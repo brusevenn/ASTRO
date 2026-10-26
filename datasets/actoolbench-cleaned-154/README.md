@@ -34,3 +34,7 @@ python3.8 astro/analysis/contractlint.py -c "<path from tools/astro/source-files
 
 - `find_candidate/sim.py` compares generated function graphs against a target/reference directory. This package supplies ACToolBench source inputs and indexes, not an ASTRO target-function/reference database or precomputed ACFGs; the full similarity-detection stage is not turnkey from the source list alone.
 - Project `config.json` files are preserved but ASTRO's file-based entry point does not automatically apply them as compiler settings/remappings. Compilation and import resolution need tool-specific validation.
+
+### ASTRO WFG comparison helper
+
+The local checkout's `astro/wfg/call_hungarian.py` now resolves `astro/wfg/python2/hungarian1.py` relative to the repository instead of using the original `/root/...` paths. Set `ASTRO_PYTHON2` to a Python 2.7 interpreter for that helper; it imports the external `hungarian` module and `numpy` in that interpreter. The main ASTRO code still requires Python 3.8. This local portability patch and its regression test have not been pushed to GitHub, and the Python 2.7 helper environment has not been exercised here.

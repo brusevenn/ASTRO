@@ -8,12 +8,15 @@ import os
 import re
 import shutil
 import subprocess
+from pathlib import Path
 
 import numpy as np
 
 def call_hungarian(Metrix, arg_dir=None):
     row, column, metrix_str = from3to2(Metrix)
-    command = ["/root/miniconda3/envs/python27/bin/python", "/root/acinfer/acinfer/acinfer/wfg/python2/hungarian1.py", arg_dir]
+    python2_executable = os.environ.get("ASTRO_PYTHON2", "python2")
+    helper_script = Path(__file__).resolve().parent / "python2" / "hungarian1.py"
+    command = [python2_executable, str(helper_script), arg_dir]
     arg_str = str(row) + " " + str(column) + " " + metrix_str
     if not arg_dir:
         raise RuntimeError("         ")
