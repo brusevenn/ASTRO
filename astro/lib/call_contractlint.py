@@ -11,7 +11,8 @@ from lib import config
 
 
 def collect_kwargs(**kwargs):
-    cmd = ["python", "/root/research/acinfer/acinfer/acinfer/analysis/contractlint.py"]
+    astro_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    cmd = [sys.executable, os.path.join(astro_root, "analysis", "contractlint.py")]
     for (key, value) in kwargs.items():
         if value:
             if key == "sname":

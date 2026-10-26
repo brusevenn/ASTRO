@@ -16,8 +16,9 @@ from shutil import rmtree
 from numpy import true_divide
 
 import sys
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append("/root/astro_submit/astro")
+ASTRO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if ASTRO_ROOT not in sys.path:
+    sys.path.insert(0, ASTRO_ROOT)
 from analysis.callgraph import *
 from crytic_compile.localize import config as compile_config
 from analysis.detection import *

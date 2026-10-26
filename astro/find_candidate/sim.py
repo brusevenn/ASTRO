@@ -9,7 +9,9 @@ import traceback
 from concurrent.futures import (ALL_COMPLETED, FIRST_COMPLETED,
                                 ProcessPoolExecutor, as_completed, wait)
 
-sys.path.append("/root/astro_submit/astro")
+ASTRO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if ASTRO_ROOT not in sys.path:
+    sys.path.insert(0, ASTRO_ROOT)
 from find_candidate.candidate_filter import main as filter
 from find_candidate.cmp import main as cmp
 from lib import config
