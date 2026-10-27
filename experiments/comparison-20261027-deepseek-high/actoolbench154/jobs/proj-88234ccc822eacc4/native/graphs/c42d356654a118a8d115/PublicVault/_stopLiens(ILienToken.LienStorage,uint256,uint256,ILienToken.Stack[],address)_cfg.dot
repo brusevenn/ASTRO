@@ -1,0 +1,574 @@
+digraph {
+"BlockID: 2227
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 2228
+Call context: 
+None
+NEW VARIABLE auctionData
+REF_643(address) -> auctionData.liquidator
+REF_643(address) (->auctionData) := liquidator(address)
+REF_644(ILienToken.AuctionStack[]) -> auctionData.stack
+REF_645 -> LENGTH stack
+TMP_1567ILienToken.AuctionStack[])  = new ILienToken.AuctionStack[](REF_645)
+REF_644(ILienToken.AuctionStack[]) (->auctionData) := TMP_1567(ILienToken.AuctionStack[])
+REF_646(mapping(uint256 => ILienToken.AuctionData)) -> s.auctionData
+REF_647(ILienToken.AuctionData) -> REF_646[collateralId]
+REF_648(address) -> REF_647.liquidator
+REF_648(address) (->s) := liquidator(address)
+NEW VARIABLE i
+EXPRESSION:None	NodeType.VARIABLE
+auctionData.liquidator = liquidator	NodeType.EXPRESSION
+auctionData.stack = new ILienToken.AuctionStack[](stack.length)	NodeType.EXPRESSION
+s.auctionData[collateralId].liquidator = liquidator	NodeType.EXPRESSION
+None	NodeType.VARIABLE";
+"BlockID: 2229
+Call context: 
+None
+BEGIN_LOOP
+REF_649 -> LENGTH stack
+TMP_1568(bool) = i < REF_649
+CONDITION TMP_1568
+EXPRESSION:None	NodeType.STARTLOOP
+i < stack.length	NodeType.IFLOOP";
+"BlockID: 2230
+Call context: 
+True
+NEW VARIABLE auctionStack
+REF_650(uint256) -> auctionStack.lienId
+REF_651(ILienToken.Stack) -> stack[i]
+REF_652(ILienToken.Point) -> REF_651.point
+REF_653(uint256) -> REF_652.lienId
+REF_650(uint256) (->auctionStack) := REF_653(uint256)
+REF_654(uint40) -> auctionStack.end
+REF_655(ILienToken.Stack) -> stack[i]
+REF_656(ILienToken.Point) -> REF_655.point
+REF_657(uint40) -> REF_656.end
+REF_654(uint40) (->auctionStack) := REF_657(uint40)
+REF_658(ILienToken.Stack) -> stack[i]
+TMP_1569(uint88) = INTERNAL_CALL, LienToken._getOwed(ILienToken.Stack,uint256)(REF_658,block.timestamp)
+EXPRESSION:None	NodeType.VARIABLE
+auctionStack.lienId = stack[i].point.lienId	NodeType.EXPRESSION
+auctionStack.end = stack[i].point.end	NodeType.EXPRESSION";
+"BlockID: 2231
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 2232
+Call context: 
+None
+REF_674(mapping(uint256 => bytes32)) -> s.collateralStateHash
+REF_675(bytes32) -> REF_674[collateralId]
+REF_675(bytes32) (->s) := ACTIVE_AUCTION(bytes32)
+REF_676(uint48) -> auctionData.startTime
+TMP_1579(uint48) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo48(uint256), arguments:['block.timestamp'] 
+EXPRESSION:s.collateralStateHash[collateralId] = ACTIVE_AUCTION	NodeType.EXPRESSION
+auctionData.startTime = block.timestamp.safeCastTo48()	NodeType.EXPRESSION";
+"BlockID: 2233
+Call context: 
+None
+REF_676(uint48) (->auctionData) := TMP_1579(uint48)
+REF_678(uint48) -> auctionData.endTime
+TMP_1580(uint256) = block.timestamp (c)+ auctionWindow
+TMP_1581(uint48) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo48(uint256), arguments:['TMP_1580'] 
+EXPRESSION:auctionData.startTime = block.timestamp.safeCastTo48()	NodeType.EXPRESSION
+auctionData.endTime = (block.timestamp + auctionWindow).safeCastTo48()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2234
+Call context: 
+None
+REF_678(uint48) (->auctionData) := TMP_1581(uint48)
+REF_680(uint88) -> auctionData.startAmount
+REF_681(ILienToken.Stack) -> stack[0]
+REF_682(ILienToken.Lien) -> REF_681.lien
+REF_683(ILienToken.Details) -> REF_682.details
+REF_684(uint256) -> REF_683.liquidationInitialAsk
+TMP_1582(uint88) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo88(uint256), arguments:['REF_684'] 
+EXPRESSION:auctionData.endTime = (block.timestamp + auctionWindow).safeCastTo48()	NodeType.EXPRESSION
+auctionData.startAmount = stack[0].lien.details.liquidationInitialAsk.safeCastTo88()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2235
+Call context: 
+None
+REF_680(uint88) (->auctionData) := TMP_1582(uint88)
+REF_686(uint88) -> auctionData.endAmount
+TMP_1583 = CONVERT 1000 to uint88
+REF_686(uint88) (->auctionData) := TMP_1583(uint88)
+REF_687(ICollateralToken) -> s.COLLATERAL_TOKEN
+TMP_1584(ClearingHouse) = HIGH_LEVEL_CALL, dest:REF_687(ICollateralToken), function:getClearingHouse, arguments:['collateralId']  
+EXPRESSION:auctionData.startAmount = stack[0].lien.details.liquidationInitialAsk.safeCastTo88()	NodeType.EXPRESSION
+auctionData.endAmount = uint88(1000)	NodeType.EXPRESSION
+s.COLLATERAL_TOKEN.getClearingHouse(collateralId).setAuctionData(auctionData)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2236
+Call context: 
+None
+HIGH_LEVEL_CALL, dest:TMP_1584(ClearingHouse), function:setAuctionData, arguments:['auctionData']  
+EXPRESSION:s.COLLATERAL_TOKEN.getClearingHouse(collateralId).setAuctionData(auctionData)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2238
+Call context: 
+None
+owed(uint88) := TMP_1569(uint88)
+REF_659(uint88) -> auctionStack.amountOwed
+REF_659(uint88) (->auctionStack) := owed(uint88)
+REF_660(mapping(uint256 => ILienToken.LienMeta)) -> s.lienMeta
+REF_661(uint256) -> auctionStack.lienId
+REF_662(ILienToken.LienMeta) -> REF_660[REF_661]
+REF_663(bool) -> REF_662.atLiquidation
+REF_663(bool) (->s) := True(bool)
+REF_664(ILienToken.AuctionStack[]) -> auctionData.stack
+REF_665(ILienToken.AuctionStack) -> REF_664[i]
+REF_665(ILienToken.AuctionStack) (->auctionData) := auctionStack(ILienToken.AuctionStack)
+REF_666(uint256) -> auctionStack.lienId
+TMP_1570(address) = INTERNAL_CALL, LienToken._getPayee(ILienToken.LienStorage,uint256)(s,REF_666)
+EXPRESSION:owed = _getOwed(stack[i],block.timestamp)	NodeType.VARIABLE
+owed = _getOwed(stack[i],block.timestamp)	NodeType.EXPRESSION
+auctionStack.amountOwed = owed	NodeType.EXPRESSION
+s.lienMeta[auctionStack.lienId].atLiquidation = true	NodeType.EXPRESSION
+auctionData.stack[i] = auctionStack	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2239
+Call context: 
+None
+payee(address) := TMP_1570(address)
+TMP_1571(bool) = INTERNAL_CALL, LienToken._isPublicVault(ILienToken.LienStorage,address)(s,payee)
+EXPRESSION:payee = _getPayee(s,auctionStack.lienId)	NodeType.VARIABLE
+payee = _getPayee(s,auctionStack.lienId)	NodeType.EXPRESSION
+_isPublicVault(s,payee)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2240
+Call context: 
+None
+CONDITION TMP_1571
+EXPRESSION:_isPublicVault(s,payee)	NodeType.IF" [shape=box];
+"BlockID: 2241
+Call context: 
+True
+TMP_1572 = CONVERT payee to IPublicVault
+REF_669(ILienToken.Stack) -> stack[i]
+TMP_1573(uint256) = INTERNAL_CALL, LienToken.calculateSlope(ILienToken.Stack)(REF_669)
+EXPRESSION:";
+"BlockID: 2244
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2245
+Call context: 
+None
+i(uint256) = i + 1
+EXPRESSION:++ i	NodeType.EXPRESSION";
+"BlockID: 2242
+Call context: 
+None
+REF_670(ILienToken.Stack) -> stack[i]
+REF_671(ILienToken.Point) -> REF_670.point
+REF_672(uint40) -> REF_671.end
+TMP_1574(IPublicVault.AfterLiquidationParams) = new AfterLiquidationParams(TMP_1573,owed,REF_672)
+TMP_1575(address) = HIGH_LEVEL_CALL, dest:TMP_1572(IPublicVault), function:updateVaultAfterLiquidation, arguments:['auctionWindow', 'TMP_1574']  
+EXPRESSION:" [shape=box];
+"BlockID: 2243
+Call context: 
+None
+withdrawProxyIfNearBoundary(address) := TMP_1575(address)
+TMP_1576 = CONVERT 0 to address
+TMP_1577(bool) = withdrawProxyIfNearBoundary != TMP_1576
+CONDITION TMP_1577
+EXPRESSION:withdrawProxyIfNearBoundary = IPublicVault(payee).updateVaultAfterLiquidation(auctionWindow,IPublicVault.AfterLiquidationParams(calculateSlope(stack[i]),owed,stack[i].point.end))	NodeType.VARIABLE
+withdrawProxyIfNearBoundary = IPublicVault(payee).updateVaultAfterLiquidation(auctionWindow,IPublicVault.AfterLiquidationParams(calculateSlope(stack[i]),owed,stack[i].point.end))	NodeType.EXPRESSION
+withdrawProxyIfNearBoundary != address(0)	NodeType.IF" [shape=box];
+"BlockID: 2246
+Call context: 
+True
+REF_673(uint256) -> auctionStack.lienId
+INTERNAL_CALL, LienToken._setPayee(ILienToken.LienStorage,uint256,address)(s,REF_673,withdrawProxyIfNearBoundary)
+EXPRESSION:_setPayee(s,auctionStack.lienId,withdrawProxyIfNearBoundary)	NodeType.EXPRESSION";
+"BlockID: 2248
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2227
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 2228
+Call context: 
+None
+NEW VARIABLE auctionData
+REF_643(address) -> auctionData.liquidator
+REF_643(address) (->auctionData) := liquidator(address)
+REF_644(ILienToken.AuctionStack[]) -> auctionData.stack
+REF_645 -> LENGTH stack
+TMP_1567ILienToken.AuctionStack[])  = new ILienToken.AuctionStack[](REF_645)
+REF_644(ILienToken.AuctionStack[]) (->auctionData) := TMP_1567(ILienToken.AuctionStack[])
+REF_646(mapping(uint256 => ILienToken.AuctionData)) -> s.auctionData
+REF_647(ILienToken.AuctionData) -> REF_646[collateralId]
+REF_648(address) -> REF_647.liquidator
+REF_648(address) (->s) := liquidator(address)
+NEW VARIABLE i
+EXPRESSION:None	NodeType.VARIABLE
+auctionData.liquidator = liquidator	NodeType.EXPRESSION
+auctionData.stack = new ILienToken.AuctionStack[](stack.length)	NodeType.EXPRESSION
+s.auctionData[collateralId].liquidator = liquidator	NodeType.EXPRESSION
+None	NodeType.VARIABLE" [key=0];
+"BlockID: 2228
+Call context: 
+None
+NEW VARIABLE auctionData
+REF_643(address) -> auctionData.liquidator
+REF_643(address) (->auctionData) := liquidator(address)
+REF_644(ILienToken.AuctionStack[]) -> auctionData.stack
+REF_645 -> LENGTH stack
+TMP_1567ILienToken.AuctionStack[])  = new ILienToken.AuctionStack[](REF_645)
+REF_644(ILienToken.AuctionStack[]) (->auctionData) := TMP_1567(ILienToken.AuctionStack[])
+REF_646(mapping(uint256 => ILienToken.AuctionData)) -> s.auctionData
+REF_647(ILienToken.AuctionData) -> REF_646[collateralId]
+REF_648(address) -> REF_647.liquidator
+REF_648(address) (->s) := liquidator(address)
+NEW VARIABLE i
+EXPRESSION:None	NodeType.VARIABLE
+auctionData.liquidator = liquidator	NodeType.EXPRESSION
+auctionData.stack = new ILienToken.AuctionStack[](stack.length)	NodeType.EXPRESSION
+s.auctionData[collateralId].liquidator = liquidator	NodeType.EXPRESSION
+None	NodeType.VARIABLE" -> "BlockID: 2229
+Call context: 
+None
+BEGIN_LOOP
+REF_649 -> LENGTH stack
+TMP_1568(bool) = i < REF_649
+CONDITION TMP_1568
+EXPRESSION:None	NodeType.STARTLOOP
+i < stack.length	NodeType.IFLOOP" [key=0];
+"BlockID: 2229
+Call context: 
+None
+BEGIN_LOOP
+REF_649 -> LENGTH stack
+TMP_1568(bool) = i < REF_649
+CONDITION TMP_1568
+EXPRESSION:None	NodeType.STARTLOOP
+i < stack.length	NodeType.IFLOOP" -> "BlockID: 2230
+Call context: 
+True
+NEW VARIABLE auctionStack
+REF_650(uint256) -> auctionStack.lienId
+REF_651(ILienToken.Stack) -> stack[i]
+REF_652(ILienToken.Point) -> REF_651.point
+REF_653(uint256) -> REF_652.lienId
+REF_650(uint256) (->auctionStack) := REF_653(uint256)
+REF_654(uint40) -> auctionStack.end
+REF_655(ILienToken.Stack) -> stack[i]
+REF_656(ILienToken.Point) -> REF_655.point
+REF_657(uint40) -> REF_656.end
+REF_654(uint40) (->auctionStack) := REF_657(uint40)
+REF_658(ILienToken.Stack) -> stack[i]
+TMP_1569(uint88) = INTERNAL_CALL, LienToken._getOwed(ILienToken.Stack,uint256)(REF_658,block.timestamp)
+EXPRESSION:None	NodeType.VARIABLE
+auctionStack.lienId = stack[i].point.lienId	NodeType.EXPRESSION
+auctionStack.end = stack[i].point.end	NodeType.EXPRESSION" [key=0];
+"BlockID: 2229
+Call context: 
+None
+BEGIN_LOOP
+REF_649 -> LENGTH stack
+TMP_1568(bool) = i < REF_649
+CONDITION TMP_1568
+EXPRESSION:None	NodeType.STARTLOOP
+i < stack.length	NodeType.IFLOOP" -> "BlockID: 2231
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 2230
+Call context: 
+True
+NEW VARIABLE auctionStack
+REF_650(uint256) -> auctionStack.lienId
+REF_651(ILienToken.Stack) -> stack[i]
+REF_652(ILienToken.Point) -> REF_651.point
+REF_653(uint256) -> REF_652.lienId
+REF_650(uint256) (->auctionStack) := REF_653(uint256)
+REF_654(uint40) -> auctionStack.end
+REF_655(ILienToken.Stack) -> stack[i]
+REF_656(ILienToken.Point) -> REF_655.point
+REF_657(uint40) -> REF_656.end
+REF_654(uint40) (->auctionStack) := REF_657(uint40)
+REF_658(ILienToken.Stack) -> stack[i]
+TMP_1569(uint88) = INTERNAL_CALL, LienToken._getOwed(ILienToken.Stack,uint256)(REF_658,block.timestamp)
+EXPRESSION:None	NodeType.VARIABLE
+auctionStack.lienId = stack[i].point.lienId	NodeType.EXPRESSION
+auctionStack.end = stack[i].point.end	NodeType.EXPRESSION" -> "BlockID: 2238
+Call context: 
+None
+owed(uint88) := TMP_1569(uint88)
+REF_659(uint88) -> auctionStack.amountOwed
+REF_659(uint88) (->auctionStack) := owed(uint88)
+REF_660(mapping(uint256 => ILienToken.LienMeta)) -> s.lienMeta
+REF_661(uint256) -> auctionStack.lienId
+REF_662(ILienToken.LienMeta) -> REF_660[REF_661]
+REF_663(bool) -> REF_662.atLiquidation
+REF_663(bool) (->s) := True(bool)
+REF_664(ILienToken.AuctionStack[]) -> auctionData.stack
+REF_665(ILienToken.AuctionStack) -> REF_664[i]
+REF_665(ILienToken.AuctionStack) (->auctionData) := auctionStack(ILienToken.AuctionStack)
+REF_666(uint256) -> auctionStack.lienId
+TMP_1570(address) = INTERNAL_CALL, LienToken._getPayee(ILienToken.LienStorage,uint256)(s,REF_666)
+EXPRESSION:owed = _getOwed(stack[i],block.timestamp)	NodeType.VARIABLE
+owed = _getOwed(stack[i],block.timestamp)	NodeType.EXPRESSION
+auctionStack.amountOwed = owed	NodeType.EXPRESSION
+s.lienMeta[auctionStack.lienId].atLiquidation = true	NodeType.EXPRESSION
+auctionData.stack[i] = auctionStack	NodeType.EXPRESSION" [key=0];
+"BlockID: 2231
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 2232
+Call context: 
+None
+REF_674(mapping(uint256 => bytes32)) -> s.collateralStateHash
+REF_675(bytes32) -> REF_674[collateralId]
+REF_675(bytes32) (->s) := ACTIVE_AUCTION(bytes32)
+REF_676(uint48) -> auctionData.startTime
+TMP_1579(uint48) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo48(uint256), arguments:['block.timestamp'] 
+EXPRESSION:s.collateralStateHash[collateralId] = ACTIVE_AUCTION	NodeType.EXPRESSION
+auctionData.startTime = block.timestamp.safeCastTo48()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2232
+Call context: 
+None
+REF_674(mapping(uint256 => bytes32)) -> s.collateralStateHash
+REF_675(bytes32) -> REF_674[collateralId]
+REF_675(bytes32) (->s) := ACTIVE_AUCTION(bytes32)
+REF_676(uint48) -> auctionData.startTime
+TMP_1579(uint48) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo48(uint256), arguments:['block.timestamp'] 
+EXPRESSION:s.collateralStateHash[collateralId] = ACTIVE_AUCTION	NodeType.EXPRESSION
+auctionData.startTime = block.timestamp.safeCastTo48()	NodeType.EXPRESSION" -> "BlockID: 2233
+Call context: 
+None
+REF_676(uint48) (->auctionData) := TMP_1579(uint48)
+REF_678(uint48) -> auctionData.endTime
+TMP_1580(uint256) = block.timestamp (c)+ auctionWindow
+TMP_1581(uint48) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo48(uint256), arguments:['TMP_1580'] 
+EXPRESSION:auctionData.startTime = block.timestamp.safeCastTo48()	NodeType.EXPRESSION
+auctionData.endTime = (block.timestamp + auctionWindow).safeCastTo48()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2233
+Call context: 
+None
+REF_676(uint48) (->auctionData) := TMP_1579(uint48)
+REF_678(uint48) -> auctionData.endTime
+TMP_1580(uint256) = block.timestamp (c)+ auctionWindow
+TMP_1581(uint48) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo48(uint256), arguments:['TMP_1580'] 
+EXPRESSION:auctionData.startTime = block.timestamp.safeCastTo48()	NodeType.EXPRESSION
+auctionData.endTime = (block.timestamp + auctionWindow).safeCastTo48()	NodeType.EXPRESSION" -> "BlockID: 2234
+Call context: 
+None
+REF_678(uint48) (->auctionData) := TMP_1581(uint48)
+REF_680(uint88) -> auctionData.startAmount
+REF_681(ILienToken.Stack) -> stack[0]
+REF_682(ILienToken.Lien) -> REF_681.lien
+REF_683(ILienToken.Details) -> REF_682.details
+REF_684(uint256) -> REF_683.liquidationInitialAsk
+TMP_1582(uint88) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo88(uint256), arguments:['REF_684'] 
+EXPRESSION:auctionData.endTime = (block.timestamp + auctionWindow).safeCastTo48()	NodeType.EXPRESSION
+auctionData.startAmount = stack[0].lien.details.liquidationInitialAsk.safeCastTo88()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2234
+Call context: 
+None
+REF_678(uint48) (->auctionData) := TMP_1581(uint48)
+REF_680(uint88) -> auctionData.startAmount
+REF_681(ILienToken.Stack) -> stack[0]
+REF_682(ILienToken.Lien) -> REF_681.lien
+REF_683(ILienToken.Details) -> REF_682.details
+REF_684(uint256) -> REF_683.liquidationInitialAsk
+TMP_1582(uint88) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo88(uint256), arguments:['REF_684'] 
+EXPRESSION:auctionData.endTime = (block.timestamp + auctionWindow).safeCastTo48()	NodeType.EXPRESSION
+auctionData.startAmount = stack[0].lien.details.liquidationInitialAsk.safeCastTo88()	NodeType.EXPRESSION" -> "BlockID: 2235
+Call context: 
+None
+REF_680(uint88) (->auctionData) := TMP_1582(uint88)
+REF_686(uint88) -> auctionData.endAmount
+TMP_1583 = CONVERT 1000 to uint88
+REF_686(uint88) (->auctionData) := TMP_1583(uint88)
+REF_687(ICollateralToken) -> s.COLLATERAL_TOKEN
+TMP_1584(ClearingHouse) = HIGH_LEVEL_CALL, dest:REF_687(ICollateralToken), function:getClearingHouse, arguments:['collateralId']  
+EXPRESSION:auctionData.startAmount = stack[0].lien.details.liquidationInitialAsk.safeCastTo88()	NodeType.EXPRESSION
+auctionData.endAmount = uint88(1000)	NodeType.EXPRESSION
+s.COLLATERAL_TOKEN.getClearingHouse(collateralId).setAuctionData(auctionData)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2235
+Call context: 
+None
+REF_680(uint88) (->auctionData) := TMP_1582(uint88)
+REF_686(uint88) -> auctionData.endAmount
+TMP_1583 = CONVERT 1000 to uint88
+REF_686(uint88) (->auctionData) := TMP_1583(uint88)
+REF_687(ICollateralToken) -> s.COLLATERAL_TOKEN
+TMP_1584(ClearingHouse) = HIGH_LEVEL_CALL, dest:REF_687(ICollateralToken), function:getClearingHouse, arguments:['collateralId']  
+EXPRESSION:auctionData.startAmount = stack[0].lien.details.liquidationInitialAsk.safeCastTo88()	NodeType.EXPRESSION
+auctionData.endAmount = uint88(1000)	NodeType.EXPRESSION
+s.COLLATERAL_TOKEN.getClearingHouse(collateralId).setAuctionData(auctionData)	NodeType.EXPRESSION" -> "BlockID: 2236
+Call context: 
+None
+HIGH_LEVEL_CALL, dest:TMP_1584(ClearingHouse), function:setAuctionData, arguments:['auctionData']  
+EXPRESSION:s.COLLATERAL_TOKEN.getClearingHouse(collateralId).setAuctionData(auctionData)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2238
+Call context: 
+None
+owed(uint88) := TMP_1569(uint88)
+REF_659(uint88) -> auctionStack.amountOwed
+REF_659(uint88) (->auctionStack) := owed(uint88)
+REF_660(mapping(uint256 => ILienToken.LienMeta)) -> s.lienMeta
+REF_661(uint256) -> auctionStack.lienId
+REF_662(ILienToken.LienMeta) -> REF_660[REF_661]
+REF_663(bool) -> REF_662.atLiquidation
+REF_663(bool) (->s) := True(bool)
+REF_664(ILienToken.AuctionStack[]) -> auctionData.stack
+REF_665(ILienToken.AuctionStack) -> REF_664[i]
+REF_665(ILienToken.AuctionStack) (->auctionData) := auctionStack(ILienToken.AuctionStack)
+REF_666(uint256) -> auctionStack.lienId
+TMP_1570(address) = INTERNAL_CALL, LienToken._getPayee(ILienToken.LienStorage,uint256)(s,REF_666)
+EXPRESSION:owed = _getOwed(stack[i],block.timestamp)	NodeType.VARIABLE
+owed = _getOwed(stack[i],block.timestamp)	NodeType.EXPRESSION
+auctionStack.amountOwed = owed	NodeType.EXPRESSION
+s.lienMeta[auctionStack.lienId].atLiquidation = true	NodeType.EXPRESSION
+auctionData.stack[i] = auctionStack	NodeType.EXPRESSION" -> "BlockID: 2239
+Call context: 
+None
+payee(address) := TMP_1570(address)
+TMP_1571(bool) = INTERNAL_CALL, LienToken._isPublicVault(ILienToken.LienStorage,address)(s,payee)
+EXPRESSION:payee = _getPayee(s,auctionStack.lienId)	NodeType.VARIABLE
+payee = _getPayee(s,auctionStack.lienId)	NodeType.EXPRESSION
+_isPublicVault(s,payee)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2239
+Call context: 
+None
+payee(address) := TMP_1570(address)
+TMP_1571(bool) = INTERNAL_CALL, LienToken._isPublicVault(ILienToken.LienStorage,address)(s,payee)
+EXPRESSION:payee = _getPayee(s,auctionStack.lienId)	NodeType.VARIABLE
+payee = _getPayee(s,auctionStack.lienId)	NodeType.EXPRESSION
+_isPublicVault(s,payee)	NodeType.EXPRESSION" -> "BlockID: 2240
+Call context: 
+None
+CONDITION TMP_1571
+EXPRESSION:_isPublicVault(s,payee)	NodeType.IF" [key=0];
+"BlockID: 2240
+Call context: 
+None
+CONDITION TMP_1571
+EXPRESSION:_isPublicVault(s,payee)	NodeType.IF" -> "BlockID: 2241
+Call context: 
+True
+TMP_1572 = CONVERT payee to IPublicVault
+REF_669(ILienToken.Stack) -> stack[i]
+TMP_1573(uint256) = INTERNAL_CALL, LienToken.calculateSlope(ILienToken.Stack)(REF_669)
+EXPRESSION:" [key=0];
+"BlockID: 2240
+Call context: 
+None
+CONDITION TMP_1571
+EXPRESSION:_isPublicVault(s,payee)	NodeType.IF" -> "BlockID: 2244
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2241
+Call context: 
+True
+TMP_1572 = CONVERT payee to IPublicVault
+REF_669(ILienToken.Stack) -> stack[i]
+TMP_1573(uint256) = INTERNAL_CALL, LienToken.calculateSlope(ILienToken.Stack)(REF_669)
+EXPRESSION:" -> "BlockID: 2242
+Call context: 
+None
+REF_670(ILienToken.Stack) -> stack[i]
+REF_671(ILienToken.Point) -> REF_670.point
+REF_672(uint40) -> REF_671.end
+TMP_1574(IPublicVault.AfterLiquidationParams) = new AfterLiquidationParams(TMP_1573,owed,REF_672)
+TMP_1575(address) = HIGH_LEVEL_CALL, dest:TMP_1572(IPublicVault), function:updateVaultAfterLiquidation, arguments:['auctionWindow', 'TMP_1574']  
+EXPRESSION:" [key=0];
+"BlockID: 2244
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2245
+Call context: 
+None
+i(uint256) = i + 1
+EXPRESSION:++ i	NodeType.EXPRESSION" [key=0];
+"BlockID: 2245
+Call context: 
+None
+i(uint256) = i + 1
+EXPRESSION:++ i	NodeType.EXPRESSION" -> "BlockID: 2229
+Call context: 
+None
+BEGIN_LOOP
+REF_649 -> LENGTH stack
+TMP_1568(bool) = i < REF_649
+CONDITION TMP_1568
+EXPRESSION:None	NodeType.STARTLOOP
+i < stack.length	NodeType.IFLOOP" [key=0];
+"BlockID: 2242
+Call context: 
+None
+REF_670(ILienToken.Stack) -> stack[i]
+REF_671(ILienToken.Point) -> REF_670.point
+REF_672(uint40) -> REF_671.end
+TMP_1574(IPublicVault.AfterLiquidationParams) = new AfterLiquidationParams(TMP_1573,owed,REF_672)
+TMP_1575(address) = HIGH_LEVEL_CALL, dest:TMP_1572(IPublicVault), function:updateVaultAfterLiquidation, arguments:['auctionWindow', 'TMP_1574']  
+EXPRESSION:" -> "BlockID: 2243
+Call context: 
+None
+withdrawProxyIfNearBoundary(address) := TMP_1575(address)
+TMP_1576 = CONVERT 0 to address
+TMP_1577(bool) = withdrawProxyIfNearBoundary != TMP_1576
+CONDITION TMP_1577
+EXPRESSION:withdrawProxyIfNearBoundary = IPublicVault(payee).updateVaultAfterLiquidation(auctionWindow,IPublicVault.AfterLiquidationParams(calculateSlope(stack[i]),owed,stack[i].point.end))	NodeType.VARIABLE
+withdrawProxyIfNearBoundary = IPublicVault(payee).updateVaultAfterLiquidation(auctionWindow,IPublicVault.AfterLiquidationParams(calculateSlope(stack[i]),owed,stack[i].point.end))	NodeType.EXPRESSION
+withdrawProxyIfNearBoundary != address(0)	NodeType.IF" [key=0];
+"BlockID: 2243
+Call context: 
+None
+withdrawProxyIfNearBoundary(address) := TMP_1575(address)
+TMP_1576 = CONVERT 0 to address
+TMP_1577(bool) = withdrawProxyIfNearBoundary != TMP_1576
+CONDITION TMP_1577
+EXPRESSION:withdrawProxyIfNearBoundary = IPublicVault(payee).updateVaultAfterLiquidation(auctionWindow,IPublicVault.AfterLiquidationParams(calculateSlope(stack[i]),owed,stack[i].point.end))	NodeType.VARIABLE
+withdrawProxyIfNearBoundary = IPublicVault(payee).updateVaultAfterLiquidation(auctionWindow,IPublicVault.AfterLiquidationParams(calculateSlope(stack[i]),owed,stack[i].point.end))	NodeType.EXPRESSION
+withdrawProxyIfNearBoundary != address(0)	NodeType.IF" -> "BlockID: 2246
+Call context: 
+True
+REF_673(uint256) -> auctionStack.lienId
+INTERNAL_CALL, LienToken._setPayee(ILienToken.LienStorage,uint256,address)(s,REF_673,withdrawProxyIfNearBoundary)
+EXPRESSION:_setPayee(s,auctionStack.lienId,withdrawProxyIfNearBoundary)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2243
+Call context: 
+None
+withdrawProxyIfNearBoundary(address) := TMP_1575(address)
+TMP_1576 = CONVERT 0 to address
+TMP_1577(bool) = withdrawProxyIfNearBoundary != TMP_1576
+CONDITION TMP_1577
+EXPRESSION:withdrawProxyIfNearBoundary = IPublicVault(payee).updateVaultAfterLiquidation(auctionWindow,IPublicVault.AfterLiquidationParams(calculateSlope(stack[i]),owed,stack[i].point.end))	NodeType.VARIABLE
+withdrawProxyIfNearBoundary = IPublicVault(payee).updateVaultAfterLiquidation(auctionWindow,IPublicVault.AfterLiquidationParams(calculateSlope(stack[i]),owed,stack[i].point.end))	NodeType.EXPRESSION
+withdrawProxyIfNearBoundary != address(0)	NodeType.IF" -> "BlockID: 2248
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2246
+Call context: 
+True
+REF_673(uint256) -> auctionStack.lienId
+INTERNAL_CALL, LienToken._setPayee(ILienToken.LienStorage,uint256,address)(s,REF_673,withdrawProxyIfNearBoundary)
+EXPRESSION:_setPayee(s,auctionStack.lienId,withdrawProxyIfNearBoundary)	NodeType.EXPRESSION" -> "BlockID: 2248
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2248
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2244
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

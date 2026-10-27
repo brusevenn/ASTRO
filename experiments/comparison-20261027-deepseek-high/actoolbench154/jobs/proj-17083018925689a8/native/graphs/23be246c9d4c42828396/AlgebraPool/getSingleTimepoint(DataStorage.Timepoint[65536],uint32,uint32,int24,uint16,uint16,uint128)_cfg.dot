@@ -1,0 +1,678 @@
+digraph {
+"BlockID: 356
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 357
+Call context: 
+None
+TMP_182(uint32) = time - secondsAgo
+target(uint32) := TMP_182(uint32)
+TMP_183(bool) = secondsAgo == 0
+REF_34(DataStorage.Timepoint) -> self[index]
+REF_35(uint32) -> REF_34.blockTimestamp
+TMP_184(bool) = INTERNAL_CALL, DataStorage.lteConsideringOverflow(uint32,uint32,uint32)(REF_35,target,time)
+EXPRESSION:target = time - secondsAgo	NodeType.VARIABLE
+target = time - secondsAgo	NodeType.EXPRESSION
+secondsAgo == 0 || lteConsideringOverflow(self[index].blockTimestamp,target,time)	NodeType.EXPRESSION";
+"BlockID: 358
+Call context: 
+None
+TMP_185(bool) = TMP_183 || TMP_184
+CONDITION TMP_185
+EXPRESSION:secondsAgo == 0 || lteConsideringOverflow(self[index].blockTimestamp,target,time)	NodeType.IF" [shape=box];
+"BlockID: 359
+Call context: 
+True
+REF_36(DataStorage.Timepoint) -> self[index]
+last(DataStorage.Timepoint) := REF_36(DataStorage.Timepoint)
+REF_37(uint32) -> last.blockTimestamp
+TMP_186(bool) = REF_37 == target
+CONDITION TMP_186
+EXPRESSION:last = self[index]	NodeType.VARIABLE
+last = self[index]	NodeType.EXPRESSION
+last.blockTimestamp == target	NodeType.IF";
+"BlockID: 360
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 361
+Call context: 
+None
+REF_49(DataStorage.Timepoint) -> self[oldestIndex]
+REF_50(uint32) -> REF_49.blockTimestamp
+TMP_196(bool) = INTERNAL_CALL, DataStorage.lteConsideringOverflow(uint32,uint32,uint32)(REF_50,target,time)
+EXPRESSION:require(bool,string)(lteConsideringOverflow(self[oldestIndex].blockTimestamp,target,time),OLD)	NodeType.EXPRESSION";
+"BlockID: 363
+Call context: 
+True
+NEW VARIABLE beforeOrAt
+NEW VARIABLE atOrAfter
+TUPLE_0(DataStorage.Timepoint,DataStorage.Timepoint) = INTERNAL_CALL, DataStorage.binarySearch(DataStorage.Timepoint[65536],uint32,uint32,uint16,uint16)(self,time,target,index,oldestIndex)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(beforeOrAt,atOrAfter) = binarySearch(self,time,target,index,oldestIndex)	NodeType.EXPRESSION";
+"BlockID: 364
+Call context: 
+None
+beforeOrAt(DataStorage.Timepoint)= UNPACK TUPLE_0 index: 0 
+atOrAfter(DataStorage.Timepoint)= UNPACK TUPLE_0 index: 1 
+REF_51(uint32) -> atOrAfter.blockTimestamp
+TMP_198(bool) = target == REF_51
+CONDITION TMP_198
+EXPRESSION:(beforeOrAt,atOrAfter) = binarySearch(self,time,target,index,oldestIndex)	NodeType.EXPRESSION
+target == atOrAfter.blockTimestamp	NodeType.IF" [shape=box];
+"BlockID: 365
+Call context: 
+True
+RETURN atOrAfter
+EXPRESSION:atOrAfter	NodeType.RETURN";
+"BlockID: 366
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 367
+Call context: 
+None
+REF_52(uint32) -> beforeOrAt.blockTimestamp
+TMP_199(bool) = target != REF_52
+CONDITION TMP_199
+EXPRESSION:target != beforeOrAt.blockTimestamp	NodeType.IF";
+"BlockID: 368
+Call context: 
+True
+REF_53(uint32) -> atOrAfter.blockTimestamp
+REF_54(uint32) -> beforeOrAt.blockTimestamp
+TMP_200(uint32) = REF_53 - REF_54
+timepointTimeDelta(int56) := TMP_200(uint32)
+REF_55(uint32) -> beforeOrAt.blockTimestamp
+TMP_201(uint32) = target - REF_55
+targetDelta(int56) := TMP_201(uint32)
+REF_56(int56) -> beforeOrAt.tickCumulative
+REF_57(int56) -> atOrAfter.tickCumulative
+REF_58(int56) -> beforeOrAt.tickCumulative
+TMP_202(int56) = REF_57 - REF_58
+TMP_203(int56) = TMP_202 / timepointTimeDelta
+TMP_204(int56) = TMP_203 * targetDelta
+REF_56(-> beforeOrAt) = REF_56 + TMP_204
+REF_59(uint160) -> beforeOrAt.secondsPerLiquidityCumulative
+REF_60(uint160) -> atOrAfter.secondsPerLiquidityCumulative
+REF_61(uint160) -> beforeOrAt.secondsPerLiquidityCumulative
+TMP_205(uint160) = REF_60 - REF_61
+TMP_206 = CONVERT TMP_205 to uint256
+TMP_207(uint256) = TMP_206 * targetDelta
+TMP_208(uint256) = TMP_207 / timepointTimeDelta
+TMP_209 = CONVERT TMP_208 to uint160
+REF_59(-> beforeOrAt) = REF_59 + TMP_209
+REF_62(uint88) -> beforeOrAt.volatilityCumulative
+REF_63(uint88) -> atOrAfter.volatilityCumulative
+REF_64(uint88) -> beforeOrAt.volatilityCumulative
+TMP_210(uint88) = REF_63 - REF_64
+TMP_211(uint88) = TMP_210 / timepointTimeDelta
+TMP_212(uint88) = TMP_211 * targetDelta
+REF_62(-> beforeOrAt) = REF_62 + TMP_212
+REF_65(uint144) -> beforeOrAt.volumePerLiquidityCumulative
+REF_66(uint144) -> atOrAfter.volumePerLiquidityCumulative
+REF_67(uint144) -> beforeOrAt.volumePerLiquidityCumulative
+TMP_213(uint144) = REF_66 - REF_67
+TMP_214(uint144) = TMP_213 / timepointTimeDelta
+TMP_215(uint144) = TMP_214 * targetDelta
+REF_65(-> beforeOrAt) = REF_65 + TMP_215
+EXPRESSION:timepointTimeDelta = atOrAfter.blockTimestamp - beforeOrAt.blockTimestamp	NodeType.VARIABLE
+timepointTimeDelta = atOrAfter.blockTimestamp - beforeOrAt.blockTimestamp	NodeType.EXPRESSION
+targetDelta = target - beforeOrAt.blockTimestamp	NodeType.VARIABLE
+targetDelta = target - beforeOrAt.blockTimestamp	NodeType.EXPRESSION
+beforeOrAt.tickCumulative += ((atOrAfter.tickCumulative - beforeOrAt.tickCumulative) / timepointTimeDelta) * targetDelta	NodeType.EXPRESSION
+beforeOrAt.secondsPerLiquidityCumulative += uint160((uint256(atOrAfter.secondsPerLiquidityCumulative - beforeOrAt.secondsPerLiquidityCumulative) * targetDelta) / timepointTimeDelta)	NodeType.EXPRESSION
+beforeOrAt.volatilityCumulative += ((atOrAfter.volatilityCumulative - beforeOrAt.volatilityCumulative) / timepointTimeDelta) * targetDelta	NodeType.EXPRESSION
+beforeOrAt.volumePerLiquidityCumulative += ((atOrAfter.volumePerLiquidityCumulative - beforeOrAt.volumePerLiquidityCumulative) / timepointTimeDelta) * targetDelta	NodeType.EXPRESSION";
+"BlockID: 369
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 370
+Call context: 
+None
+RETURN beforeOrAt
+EXPRESSION:beforeOrAt	NodeType.RETURN";
+"BlockID: 371
+Call context: 
+True
+RETURN last
+EXPRESSION:last	NodeType.RETURN";
+"BlockID: 372
+Call context: 
+False
+REF_38(int56) -> last.blockTimestamp
+REF_39(int56) -> last.tickCumulative
+TMP_187(int256) = INTERNAL_CALL, DataStorage._getAverageTick(DataStorage.Timepoint[65536],uint32,int24,uint16,uint16,uint32,int56)(self,time,tick,index,oldestIndex,REF_38,REF_39)
+EXPRESSION:";
+"BlockID: 373
+Call context: 
+None
+TMP_188 = CONVERT TMP_187 to int24
+avgTick(int24) := TMP_188(int24)
+prevTick(int24) := tick(int24)
+TMP_189(bool) = index != oldestIndex
+CONDITION TMP_189
+EXPRESSION:avgTick = int24(_getAverageTick(self,time,tick,index,oldestIndex,last.blockTimestamp,last.tickCumulative))	NodeType.VARIABLE
+avgTick = int24(_getAverageTick(self,time,tick,index,oldestIndex,last.blockTimestamp,last.tickCumulative))	NodeType.EXPRESSION
+prevTick = tick	NodeType.VARIABLE
+prevTick = tick	NodeType.EXPRESSION
+index != oldestIndex	NodeType.IF" [shape=box];
+"BlockID: 374
+Call context: 
+True
+NEW VARIABLE prevLast
+TMP_190(uint16) = index - 1
+REF_40(DataStorage.Timepoint) -> self[TMP_190]
+_prevLast(DataStorage.Timepoint) := REF_40(DataStorage.Timepoint)
+REF_41(uint32) -> prevLast.blockTimestamp
+REF_42(uint32) -> _prevLast.blockTimestamp
+REF_41(uint32) (->prevLast) := REF_42(uint32)
+REF_43(int56) -> prevLast.tickCumulative
+REF_44(int56) -> _prevLast.tickCumulative
+REF_43(int56) (->prevLast) := REF_44(int56)
+REF_45(int56) -> last.tickCumulative
+REF_46(int56) -> prevLast.tickCumulative
+TMP_191(int56) = REF_45 - REF_46
+REF_47(int56) -> last.blockTimestamp
+REF_48(int56) -> prevLast.blockTimestamp
+TMP_192(int56) = REF_47 - REF_48
+TMP_193(int56) = TMP_191 / TMP_192
+TMP_194 = CONVERT TMP_193 to int24
+prevTick(int24) := TMP_194(int24)
+EXPRESSION:None	NodeType.VARIABLE
+_prevLast = self[index - 1]	NodeType.VARIABLE
+_prevLast = self[index - 1]	NodeType.EXPRESSION
+prevLast.blockTimestamp = _prevLast.blockTimestamp	NodeType.EXPRESSION
+prevLast.tickCumulative = _prevLast.tickCumulative	NodeType.EXPRESSION
+prevTick = int24((last.tickCumulative - prevLast.tickCumulative) / (last.blockTimestamp - prevLast.blockTimestamp))	NodeType.EXPRESSION";
+"BlockID: 375
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 376
+Call context: 
+None
+TMP_195(DataStorage.Timepoint) = INTERNAL_CALL, DataStorage.createNewTimepoint(DataStorage.Timepoint,uint32,int24,int24,uint128,int24,uint128)(last,target,tick,prevTick,liquidity,avgTick,0)
+EXPRESSION:createNewTimepoint(last,target,tick,prevTick,liquidity,avgTick,0)	NodeType.EXPRESSION";
+"BlockID: 377
+Call context: 
+None
+RETURN TMP_195
+EXPRESSION:createNewTimepoint(last,target,tick,prevTick,liquidity,avgTick,0)	NodeType.RETURN" [shape=box];
+"BlockID: 378
+Call context: 
+None
+CONDITION TMP_196
+EXPRESSION:qiantao require	NodeType.IF";
+"BlockID: 379
+Call context: 
+True
+TMP_197(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 380
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 356
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 357
+Call context: 
+None
+TMP_182(uint32) = time - secondsAgo
+target(uint32) := TMP_182(uint32)
+TMP_183(bool) = secondsAgo == 0
+REF_34(DataStorage.Timepoint) -> self[index]
+REF_35(uint32) -> REF_34.blockTimestamp
+TMP_184(bool) = INTERNAL_CALL, DataStorage.lteConsideringOverflow(uint32,uint32,uint32)(REF_35,target,time)
+EXPRESSION:target = time - secondsAgo	NodeType.VARIABLE
+target = time - secondsAgo	NodeType.EXPRESSION
+secondsAgo == 0 || lteConsideringOverflow(self[index].blockTimestamp,target,time)	NodeType.EXPRESSION" [key=0];
+"BlockID: 357
+Call context: 
+None
+TMP_182(uint32) = time - secondsAgo
+target(uint32) := TMP_182(uint32)
+TMP_183(bool) = secondsAgo == 0
+REF_34(DataStorage.Timepoint) -> self[index]
+REF_35(uint32) -> REF_34.blockTimestamp
+TMP_184(bool) = INTERNAL_CALL, DataStorage.lteConsideringOverflow(uint32,uint32,uint32)(REF_35,target,time)
+EXPRESSION:target = time - secondsAgo	NodeType.VARIABLE
+target = time - secondsAgo	NodeType.EXPRESSION
+secondsAgo == 0 || lteConsideringOverflow(self[index].blockTimestamp,target,time)	NodeType.EXPRESSION" -> "BlockID: 358
+Call context: 
+None
+TMP_185(bool) = TMP_183 || TMP_184
+CONDITION TMP_185
+EXPRESSION:secondsAgo == 0 || lteConsideringOverflow(self[index].blockTimestamp,target,time)	NodeType.IF" [key=0];
+"BlockID: 358
+Call context: 
+None
+TMP_185(bool) = TMP_183 || TMP_184
+CONDITION TMP_185
+EXPRESSION:secondsAgo == 0 || lteConsideringOverflow(self[index].blockTimestamp,target,time)	NodeType.IF" -> "BlockID: 359
+Call context: 
+True
+REF_36(DataStorage.Timepoint) -> self[index]
+last(DataStorage.Timepoint) := REF_36(DataStorage.Timepoint)
+REF_37(uint32) -> last.blockTimestamp
+TMP_186(bool) = REF_37 == target
+CONDITION TMP_186
+EXPRESSION:last = self[index]	NodeType.VARIABLE
+last = self[index]	NodeType.EXPRESSION
+last.blockTimestamp == target	NodeType.IF" [key=0];
+"BlockID: 358
+Call context: 
+None
+TMP_185(bool) = TMP_183 || TMP_184
+CONDITION TMP_185
+EXPRESSION:secondsAgo == 0 || lteConsideringOverflow(self[index].blockTimestamp,target,time)	NodeType.IF" -> "BlockID: 360
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 359
+Call context: 
+True
+REF_36(DataStorage.Timepoint) -> self[index]
+last(DataStorage.Timepoint) := REF_36(DataStorage.Timepoint)
+REF_37(uint32) -> last.blockTimestamp
+TMP_186(bool) = REF_37 == target
+CONDITION TMP_186
+EXPRESSION:last = self[index]	NodeType.VARIABLE
+last = self[index]	NodeType.EXPRESSION
+last.blockTimestamp == target	NodeType.IF" -> "BlockID: 371
+Call context: 
+True
+RETURN last
+EXPRESSION:last	NodeType.RETURN" [key=0];
+"BlockID: 359
+Call context: 
+True
+REF_36(DataStorage.Timepoint) -> self[index]
+last(DataStorage.Timepoint) := REF_36(DataStorage.Timepoint)
+REF_37(uint32) -> last.blockTimestamp
+TMP_186(bool) = REF_37 == target
+CONDITION TMP_186
+EXPRESSION:last = self[index]	NodeType.VARIABLE
+last = self[index]	NodeType.EXPRESSION
+last.blockTimestamp == target	NodeType.IF" -> "BlockID: 372
+Call context: 
+False
+REF_38(int56) -> last.blockTimestamp
+REF_39(int56) -> last.tickCumulative
+TMP_187(int256) = INTERNAL_CALL, DataStorage._getAverageTick(DataStorage.Timepoint[65536],uint32,int24,uint16,uint16,uint32,int56)(self,time,tick,index,oldestIndex,REF_38,REF_39)
+EXPRESSION:" [key=0];
+"BlockID: 360
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 361
+Call context: 
+None
+REF_49(DataStorage.Timepoint) -> self[oldestIndex]
+REF_50(uint32) -> REF_49.blockTimestamp
+TMP_196(bool) = INTERNAL_CALL, DataStorage.lteConsideringOverflow(uint32,uint32,uint32)(REF_50,target,time)
+EXPRESSION:require(bool,string)(lteConsideringOverflow(self[oldestIndex].blockTimestamp,target,time),OLD)	NodeType.EXPRESSION" [key=0];
+"BlockID: 361
+Call context: 
+None
+REF_49(DataStorage.Timepoint) -> self[oldestIndex]
+REF_50(uint32) -> REF_49.blockTimestamp
+TMP_196(bool) = INTERNAL_CALL, DataStorage.lteConsideringOverflow(uint32,uint32,uint32)(REF_50,target,time)
+EXPRESSION:require(bool,string)(lteConsideringOverflow(self[oldestIndex].blockTimestamp,target,time),OLD)	NodeType.EXPRESSION" -> "BlockID: 378
+Call context: 
+None
+CONDITION TMP_196
+EXPRESSION:qiantao require	NodeType.IF" [key=0];
+"BlockID: 363
+Call context: 
+True
+NEW VARIABLE beforeOrAt
+NEW VARIABLE atOrAfter
+TUPLE_0(DataStorage.Timepoint,DataStorage.Timepoint) = INTERNAL_CALL, DataStorage.binarySearch(DataStorage.Timepoint[65536],uint32,uint32,uint16,uint16)(self,time,target,index,oldestIndex)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(beforeOrAt,atOrAfter) = binarySearch(self,time,target,index,oldestIndex)	NodeType.EXPRESSION" -> "BlockID: 364
+Call context: 
+None
+beforeOrAt(DataStorage.Timepoint)= UNPACK TUPLE_0 index: 0 
+atOrAfter(DataStorage.Timepoint)= UNPACK TUPLE_0 index: 1 
+REF_51(uint32) -> atOrAfter.blockTimestamp
+TMP_198(bool) = target == REF_51
+CONDITION TMP_198
+EXPRESSION:(beforeOrAt,atOrAfter) = binarySearch(self,time,target,index,oldestIndex)	NodeType.EXPRESSION
+target == atOrAfter.blockTimestamp	NodeType.IF" [key=0];
+"BlockID: 364
+Call context: 
+None
+beforeOrAt(DataStorage.Timepoint)= UNPACK TUPLE_0 index: 0 
+atOrAfter(DataStorage.Timepoint)= UNPACK TUPLE_0 index: 1 
+REF_51(uint32) -> atOrAfter.blockTimestamp
+TMP_198(bool) = target == REF_51
+CONDITION TMP_198
+EXPRESSION:(beforeOrAt,atOrAfter) = binarySearch(self,time,target,index,oldestIndex)	NodeType.EXPRESSION
+target == atOrAfter.blockTimestamp	NodeType.IF" -> "BlockID: 365
+Call context: 
+True
+RETURN atOrAfter
+EXPRESSION:atOrAfter	NodeType.RETURN" [key=0];
+"BlockID: 364
+Call context: 
+None
+beforeOrAt(DataStorage.Timepoint)= UNPACK TUPLE_0 index: 0 
+atOrAfter(DataStorage.Timepoint)= UNPACK TUPLE_0 index: 1 
+REF_51(uint32) -> atOrAfter.blockTimestamp
+TMP_198(bool) = target == REF_51
+CONDITION TMP_198
+EXPRESSION:(beforeOrAt,atOrAfter) = binarySearch(self,time,target,index,oldestIndex)	NodeType.EXPRESSION
+target == atOrAfter.blockTimestamp	NodeType.IF" -> "BlockID: 366
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 366
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 367
+Call context: 
+None
+REF_52(uint32) -> beforeOrAt.blockTimestamp
+TMP_199(bool) = target != REF_52
+CONDITION TMP_199
+EXPRESSION:target != beforeOrAt.blockTimestamp	NodeType.IF" [key=0];
+"BlockID: 367
+Call context: 
+None
+REF_52(uint32) -> beforeOrAt.blockTimestamp
+TMP_199(bool) = target != REF_52
+CONDITION TMP_199
+EXPRESSION:target != beforeOrAt.blockTimestamp	NodeType.IF" -> "BlockID: 368
+Call context: 
+True
+REF_53(uint32) -> atOrAfter.blockTimestamp
+REF_54(uint32) -> beforeOrAt.blockTimestamp
+TMP_200(uint32) = REF_53 - REF_54
+timepointTimeDelta(int56) := TMP_200(uint32)
+REF_55(uint32) -> beforeOrAt.blockTimestamp
+TMP_201(uint32) = target - REF_55
+targetDelta(int56) := TMP_201(uint32)
+REF_56(int56) -> beforeOrAt.tickCumulative
+REF_57(int56) -> atOrAfter.tickCumulative
+REF_58(int56) -> beforeOrAt.tickCumulative
+TMP_202(int56) = REF_57 - REF_58
+TMP_203(int56) = TMP_202 / timepointTimeDelta
+TMP_204(int56) = TMP_203 * targetDelta
+REF_56(-> beforeOrAt) = REF_56 + TMP_204
+REF_59(uint160) -> beforeOrAt.secondsPerLiquidityCumulative
+REF_60(uint160) -> atOrAfter.secondsPerLiquidityCumulative
+REF_61(uint160) -> beforeOrAt.secondsPerLiquidityCumulative
+TMP_205(uint160) = REF_60 - REF_61
+TMP_206 = CONVERT TMP_205 to uint256
+TMP_207(uint256) = TMP_206 * targetDelta
+TMP_208(uint256) = TMP_207 / timepointTimeDelta
+TMP_209 = CONVERT TMP_208 to uint160
+REF_59(-> beforeOrAt) = REF_59 + TMP_209
+REF_62(uint88) -> beforeOrAt.volatilityCumulative
+REF_63(uint88) -> atOrAfter.volatilityCumulative
+REF_64(uint88) -> beforeOrAt.volatilityCumulative
+TMP_210(uint88) = REF_63 - REF_64
+TMP_211(uint88) = TMP_210 / timepointTimeDelta
+TMP_212(uint88) = TMP_211 * targetDelta
+REF_62(-> beforeOrAt) = REF_62 + TMP_212
+REF_65(uint144) -> beforeOrAt.volumePerLiquidityCumulative
+REF_66(uint144) -> atOrAfter.volumePerLiquidityCumulative
+REF_67(uint144) -> beforeOrAt.volumePerLiquidityCumulative
+TMP_213(uint144) = REF_66 - REF_67
+TMP_214(uint144) = TMP_213 / timepointTimeDelta
+TMP_215(uint144) = TMP_214 * targetDelta
+REF_65(-> beforeOrAt) = REF_65 + TMP_215
+EXPRESSION:timepointTimeDelta = atOrAfter.blockTimestamp - beforeOrAt.blockTimestamp	NodeType.VARIABLE
+timepointTimeDelta = atOrAfter.blockTimestamp - beforeOrAt.blockTimestamp	NodeType.EXPRESSION
+targetDelta = target - beforeOrAt.blockTimestamp	NodeType.VARIABLE
+targetDelta = target - beforeOrAt.blockTimestamp	NodeType.EXPRESSION
+beforeOrAt.tickCumulative += ((atOrAfter.tickCumulative - beforeOrAt.tickCumulative) / timepointTimeDelta) * targetDelta	NodeType.EXPRESSION
+beforeOrAt.secondsPerLiquidityCumulative += uint160((uint256(atOrAfter.secondsPerLiquidityCumulative - beforeOrAt.secondsPerLiquidityCumulative) * targetDelta) / timepointTimeDelta)	NodeType.EXPRESSION
+beforeOrAt.volatilityCumulative += ((atOrAfter.volatilityCumulative - beforeOrAt.volatilityCumulative) / timepointTimeDelta) * targetDelta	NodeType.EXPRESSION
+beforeOrAt.volumePerLiquidityCumulative += ((atOrAfter.volumePerLiquidityCumulative - beforeOrAt.volumePerLiquidityCumulative) / timepointTimeDelta) * targetDelta	NodeType.EXPRESSION" [key=0];
+"BlockID: 367
+Call context: 
+None
+REF_52(uint32) -> beforeOrAt.blockTimestamp
+TMP_199(bool) = target != REF_52
+CONDITION TMP_199
+EXPRESSION:target != beforeOrAt.blockTimestamp	NodeType.IF" -> "BlockID: 369
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 368
+Call context: 
+True
+REF_53(uint32) -> atOrAfter.blockTimestamp
+REF_54(uint32) -> beforeOrAt.blockTimestamp
+TMP_200(uint32) = REF_53 - REF_54
+timepointTimeDelta(int56) := TMP_200(uint32)
+REF_55(uint32) -> beforeOrAt.blockTimestamp
+TMP_201(uint32) = target - REF_55
+targetDelta(int56) := TMP_201(uint32)
+REF_56(int56) -> beforeOrAt.tickCumulative
+REF_57(int56) -> atOrAfter.tickCumulative
+REF_58(int56) -> beforeOrAt.tickCumulative
+TMP_202(int56) = REF_57 - REF_58
+TMP_203(int56) = TMP_202 / timepointTimeDelta
+TMP_204(int56) = TMP_203 * targetDelta
+REF_56(-> beforeOrAt) = REF_56 + TMP_204
+REF_59(uint160) -> beforeOrAt.secondsPerLiquidityCumulative
+REF_60(uint160) -> atOrAfter.secondsPerLiquidityCumulative
+REF_61(uint160) -> beforeOrAt.secondsPerLiquidityCumulative
+TMP_205(uint160) = REF_60 - REF_61
+TMP_206 = CONVERT TMP_205 to uint256
+TMP_207(uint256) = TMP_206 * targetDelta
+TMP_208(uint256) = TMP_207 / timepointTimeDelta
+TMP_209 = CONVERT TMP_208 to uint160
+REF_59(-> beforeOrAt) = REF_59 + TMP_209
+REF_62(uint88) -> beforeOrAt.volatilityCumulative
+REF_63(uint88) -> atOrAfter.volatilityCumulative
+REF_64(uint88) -> beforeOrAt.volatilityCumulative
+TMP_210(uint88) = REF_63 - REF_64
+TMP_211(uint88) = TMP_210 / timepointTimeDelta
+TMP_212(uint88) = TMP_211 * targetDelta
+REF_62(-> beforeOrAt) = REF_62 + TMP_212
+REF_65(uint144) -> beforeOrAt.volumePerLiquidityCumulative
+REF_66(uint144) -> atOrAfter.volumePerLiquidityCumulative
+REF_67(uint144) -> beforeOrAt.volumePerLiquidityCumulative
+TMP_213(uint144) = REF_66 - REF_67
+TMP_214(uint144) = TMP_213 / timepointTimeDelta
+TMP_215(uint144) = TMP_214 * targetDelta
+REF_65(-> beforeOrAt) = REF_65 + TMP_215
+EXPRESSION:timepointTimeDelta = atOrAfter.blockTimestamp - beforeOrAt.blockTimestamp	NodeType.VARIABLE
+timepointTimeDelta = atOrAfter.blockTimestamp - beforeOrAt.blockTimestamp	NodeType.EXPRESSION
+targetDelta = target - beforeOrAt.blockTimestamp	NodeType.VARIABLE
+targetDelta = target - beforeOrAt.blockTimestamp	NodeType.EXPRESSION
+beforeOrAt.tickCumulative += ((atOrAfter.tickCumulative - beforeOrAt.tickCumulative) / timepointTimeDelta) * targetDelta	NodeType.EXPRESSION
+beforeOrAt.secondsPerLiquidityCumulative += uint160((uint256(atOrAfter.secondsPerLiquidityCumulative - beforeOrAt.secondsPerLiquidityCumulative) * targetDelta) / timepointTimeDelta)	NodeType.EXPRESSION
+beforeOrAt.volatilityCumulative += ((atOrAfter.volatilityCumulative - beforeOrAt.volatilityCumulative) / timepointTimeDelta) * targetDelta	NodeType.EXPRESSION
+beforeOrAt.volumePerLiquidityCumulative += ((atOrAfter.volumePerLiquidityCumulative - beforeOrAt.volumePerLiquidityCumulative) / timepointTimeDelta) * targetDelta	NodeType.EXPRESSION" -> "BlockID: 369
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 369
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 370
+Call context: 
+None
+RETURN beforeOrAt
+EXPRESSION:beforeOrAt	NodeType.RETURN" [key=0];
+"BlockID: 372
+Call context: 
+False
+REF_38(int56) -> last.blockTimestamp
+REF_39(int56) -> last.tickCumulative
+TMP_187(int256) = INTERNAL_CALL, DataStorage._getAverageTick(DataStorage.Timepoint[65536],uint32,int24,uint16,uint16,uint32,int56)(self,time,tick,index,oldestIndex,REF_38,REF_39)
+EXPRESSION:" -> "BlockID: 373
+Call context: 
+None
+TMP_188 = CONVERT TMP_187 to int24
+avgTick(int24) := TMP_188(int24)
+prevTick(int24) := tick(int24)
+TMP_189(bool) = index != oldestIndex
+CONDITION TMP_189
+EXPRESSION:avgTick = int24(_getAverageTick(self,time,tick,index,oldestIndex,last.blockTimestamp,last.tickCumulative))	NodeType.VARIABLE
+avgTick = int24(_getAverageTick(self,time,tick,index,oldestIndex,last.blockTimestamp,last.tickCumulative))	NodeType.EXPRESSION
+prevTick = tick	NodeType.VARIABLE
+prevTick = tick	NodeType.EXPRESSION
+index != oldestIndex	NodeType.IF" [key=0];
+"BlockID: 373
+Call context: 
+None
+TMP_188 = CONVERT TMP_187 to int24
+avgTick(int24) := TMP_188(int24)
+prevTick(int24) := tick(int24)
+TMP_189(bool) = index != oldestIndex
+CONDITION TMP_189
+EXPRESSION:avgTick = int24(_getAverageTick(self,time,tick,index,oldestIndex,last.blockTimestamp,last.tickCumulative))	NodeType.VARIABLE
+avgTick = int24(_getAverageTick(self,time,tick,index,oldestIndex,last.blockTimestamp,last.tickCumulative))	NodeType.EXPRESSION
+prevTick = tick	NodeType.VARIABLE
+prevTick = tick	NodeType.EXPRESSION
+index != oldestIndex	NodeType.IF" -> "BlockID: 374
+Call context: 
+True
+NEW VARIABLE prevLast
+TMP_190(uint16) = index - 1
+REF_40(DataStorage.Timepoint) -> self[TMP_190]
+_prevLast(DataStorage.Timepoint) := REF_40(DataStorage.Timepoint)
+REF_41(uint32) -> prevLast.blockTimestamp
+REF_42(uint32) -> _prevLast.blockTimestamp
+REF_41(uint32) (->prevLast) := REF_42(uint32)
+REF_43(int56) -> prevLast.tickCumulative
+REF_44(int56) -> _prevLast.tickCumulative
+REF_43(int56) (->prevLast) := REF_44(int56)
+REF_45(int56) -> last.tickCumulative
+REF_46(int56) -> prevLast.tickCumulative
+TMP_191(int56) = REF_45 - REF_46
+REF_47(int56) -> last.blockTimestamp
+REF_48(int56) -> prevLast.blockTimestamp
+TMP_192(int56) = REF_47 - REF_48
+TMP_193(int56) = TMP_191 / TMP_192
+TMP_194 = CONVERT TMP_193 to int24
+prevTick(int24) := TMP_194(int24)
+EXPRESSION:None	NodeType.VARIABLE
+_prevLast = self[index - 1]	NodeType.VARIABLE
+_prevLast = self[index - 1]	NodeType.EXPRESSION
+prevLast.blockTimestamp = _prevLast.blockTimestamp	NodeType.EXPRESSION
+prevLast.tickCumulative = _prevLast.tickCumulative	NodeType.EXPRESSION
+prevTick = int24((last.tickCumulative - prevLast.tickCumulative) / (last.blockTimestamp - prevLast.blockTimestamp))	NodeType.EXPRESSION" [key=0];
+"BlockID: 373
+Call context: 
+None
+TMP_188 = CONVERT TMP_187 to int24
+avgTick(int24) := TMP_188(int24)
+prevTick(int24) := tick(int24)
+TMP_189(bool) = index != oldestIndex
+CONDITION TMP_189
+EXPRESSION:avgTick = int24(_getAverageTick(self,time,tick,index,oldestIndex,last.blockTimestamp,last.tickCumulative))	NodeType.VARIABLE
+avgTick = int24(_getAverageTick(self,time,tick,index,oldestIndex,last.blockTimestamp,last.tickCumulative))	NodeType.EXPRESSION
+prevTick = tick	NodeType.VARIABLE
+prevTick = tick	NodeType.EXPRESSION
+index != oldestIndex	NodeType.IF" -> "BlockID: 375
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 374
+Call context: 
+True
+NEW VARIABLE prevLast
+TMP_190(uint16) = index - 1
+REF_40(DataStorage.Timepoint) -> self[TMP_190]
+_prevLast(DataStorage.Timepoint) := REF_40(DataStorage.Timepoint)
+REF_41(uint32) -> prevLast.blockTimestamp
+REF_42(uint32) -> _prevLast.blockTimestamp
+REF_41(uint32) (->prevLast) := REF_42(uint32)
+REF_43(int56) -> prevLast.tickCumulative
+REF_44(int56) -> _prevLast.tickCumulative
+REF_43(int56) (->prevLast) := REF_44(int56)
+REF_45(int56) -> last.tickCumulative
+REF_46(int56) -> prevLast.tickCumulative
+TMP_191(int56) = REF_45 - REF_46
+REF_47(int56) -> last.blockTimestamp
+REF_48(int56) -> prevLast.blockTimestamp
+TMP_192(int56) = REF_47 - REF_48
+TMP_193(int56) = TMP_191 / TMP_192
+TMP_194 = CONVERT TMP_193 to int24
+prevTick(int24) := TMP_194(int24)
+EXPRESSION:None	NodeType.VARIABLE
+_prevLast = self[index - 1]	NodeType.VARIABLE
+_prevLast = self[index - 1]	NodeType.EXPRESSION
+prevLast.blockTimestamp = _prevLast.blockTimestamp	NodeType.EXPRESSION
+prevLast.tickCumulative = _prevLast.tickCumulative	NodeType.EXPRESSION
+prevTick = int24((last.tickCumulative - prevLast.tickCumulative) / (last.blockTimestamp - prevLast.blockTimestamp))	NodeType.EXPRESSION" -> "BlockID: 375
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 375
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 376
+Call context: 
+None
+TMP_195(DataStorage.Timepoint) = INTERNAL_CALL, DataStorage.createNewTimepoint(DataStorage.Timepoint,uint32,int24,int24,uint128,int24,uint128)(last,target,tick,prevTick,liquidity,avgTick,0)
+EXPRESSION:createNewTimepoint(last,target,tick,prevTick,liquidity,avgTick,0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 376
+Call context: 
+None
+TMP_195(DataStorage.Timepoint) = INTERNAL_CALL, DataStorage.createNewTimepoint(DataStorage.Timepoint,uint32,int24,int24,uint128,int24,uint128)(last,target,tick,prevTick,liquidity,avgTick,0)
+EXPRESSION:createNewTimepoint(last,target,tick,prevTick,liquidity,avgTick,0)	NodeType.EXPRESSION" -> "BlockID: 377
+Call context: 
+None
+RETURN TMP_195
+EXPRESSION:createNewTimepoint(last,target,tick,prevTick,liquidity,avgTick,0)	NodeType.RETURN" [key=0];
+"BlockID: 378
+Call context: 
+None
+CONDITION TMP_196
+EXPRESSION:qiantao require	NodeType.IF" -> "BlockID: 379
+Call context: 
+True
+TMP_197(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 378
+Call context: 
+None
+CONDITION TMP_196
+EXPRESSION:qiantao require	NodeType.IF" -> "BlockID: 380
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 380
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 363
+Call context: 
+True
+NEW VARIABLE beforeOrAt
+NEW VARIABLE atOrAfter
+TUPLE_0(DataStorage.Timepoint,DataStorage.Timepoint) = INTERNAL_CALL, DataStorage.binarySearch(DataStorage.Timepoint[65536],uint32,uint32,uint16,uint16)(self,time,target,index,oldestIndex)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(beforeOrAt,atOrAfter) = binarySearch(self,time,target,index,oldestIndex)	NodeType.EXPRESSION" [key=0];
+}

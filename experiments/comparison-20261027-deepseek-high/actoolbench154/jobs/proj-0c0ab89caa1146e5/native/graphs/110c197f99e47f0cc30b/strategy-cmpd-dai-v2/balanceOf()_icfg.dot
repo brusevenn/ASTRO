@@ -1,0 +1,553 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+TMP_375 = CONVERT want to IERC20
+TMP_376 = CONVERT this to address
+TMP_377(uint256) = HIGH_LEVEL_CALL, dest:TMP_375(IERC20), function:balanceOf, arguments:['TMP_376']  
+EXPRESSION:IERC20(want).balanceOf(address(this))	NodeType.EXPRESSION";
+"BlockID: 2
+Call context: balanceOf
+None
+TMP_1039(None) := TMP_377(uint256)
+NEW VARIABLE cTokenBal
+NEW VARIABLE exchangeRate
+TMP_531 = CONVERT cdai to ICToken
+TMP_532 = CONVERT this to address
+TUPLE_46(uint256,uint256,uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_531(ICToken), function:getAccountSnapshot, arguments:['TMP_532']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(cTokenBal,exchangeRate) = ICToken(cdai).getAccountSnapshot(address(this))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3
+Call context: balanceOf,balanceOfPool
+None
+cTokenBal(uint256)= UNPACK TUPLE_46 index: 1 
+exchangeRate(uint256)= UNPACK TUPLE_46 index: 3 
+NEW VARIABLE bal
+TMP_533(Exponential.Exp) = new Exp(exchangeRate)
+NEW VARIABLE err
+NEW VARIABLE product
+NEW VARIABLE err0
+NEW VARIABLE scaledMantissa
+REF_143(uint256) -> a.mantissa
+TMP_349(bool) = a == 0
+CONDITION TMP_349
+EXPRESSION:(cTokenBal,exchangeRate) = ICToken(cdai).getAccountSnapshot(address(this))	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF" [shape=box];
+"BlockID: 16
+Call context: balanceOf,balanceOfPool
+None
+bal(uint256)= UNPACK TUPLE_47 index: 1 
+TMP_1059(None) := bal(uint256)
+supplied(uint256) := TMP_537(uint256)
+TMP_534 = CONVERT cdai to ICToken
+TMP_535 = CONVERT this to address
+TMP_536(uint256) = HIGH_LEVEL_CALL, dest:TMP_534(ICToken), function:borrowBalanceStored, arguments:['TMP_535']  
+EXPRESSION:(bal) = mulScalarTruncate(Exp(exchangeRate),cTokenBal)	NodeType.EXPRESSION
+supplied = getSuppliedView()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceStored(address(this))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 12
+Call context: balanceOf,balanceOfPool,getSuppliedView
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_30 index: 0 
+product(Exponential.Exp)= UNPACK TUPLE_30 index: 1 
+REF_146(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_256(bool) = err != REF_146
+CONDITION TMP_256
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 14
+Call context: balanceOf,balanceOfPool,getSuppliedView
+True
+TMP_992(None) := err(CarefulMath.MathError)
+TMP_992(None) := TMP_257(uint256)
+EXPRESSION:";
+"BlockID: 15
+Call context: balanceOf,balanceOfPool,getSuppliedView
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 17
+Call context: balanceOf,balanceOfPool,getSuppliedView
+None
+REF_147(CarefulMath.MathError) -> MathError.NO_ERROR
+REF_165(uint256) -> exp.mantissa
+TMP_277(uint256) = REF_165 / expScale
+TMP_1001(None) := TMP_277(uint256)
+TMP_992(None) := REF_147(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 6
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_29 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_29 index: 1 
+REF_144(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_253(bool) = err0 != REF_144
+CONDITION TMP_253
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 8
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate
+True
+TMP_254(Exponential.Exp) = new Exp(0)
+TMP_991(None) := err0(CarefulMath.MathError)
+TMP_991(None) := TMP_254(Exponential.Exp)
+TMP_991(None) := TMP_255(Exponential.Exp)
+EXPRESSION:";
+"BlockID: 9
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 13
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate
+None
+REF_145(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_255(Exponential.Exp) = new Exp(scaledMantissa)
+TMP_991(None) := REF_145(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 4
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+True
+REF_197(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1033(None) := REF_197(CarefulMath.MathError)
+TMP_1033(None) := c(uint256)
+EXPRESSION:";
+"BlockID: 5
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 7
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+None
+TMP_350(uint256) = a * b
+c(uint256) := TMP_350(uint256)
+TMP_351(uint256) = c / a
+TMP_352(bool) = TMP_351 != b
+CONDITION TMP_352
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF";
+"BlockID: 10
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+True
+REF_198(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1033(None) := REF_198(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 11
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+False
+REF_199(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1033(None) := REF_199(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 18
+Call context: balanceOf,balanceOfPool
+None
+TMP_1060(None) := TMP_536(uint256)
+borrowed(uint256) := TMP_538(uint256)
+TMP_539(uint256) = a - b
+TMP_1061(None) := TMP_539(uint256)
+TMP_380(uint256) = a + b
+RETURN TMP_380
+EXPRESSION:borrowed = getBorrowedView()	NodeType.VARIABLE
+borrowed = getBorrowedView()	NodeType.EXPRESSION
+supplied.sub(borrowed)	NodeType.EXPRESSION
+balanceOfWant().add(balanceOfPool())	NodeType.EXPRESSION
+balanceOfWant().add(balanceOfPool())	NodeType.RETURN" [shape=box];
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+TMP_375 = CONVERT want to IERC20
+TMP_376 = CONVERT this to address
+TMP_377(uint256) = HIGH_LEVEL_CALL, dest:TMP_375(IERC20), function:balanceOf, arguments:['TMP_376']  
+EXPRESSION:IERC20(want).balanceOf(address(this))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_375 = CONVERT want to IERC20
+TMP_376 = CONVERT this to address
+TMP_377(uint256) = HIGH_LEVEL_CALL, dest:TMP_375(IERC20), function:balanceOf, arguments:['TMP_376']  
+EXPRESSION:IERC20(want).balanceOf(address(this))	NodeType.EXPRESSION" -> "BlockID: 2
+Call context: balanceOf
+None
+TMP_1039(None) := TMP_377(uint256)
+NEW VARIABLE cTokenBal
+NEW VARIABLE exchangeRate
+TMP_531 = CONVERT cdai to ICToken
+TMP_532 = CONVERT this to address
+TUPLE_46(uint256,uint256,uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_531(ICToken), function:getAccountSnapshot, arguments:['TMP_532']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(cTokenBal,exchangeRate) = ICToken(cdai).getAccountSnapshot(address(this))	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 2
+Call context: balanceOf
+None
+TMP_1039(None) := TMP_377(uint256)
+NEW VARIABLE cTokenBal
+NEW VARIABLE exchangeRate
+TMP_531 = CONVERT cdai to ICToken
+TMP_532 = CONVERT this to address
+TUPLE_46(uint256,uint256,uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_531(ICToken), function:getAccountSnapshot, arguments:['TMP_532']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(cTokenBal,exchangeRate) = ICToken(cdai).getAccountSnapshot(address(this))	NodeType.EXPRESSION" -> "BlockID: 3
+Call context: balanceOf,balanceOfPool
+None
+cTokenBal(uint256)= UNPACK TUPLE_46 index: 1 
+exchangeRate(uint256)= UNPACK TUPLE_46 index: 3 
+NEW VARIABLE bal
+TMP_533(Exponential.Exp) = new Exp(exchangeRate)
+NEW VARIABLE err
+NEW VARIABLE product
+NEW VARIABLE err0
+NEW VARIABLE scaledMantissa
+REF_143(uint256) -> a.mantissa
+TMP_349(bool) = a == 0
+CONDITION TMP_349
+EXPRESSION:(cTokenBal,exchangeRate) = ICToken(cdai).getAccountSnapshot(address(this))	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF" [key="successor_1"];
+"BlockID: 3
+Call context: balanceOf,balanceOfPool
+None
+cTokenBal(uint256)= UNPACK TUPLE_46 index: 1 
+exchangeRate(uint256)= UNPACK TUPLE_46 index: 3 
+NEW VARIABLE bal
+TMP_533(Exponential.Exp) = new Exp(exchangeRate)
+NEW VARIABLE err
+NEW VARIABLE product
+NEW VARIABLE err0
+NEW VARIABLE scaledMantissa
+REF_143(uint256) -> a.mantissa
+TMP_349(bool) = a == 0
+CONDITION TMP_349
+EXPRESSION:(cTokenBal,exchangeRate) = ICToken(cdai).getAccountSnapshot(address(this))	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF" -> "BlockID: 4
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+True
+REF_197(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1033(None) := REF_197(CarefulMath.MathError)
+TMP_1033(None) := c(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 3
+Call context: balanceOf,balanceOfPool
+None
+cTokenBal(uint256)= UNPACK TUPLE_46 index: 1 
+exchangeRate(uint256)= UNPACK TUPLE_46 index: 3 
+NEW VARIABLE bal
+TMP_533(Exponential.Exp) = new Exp(exchangeRate)
+NEW VARIABLE err
+NEW VARIABLE product
+NEW VARIABLE err0
+NEW VARIABLE scaledMantissa
+REF_143(uint256) -> a.mantissa
+TMP_349(bool) = a == 0
+CONDITION TMP_349
+EXPRESSION:(cTokenBal,exchangeRate) = ICToken(cdai).getAccountSnapshot(address(this))	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF" -> "BlockID: 5
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 16
+Call context: balanceOf,balanceOfPool
+None
+bal(uint256)= UNPACK TUPLE_47 index: 1 
+TMP_1059(None) := bal(uint256)
+supplied(uint256) := TMP_537(uint256)
+TMP_534 = CONVERT cdai to ICToken
+TMP_535 = CONVERT this to address
+TMP_536(uint256) = HIGH_LEVEL_CALL, dest:TMP_534(ICToken), function:borrowBalanceStored, arguments:['TMP_535']  
+EXPRESSION:(bal) = mulScalarTruncate(Exp(exchangeRate),cTokenBal)	NodeType.EXPRESSION
+supplied = getSuppliedView()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceStored(address(this))	NodeType.EXPRESSION" -> "BlockID: 18
+Call context: balanceOf,balanceOfPool
+None
+TMP_1060(None) := TMP_536(uint256)
+borrowed(uint256) := TMP_538(uint256)
+TMP_539(uint256) = a - b
+TMP_1061(None) := TMP_539(uint256)
+TMP_380(uint256) = a + b
+RETURN TMP_380
+EXPRESSION:borrowed = getBorrowedView()	NodeType.VARIABLE
+borrowed = getBorrowedView()	NodeType.EXPRESSION
+supplied.sub(borrowed)	NodeType.EXPRESSION
+balanceOfWant().add(balanceOfPool())	NodeType.EXPRESSION
+balanceOfWant().add(balanceOfPool())	NodeType.RETURN" [key="successor_1"];
+"BlockID: 12
+Call context: balanceOf,balanceOfPool,getSuppliedView
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_30 index: 0 
+product(Exponential.Exp)= UNPACK TUPLE_30 index: 1 
+REF_146(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_256(bool) = err != REF_146
+CONDITION TMP_256
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 14
+Call context: balanceOf,balanceOfPool,getSuppliedView
+True
+TMP_992(None) := err(CarefulMath.MathError)
+TMP_992(None) := TMP_257(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 12
+Call context: balanceOf,balanceOfPool,getSuppliedView
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_30 index: 0 
+product(Exponential.Exp)= UNPACK TUPLE_30 index: 1 
+REF_146(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_256(bool) = err != REF_146
+CONDITION TMP_256
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 15
+Call context: balanceOf,balanceOfPool,getSuppliedView
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 14
+Call context: balanceOf,balanceOfPool,getSuppliedView
+True
+TMP_992(None) := err(CarefulMath.MathError)
+TMP_992(None) := TMP_257(uint256)
+EXPRESSION:" -> "BlockID: 16
+Call context: balanceOf,balanceOfPool
+None
+bal(uint256)= UNPACK TUPLE_47 index: 1 
+TMP_1059(None) := bal(uint256)
+supplied(uint256) := TMP_537(uint256)
+TMP_534 = CONVERT cdai to ICToken
+TMP_535 = CONVERT this to address
+TMP_536(uint256) = HIGH_LEVEL_CALL, dest:TMP_534(ICToken), function:borrowBalanceStored, arguments:['TMP_535']  
+EXPRESSION:(bal) = mulScalarTruncate(Exp(exchangeRate),cTokenBal)	NodeType.EXPRESSION
+supplied = getSuppliedView()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceStored(address(this))	NodeType.EXPRESSION" [key="successor_5", ref="StrategyCmpdDaiV2.mulScalarTruncate"];
+"BlockID: 15
+Call context: balanceOf,balanceOfPool,getSuppliedView
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 17
+Call context: balanceOf,balanceOfPool,getSuppliedView
+None
+REF_147(CarefulMath.MathError) -> MathError.NO_ERROR
+REF_165(uint256) -> exp.mantissa
+TMP_277(uint256) = REF_165 / expScale
+TMP_1001(None) := TMP_277(uint256)
+TMP_992(None) := REF_147(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 17
+Call context: balanceOf,balanceOfPool,getSuppliedView
+None
+REF_147(CarefulMath.MathError) -> MathError.NO_ERROR
+REF_165(uint256) -> exp.mantissa
+TMP_277(uint256) = REF_165 / expScale
+TMP_1001(None) := TMP_277(uint256)
+TMP_992(None) := REF_147(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 16
+Call context: balanceOf,balanceOfPool
+None
+bal(uint256)= UNPACK TUPLE_47 index: 1 
+TMP_1059(None) := bal(uint256)
+supplied(uint256) := TMP_537(uint256)
+TMP_534 = CONVERT cdai to ICToken
+TMP_535 = CONVERT this to address
+TMP_536(uint256) = HIGH_LEVEL_CALL, dest:TMP_534(ICToken), function:borrowBalanceStored, arguments:['TMP_535']  
+EXPRESSION:(bal) = mulScalarTruncate(Exp(exchangeRate),cTokenBal)	NodeType.EXPRESSION
+supplied = getSuppliedView()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceStored(address(this))	NodeType.EXPRESSION" [key="successor_5", ref="StrategyCmpdDaiV2.mulScalarTruncate"];
+"BlockID: 6
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_29 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_29 index: 1 
+REF_144(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_253(bool) = err0 != REF_144
+CONDITION TMP_253
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 8
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate
+True
+TMP_254(Exponential.Exp) = new Exp(0)
+TMP_991(None) := err0(CarefulMath.MathError)
+TMP_991(None) := TMP_254(Exponential.Exp)
+TMP_991(None) := TMP_255(Exponential.Exp)
+EXPRESSION:" [key=0];
+"BlockID: 6
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_29 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_29 index: 1 
+REF_144(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_253(bool) = err0 != REF_144
+CONDITION TMP_253
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 9
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 8
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate
+True
+TMP_254(Exponential.Exp) = new Exp(0)
+TMP_991(None) := err0(CarefulMath.MathError)
+TMP_991(None) := TMP_254(Exponential.Exp)
+TMP_991(None) := TMP_255(Exponential.Exp)
+EXPRESSION:" -> "BlockID: 12
+Call context: balanceOf,balanceOfPool,getSuppliedView
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_30 index: 0 
+product(Exponential.Exp)= UNPACK TUPLE_30 index: 1 
+REF_146(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_256(bool) = err != REF_146
+CONDITION TMP_256
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="StrategyCmpdDaiV2.mulScalar"];
+"BlockID: 9
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 13
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate
+None
+REF_145(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_255(Exponential.Exp) = new Exp(scaledMantissa)
+TMP_991(None) := REF_145(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 13
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate
+None
+REF_145(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_255(Exponential.Exp) = new Exp(scaledMantissa)
+TMP_991(None) := REF_145(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 12
+Call context: balanceOf,balanceOfPool,getSuppliedView
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_30 index: 0 
+product(Exponential.Exp)= UNPACK TUPLE_30 index: 1 
+REF_146(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_256(bool) = err != REF_146
+CONDITION TMP_256
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="StrategyCmpdDaiV2.mulScalar"];
+"BlockID: 4
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+True
+REF_197(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1033(None) := REF_197(CarefulMath.MathError)
+TMP_1033(None) := c(uint256)
+EXPRESSION:" -> "BlockID: 6
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_29 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_29 index: 1 
+REF_144(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_253(bool) = err0 != REF_144
+CONDITION TMP_253
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="StrategyCmpdDaiV2.mulUInt"];
+"BlockID: 5
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 7
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+None
+TMP_350(uint256) = a * b
+c(uint256) := TMP_350(uint256)
+TMP_351(uint256) = c / a
+TMP_352(bool) = TMP_351 != b
+CONDITION TMP_352
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF" [key=0];
+"BlockID: 7
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+None
+TMP_350(uint256) = a * b
+c(uint256) := TMP_350(uint256)
+TMP_351(uint256) = c / a
+TMP_352(bool) = TMP_351 != b
+CONDITION TMP_352
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF" -> "BlockID: 10
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+True
+REF_198(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1033(None) := REF_198(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 7
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+None
+TMP_350(uint256) = a * b
+c(uint256) := TMP_350(uint256)
+TMP_351(uint256) = c / a
+TMP_352(bool) = TMP_351 != b
+CONDITION TMP_352
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF" -> "BlockID: 11
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+False
+REF_199(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1033(None) := REF_199(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 10
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+True
+REF_198(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1033(None) := REF_198(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 6
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_29 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_29 index: 1 
+REF_144(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_253(bool) = err0 != REF_144
+CONDITION TMP_253
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="StrategyCmpdDaiV2.mulUInt"];
+"BlockID: 11
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+False
+REF_199(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1033(None) := REF_199(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 6
+Call context: balanceOf,balanceOfPool,getSuppliedView,mulScalarTruncate
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_29 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_29 index: 1 
+REF_144(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_253(bool) = err0 != REF_144
+CONDITION TMP_253
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="StrategyCmpdDaiV2.mulUInt"];
+}

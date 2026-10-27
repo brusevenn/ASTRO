@@ -1,0 +1,236 @@
+digraph {
+"BlockID: 1099
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1100
+Call context: 
+None
+MODIFIER_CALL, SpotVault.reimburseGas()()
+EXPRESSION:reimburseGas()	NodeType.EXPRESSION";
+"BlockID: 1101
+Call context: 
+None
+MODIFIER_CALL, AccessControl.onlyRole(bytes32)(OPERATOR)
+EXPRESSION:reimburseGas()	NodeType.EXPRESSION
+onlyRole(OPERATOR)	NodeType.EXPRESSION";
+"BlockID: 1103
+Call context: 
+True
+REF_224(SpotVault.FeeType) -> FeeType.ROTATION
+REF_225(uint256) -> feePercentages[REF_224]
+TMP_502(uint256) = INTERNAL_CALL, SpotVault._getAum()()
+EXPRESSION:";
+"BlockID: 1104
+Call context: 
+None
+TMP_503(uint256) = REF_225 (c)* TMP_502
+TMP_504(uint256) = TMP_503 (c)/ UNIT
+feeValueInUsd(uint256) := TMP_504(uint256)
+NEW VARIABLE price
+NEW VARIABLE priceDecimals
+NEW VARIABLE timestamp
+TUPLE_5(int256,uint8,uint256) = HIGH_LEVEL_CALL, dest:oracle(IOracleConnector), function:getPriceInUsd, arguments:['feeAsset']  
+EXPRESSION:feeValueInUsd = feePercentages[FeeType.ROTATION] * _getAum() / UNIT	NodeType.VARIABLE
+feeValueInUsd = feePercentages[FeeType.ROTATION] * _getAum() / UNIT	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(price,priceDecimals,timestamp) = oracle.getPriceInUsd(feeAsset)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1105
+Call context: 
+None
+price(int256)= UNPACK TUPLE_5 index: 0 
+priceDecimals(uint8)= UNPACK TUPLE_5 index: 1 
+timestamp(uint256)= UNPACK TUPLE_5 index: 2 
+TMP_505 = CONVERT feeAsset to ERC20
+token(ERC20) := TMP_505(ERC20)
+TMP_506(uint8) = HIGH_LEVEL_CALL, dest:token(ERC20), function:decimals, arguments:[]  
+EXPRESSION:(price,priceDecimals,timestamp) = oracle.getPriceInUsd(feeAsset)	NodeType.EXPRESSION
+token = ERC20(feeAsset)	NodeType.VARIABLE
+token = ERC20(feeAsset)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1106
+Call context: 
+None
+TMP_507(uint8) = priceDecimals (c)+ TMP_506
+TMP_508(uint256) = 10 (c)** TMP_507
+TMP_509(uint256) = feeValueInUsd (c)* TMP_508
+TMP_510 = CONVERT price to uint256
+TMP_511(uint256) = TMP_509 (c)/ TMP_510
+TMP_512(uint256) = TMP_511 (c)/ UNIT
+tokenSize(uint256) := TMP_512(uint256)
+REF_228(uint256) -> feeRecord[weekNumber]
+REF_228(uint256) (->feeRecord) := feeValueInUsd(uint256)
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['token', 'feeRecipient', 'tokenSize'] 
+EXPRESSION:tokenSize = feeValueInUsd * (10 ** (priceDecimals + token.decimals())) / uint256(price) / UNIT	NodeType.VARIABLE
+tokenSize = feeValueInUsd * (10 ** (priceDecimals + token.decimals())) / uint256(price) / UNIT	NodeType.EXPRESSION
+feeRecord[weekNumber] = feeValueInUsd	NodeType.EXPRESSION
+token.safeTransfer(feeRecipient,tokenSize)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1108
+Call context: 
+None
+TMP_499(uint256) = block.timestamp (c)/ FEE_INTERVAL
+weekNumber(uint256) := TMP_499(uint256)
+REF_223(uint256) -> feeRecord[weekNumber]
+TMP_500(bool) = REF_223 == 0
+CONDITION TMP_500
+EXPRESSION:TMP_500(bool) = REF_223 == 0	NodeType.IF";
+"BlockID: 1109
+Call context: 
+True
+TMP_501(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 1110
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1099
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1100
+Call context: 
+None
+MODIFIER_CALL, SpotVault.reimburseGas()()
+EXPRESSION:reimburseGas()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1100
+Call context: 
+None
+MODIFIER_CALL, SpotVault.reimburseGas()()
+EXPRESSION:reimburseGas()	NodeType.EXPRESSION" -> "BlockID: 1101
+Call context: 
+None
+MODIFIER_CALL, AccessControl.onlyRole(bytes32)(OPERATOR)
+EXPRESSION:reimburseGas()	NodeType.EXPRESSION
+onlyRole(OPERATOR)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1101
+Call context: 
+None
+MODIFIER_CALL, AccessControl.onlyRole(bytes32)(OPERATOR)
+EXPRESSION:reimburseGas()	NodeType.EXPRESSION
+onlyRole(OPERATOR)	NodeType.EXPRESSION" -> "BlockID: 1108
+Call context: 
+None
+TMP_499(uint256) = block.timestamp (c)/ FEE_INTERVAL
+weekNumber(uint256) := TMP_499(uint256)
+REF_223(uint256) -> feeRecord[weekNumber]
+TMP_500(bool) = REF_223 == 0
+CONDITION TMP_500
+EXPRESSION:TMP_500(bool) = REF_223 == 0	NodeType.IF" [key=0];
+"BlockID: 1103
+Call context: 
+True
+REF_224(SpotVault.FeeType) -> FeeType.ROTATION
+REF_225(uint256) -> feePercentages[REF_224]
+TMP_502(uint256) = INTERNAL_CALL, SpotVault._getAum()()
+EXPRESSION:" -> "BlockID: 1104
+Call context: 
+None
+TMP_503(uint256) = REF_225 (c)* TMP_502
+TMP_504(uint256) = TMP_503 (c)/ UNIT
+feeValueInUsd(uint256) := TMP_504(uint256)
+NEW VARIABLE price
+NEW VARIABLE priceDecimals
+NEW VARIABLE timestamp
+TUPLE_5(int256,uint8,uint256) = HIGH_LEVEL_CALL, dest:oracle(IOracleConnector), function:getPriceInUsd, arguments:['feeAsset']  
+EXPRESSION:feeValueInUsd = feePercentages[FeeType.ROTATION] * _getAum() / UNIT	NodeType.VARIABLE
+feeValueInUsd = feePercentages[FeeType.ROTATION] * _getAum() / UNIT	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(price,priceDecimals,timestamp) = oracle.getPriceInUsd(feeAsset)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1104
+Call context: 
+None
+TMP_503(uint256) = REF_225 (c)* TMP_502
+TMP_504(uint256) = TMP_503 (c)/ UNIT
+feeValueInUsd(uint256) := TMP_504(uint256)
+NEW VARIABLE price
+NEW VARIABLE priceDecimals
+NEW VARIABLE timestamp
+TUPLE_5(int256,uint8,uint256) = HIGH_LEVEL_CALL, dest:oracle(IOracleConnector), function:getPriceInUsd, arguments:['feeAsset']  
+EXPRESSION:feeValueInUsd = feePercentages[FeeType.ROTATION] * _getAum() / UNIT	NodeType.VARIABLE
+feeValueInUsd = feePercentages[FeeType.ROTATION] * _getAum() / UNIT	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(price,priceDecimals,timestamp) = oracle.getPriceInUsd(feeAsset)	NodeType.EXPRESSION" -> "BlockID: 1105
+Call context: 
+None
+price(int256)= UNPACK TUPLE_5 index: 0 
+priceDecimals(uint8)= UNPACK TUPLE_5 index: 1 
+timestamp(uint256)= UNPACK TUPLE_5 index: 2 
+TMP_505 = CONVERT feeAsset to ERC20
+token(ERC20) := TMP_505(ERC20)
+TMP_506(uint8) = HIGH_LEVEL_CALL, dest:token(ERC20), function:decimals, arguments:[]  
+EXPRESSION:(price,priceDecimals,timestamp) = oracle.getPriceInUsd(feeAsset)	NodeType.EXPRESSION
+token = ERC20(feeAsset)	NodeType.VARIABLE
+token = ERC20(feeAsset)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1105
+Call context: 
+None
+price(int256)= UNPACK TUPLE_5 index: 0 
+priceDecimals(uint8)= UNPACK TUPLE_5 index: 1 
+timestamp(uint256)= UNPACK TUPLE_5 index: 2 
+TMP_505 = CONVERT feeAsset to ERC20
+token(ERC20) := TMP_505(ERC20)
+TMP_506(uint8) = HIGH_LEVEL_CALL, dest:token(ERC20), function:decimals, arguments:[]  
+EXPRESSION:(price,priceDecimals,timestamp) = oracle.getPriceInUsd(feeAsset)	NodeType.EXPRESSION
+token = ERC20(feeAsset)	NodeType.VARIABLE
+token = ERC20(feeAsset)	NodeType.EXPRESSION" -> "BlockID: 1106
+Call context: 
+None
+TMP_507(uint8) = priceDecimals (c)+ TMP_506
+TMP_508(uint256) = 10 (c)** TMP_507
+TMP_509(uint256) = feeValueInUsd (c)* TMP_508
+TMP_510 = CONVERT price to uint256
+TMP_511(uint256) = TMP_509 (c)/ TMP_510
+TMP_512(uint256) = TMP_511 (c)/ UNIT
+tokenSize(uint256) := TMP_512(uint256)
+REF_228(uint256) -> feeRecord[weekNumber]
+REF_228(uint256) (->feeRecord) := feeValueInUsd(uint256)
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['token', 'feeRecipient', 'tokenSize'] 
+EXPRESSION:tokenSize = feeValueInUsd * (10 ** (priceDecimals + token.decimals())) / uint256(price) / UNIT	NodeType.VARIABLE
+tokenSize = feeValueInUsd * (10 ** (priceDecimals + token.decimals())) / uint256(price) / UNIT	NodeType.EXPRESSION
+feeRecord[weekNumber] = feeValueInUsd	NodeType.EXPRESSION
+token.safeTransfer(feeRecipient,tokenSize)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1108
+Call context: 
+None
+TMP_499(uint256) = block.timestamp (c)/ FEE_INTERVAL
+weekNumber(uint256) := TMP_499(uint256)
+REF_223(uint256) -> feeRecord[weekNumber]
+TMP_500(bool) = REF_223 == 0
+CONDITION TMP_500
+EXPRESSION:TMP_500(bool) = REF_223 == 0	NodeType.IF" -> "BlockID: 1109
+Call context: 
+True
+TMP_501(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1108
+Call context: 
+None
+TMP_499(uint256) = block.timestamp (c)/ FEE_INTERVAL
+weekNumber(uint256) := TMP_499(uint256)
+REF_223(uint256) -> feeRecord[weekNumber]
+TMP_500(bool) = REF_223 == 0
+CONDITION TMP_500
+EXPRESSION:TMP_500(bool) = REF_223 == 0	NodeType.IF" -> "BlockID: 1110
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1110
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1103
+Call context: 
+True
+REF_224(SpotVault.FeeType) -> FeeType.ROTATION
+REF_225(uint256) -> feePercentages[REF_224]
+TMP_502(uint256) = INTERNAL_CALL, SpotVault._getAum()()
+EXPRESSION:" [key=0];
+}

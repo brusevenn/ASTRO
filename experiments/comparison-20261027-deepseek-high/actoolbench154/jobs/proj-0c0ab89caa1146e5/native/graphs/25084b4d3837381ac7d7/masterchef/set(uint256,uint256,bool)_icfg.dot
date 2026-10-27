@@ -1,0 +1,684 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+TMP_354(None) := msg.sender(address)
+TMP_280(bool) = _owner == TMP_279
+CONDITION TMP_280
+EXPRESSION:TMP_280(bool) = _owner == TMP_279	NodeType.IF";
+"BlockID: 4
+Call context: 
+None
+CONDITION _withUpdate
+EXPRESSION:onlyOwner()	NodeType.EXPRESSION
+_withUpdate	NodeType.IF";
+"BlockID: 5
+Call context: 
+True
+REF_136 -> LENGTH poolInfo
+length(uint256) := REF_136(uint256)
+pid(uint256) := 0(uint256)
+EXPRESSION:length = poolInfo.length	NodeType.VARIABLE
+length = poolInfo.length	NodeType.EXPRESSION
+pid = 0	NodeType.VARIABLE
+pid = 0	NodeType.EXPRESSION";
+"BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 8
+Call context: 
+None
+REF_104(MasterChef.PoolInfo) -> poolInfo[_pid]
+REF_105(uint256) -> REF_104.allocPoint
+TMP_192(uint256) = a - b
+TMP_193(uint256) = a + b
+totalAllocPoint(uint256) := TMP_193(uint256)
+REF_107(MasterChef.PoolInfo) -> poolInfo[_pid]
+REF_108(uint256) -> REF_107.allocPoint
+REF_108(uint256) (->poolInfo) := _allocPoint(uint256)
+EXPRESSION:totalAllocPoint = totalAllocPoint.sub(poolInfo[_pid].allocPoint).add(_allocPoint)	NodeType.EXPRESSION
+totalAllocPoint = totalAllocPoint.sub(poolInfo[_pid].allocPoint).add(_allocPoint)	NodeType.EXPRESSION
+totalAllocPoint = totalAllocPoint.sub(poolInfo[_pid].allocPoint).add(_allocPoint)	NodeType.EXPRESSION
+poolInfo[_pid].allocPoint = _allocPoint	NodeType.EXPRESSION";
+"BlockID: 2
+Call context: set
+True
+TMP_281(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 3
+Call context: set
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 7
+Call context: set
+None
+BEGIN_LOOP
+TMP_219(bool) = pid < length
+CONDITION TMP_219
+EXPRESSION:None	NodeType.STARTLOOP
+pid < length	NodeType.IFLOOP";
+"BlockID: 9
+Call context: set
+True
+REF_137(MasterChef.PoolInfo) -> poolInfo[_pid]
+pool(MasterChef.PoolInfo) := REF_137(MasterChef.PoolInfo)
+REF_138(uint256) -> pool.lastRewardBlock
+TMP_221(bool) = block.number <= REF_138
+CONDITION TMP_221
+EXPRESSION:pool = poolInfo[_pid]	NodeType.VARIABLE
+pool = poolInfo[_pid]	NodeType.EXPRESSION
+block.number <= pool.lastRewardBlock	NodeType.IF";
+"BlockID: 10
+Call context: set
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 13
+Call context: set
+None
+pid(uint256) = pid + 1
+EXPRESSION:updatePool(pid)	NodeType.EXPRESSION
+++ pid	NodeType.EXPRESSION";
+"BlockID: 11
+Call context: set,massUpdatePools
+True
+RETURN
+EXPRESSION:None	NodeType.RETURN";
+"BlockID: 12
+Call context: set,massUpdatePools
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 14
+Call context: set,massUpdatePools
+None
+REF_139(IERC20) -> pool.lpToken
+TMP_222 = CONVERT this to address
+TMP_223(uint256) = HIGH_LEVEL_CALL, dest:REF_139(IERC20), function:balanceOf, arguments:['TMP_222']  
+EXPRESSION:";
+"BlockID: 15
+Call context: set,massUpdatePools
+None
+lpSupply(uint256) := TMP_223(uint256)
+TMP_224(bool) = lpSupply == 0
+CONDITION TMP_224
+EXPRESSION:lpSupply = pool.lpToken.balanceOf(address(this))	NodeType.VARIABLE
+lpSupply = pool.lpToken.balanceOf(address(this))	NodeType.EXPRESSION
+lpSupply == 0	NodeType.IF" [shape=box];
+"BlockID: 16
+Call context: set,massUpdatePools
+True
+REF_141(uint256) -> pool.lastRewardBlock
+REF_141(uint256) (->pool) := block.number(uint256)
+RETURN
+EXPRESSION:pool.lastRewardBlock = block.number	NodeType.EXPRESSION
+None	NodeType.RETURN";
+"BlockID: 17
+Call context: set,massUpdatePools
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 18
+Call context: set,massUpdatePools
+None
+REF_142(uint256) -> pool.lastRewardBlock
+TMP_195(bool) = _to <= bonusEndBlock
+CONDITION TMP_195
+EXPRESSION:_to <= bonusEndBlock	NodeType.IF";
+"BlockID: 21
+Call context: set,massUpdatePools
+None
+multiplier(uint256) := TMP_225(uint256)
+TMP_226(uint256) = a * b
+REF_145(uint256) -> pool.allocPoint
+TMP_227(uint256) = a * b
+TMP_228(uint256) = a / b
+pickleReward(uint256) := TMP_228(uint256)
+TMP_229(uint256) = a / b
+EXPRESSION:multiplier = getMultiplier(pool.lastRewardBlock,block.number)	NodeType.VARIABLE
+multiplier = getMultiplier(pool.lastRewardBlock,block.number)	NodeType.EXPRESSION
+pickleReward = multiplier.mul(picklePerBlock).mul(pool.allocPoint).div(totalAllocPoint)	NodeType.VARIABLE
+pickleReward = multiplier.mul(picklePerBlock).mul(pool.allocPoint).div(totalAllocPoint)	NodeType.EXPRESSION
+pickle.mint(devaddr,pickleReward.div(devFundDivRate))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 24
+Call context: set,massUpdatePools
+None
+HIGH_LEVEL_CALL, dest:pickle(PickleToken), function:mint, arguments:['devaddr', 'TMP_229']  
+EXPRESSION:pickle.mint(devaddr,pickleReward.div(devFundDivRate))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 25
+Call context: set,massUpdatePools
+None
+TMP_231 = CONVERT this to address
+HIGH_LEVEL_CALL, dest:pickle(PickleToken), function:mint, arguments:['TMP_231', 'pickleReward']  
+EXPRESSION:pickle.mint(devaddr,pickleReward.div(devFundDivRate))	NodeType.EXPRESSION
+pickle.mint(address(this),pickleReward)	NodeType.EXPRESSION";
+"BlockID: 26
+Call context: set,massUpdatePools
+None
+REF_150(uint256) -> pool.accPicklePerShare
+REF_151(uint256) -> pool.accPicklePerShare
+TMP_233(uint256) = a * b
+TMP_234(uint256) = a / b
+TMP_235(uint256) = a + b
+REF_150(uint256) (->pool) := TMP_235(uint256)
+REF_155(uint256) -> pool.lastRewardBlock
+REF_155(uint256) (->pool) := block.number(uint256)
+EXPRESSION:pickle.mint(address(this),pickleReward)	NodeType.EXPRESSION
+pool.accPicklePerShare = pool.accPicklePerShare.add(pickleReward.mul(1e12).div(lpSupply))	NodeType.EXPRESSION
+pool.accPicklePerShare = pool.accPicklePerShare.add(pickleReward.mul(1e12).div(lpSupply))	NodeType.EXPRESSION
+pool.accPicklePerShare = pool.accPicklePerShare.add(pickleReward.mul(1e12).div(lpSupply))	NodeType.EXPRESSION
+pool.accPicklePerShare = pool.accPicklePerShare.add(pickleReward.mul(1e12).div(lpSupply))	NodeType.EXPRESSION
+pool.lastRewardBlock = block.number	NodeType.EXPRESSION";
+"BlockID: 19
+Call context: set,massUpdatePools,updatePool
+True
+TMP_196(uint256) = a - b
+TMP_197(uint256) = a * b
+TMP_431(None) := TMP_197(uint256)
+EXPRESSION:_to.sub(_from).mul(BONUS_MULTIPLIER)	NodeType.EXPRESSION
+_to.sub(_from).mul(BONUS_MULTIPLIER)	NodeType.EXPRESSION";
+"BlockID: 20
+Call context: set,massUpdatePools,updatePool
+False
+TMP_198(bool) = _from >= bonusEndBlock
+CONDITION TMP_198
+EXPRESSION:_from >= bonusEndBlock	NodeType.IF";
+"BlockID: 22
+Call context: set,massUpdatePools,updatePool
+True
+TMP_199(uint256) = a - b
+TMP_431(None) := TMP_199(uint256)
+EXPRESSION:_to.sub(_from)	NodeType.EXPRESSION";
+"BlockID: 23
+Call context: set,massUpdatePools,updatePool
+False
+TMP_200(uint256) = a - b
+TMP_201(uint256) = a * b
+TMP_202(uint256) = a - b
+TMP_203(uint256) = a + b
+TMP_431(None) := TMP_203(uint256)
+EXPRESSION:bonusEndBlock.sub(_from).mul(BONUS_MULTIPLIER).add(_to.sub(bonusEndBlock))	NodeType.EXPRESSION
+bonusEndBlock.sub(_from).mul(BONUS_MULTIPLIER).add(_to.sub(bonusEndBlock))	NodeType.EXPRESSION
+bonusEndBlock.sub(_from).mul(BONUS_MULTIPLIER).add(_to.sub(bonusEndBlock))	NodeType.EXPRESSION
+bonusEndBlock.sub(_from).mul(BONUS_MULTIPLIER).add(_to.sub(bonusEndBlock))	NodeType.EXPRESSION";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+TMP_354(None) := msg.sender(address)
+TMP_280(bool) = _owner == TMP_279
+CONDITION TMP_280
+EXPRESSION:TMP_280(bool) = _owner == TMP_279	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_354(None) := msg.sender(address)
+TMP_280(bool) = _owner == TMP_279
+CONDITION TMP_280
+EXPRESSION:TMP_280(bool) = _owner == TMP_279	NodeType.IF" -> "BlockID: 2
+Call context: set
+True
+TMP_281(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+TMP_354(None) := msg.sender(address)
+TMP_280(bool) = _owner == TMP_279
+CONDITION TMP_280
+EXPRESSION:TMP_280(bool) = _owner == TMP_279	NodeType.IF" -> "BlockID: 3
+Call context: set
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 4
+Call context: 
+None
+CONDITION _withUpdate
+EXPRESSION:onlyOwner()	NodeType.EXPRESSION
+_withUpdate	NodeType.IF" -> "BlockID: 5
+Call context: 
+True
+REF_136 -> LENGTH poolInfo
+length(uint256) := REF_136(uint256)
+pid(uint256) := 0(uint256)
+EXPRESSION:length = poolInfo.length	NodeType.VARIABLE
+length = poolInfo.length	NodeType.EXPRESSION
+pid = 0	NodeType.VARIABLE
+pid = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 4
+Call context: 
+None
+CONDITION _withUpdate
+EXPRESSION:onlyOwner()	NodeType.EXPRESSION
+_withUpdate	NodeType.IF" -> "BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 5
+Call context: 
+True
+REF_136 -> LENGTH poolInfo
+length(uint256) := REF_136(uint256)
+pid(uint256) := 0(uint256)
+EXPRESSION:length = poolInfo.length	NodeType.VARIABLE
+length = poolInfo.length	NodeType.EXPRESSION
+pid = 0	NodeType.VARIABLE
+pid = 0	NodeType.EXPRESSION" -> "BlockID: 7
+Call context: set
+None
+BEGIN_LOOP
+TMP_219(bool) = pid < length
+CONDITION TMP_219
+EXPRESSION:None	NodeType.STARTLOOP
+pid < length	NodeType.IFLOOP" [key="successor_5"];
+"BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 8
+Call context: 
+None
+REF_104(MasterChef.PoolInfo) -> poolInfo[_pid]
+REF_105(uint256) -> REF_104.allocPoint
+TMP_192(uint256) = a - b
+TMP_193(uint256) = a + b
+totalAllocPoint(uint256) := TMP_193(uint256)
+REF_107(MasterChef.PoolInfo) -> poolInfo[_pid]
+REF_108(uint256) -> REF_107.allocPoint
+REF_108(uint256) (->poolInfo) := _allocPoint(uint256)
+EXPRESSION:totalAllocPoint = totalAllocPoint.sub(poolInfo[_pid].allocPoint).add(_allocPoint)	NodeType.EXPRESSION
+totalAllocPoint = totalAllocPoint.sub(poolInfo[_pid].allocPoint).add(_allocPoint)	NodeType.EXPRESSION
+totalAllocPoint = totalAllocPoint.sub(poolInfo[_pid].allocPoint).add(_allocPoint)	NodeType.EXPRESSION
+poolInfo[_pid].allocPoint = _allocPoint	NodeType.EXPRESSION" [key=0];
+"BlockID: 3
+Call context: set
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: 
+None
+CONDITION _withUpdate
+EXPRESSION:onlyOwner()	NodeType.EXPRESSION
+_withUpdate	NodeType.IF" [key="Exit: onlyOwner", ref="MasterChef.onlyOwner"];
+"BlockID: 7
+Call context: set
+None
+BEGIN_LOOP
+TMP_219(bool) = pid < length
+CONDITION TMP_219
+EXPRESSION:None	NodeType.STARTLOOP
+pid < length	NodeType.IFLOOP" -> "BlockID: 9
+Call context: set
+True
+REF_137(MasterChef.PoolInfo) -> poolInfo[_pid]
+pool(MasterChef.PoolInfo) := REF_137(MasterChef.PoolInfo)
+REF_138(uint256) -> pool.lastRewardBlock
+TMP_221(bool) = block.number <= REF_138
+CONDITION TMP_221
+EXPRESSION:pool = poolInfo[_pid]	NodeType.VARIABLE
+pool = poolInfo[_pid]	NodeType.EXPRESSION
+block.number <= pool.lastRewardBlock	NodeType.IF" [key=0];
+"BlockID: 7
+Call context: set
+None
+BEGIN_LOOP
+TMP_219(bool) = pid < length
+CONDITION TMP_219
+EXPRESSION:None	NodeType.STARTLOOP
+pid < length	NodeType.IFLOOP" -> "BlockID: 10
+Call context: set
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 9
+Call context: set
+True
+REF_137(MasterChef.PoolInfo) -> poolInfo[_pid]
+pool(MasterChef.PoolInfo) := REF_137(MasterChef.PoolInfo)
+REF_138(uint256) -> pool.lastRewardBlock
+TMP_221(bool) = block.number <= REF_138
+CONDITION TMP_221
+EXPRESSION:pool = poolInfo[_pid]	NodeType.VARIABLE
+pool = poolInfo[_pid]	NodeType.EXPRESSION
+block.number <= pool.lastRewardBlock	NodeType.IF" -> "BlockID: 11
+Call context: set,massUpdatePools
+True
+RETURN
+EXPRESSION:None	NodeType.RETURN" [key="successor_5"];
+"BlockID: 9
+Call context: set
+True
+REF_137(MasterChef.PoolInfo) -> poolInfo[_pid]
+pool(MasterChef.PoolInfo) := REF_137(MasterChef.PoolInfo)
+REF_138(uint256) -> pool.lastRewardBlock
+TMP_221(bool) = block.number <= REF_138
+CONDITION TMP_221
+EXPRESSION:pool = poolInfo[_pid]	NodeType.VARIABLE
+pool = poolInfo[_pid]	NodeType.EXPRESSION
+block.number <= pool.lastRewardBlock	NodeType.IF" -> "BlockID: 12
+Call context: set,massUpdatePools
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 10
+Call context: set
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="Exit: massUpdatePools", ref="MasterChef.massUpdatePools"];
+"BlockID: 13
+Call context: set
+None
+pid(uint256) = pid + 1
+EXPRESSION:updatePool(pid)	NodeType.EXPRESSION
+++ pid	NodeType.EXPRESSION" -> "BlockID: 7
+Call context: set
+None
+BEGIN_LOOP
+TMP_219(bool) = pid < length
+CONDITION TMP_219
+EXPRESSION:None	NodeType.STARTLOOP
+pid < length	NodeType.IFLOOP" [key=0];
+"BlockID: 11
+Call context: set,massUpdatePools
+True
+RETURN
+EXPRESSION:None	NodeType.RETURN" -> "BlockID: 13
+Call context: set
+None
+pid(uint256) = pid + 1
+EXPRESSION:updatePool(pid)	NodeType.EXPRESSION
+++ pid	NodeType.EXPRESSION" [key="successor_5", ref="MasterChef.updatePool"];
+"BlockID: 12
+Call context: set,massUpdatePools
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 14
+Call context: set,massUpdatePools
+None
+REF_139(IERC20) -> pool.lpToken
+TMP_222 = CONVERT this to address
+TMP_223(uint256) = HIGH_LEVEL_CALL, dest:REF_139(IERC20), function:balanceOf, arguments:['TMP_222']  
+EXPRESSION:" [key=0];
+"BlockID: 14
+Call context: set,massUpdatePools
+None
+REF_139(IERC20) -> pool.lpToken
+TMP_222 = CONVERT this to address
+TMP_223(uint256) = HIGH_LEVEL_CALL, dest:REF_139(IERC20), function:balanceOf, arguments:['TMP_222']  
+EXPRESSION:" -> "BlockID: 15
+Call context: set,massUpdatePools
+None
+lpSupply(uint256) := TMP_223(uint256)
+TMP_224(bool) = lpSupply == 0
+CONDITION TMP_224
+EXPRESSION:lpSupply = pool.lpToken.balanceOf(address(this))	NodeType.VARIABLE
+lpSupply = pool.lpToken.balanceOf(address(this))	NodeType.EXPRESSION
+lpSupply == 0	NodeType.IF" [key=0];
+"BlockID: 15
+Call context: set,massUpdatePools
+None
+lpSupply(uint256) := TMP_223(uint256)
+TMP_224(bool) = lpSupply == 0
+CONDITION TMP_224
+EXPRESSION:lpSupply = pool.lpToken.balanceOf(address(this))	NodeType.VARIABLE
+lpSupply = pool.lpToken.balanceOf(address(this))	NodeType.EXPRESSION
+lpSupply == 0	NodeType.IF" -> "BlockID: 16
+Call context: set,massUpdatePools
+True
+REF_141(uint256) -> pool.lastRewardBlock
+REF_141(uint256) (->pool) := block.number(uint256)
+RETURN
+EXPRESSION:pool.lastRewardBlock = block.number	NodeType.EXPRESSION
+None	NodeType.RETURN" [key=0];
+"BlockID: 15
+Call context: set,massUpdatePools
+None
+lpSupply(uint256) := TMP_223(uint256)
+TMP_224(bool) = lpSupply == 0
+CONDITION TMP_224
+EXPRESSION:lpSupply = pool.lpToken.balanceOf(address(this))	NodeType.VARIABLE
+lpSupply = pool.lpToken.balanceOf(address(this))	NodeType.EXPRESSION
+lpSupply == 0	NodeType.IF" -> "BlockID: 17
+Call context: set,massUpdatePools
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 16
+Call context: set,massUpdatePools
+True
+REF_141(uint256) -> pool.lastRewardBlock
+REF_141(uint256) (->pool) := block.number(uint256)
+RETURN
+EXPRESSION:pool.lastRewardBlock = block.number	NodeType.EXPRESSION
+None	NodeType.RETURN" -> "BlockID: 13
+Call context: set
+None
+pid(uint256) = pid + 1
+EXPRESSION:updatePool(pid)	NodeType.EXPRESSION
+++ pid	NodeType.EXPRESSION" [key="successor_5", ref="MasterChef.updatePool"];
+"BlockID: 17
+Call context: set,massUpdatePools
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 18
+Call context: set,massUpdatePools
+None
+REF_142(uint256) -> pool.lastRewardBlock
+TMP_195(bool) = _to <= bonusEndBlock
+CONDITION TMP_195
+EXPRESSION:_to <= bonusEndBlock	NodeType.IF" [key=0];
+"BlockID: 18
+Call context: set,massUpdatePools
+None
+REF_142(uint256) -> pool.lastRewardBlock
+TMP_195(bool) = _to <= bonusEndBlock
+CONDITION TMP_195
+EXPRESSION:_to <= bonusEndBlock	NodeType.IF" -> "BlockID: 19
+Call context: set,massUpdatePools,updatePool
+True
+TMP_196(uint256) = a - b
+TMP_197(uint256) = a * b
+TMP_431(None) := TMP_197(uint256)
+EXPRESSION:_to.sub(_from).mul(BONUS_MULTIPLIER)	NodeType.EXPRESSION
+_to.sub(_from).mul(BONUS_MULTIPLIER)	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 18
+Call context: set,massUpdatePools
+None
+REF_142(uint256) -> pool.lastRewardBlock
+TMP_195(bool) = _to <= bonusEndBlock
+CONDITION TMP_195
+EXPRESSION:_to <= bonusEndBlock	NodeType.IF" -> "BlockID: 20
+Call context: set,massUpdatePools,updatePool
+False
+TMP_198(bool) = _from >= bonusEndBlock
+CONDITION TMP_198
+EXPRESSION:_from >= bonusEndBlock	NodeType.IF" [key="successor_5"];
+"BlockID: 21
+Call context: set,massUpdatePools
+None
+multiplier(uint256) := TMP_225(uint256)
+TMP_226(uint256) = a * b
+REF_145(uint256) -> pool.allocPoint
+TMP_227(uint256) = a * b
+TMP_228(uint256) = a / b
+pickleReward(uint256) := TMP_228(uint256)
+TMP_229(uint256) = a / b
+EXPRESSION:multiplier = getMultiplier(pool.lastRewardBlock,block.number)	NodeType.VARIABLE
+multiplier = getMultiplier(pool.lastRewardBlock,block.number)	NodeType.EXPRESSION
+pickleReward = multiplier.mul(picklePerBlock).mul(pool.allocPoint).div(totalAllocPoint)	NodeType.VARIABLE
+pickleReward = multiplier.mul(picklePerBlock).mul(pool.allocPoint).div(totalAllocPoint)	NodeType.EXPRESSION
+pickle.mint(devaddr,pickleReward.div(devFundDivRate))	NodeType.EXPRESSION" -> "BlockID: 24
+Call context: set,massUpdatePools
+None
+HIGH_LEVEL_CALL, dest:pickle(PickleToken), function:mint, arguments:['devaddr', 'TMP_229']  
+EXPRESSION:pickle.mint(devaddr,pickleReward.div(devFundDivRate))	NodeType.EXPRESSION" [key="successor_1"];
+"BlockID: 24
+Call context: set,massUpdatePools
+None
+HIGH_LEVEL_CALL, dest:pickle(PickleToken), function:mint, arguments:['devaddr', 'TMP_229']  
+EXPRESSION:pickle.mint(devaddr,pickleReward.div(devFundDivRate))	NodeType.EXPRESSION" -> "BlockID: 25
+Call context: set,massUpdatePools
+None
+TMP_231 = CONVERT this to address
+HIGH_LEVEL_CALL, dest:pickle(PickleToken), function:mint, arguments:['TMP_231', 'pickleReward']  
+EXPRESSION:pickle.mint(devaddr,pickleReward.div(devFundDivRate))	NodeType.EXPRESSION
+pickle.mint(address(this),pickleReward)	NodeType.EXPRESSION" [key=0];
+"BlockID: 25
+Call context: set,massUpdatePools
+None
+TMP_231 = CONVERT this to address
+HIGH_LEVEL_CALL, dest:pickle(PickleToken), function:mint, arguments:['TMP_231', 'pickleReward']  
+EXPRESSION:pickle.mint(devaddr,pickleReward.div(devFundDivRate))	NodeType.EXPRESSION
+pickle.mint(address(this),pickleReward)	NodeType.EXPRESSION" -> "BlockID: 26
+Call context: set,massUpdatePools
+None
+REF_150(uint256) -> pool.accPicklePerShare
+REF_151(uint256) -> pool.accPicklePerShare
+TMP_233(uint256) = a * b
+TMP_234(uint256) = a / b
+TMP_235(uint256) = a + b
+REF_150(uint256) (->pool) := TMP_235(uint256)
+REF_155(uint256) -> pool.lastRewardBlock
+REF_155(uint256) (->pool) := block.number(uint256)
+EXPRESSION:pickle.mint(address(this),pickleReward)	NodeType.EXPRESSION
+pool.accPicklePerShare = pool.accPicklePerShare.add(pickleReward.mul(1e12).div(lpSupply))	NodeType.EXPRESSION
+pool.accPicklePerShare = pool.accPicklePerShare.add(pickleReward.mul(1e12).div(lpSupply))	NodeType.EXPRESSION
+pool.accPicklePerShare = pool.accPicklePerShare.add(pickleReward.mul(1e12).div(lpSupply))	NodeType.EXPRESSION
+pool.accPicklePerShare = pool.accPicklePerShare.add(pickleReward.mul(1e12).div(lpSupply))	NodeType.EXPRESSION
+pool.lastRewardBlock = block.number	NodeType.EXPRESSION" [key=0];
+"BlockID: 26
+Call context: set,massUpdatePools
+None
+REF_150(uint256) -> pool.accPicklePerShare
+REF_151(uint256) -> pool.accPicklePerShare
+TMP_233(uint256) = a * b
+TMP_234(uint256) = a / b
+TMP_235(uint256) = a + b
+REF_150(uint256) (->pool) := TMP_235(uint256)
+REF_155(uint256) -> pool.lastRewardBlock
+REF_155(uint256) (->pool) := block.number(uint256)
+EXPRESSION:pickle.mint(address(this),pickleReward)	NodeType.EXPRESSION
+pool.accPicklePerShare = pool.accPicklePerShare.add(pickleReward.mul(1e12).div(lpSupply))	NodeType.EXPRESSION
+pool.accPicklePerShare = pool.accPicklePerShare.add(pickleReward.mul(1e12).div(lpSupply))	NodeType.EXPRESSION
+pool.accPicklePerShare = pool.accPicklePerShare.add(pickleReward.mul(1e12).div(lpSupply))	NodeType.EXPRESSION
+pool.accPicklePerShare = pool.accPicklePerShare.add(pickleReward.mul(1e12).div(lpSupply))	NodeType.EXPRESSION
+pool.lastRewardBlock = block.number	NodeType.EXPRESSION" -> "BlockID: 13
+Call context: set
+None
+pid(uint256) = pid + 1
+EXPRESSION:updatePool(pid)	NodeType.EXPRESSION
+++ pid	NodeType.EXPRESSION" [key="successor_5", ref="MasterChef.updatePool"];
+"BlockID: 19
+Call context: set,massUpdatePools,updatePool
+True
+TMP_196(uint256) = a - b
+TMP_197(uint256) = a * b
+TMP_431(None) := TMP_197(uint256)
+EXPRESSION:_to.sub(_from).mul(BONUS_MULTIPLIER)	NodeType.EXPRESSION
+_to.sub(_from).mul(BONUS_MULTIPLIER)	NodeType.EXPRESSION" -> "BlockID: 21
+Call context: set,massUpdatePools
+None
+multiplier(uint256) := TMP_225(uint256)
+TMP_226(uint256) = a * b
+REF_145(uint256) -> pool.allocPoint
+TMP_227(uint256) = a * b
+TMP_228(uint256) = a / b
+pickleReward(uint256) := TMP_228(uint256)
+TMP_229(uint256) = a / b
+EXPRESSION:multiplier = getMultiplier(pool.lastRewardBlock,block.number)	NodeType.VARIABLE
+multiplier = getMultiplier(pool.lastRewardBlock,block.number)	NodeType.EXPRESSION
+pickleReward = multiplier.mul(picklePerBlock).mul(pool.allocPoint).div(totalAllocPoint)	NodeType.VARIABLE
+pickleReward = multiplier.mul(picklePerBlock).mul(pool.allocPoint).div(totalAllocPoint)	NodeType.EXPRESSION
+pickle.mint(devaddr,pickleReward.div(devFundDivRate))	NodeType.EXPRESSION" [key="successor_5", ref="MasterChef.getMultiplier"];
+"BlockID: 20
+Call context: set,massUpdatePools,updatePool
+False
+TMP_198(bool) = _from >= bonusEndBlock
+CONDITION TMP_198
+EXPRESSION:_from >= bonusEndBlock	NodeType.IF" -> "BlockID: 22
+Call context: set,massUpdatePools,updatePool
+True
+TMP_199(uint256) = a - b
+TMP_431(None) := TMP_199(uint256)
+EXPRESSION:_to.sub(_from)	NodeType.EXPRESSION" [key=0];
+"BlockID: 20
+Call context: set,massUpdatePools,updatePool
+False
+TMP_198(bool) = _from >= bonusEndBlock
+CONDITION TMP_198
+EXPRESSION:_from >= bonusEndBlock	NodeType.IF" -> "BlockID: 23
+Call context: set,massUpdatePools,updatePool
+False
+TMP_200(uint256) = a - b
+TMP_201(uint256) = a * b
+TMP_202(uint256) = a - b
+TMP_203(uint256) = a + b
+TMP_431(None) := TMP_203(uint256)
+EXPRESSION:bonusEndBlock.sub(_from).mul(BONUS_MULTIPLIER).add(_to.sub(bonusEndBlock))	NodeType.EXPRESSION
+bonusEndBlock.sub(_from).mul(BONUS_MULTIPLIER).add(_to.sub(bonusEndBlock))	NodeType.EXPRESSION
+bonusEndBlock.sub(_from).mul(BONUS_MULTIPLIER).add(_to.sub(bonusEndBlock))	NodeType.EXPRESSION
+bonusEndBlock.sub(_from).mul(BONUS_MULTIPLIER).add(_to.sub(bonusEndBlock))	NodeType.EXPRESSION" [key=0];
+"BlockID: 22
+Call context: set,massUpdatePools,updatePool
+True
+TMP_199(uint256) = a - b
+TMP_431(None) := TMP_199(uint256)
+EXPRESSION:_to.sub(_from)	NodeType.EXPRESSION" -> "BlockID: 21
+Call context: set,massUpdatePools
+None
+multiplier(uint256) := TMP_225(uint256)
+TMP_226(uint256) = a * b
+REF_145(uint256) -> pool.allocPoint
+TMP_227(uint256) = a * b
+TMP_228(uint256) = a / b
+pickleReward(uint256) := TMP_228(uint256)
+TMP_229(uint256) = a / b
+EXPRESSION:multiplier = getMultiplier(pool.lastRewardBlock,block.number)	NodeType.VARIABLE
+multiplier = getMultiplier(pool.lastRewardBlock,block.number)	NodeType.EXPRESSION
+pickleReward = multiplier.mul(picklePerBlock).mul(pool.allocPoint).div(totalAllocPoint)	NodeType.VARIABLE
+pickleReward = multiplier.mul(picklePerBlock).mul(pool.allocPoint).div(totalAllocPoint)	NodeType.EXPRESSION
+pickle.mint(devaddr,pickleReward.div(devFundDivRate))	NodeType.EXPRESSION" [key="successor_5", ref="MasterChef.getMultiplier"];
+"BlockID: 23
+Call context: set,massUpdatePools,updatePool
+False
+TMP_200(uint256) = a - b
+TMP_201(uint256) = a * b
+TMP_202(uint256) = a - b
+TMP_203(uint256) = a + b
+TMP_431(None) := TMP_203(uint256)
+EXPRESSION:bonusEndBlock.sub(_from).mul(BONUS_MULTIPLIER).add(_to.sub(bonusEndBlock))	NodeType.EXPRESSION
+bonusEndBlock.sub(_from).mul(BONUS_MULTIPLIER).add(_to.sub(bonusEndBlock))	NodeType.EXPRESSION
+bonusEndBlock.sub(_from).mul(BONUS_MULTIPLIER).add(_to.sub(bonusEndBlock))	NodeType.EXPRESSION
+bonusEndBlock.sub(_from).mul(BONUS_MULTIPLIER).add(_to.sub(bonusEndBlock))	NodeType.EXPRESSION" -> "BlockID: 21
+Call context: set,massUpdatePools
+None
+multiplier(uint256) := TMP_225(uint256)
+TMP_226(uint256) = a * b
+REF_145(uint256) -> pool.allocPoint
+TMP_227(uint256) = a * b
+TMP_228(uint256) = a / b
+pickleReward(uint256) := TMP_228(uint256)
+TMP_229(uint256) = a / b
+EXPRESSION:multiplier = getMultiplier(pool.lastRewardBlock,block.number)	NodeType.VARIABLE
+multiplier = getMultiplier(pool.lastRewardBlock,block.number)	NodeType.EXPRESSION
+pickleReward = multiplier.mul(picklePerBlock).mul(pool.allocPoint).div(totalAllocPoint)	NodeType.VARIABLE
+pickleReward = multiplier.mul(picklePerBlock).mul(pool.allocPoint).div(totalAllocPoint)	NodeType.EXPRESSION
+pickle.mint(devaddr,pickleReward.div(devFundDivRate))	NodeType.EXPRESSION" [key="successor_5", ref="MasterChef.getMultiplier"];
+}

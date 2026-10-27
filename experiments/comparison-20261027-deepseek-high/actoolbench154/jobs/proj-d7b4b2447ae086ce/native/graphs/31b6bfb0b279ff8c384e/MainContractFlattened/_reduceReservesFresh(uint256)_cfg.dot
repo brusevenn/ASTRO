@@ -1,0 +1,401 @@
+digraph {
+"BlockID: 2944
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 2945
+Call context: 
+None
+NEW VARIABLE totalReservesNew
+TMP_1814(bool) = msg.sender != admin
+CONDITION TMP_1814
+EXPRESSION:None	NodeType.VARIABLE
+msg.sender != admin	NodeType.IF";
+"BlockID: 2946
+Call context: 
+True
+REF_1420(TokenErrorReporter.Error) -> Error.UNAUTHORIZED
+REF_1421(TokenErrorReporter.FailureInfo) -> FailureInfo.REDUCE_RESERVES_ADMIN_CHECK
+TMP_1815(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_1420,REF_1421)
+EXPRESSION:fail(Error.UNAUTHORIZED,FailureInfo.REDUCE_RESERVES_ADMIN_CHECK)	NodeType.EXPRESSION";
+"BlockID: 2948
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2949
+Call context: 
+None
+TMP_1816(uint256) = INTERNAL_CALL, CToken.getBlockNumber()()
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.EXPRESSION";
+"BlockID: 2950
+Call context: 
+None
+TMP_1817(bool) = accrualBlockNumber != TMP_1816
+CONDITION TMP_1817
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.IF" [shape=box];
+"BlockID: 2951
+Call context: 
+True
+REF_1422(TokenErrorReporter.Error) -> Error.MARKET_NOT_FRESH
+REF_1423(TokenErrorReporter.FailureInfo) -> FailureInfo.REDUCE_RESERVES_FRESH_CHECK
+TMP_1818(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_1422,REF_1423)
+EXPRESSION:fail(Error.MARKET_NOT_FRESH,FailureInfo.REDUCE_RESERVES_FRESH_CHECK)	NodeType.EXPRESSION";
+"BlockID: 2953
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2954
+Call context: 
+None
+TMP_1819(uint256) = INTERNAL_CALL, CErc20.getCashPrior()()
+EXPRESSION:getCashPrior() < reduceAmount	NodeType.EXPRESSION";
+"BlockID: 2955
+Call context: 
+None
+TMP_1820(bool) = TMP_1819 < reduceAmount
+CONDITION TMP_1820
+EXPRESSION:getCashPrior() < reduceAmount	NodeType.IF" [shape=box];
+"BlockID: 2956
+Call context: 
+True
+REF_1424(TokenErrorReporter.Error) -> Error.TOKEN_INSUFFICIENT_CASH
+REF_1425(TokenErrorReporter.FailureInfo) -> FailureInfo.REDUCE_RESERVES_CASH_NOT_AVAILABLE
+TMP_1821(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_1424,REF_1425)
+EXPRESSION:fail(Error.TOKEN_INSUFFICIENT_CASH,FailureInfo.REDUCE_RESERVES_CASH_NOT_AVAILABLE)	NodeType.EXPRESSION";
+"BlockID: 2958
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2959
+Call context: 
+None
+TMP_1822(bool) = reduceAmount > totalReserves
+CONDITION TMP_1822
+EXPRESSION:reduceAmount > totalReserves	NodeType.IF";
+"BlockID: 2960
+Call context: 
+True
+REF_1426(TokenErrorReporter.Error) -> Error.BAD_INPUT
+REF_1427(TokenErrorReporter.FailureInfo) -> FailureInfo.REDUCE_RESERVES_VALIDATION
+TMP_1823(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_1426,REF_1427)
+EXPRESSION:fail(Error.BAD_INPUT,FailureInfo.REDUCE_RESERVES_VALIDATION)	NodeType.EXPRESSION";
+"BlockID: 2962
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2964
+Call context: 
+True
+totalReserves(uint256) := totalReservesNew(uint256)
+INTERNAL_CALL, CErc20.doTransferOut(address,uint256)(admin,reduceAmount)
+EXPRESSION:totalReserves = totalReservesNew	NodeType.EXPRESSION
+doTransferOut(admin,reduceAmount)	NodeType.EXPRESSION";
+"BlockID: 2965
+Call context: 
+None
+REF_1428(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1829 = CONVERT REF_1428 to uint256
+RETURN TMP_1829
+EXPRESSION:doTransferOut(admin,reduceAmount)	NodeType.EXPRESSION
+uint256(Error.NO_ERROR)	NodeType.RETURN";
+"BlockID: 2961
+Call context: 
+None
+RETURN TMP_1823
+EXPRESSION:fail(Error.BAD_INPUT,FailureInfo.REDUCE_RESERVES_VALIDATION)	NodeType.RETURN" [shape=box];
+"BlockID: 2957
+Call context: 
+None
+RETURN TMP_1821
+EXPRESSION:fail(Error.TOKEN_INSUFFICIENT_CASH,FailureInfo.REDUCE_RESERVES_CASH_NOT_AVAILABLE)	NodeType.RETURN" [shape=box];
+"BlockID: 2952
+Call context: 
+None
+RETURN TMP_1818
+EXPRESSION:fail(Error.MARKET_NOT_FRESH,FailureInfo.REDUCE_RESERVES_FRESH_CHECK)	NodeType.RETURN" [shape=box];
+"BlockID: 2947
+Call context: 
+None
+RETURN TMP_1815
+EXPRESSION:fail(Error.UNAUTHORIZED,FailureInfo.REDUCE_RESERVES_ADMIN_CHECK)	NodeType.RETURN" [shape=box];
+"BlockID: 2966
+Call context: 
+None
+TMP_1824(uint256) = totalReserves - reduceAmount
+totalReservesNew(uint256) := TMP_1824(uint256)
+TMP_1825(bool) = totalReservesNew <= totalReserves
+CONDITION TMP_1825
+EXPRESSION:TMP_1825(bool) = totalReservesNew <= totalReserves	NodeType.IF";
+"BlockID: 2967
+Call context: 
+True
+TMP_1826(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 2968
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2944
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 2945
+Call context: 
+None
+NEW VARIABLE totalReservesNew
+TMP_1814(bool) = msg.sender != admin
+CONDITION TMP_1814
+EXPRESSION:None	NodeType.VARIABLE
+msg.sender != admin	NodeType.IF" [key=0];
+"BlockID: 2945
+Call context: 
+None
+NEW VARIABLE totalReservesNew
+TMP_1814(bool) = msg.sender != admin
+CONDITION TMP_1814
+EXPRESSION:None	NodeType.VARIABLE
+msg.sender != admin	NodeType.IF" -> "BlockID: 2946
+Call context: 
+True
+REF_1420(TokenErrorReporter.Error) -> Error.UNAUTHORIZED
+REF_1421(TokenErrorReporter.FailureInfo) -> FailureInfo.REDUCE_RESERVES_ADMIN_CHECK
+TMP_1815(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_1420,REF_1421)
+EXPRESSION:fail(Error.UNAUTHORIZED,FailureInfo.REDUCE_RESERVES_ADMIN_CHECK)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2945
+Call context: 
+None
+NEW VARIABLE totalReservesNew
+TMP_1814(bool) = msg.sender != admin
+CONDITION TMP_1814
+EXPRESSION:None	NodeType.VARIABLE
+msg.sender != admin	NodeType.IF" -> "BlockID: 2948
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2946
+Call context: 
+True
+REF_1420(TokenErrorReporter.Error) -> Error.UNAUTHORIZED
+REF_1421(TokenErrorReporter.FailureInfo) -> FailureInfo.REDUCE_RESERVES_ADMIN_CHECK
+TMP_1815(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_1420,REF_1421)
+EXPRESSION:fail(Error.UNAUTHORIZED,FailureInfo.REDUCE_RESERVES_ADMIN_CHECK)	NodeType.EXPRESSION" -> "BlockID: 2947
+Call context: 
+None
+RETURN TMP_1815
+EXPRESSION:fail(Error.UNAUTHORIZED,FailureInfo.REDUCE_RESERVES_ADMIN_CHECK)	NodeType.RETURN" [key=0];
+"BlockID: 2948
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2949
+Call context: 
+None
+TMP_1816(uint256) = INTERNAL_CALL, CToken.getBlockNumber()()
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2949
+Call context: 
+None
+TMP_1816(uint256) = INTERNAL_CALL, CToken.getBlockNumber()()
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.EXPRESSION" -> "BlockID: 2950
+Call context: 
+None
+TMP_1817(bool) = accrualBlockNumber != TMP_1816
+CONDITION TMP_1817
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.IF" [key=0];
+"BlockID: 2950
+Call context: 
+None
+TMP_1817(bool) = accrualBlockNumber != TMP_1816
+CONDITION TMP_1817
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.IF" -> "BlockID: 2951
+Call context: 
+True
+REF_1422(TokenErrorReporter.Error) -> Error.MARKET_NOT_FRESH
+REF_1423(TokenErrorReporter.FailureInfo) -> FailureInfo.REDUCE_RESERVES_FRESH_CHECK
+TMP_1818(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_1422,REF_1423)
+EXPRESSION:fail(Error.MARKET_NOT_FRESH,FailureInfo.REDUCE_RESERVES_FRESH_CHECK)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2950
+Call context: 
+None
+TMP_1817(bool) = accrualBlockNumber != TMP_1816
+CONDITION TMP_1817
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.IF" -> "BlockID: 2953
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2951
+Call context: 
+True
+REF_1422(TokenErrorReporter.Error) -> Error.MARKET_NOT_FRESH
+REF_1423(TokenErrorReporter.FailureInfo) -> FailureInfo.REDUCE_RESERVES_FRESH_CHECK
+TMP_1818(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_1422,REF_1423)
+EXPRESSION:fail(Error.MARKET_NOT_FRESH,FailureInfo.REDUCE_RESERVES_FRESH_CHECK)	NodeType.EXPRESSION" -> "BlockID: 2952
+Call context: 
+None
+RETURN TMP_1818
+EXPRESSION:fail(Error.MARKET_NOT_FRESH,FailureInfo.REDUCE_RESERVES_FRESH_CHECK)	NodeType.RETURN" [key=0];
+"BlockID: 2953
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2954
+Call context: 
+None
+TMP_1819(uint256) = INTERNAL_CALL, CErc20.getCashPrior()()
+EXPRESSION:getCashPrior() < reduceAmount	NodeType.EXPRESSION" [key=0];
+"BlockID: 2954
+Call context: 
+None
+TMP_1819(uint256) = INTERNAL_CALL, CErc20.getCashPrior()()
+EXPRESSION:getCashPrior() < reduceAmount	NodeType.EXPRESSION" -> "BlockID: 2955
+Call context: 
+None
+TMP_1820(bool) = TMP_1819 < reduceAmount
+CONDITION TMP_1820
+EXPRESSION:getCashPrior() < reduceAmount	NodeType.IF" [key=0];
+"BlockID: 2955
+Call context: 
+None
+TMP_1820(bool) = TMP_1819 < reduceAmount
+CONDITION TMP_1820
+EXPRESSION:getCashPrior() < reduceAmount	NodeType.IF" -> "BlockID: 2956
+Call context: 
+True
+REF_1424(TokenErrorReporter.Error) -> Error.TOKEN_INSUFFICIENT_CASH
+REF_1425(TokenErrorReporter.FailureInfo) -> FailureInfo.REDUCE_RESERVES_CASH_NOT_AVAILABLE
+TMP_1821(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_1424,REF_1425)
+EXPRESSION:fail(Error.TOKEN_INSUFFICIENT_CASH,FailureInfo.REDUCE_RESERVES_CASH_NOT_AVAILABLE)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2955
+Call context: 
+None
+TMP_1820(bool) = TMP_1819 < reduceAmount
+CONDITION TMP_1820
+EXPRESSION:getCashPrior() < reduceAmount	NodeType.IF" -> "BlockID: 2958
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2956
+Call context: 
+True
+REF_1424(TokenErrorReporter.Error) -> Error.TOKEN_INSUFFICIENT_CASH
+REF_1425(TokenErrorReporter.FailureInfo) -> FailureInfo.REDUCE_RESERVES_CASH_NOT_AVAILABLE
+TMP_1821(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_1424,REF_1425)
+EXPRESSION:fail(Error.TOKEN_INSUFFICIENT_CASH,FailureInfo.REDUCE_RESERVES_CASH_NOT_AVAILABLE)	NodeType.EXPRESSION" -> "BlockID: 2957
+Call context: 
+None
+RETURN TMP_1821
+EXPRESSION:fail(Error.TOKEN_INSUFFICIENT_CASH,FailureInfo.REDUCE_RESERVES_CASH_NOT_AVAILABLE)	NodeType.RETURN" [key=0];
+"BlockID: 2958
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2959
+Call context: 
+None
+TMP_1822(bool) = reduceAmount > totalReserves
+CONDITION TMP_1822
+EXPRESSION:reduceAmount > totalReserves	NodeType.IF" [key=0];
+"BlockID: 2959
+Call context: 
+None
+TMP_1822(bool) = reduceAmount > totalReserves
+CONDITION TMP_1822
+EXPRESSION:reduceAmount > totalReserves	NodeType.IF" -> "BlockID: 2960
+Call context: 
+True
+REF_1426(TokenErrorReporter.Error) -> Error.BAD_INPUT
+REF_1427(TokenErrorReporter.FailureInfo) -> FailureInfo.REDUCE_RESERVES_VALIDATION
+TMP_1823(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_1426,REF_1427)
+EXPRESSION:fail(Error.BAD_INPUT,FailureInfo.REDUCE_RESERVES_VALIDATION)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2959
+Call context: 
+None
+TMP_1822(bool) = reduceAmount > totalReserves
+CONDITION TMP_1822
+EXPRESSION:reduceAmount > totalReserves	NodeType.IF" -> "BlockID: 2962
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2960
+Call context: 
+True
+REF_1426(TokenErrorReporter.Error) -> Error.BAD_INPUT
+REF_1427(TokenErrorReporter.FailureInfo) -> FailureInfo.REDUCE_RESERVES_VALIDATION
+TMP_1823(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_1426,REF_1427)
+EXPRESSION:fail(Error.BAD_INPUT,FailureInfo.REDUCE_RESERVES_VALIDATION)	NodeType.EXPRESSION" -> "BlockID: 2961
+Call context: 
+None
+RETURN TMP_1823
+EXPRESSION:fail(Error.BAD_INPUT,FailureInfo.REDUCE_RESERVES_VALIDATION)	NodeType.RETURN" [key=0];
+"BlockID: 2962
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2966
+Call context: 
+None
+TMP_1824(uint256) = totalReserves - reduceAmount
+totalReservesNew(uint256) := TMP_1824(uint256)
+TMP_1825(bool) = totalReservesNew <= totalReserves
+CONDITION TMP_1825
+EXPRESSION:TMP_1825(bool) = totalReservesNew <= totalReserves	NodeType.IF" [key=0];
+"BlockID: 2964
+Call context: 
+True
+totalReserves(uint256) := totalReservesNew(uint256)
+INTERNAL_CALL, CErc20.doTransferOut(address,uint256)(admin,reduceAmount)
+EXPRESSION:totalReserves = totalReservesNew	NodeType.EXPRESSION
+doTransferOut(admin,reduceAmount)	NodeType.EXPRESSION" -> "BlockID: 2965
+Call context: 
+None
+REF_1428(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1829 = CONVERT REF_1428 to uint256
+RETURN TMP_1829
+EXPRESSION:doTransferOut(admin,reduceAmount)	NodeType.EXPRESSION
+uint256(Error.NO_ERROR)	NodeType.RETURN" [key=0];
+"BlockID: 2966
+Call context: 
+None
+TMP_1824(uint256) = totalReserves - reduceAmount
+totalReservesNew(uint256) := TMP_1824(uint256)
+TMP_1825(bool) = totalReservesNew <= totalReserves
+CONDITION TMP_1825
+EXPRESSION:TMP_1825(bool) = totalReservesNew <= totalReserves	NodeType.IF" -> "BlockID: 2967
+Call context: 
+True
+TMP_1826(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2966
+Call context: 
+None
+TMP_1824(uint256) = totalReserves - reduceAmount
+totalReservesNew(uint256) := TMP_1824(uint256)
+TMP_1825(bool) = totalReservesNew <= totalReserves
+CONDITION TMP_1825
+EXPRESSION:TMP_1825(bool) = totalReservesNew <= totalReserves	NodeType.IF" -> "BlockID: 2968
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2968
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2964
+Call context: 
+True
+totalReserves(uint256) := totalReservesNew(uint256)
+INTERNAL_CALL, CErc20.doTransferOut(address,uint256)(admin,reduceAmount)
+EXPRESSION:totalReserves = totalReservesNew	NodeType.EXPRESSION
+doTransferOut(admin,reduceAmount)	NodeType.EXPRESSION" [key=0];
+}

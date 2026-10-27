@@ -1,0 +1,941 @@
+digraph {
+"BlockID: 1648
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1649
+Call context: 
+None
+TMP_991 = CONVERT this to address
+TMP_992 = CONVERT cTokenCollateral to address
+TMP_993(uint256) = HIGH_LEVEL_CALL, dest:comptroller(ComptrollerInterface), function:liquidateBorrowAllowed, arguments:['TMP_991', 'TMP_992', 'liquidator', 'borrower', 'repayAmount']  
+EXPRESSION:";
+"BlockID: 1650
+Call context: 
+None
+allowed(uint256) := TMP_993(uint256)
+TMP_994(bool) = allowed != 0
+CONDITION TMP_994
+EXPRESSION:allowed = comptroller.liquidateBorrowAllowed(address(this),address(cTokenCollateral),liquidator,borrower,repayAmount)	NodeType.VARIABLE
+allowed = comptroller.liquidateBorrowAllowed(address(this),address(cTokenCollateral),liquidator,borrower,repayAmount)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" [shape=box];
+"BlockID: 1651
+Call context: 
+True
+REF_816(TokenErrorReporter.Error) -> Error.COMPTROLLER_REJECTION
+REF_817(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_COMPTROLLER_REJECTION
+TMP_995(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_816,REF_817,allowed)
+EXPRESSION:(failOpaque(Error.COMPTROLLER_REJECTION,FailureInfo.LIQUIDATE_COMPTROLLER_REJECTION,allowed),0)	NodeType.EXPRESSION";
+"BlockID: 1653
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1654
+Call context: 
+None
+TMP_996(uint256) = INTERNAL_CALL, CToken.getBlockNumber()()
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.EXPRESSION";
+"BlockID: 1655
+Call context: 
+None
+TMP_997(bool) = accrualBlockNumber != TMP_996
+CONDITION TMP_997
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.IF" [shape=box];
+"BlockID: 1656
+Call context: 
+True
+REF_818(TokenErrorReporter.Error) -> Error.MARKET_NOT_FRESH
+REF_819(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_FRESHNESS_CHECK
+TMP_998(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_818,REF_819)
+EXPRESSION:(fail(Error.MARKET_NOT_FRESH,FailureInfo.LIQUIDATE_FRESHNESS_CHECK),0)	NodeType.EXPRESSION";
+"BlockID: 1658
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1659
+Call context: 
+None
+TMP_999(uint256) = HIGH_LEVEL_CALL, dest:cTokenCollateral(CTokenInterface), function:accrualBlockNumber, arguments:[]  
+EXPRESSION:cTokenCollateral.accrualBlockNumber() != getBlockNumber()	NodeType.EXPRESSION";
+"BlockID: 1660
+Call context: 
+None
+TMP_1000(uint256) = INTERNAL_CALL, CToken.getBlockNumber()()
+EXPRESSION:cTokenCollateral.accrualBlockNumber() != getBlockNumber()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1661
+Call context: 
+None
+TMP_1001(bool) = TMP_999 != TMP_1000
+CONDITION TMP_1001
+EXPRESSION:cTokenCollateral.accrualBlockNumber() != getBlockNumber()	NodeType.IF" [shape=box];
+"BlockID: 1662
+Call context: 
+True
+REF_821(TokenErrorReporter.Error) -> Error.MARKET_NOT_FRESH
+REF_822(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_COLLATERAL_FRESHNESS_CHECK
+TMP_1002(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_821,REF_822)
+EXPRESSION:(fail(Error.MARKET_NOT_FRESH,FailureInfo.LIQUIDATE_COLLATERAL_FRESHNESS_CHECK),0)	NodeType.EXPRESSION";
+"BlockID: 1664
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1665
+Call context: 
+None
+TMP_1003(bool) = borrower == liquidator
+CONDITION TMP_1003
+EXPRESSION:borrower == liquidator	NodeType.IF";
+"BlockID: 1666
+Call context: 
+True
+REF_823(TokenErrorReporter.Error) -> Error.INVALID_ACCOUNT_PAIR
+REF_824(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_LIQUIDATOR_IS_BORROWER
+TMP_1004(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_823,REF_824)
+EXPRESSION:(fail(Error.INVALID_ACCOUNT_PAIR,FailureInfo.LIQUIDATE_LIQUIDATOR_IS_BORROWER),0)	NodeType.EXPRESSION";
+"BlockID: 1668
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1669
+Call context: 
+None
+TMP_1005(bool) = repayAmount == 0
+CONDITION TMP_1005
+EXPRESSION:repayAmount == 0	NodeType.IF";
+"BlockID: 1670
+Call context: 
+True
+REF_825(TokenErrorReporter.Error) -> Error.INVALID_CLOSE_AMOUNT_REQUESTED
+REF_826(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_CLOSE_AMOUNT_IS_ZERO
+TMP_1006(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_825,REF_826)
+EXPRESSION:(fail(Error.INVALID_CLOSE_AMOUNT_REQUESTED,FailureInfo.LIQUIDATE_CLOSE_AMOUNT_IS_ZERO),0)	NodeType.EXPRESSION";
+"BlockID: 1672
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1673
+Call context: 
+None
+TMP_1007(uint256) = 0 - 1
+TMP_1008 = CONVERT TMP_1007 to uint256
+TMP_1009(bool) = repayAmount == TMP_1008
+CONDITION TMP_1009
+EXPRESSION:repayAmount == uint256(- 1)	NodeType.IF";
+"BlockID: 1674
+Call context: 
+True
+REF_827(TokenErrorReporter.Error) -> Error.INVALID_CLOSE_AMOUNT_REQUESTED
+REF_828(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_CLOSE_AMOUNT_IS_UINT_MAX
+TMP_1010(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_827,REF_828)
+EXPRESSION:(fail(Error.INVALID_CLOSE_AMOUNT_REQUESTED,FailureInfo.LIQUIDATE_CLOSE_AMOUNT_IS_UINT_MAX),0)	NodeType.EXPRESSION";
+"BlockID: 1676
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1677
+Call context: 
+None
+NEW VARIABLE repayBorrowError
+NEW VARIABLE actualRepayAmount
+TUPLE_126(uint256,uint256) = INTERNAL_CALL, CToken.repayBorrowFresh(address,address,uint256)(liquidator,borrower,repayAmount)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(repayBorrowError,actualRepayAmount) = repayBorrowFresh(liquidator,borrower,repayAmount)	NodeType.EXPRESSION";
+"BlockID: 1678
+Call context: 
+None
+repayBorrowError(uint256)= UNPACK TUPLE_126 index: 0 
+actualRepayAmount(uint256)= UNPACK TUPLE_126 index: 1 
+REF_829(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1011 = CONVERT REF_829 to uint256
+TMP_1012(bool) = repayBorrowError != TMP_1011
+CONDITION TMP_1012
+EXPRESSION:(repayBorrowError,actualRepayAmount) = repayBorrowFresh(liquidator,borrower,repayAmount)	NodeType.EXPRESSION
+repayBorrowError != uint256(Error.NO_ERROR)	NodeType.IF" [shape=box];
+"BlockID: 1679
+Call context: 
+True
+TMP_1013 = CONVERT repayBorrowError to TokenErrorReporter.Error
+REF_830(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_REPAY_BORROW_FRESH_FAILED
+TMP_1014(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(TMP_1013,REF_830)
+EXPRESSION:(fail(TokenErrorReporter.Error(repayBorrowError),FailureInfo.LIQUIDATE_REPAY_BORROW_FRESH_FAILED),0)	NodeType.EXPRESSION";
+"BlockID: 1681
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1682
+Call context: 
+None
+NEW VARIABLE amountSeizeError
+NEW VARIABLE seizeTokens
+TMP_1015 = CONVERT this to address
+TMP_1016 = CONVERT cTokenCollateral to address
+TUPLE_127(uint256,uint256) = HIGH_LEVEL_CALL, dest:comptroller(ComptrollerInterface), function:liquidateCalculateSeizeTokens, arguments:['TMP_1015', 'TMP_1016', 'actualRepayAmount']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amountSeizeError,seizeTokens) = comptroller.liquidateCalculateSeizeTokens(address(this),address(cTokenCollateral),actualRepayAmount)	NodeType.EXPRESSION";
+"BlockID: 1684
+Call context: 
+True
+TMP_1020(uint256) = HIGH_LEVEL_CALL, dest:cTokenCollateral(CTokenInterface), function:balanceOf, arguments:['borrower']  
+EXPRESSION:require(bool,string)(cTokenCollateral.balanceOf(borrower) >= seizeTokens,LIQUIDATE_SEIZE_TOO_MUCH)	NodeType.EXPRESSION";
+"BlockID: 1686
+Call context: 
+True
+NEW VARIABLE seizeError
+TMP_1023 = CONVERT cTokenCollateral to address
+TMP_1024 = CONVERT this to address
+TMP_1025(bool) = TMP_1023 == TMP_1024
+CONDITION TMP_1025
+EXPRESSION:None	NodeType.VARIABLE
+address(cTokenCollateral) == address(this)	NodeType.IF";
+"BlockID: 1687
+Call context: 
+True
+TMP_1026 = CONVERT this to address
+TMP_1027(uint256) = INTERNAL_CALL, CToken.seizeInternal(address,address,address,uint256)(TMP_1026,liquidator,borrower,seizeTokens)
+EXPRESSION:seizeError = seizeInternal(address(this),liquidator,borrower,seizeTokens)	NodeType.EXPRESSION";
+"BlockID: 1689
+Call context: 
+False
+TMP_1028(uint256) = HIGH_LEVEL_CALL, dest:cTokenCollateral(CTokenInterface), function:seize, arguments:['liquidator', 'borrower', 'seizeTokens']  
+EXPRESSION:seizeError = cTokenCollateral.seize(liquidator,borrower,seizeTokens)	NodeType.EXPRESSION";
+"BlockID: 1690
+Call context: 
+None
+seizeError(uint256) := TMP_1028(uint256)
+EXPRESSION:seizeError = cTokenCollateral.seize(liquidator,borrower,seizeTokens)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1691
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1694
+Call context: 
+None
+REF_836(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1034 = CONVERT REF_836 to uint256
+RETURN TMP_1034,actualRepayAmount
+EXPRESSION:LiquidateBorrow(liquidator,borrower,actualRepayAmount,address(cTokenCollateral),seizeTokens)	NodeType.EXPRESSION
+(uint256(Error.NO_ERROR),actualRepayAmount)	NodeType.RETURN";
+"BlockID: 1688
+Call context: 
+None
+seizeError(uint256) := TMP_1027(uint256)
+EXPRESSION:seizeError = seizeInternal(address(this),liquidator,borrower,seizeTokens)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1680
+Call context: 
+None
+RETURN TMP_1014,0
+EXPRESSION:(fail(TokenErrorReporter.Error(repayBorrowError),FailureInfo.LIQUIDATE_REPAY_BORROW_FRESH_FAILED),0)	NodeType.RETURN" [shape=box];
+"BlockID: 1675
+Call context: 
+None
+RETURN TMP_1010,0
+EXPRESSION:(fail(Error.INVALID_CLOSE_AMOUNT_REQUESTED,FailureInfo.LIQUIDATE_CLOSE_AMOUNT_IS_UINT_MAX),0)	NodeType.RETURN" [shape=box];
+"BlockID: 1671
+Call context: 
+None
+RETURN TMP_1006,0
+EXPRESSION:(fail(Error.INVALID_CLOSE_AMOUNT_REQUESTED,FailureInfo.LIQUIDATE_CLOSE_AMOUNT_IS_ZERO),0)	NodeType.RETURN" [shape=box];
+"BlockID: 1667
+Call context: 
+None
+RETURN TMP_1004,0
+EXPRESSION:(fail(Error.INVALID_ACCOUNT_PAIR,FailureInfo.LIQUIDATE_LIQUIDATOR_IS_BORROWER),0)	NodeType.RETURN" [shape=box];
+"BlockID: 1663
+Call context: 
+None
+RETURN TMP_1002,0
+EXPRESSION:(fail(Error.MARKET_NOT_FRESH,FailureInfo.LIQUIDATE_COLLATERAL_FRESHNESS_CHECK),0)	NodeType.RETURN" [shape=box];
+"BlockID: 1657
+Call context: 
+None
+RETURN TMP_998,0
+EXPRESSION:(fail(Error.MARKET_NOT_FRESH,FailureInfo.LIQUIDATE_FRESHNESS_CHECK),0)	NodeType.RETURN" [shape=box];
+"BlockID: 1652
+Call context: 
+None
+RETURN TMP_995,0
+EXPRESSION:(failOpaque(Error.COMPTROLLER_REJECTION,FailureInfo.LIQUIDATE_COMPTROLLER_REJECTION,allowed),0)	NodeType.RETURN" [shape=box];
+"BlockID: 1695
+Call context: 
+None
+amountSeizeError(uint256)= UNPACK TUPLE_127 index: 0 
+seizeTokens(uint256)= UNPACK TUPLE_127 index: 1 
+REF_832(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1017 = CONVERT REF_832 to uint256
+TMP_1018(bool) = amountSeizeError == TMP_1017
+CONDITION TMP_1018
+EXPRESSION:TMP_1018(bool) = amountSeizeError == TMP_1017	NodeType.IF";
+"BlockID: 1696
+Call context: 
+True
+TMP_1019(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 1697
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1698
+Call context: 
+None
+TMP_1021(bool) = TMP_1020 >= seizeTokens
+CONDITION TMP_1021
+EXPRESSION:TMP_1021(bool) = TMP_1020 >= seizeTokens	NodeType.IF";
+"BlockID: 1699
+Call context: 
+True
+TMP_1022(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 1700
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1701
+Call context: 
+None
+REF_835(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1029 = CONVERT REF_835 to uint256
+TMP_1030(bool) = seizeError == TMP_1029
+CONDITION TMP_1030
+EXPRESSION:TMP_1030(bool) = seizeError == TMP_1029	NodeType.IF";
+"BlockID: 1702
+Call context: 
+True
+TMP_1031(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 1703
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1648
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1649
+Call context: 
+None
+TMP_991 = CONVERT this to address
+TMP_992 = CONVERT cTokenCollateral to address
+TMP_993(uint256) = HIGH_LEVEL_CALL, dest:comptroller(ComptrollerInterface), function:liquidateBorrowAllowed, arguments:['TMP_991', 'TMP_992', 'liquidator', 'borrower', 'repayAmount']  
+EXPRESSION:" [key=0];
+"BlockID: 1649
+Call context: 
+None
+TMP_991 = CONVERT this to address
+TMP_992 = CONVERT cTokenCollateral to address
+TMP_993(uint256) = HIGH_LEVEL_CALL, dest:comptroller(ComptrollerInterface), function:liquidateBorrowAllowed, arguments:['TMP_991', 'TMP_992', 'liquidator', 'borrower', 'repayAmount']  
+EXPRESSION:" -> "BlockID: 1650
+Call context: 
+None
+allowed(uint256) := TMP_993(uint256)
+TMP_994(bool) = allowed != 0
+CONDITION TMP_994
+EXPRESSION:allowed = comptroller.liquidateBorrowAllowed(address(this),address(cTokenCollateral),liquidator,borrower,repayAmount)	NodeType.VARIABLE
+allowed = comptroller.liquidateBorrowAllowed(address(this),address(cTokenCollateral),liquidator,borrower,repayAmount)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" [key=0];
+"BlockID: 1650
+Call context: 
+None
+allowed(uint256) := TMP_993(uint256)
+TMP_994(bool) = allowed != 0
+CONDITION TMP_994
+EXPRESSION:allowed = comptroller.liquidateBorrowAllowed(address(this),address(cTokenCollateral),liquidator,borrower,repayAmount)	NodeType.VARIABLE
+allowed = comptroller.liquidateBorrowAllowed(address(this),address(cTokenCollateral),liquidator,borrower,repayAmount)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" -> "BlockID: 1651
+Call context: 
+True
+REF_816(TokenErrorReporter.Error) -> Error.COMPTROLLER_REJECTION
+REF_817(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_COMPTROLLER_REJECTION
+TMP_995(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_816,REF_817,allowed)
+EXPRESSION:(failOpaque(Error.COMPTROLLER_REJECTION,FailureInfo.LIQUIDATE_COMPTROLLER_REJECTION,allowed),0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1650
+Call context: 
+None
+allowed(uint256) := TMP_993(uint256)
+TMP_994(bool) = allowed != 0
+CONDITION TMP_994
+EXPRESSION:allowed = comptroller.liquidateBorrowAllowed(address(this),address(cTokenCollateral),liquidator,borrower,repayAmount)	NodeType.VARIABLE
+allowed = comptroller.liquidateBorrowAllowed(address(this),address(cTokenCollateral),liquidator,borrower,repayAmount)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" -> "BlockID: 1653
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1651
+Call context: 
+True
+REF_816(TokenErrorReporter.Error) -> Error.COMPTROLLER_REJECTION
+REF_817(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_COMPTROLLER_REJECTION
+TMP_995(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_816,REF_817,allowed)
+EXPRESSION:(failOpaque(Error.COMPTROLLER_REJECTION,FailureInfo.LIQUIDATE_COMPTROLLER_REJECTION,allowed),0)	NodeType.EXPRESSION" -> "BlockID: 1652
+Call context: 
+None
+RETURN TMP_995,0
+EXPRESSION:(failOpaque(Error.COMPTROLLER_REJECTION,FailureInfo.LIQUIDATE_COMPTROLLER_REJECTION,allowed),0)	NodeType.RETURN" [key=0];
+"BlockID: 1653
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1654
+Call context: 
+None
+TMP_996(uint256) = INTERNAL_CALL, CToken.getBlockNumber()()
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1654
+Call context: 
+None
+TMP_996(uint256) = INTERNAL_CALL, CToken.getBlockNumber()()
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.EXPRESSION" -> "BlockID: 1655
+Call context: 
+None
+TMP_997(bool) = accrualBlockNumber != TMP_996
+CONDITION TMP_997
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.IF" [key=0];
+"BlockID: 1655
+Call context: 
+None
+TMP_997(bool) = accrualBlockNumber != TMP_996
+CONDITION TMP_997
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.IF" -> "BlockID: 1656
+Call context: 
+True
+REF_818(TokenErrorReporter.Error) -> Error.MARKET_NOT_FRESH
+REF_819(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_FRESHNESS_CHECK
+TMP_998(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_818,REF_819)
+EXPRESSION:(fail(Error.MARKET_NOT_FRESH,FailureInfo.LIQUIDATE_FRESHNESS_CHECK),0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1655
+Call context: 
+None
+TMP_997(bool) = accrualBlockNumber != TMP_996
+CONDITION TMP_997
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.IF" -> "BlockID: 1658
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1656
+Call context: 
+True
+REF_818(TokenErrorReporter.Error) -> Error.MARKET_NOT_FRESH
+REF_819(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_FRESHNESS_CHECK
+TMP_998(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_818,REF_819)
+EXPRESSION:(fail(Error.MARKET_NOT_FRESH,FailureInfo.LIQUIDATE_FRESHNESS_CHECK),0)	NodeType.EXPRESSION" -> "BlockID: 1657
+Call context: 
+None
+RETURN TMP_998,0
+EXPRESSION:(fail(Error.MARKET_NOT_FRESH,FailureInfo.LIQUIDATE_FRESHNESS_CHECK),0)	NodeType.RETURN" [key=0];
+"BlockID: 1658
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1659
+Call context: 
+None
+TMP_999(uint256) = HIGH_LEVEL_CALL, dest:cTokenCollateral(CTokenInterface), function:accrualBlockNumber, arguments:[]  
+EXPRESSION:cTokenCollateral.accrualBlockNumber() != getBlockNumber()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1659
+Call context: 
+None
+TMP_999(uint256) = HIGH_LEVEL_CALL, dest:cTokenCollateral(CTokenInterface), function:accrualBlockNumber, arguments:[]  
+EXPRESSION:cTokenCollateral.accrualBlockNumber() != getBlockNumber()	NodeType.EXPRESSION" -> "BlockID: 1660
+Call context: 
+None
+TMP_1000(uint256) = INTERNAL_CALL, CToken.getBlockNumber()()
+EXPRESSION:cTokenCollateral.accrualBlockNumber() != getBlockNumber()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1660
+Call context: 
+None
+TMP_1000(uint256) = INTERNAL_CALL, CToken.getBlockNumber()()
+EXPRESSION:cTokenCollateral.accrualBlockNumber() != getBlockNumber()	NodeType.EXPRESSION" -> "BlockID: 1661
+Call context: 
+None
+TMP_1001(bool) = TMP_999 != TMP_1000
+CONDITION TMP_1001
+EXPRESSION:cTokenCollateral.accrualBlockNumber() != getBlockNumber()	NodeType.IF" [key=0];
+"BlockID: 1661
+Call context: 
+None
+TMP_1001(bool) = TMP_999 != TMP_1000
+CONDITION TMP_1001
+EXPRESSION:cTokenCollateral.accrualBlockNumber() != getBlockNumber()	NodeType.IF" -> "BlockID: 1662
+Call context: 
+True
+REF_821(TokenErrorReporter.Error) -> Error.MARKET_NOT_FRESH
+REF_822(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_COLLATERAL_FRESHNESS_CHECK
+TMP_1002(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_821,REF_822)
+EXPRESSION:(fail(Error.MARKET_NOT_FRESH,FailureInfo.LIQUIDATE_COLLATERAL_FRESHNESS_CHECK),0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1661
+Call context: 
+None
+TMP_1001(bool) = TMP_999 != TMP_1000
+CONDITION TMP_1001
+EXPRESSION:cTokenCollateral.accrualBlockNumber() != getBlockNumber()	NodeType.IF" -> "BlockID: 1664
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1662
+Call context: 
+True
+REF_821(TokenErrorReporter.Error) -> Error.MARKET_NOT_FRESH
+REF_822(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_COLLATERAL_FRESHNESS_CHECK
+TMP_1002(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_821,REF_822)
+EXPRESSION:(fail(Error.MARKET_NOT_FRESH,FailureInfo.LIQUIDATE_COLLATERAL_FRESHNESS_CHECK),0)	NodeType.EXPRESSION" -> "BlockID: 1663
+Call context: 
+None
+RETURN TMP_1002,0
+EXPRESSION:(fail(Error.MARKET_NOT_FRESH,FailureInfo.LIQUIDATE_COLLATERAL_FRESHNESS_CHECK),0)	NodeType.RETURN" [key=0];
+"BlockID: 1664
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1665
+Call context: 
+None
+TMP_1003(bool) = borrower == liquidator
+CONDITION TMP_1003
+EXPRESSION:borrower == liquidator	NodeType.IF" [key=0];
+"BlockID: 1665
+Call context: 
+None
+TMP_1003(bool) = borrower == liquidator
+CONDITION TMP_1003
+EXPRESSION:borrower == liquidator	NodeType.IF" -> "BlockID: 1666
+Call context: 
+True
+REF_823(TokenErrorReporter.Error) -> Error.INVALID_ACCOUNT_PAIR
+REF_824(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_LIQUIDATOR_IS_BORROWER
+TMP_1004(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_823,REF_824)
+EXPRESSION:(fail(Error.INVALID_ACCOUNT_PAIR,FailureInfo.LIQUIDATE_LIQUIDATOR_IS_BORROWER),0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1665
+Call context: 
+None
+TMP_1003(bool) = borrower == liquidator
+CONDITION TMP_1003
+EXPRESSION:borrower == liquidator	NodeType.IF" -> "BlockID: 1668
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1666
+Call context: 
+True
+REF_823(TokenErrorReporter.Error) -> Error.INVALID_ACCOUNT_PAIR
+REF_824(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_LIQUIDATOR_IS_BORROWER
+TMP_1004(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_823,REF_824)
+EXPRESSION:(fail(Error.INVALID_ACCOUNT_PAIR,FailureInfo.LIQUIDATE_LIQUIDATOR_IS_BORROWER),0)	NodeType.EXPRESSION" -> "BlockID: 1667
+Call context: 
+None
+RETURN TMP_1004,0
+EXPRESSION:(fail(Error.INVALID_ACCOUNT_PAIR,FailureInfo.LIQUIDATE_LIQUIDATOR_IS_BORROWER),0)	NodeType.RETURN" [key=0];
+"BlockID: 1668
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1669
+Call context: 
+None
+TMP_1005(bool) = repayAmount == 0
+CONDITION TMP_1005
+EXPRESSION:repayAmount == 0	NodeType.IF" [key=0];
+"BlockID: 1669
+Call context: 
+None
+TMP_1005(bool) = repayAmount == 0
+CONDITION TMP_1005
+EXPRESSION:repayAmount == 0	NodeType.IF" -> "BlockID: 1670
+Call context: 
+True
+REF_825(TokenErrorReporter.Error) -> Error.INVALID_CLOSE_AMOUNT_REQUESTED
+REF_826(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_CLOSE_AMOUNT_IS_ZERO
+TMP_1006(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_825,REF_826)
+EXPRESSION:(fail(Error.INVALID_CLOSE_AMOUNT_REQUESTED,FailureInfo.LIQUIDATE_CLOSE_AMOUNT_IS_ZERO),0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1669
+Call context: 
+None
+TMP_1005(bool) = repayAmount == 0
+CONDITION TMP_1005
+EXPRESSION:repayAmount == 0	NodeType.IF" -> "BlockID: 1672
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1670
+Call context: 
+True
+REF_825(TokenErrorReporter.Error) -> Error.INVALID_CLOSE_AMOUNT_REQUESTED
+REF_826(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_CLOSE_AMOUNT_IS_ZERO
+TMP_1006(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_825,REF_826)
+EXPRESSION:(fail(Error.INVALID_CLOSE_AMOUNT_REQUESTED,FailureInfo.LIQUIDATE_CLOSE_AMOUNT_IS_ZERO),0)	NodeType.EXPRESSION" -> "BlockID: 1671
+Call context: 
+None
+RETURN TMP_1006,0
+EXPRESSION:(fail(Error.INVALID_CLOSE_AMOUNT_REQUESTED,FailureInfo.LIQUIDATE_CLOSE_AMOUNT_IS_ZERO),0)	NodeType.RETURN" [key=0];
+"BlockID: 1672
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1673
+Call context: 
+None
+TMP_1007(uint256) = 0 - 1
+TMP_1008 = CONVERT TMP_1007 to uint256
+TMP_1009(bool) = repayAmount == TMP_1008
+CONDITION TMP_1009
+EXPRESSION:repayAmount == uint256(- 1)	NodeType.IF" [key=0];
+"BlockID: 1673
+Call context: 
+None
+TMP_1007(uint256) = 0 - 1
+TMP_1008 = CONVERT TMP_1007 to uint256
+TMP_1009(bool) = repayAmount == TMP_1008
+CONDITION TMP_1009
+EXPRESSION:repayAmount == uint256(- 1)	NodeType.IF" -> "BlockID: 1674
+Call context: 
+True
+REF_827(TokenErrorReporter.Error) -> Error.INVALID_CLOSE_AMOUNT_REQUESTED
+REF_828(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_CLOSE_AMOUNT_IS_UINT_MAX
+TMP_1010(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_827,REF_828)
+EXPRESSION:(fail(Error.INVALID_CLOSE_AMOUNT_REQUESTED,FailureInfo.LIQUIDATE_CLOSE_AMOUNT_IS_UINT_MAX),0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1673
+Call context: 
+None
+TMP_1007(uint256) = 0 - 1
+TMP_1008 = CONVERT TMP_1007 to uint256
+TMP_1009(bool) = repayAmount == TMP_1008
+CONDITION TMP_1009
+EXPRESSION:repayAmount == uint256(- 1)	NodeType.IF" -> "BlockID: 1676
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1674
+Call context: 
+True
+REF_827(TokenErrorReporter.Error) -> Error.INVALID_CLOSE_AMOUNT_REQUESTED
+REF_828(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_CLOSE_AMOUNT_IS_UINT_MAX
+TMP_1010(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_827,REF_828)
+EXPRESSION:(fail(Error.INVALID_CLOSE_AMOUNT_REQUESTED,FailureInfo.LIQUIDATE_CLOSE_AMOUNT_IS_UINT_MAX),0)	NodeType.EXPRESSION" -> "BlockID: 1675
+Call context: 
+None
+RETURN TMP_1010,0
+EXPRESSION:(fail(Error.INVALID_CLOSE_AMOUNT_REQUESTED,FailureInfo.LIQUIDATE_CLOSE_AMOUNT_IS_UINT_MAX),0)	NodeType.RETURN" [key=0];
+"BlockID: 1676
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1677
+Call context: 
+None
+NEW VARIABLE repayBorrowError
+NEW VARIABLE actualRepayAmount
+TUPLE_126(uint256,uint256) = INTERNAL_CALL, CToken.repayBorrowFresh(address,address,uint256)(liquidator,borrower,repayAmount)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(repayBorrowError,actualRepayAmount) = repayBorrowFresh(liquidator,borrower,repayAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1677
+Call context: 
+None
+NEW VARIABLE repayBorrowError
+NEW VARIABLE actualRepayAmount
+TUPLE_126(uint256,uint256) = INTERNAL_CALL, CToken.repayBorrowFresh(address,address,uint256)(liquidator,borrower,repayAmount)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(repayBorrowError,actualRepayAmount) = repayBorrowFresh(liquidator,borrower,repayAmount)	NodeType.EXPRESSION" -> "BlockID: 1678
+Call context: 
+None
+repayBorrowError(uint256)= UNPACK TUPLE_126 index: 0 
+actualRepayAmount(uint256)= UNPACK TUPLE_126 index: 1 
+REF_829(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1011 = CONVERT REF_829 to uint256
+TMP_1012(bool) = repayBorrowError != TMP_1011
+CONDITION TMP_1012
+EXPRESSION:(repayBorrowError,actualRepayAmount) = repayBorrowFresh(liquidator,borrower,repayAmount)	NodeType.EXPRESSION
+repayBorrowError != uint256(Error.NO_ERROR)	NodeType.IF" [key=0];
+"BlockID: 1678
+Call context: 
+None
+repayBorrowError(uint256)= UNPACK TUPLE_126 index: 0 
+actualRepayAmount(uint256)= UNPACK TUPLE_126 index: 1 
+REF_829(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1011 = CONVERT REF_829 to uint256
+TMP_1012(bool) = repayBorrowError != TMP_1011
+CONDITION TMP_1012
+EXPRESSION:(repayBorrowError,actualRepayAmount) = repayBorrowFresh(liquidator,borrower,repayAmount)	NodeType.EXPRESSION
+repayBorrowError != uint256(Error.NO_ERROR)	NodeType.IF" -> "BlockID: 1679
+Call context: 
+True
+TMP_1013 = CONVERT repayBorrowError to TokenErrorReporter.Error
+REF_830(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_REPAY_BORROW_FRESH_FAILED
+TMP_1014(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(TMP_1013,REF_830)
+EXPRESSION:(fail(TokenErrorReporter.Error(repayBorrowError),FailureInfo.LIQUIDATE_REPAY_BORROW_FRESH_FAILED),0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1678
+Call context: 
+None
+repayBorrowError(uint256)= UNPACK TUPLE_126 index: 0 
+actualRepayAmount(uint256)= UNPACK TUPLE_126 index: 1 
+REF_829(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1011 = CONVERT REF_829 to uint256
+TMP_1012(bool) = repayBorrowError != TMP_1011
+CONDITION TMP_1012
+EXPRESSION:(repayBorrowError,actualRepayAmount) = repayBorrowFresh(liquidator,borrower,repayAmount)	NodeType.EXPRESSION
+repayBorrowError != uint256(Error.NO_ERROR)	NodeType.IF" -> "BlockID: 1681
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1679
+Call context: 
+True
+TMP_1013 = CONVERT repayBorrowError to TokenErrorReporter.Error
+REF_830(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_REPAY_BORROW_FRESH_FAILED
+TMP_1014(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(TMP_1013,REF_830)
+EXPRESSION:(fail(TokenErrorReporter.Error(repayBorrowError),FailureInfo.LIQUIDATE_REPAY_BORROW_FRESH_FAILED),0)	NodeType.EXPRESSION" -> "BlockID: 1680
+Call context: 
+None
+RETURN TMP_1014,0
+EXPRESSION:(fail(TokenErrorReporter.Error(repayBorrowError),FailureInfo.LIQUIDATE_REPAY_BORROW_FRESH_FAILED),0)	NodeType.RETURN" [key=0];
+"BlockID: 1681
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1682
+Call context: 
+None
+NEW VARIABLE amountSeizeError
+NEW VARIABLE seizeTokens
+TMP_1015 = CONVERT this to address
+TMP_1016 = CONVERT cTokenCollateral to address
+TUPLE_127(uint256,uint256) = HIGH_LEVEL_CALL, dest:comptroller(ComptrollerInterface), function:liquidateCalculateSeizeTokens, arguments:['TMP_1015', 'TMP_1016', 'actualRepayAmount']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amountSeizeError,seizeTokens) = comptroller.liquidateCalculateSeizeTokens(address(this),address(cTokenCollateral),actualRepayAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1682
+Call context: 
+None
+NEW VARIABLE amountSeizeError
+NEW VARIABLE seizeTokens
+TMP_1015 = CONVERT this to address
+TMP_1016 = CONVERT cTokenCollateral to address
+TUPLE_127(uint256,uint256) = HIGH_LEVEL_CALL, dest:comptroller(ComptrollerInterface), function:liquidateCalculateSeizeTokens, arguments:['TMP_1015', 'TMP_1016', 'actualRepayAmount']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amountSeizeError,seizeTokens) = comptroller.liquidateCalculateSeizeTokens(address(this),address(cTokenCollateral),actualRepayAmount)	NodeType.EXPRESSION" -> "BlockID: 1695
+Call context: 
+None
+amountSeizeError(uint256)= UNPACK TUPLE_127 index: 0 
+seizeTokens(uint256)= UNPACK TUPLE_127 index: 1 
+REF_832(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1017 = CONVERT REF_832 to uint256
+TMP_1018(bool) = amountSeizeError == TMP_1017
+CONDITION TMP_1018
+EXPRESSION:TMP_1018(bool) = amountSeizeError == TMP_1017	NodeType.IF" [key=0];
+"BlockID: 1684
+Call context: 
+True
+TMP_1020(uint256) = HIGH_LEVEL_CALL, dest:cTokenCollateral(CTokenInterface), function:balanceOf, arguments:['borrower']  
+EXPRESSION:require(bool,string)(cTokenCollateral.balanceOf(borrower) >= seizeTokens,LIQUIDATE_SEIZE_TOO_MUCH)	NodeType.EXPRESSION" -> "BlockID: 1698
+Call context: 
+None
+TMP_1021(bool) = TMP_1020 >= seizeTokens
+CONDITION TMP_1021
+EXPRESSION:TMP_1021(bool) = TMP_1020 >= seizeTokens	NodeType.IF" [key=0];
+"BlockID: 1686
+Call context: 
+True
+NEW VARIABLE seizeError
+TMP_1023 = CONVERT cTokenCollateral to address
+TMP_1024 = CONVERT this to address
+TMP_1025(bool) = TMP_1023 == TMP_1024
+CONDITION TMP_1025
+EXPRESSION:None	NodeType.VARIABLE
+address(cTokenCollateral) == address(this)	NodeType.IF" -> "BlockID: 1687
+Call context: 
+True
+TMP_1026 = CONVERT this to address
+TMP_1027(uint256) = INTERNAL_CALL, CToken.seizeInternal(address,address,address,uint256)(TMP_1026,liquidator,borrower,seizeTokens)
+EXPRESSION:seizeError = seizeInternal(address(this),liquidator,borrower,seizeTokens)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1686
+Call context: 
+True
+NEW VARIABLE seizeError
+TMP_1023 = CONVERT cTokenCollateral to address
+TMP_1024 = CONVERT this to address
+TMP_1025(bool) = TMP_1023 == TMP_1024
+CONDITION TMP_1025
+EXPRESSION:None	NodeType.VARIABLE
+address(cTokenCollateral) == address(this)	NodeType.IF" -> "BlockID: 1689
+Call context: 
+False
+TMP_1028(uint256) = HIGH_LEVEL_CALL, dest:cTokenCollateral(CTokenInterface), function:seize, arguments:['liquidator', 'borrower', 'seizeTokens']  
+EXPRESSION:seizeError = cTokenCollateral.seize(liquidator,borrower,seizeTokens)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1687
+Call context: 
+True
+TMP_1026 = CONVERT this to address
+TMP_1027(uint256) = INTERNAL_CALL, CToken.seizeInternal(address,address,address,uint256)(TMP_1026,liquidator,borrower,seizeTokens)
+EXPRESSION:seizeError = seizeInternal(address(this),liquidator,borrower,seizeTokens)	NodeType.EXPRESSION" -> "BlockID: 1688
+Call context: 
+None
+seizeError(uint256) := TMP_1027(uint256)
+EXPRESSION:seizeError = seizeInternal(address(this),liquidator,borrower,seizeTokens)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1689
+Call context: 
+False
+TMP_1028(uint256) = HIGH_LEVEL_CALL, dest:cTokenCollateral(CTokenInterface), function:seize, arguments:['liquidator', 'borrower', 'seizeTokens']  
+EXPRESSION:seizeError = cTokenCollateral.seize(liquidator,borrower,seizeTokens)	NodeType.EXPRESSION" -> "BlockID: 1690
+Call context: 
+None
+seizeError(uint256) := TMP_1028(uint256)
+EXPRESSION:seizeError = cTokenCollateral.seize(liquidator,borrower,seizeTokens)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1690
+Call context: 
+None
+seizeError(uint256) := TMP_1028(uint256)
+EXPRESSION:seizeError = cTokenCollateral.seize(liquidator,borrower,seizeTokens)	NodeType.EXPRESSION" -> "BlockID: 1691
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1691
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1701
+Call context: 
+None
+REF_835(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1029 = CONVERT REF_835 to uint256
+TMP_1030(bool) = seizeError == TMP_1029
+CONDITION TMP_1030
+EXPRESSION:TMP_1030(bool) = seizeError == TMP_1029	NodeType.IF" [key=0];
+"BlockID: 1688
+Call context: 
+None
+seizeError(uint256) := TMP_1027(uint256)
+EXPRESSION:seizeError = seizeInternal(address(this),liquidator,borrower,seizeTokens)	NodeType.EXPRESSION" -> "BlockID: 1691
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1695
+Call context: 
+None
+amountSeizeError(uint256)= UNPACK TUPLE_127 index: 0 
+seizeTokens(uint256)= UNPACK TUPLE_127 index: 1 
+REF_832(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1017 = CONVERT REF_832 to uint256
+TMP_1018(bool) = amountSeizeError == TMP_1017
+CONDITION TMP_1018
+EXPRESSION:TMP_1018(bool) = amountSeizeError == TMP_1017	NodeType.IF" -> "BlockID: 1696
+Call context: 
+True
+TMP_1019(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1695
+Call context: 
+None
+amountSeizeError(uint256)= UNPACK TUPLE_127 index: 0 
+seizeTokens(uint256)= UNPACK TUPLE_127 index: 1 
+REF_832(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1017 = CONVERT REF_832 to uint256
+TMP_1018(bool) = amountSeizeError == TMP_1017
+CONDITION TMP_1018
+EXPRESSION:TMP_1018(bool) = amountSeizeError == TMP_1017	NodeType.IF" -> "BlockID: 1697
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1697
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1684
+Call context: 
+True
+TMP_1020(uint256) = HIGH_LEVEL_CALL, dest:cTokenCollateral(CTokenInterface), function:balanceOf, arguments:['borrower']  
+EXPRESSION:require(bool,string)(cTokenCollateral.balanceOf(borrower) >= seizeTokens,LIQUIDATE_SEIZE_TOO_MUCH)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1698
+Call context: 
+None
+TMP_1021(bool) = TMP_1020 >= seizeTokens
+CONDITION TMP_1021
+EXPRESSION:TMP_1021(bool) = TMP_1020 >= seizeTokens	NodeType.IF" -> "BlockID: 1699
+Call context: 
+True
+TMP_1022(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1698
+Call context: 
+None
+TMP_1021(bool) = TMP_1020 >= seizeTokens
+CONDITION TMP_1021
+EXPRESSION:TMP_1021(bool) = TMP_1020 >= seizeTokens	NodeType.IF" -> "BlockID: 1700
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1700
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1686
+Call context: 
+True
+NEW VARIABLE seizeError
+TMP_1023 = CONVERT cTokenCollateral to address
+TMP_1024 = CONVERT this to address
+TMP_1025(bool) = TMP_1023 == TMP_1024
+CONDITION TMP_1025
+EXPRESSION:None	NodeType.VARIABLE
+address(cTokenCollateral) == address(this)	NodeType.IF" [key=0];
+"BlockID: 1701
+Call context: 
+None
+REF_835(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1029 = CONVERT REF_835 to uint256
+TMP_1030(bool) = seizeError == TMP_1029
+CONDITION TMP_1030
+EXPRESSION:TMP_1030(bool) = seizeError == TMP_1029	NodeType.IF" -> "BlockID: 1702
+Call context: 
+True
+TMP_1031(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1701
+Call context: 
+None
+REF_835(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1029 = CONVERT REF_835 to uint256
+TMP_1030(bool) = seizeError == TMP_1029
+CONDITION TMP_1030
+EXPRESSION:TMP_1030(bool) = seizeError == TMP_1029	NodeType.IF" -> "BlockID: 1703
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1703
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1694
+Call context: 
+None
+REF_836(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1034 = CONVERT REF_836 to uint256
+RETURN TMP_1034,actualRepayAmount
+EXPRESSION:LiquidateBorrow(liquidator,borrower,actualRepayAmount,address(cTokenCollateral),seizeTokens)	NodeType.EXPRESSION
+(uint256(Error.NO_ERROR),actualRepayAmount)	NodeType.RETURN" [key=0];
+}

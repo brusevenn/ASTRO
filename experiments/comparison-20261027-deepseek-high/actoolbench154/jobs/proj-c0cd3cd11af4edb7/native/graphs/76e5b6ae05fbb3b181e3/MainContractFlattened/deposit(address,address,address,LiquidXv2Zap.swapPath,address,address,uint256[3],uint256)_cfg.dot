@@ -1,0 +1,697 @@
+digraph {
+"BlockID: 130
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 131
+Call context: 
+None
+TMP_66 = CONVERT factory to ILiquidXv2Factory
+TMP_67(address) = HIGH_LEVEL_CALL, dest:TMP_66(ILiquidXv2Factory), function:getPair, arguments:['token0', 'token1']  
+EXPRESSION:";
+"BlockID: 133
+Call context: 
+True
+NEW VARIABLE lvar
+REF_33(uint256) -> lvar[3]
+REF_33(uint256) (->lvar) := msg.value(uint256)
+inToken(address) := token(address)
+TMP_71 = CONVERT 0 to address
+TMP_72(bool) = token != TMP_71
+CONDITION TMP_72
+EXPRESSION:None	NodeType.VARIABLE
+lvar[3] = msg.value	NodeType.EXPRESSION
+inToken = token	NodeType.VARIABLE
+inToken = token	NodeType.EXPRESSION
+token != address(0)	NodeType.IF";
+"BlockID: 134
+Call context: 
+True
+REF_34(uint256) -> lvar[3]
+TMP_73 = CONVERT token to IERC20
+TMP_74 = CONVERT this to address
+TMP_75(uint256) = HIGH_LEVEL_CALL, dest:TMP_73(IERC20), function:balanceOf, arguments:['TMP_74']  
+EXPRESSION:lvar[3] = IERC20(token).balanceOf(address(this))	NodeType.EXPRESSION";
+"BlockID: 136
+Call context: 
+False
+inToken(address) := wrappedETH(address)
+TMP_83 = CONVERT wrappedETH to IWETH
+REF_42(uint256) -> lvar[3]
+HIGH_LEVEL_CALL, dest:TMP_83(IWETH), function:deposit, arguments:[] value:REF_42 
+EXPRESSION:inToken = wrappedETH	NodeType.EXPRESSION
+IWETH(wrappedETH).deposit{value: lvar[3]}()	NodeType.EXPRESSION";
+"BlockID: 138
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 139
+Call context: 
+None
+REF_43(ISwapPlusv1.swapBlock[]) -> path.path
+REF_44 -> LENGTH REF_43
+TMP_85(bool) = REF_44 > 0
+CONDITION TMP_85
+EXPRESSION:path.path.length > 0	NodeType.IF";
+"BlockID: 140
+Call context: 
+True
+REF_45(uint256) -> lvar[3]
+INTERNAL_CALL, LiquidXv2Zap._approveTokenIfNeeded(address,address,uint256)(inToken,swapPlus,REF_45)
+EXPRESSION:_approveTokenIfNeeded(inToken,swapPlus,lvar[3])	NodeType.EXPRESSION";
+"BlockID: 142
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 143
+Call context: 
+None
+REF_50(uint256) -> lvar[4]
+REF_51(uint256) -> lvar[5]
+REF_52(uint256) -> lvar[3]
+TUPLE_5(uint256,uint256) = INTERNAL_CALL, LiquidXv2Zap._depositSwap(address,address,address,uint256)(token0,token1,inToken,REF_52)
+EXPRESSION:(lvar[4],lvar[5]) = _depositSwap(token0,token1,inToken,lvar[3])	NodeType.EXPRESSION";
+"BlockID: 144
+Call context: 
+None
+REF_50(uint256)= UNPACK TUPLE_5 index: 0 
+REF_51(uint256)= UNPACK TUPLE_5 index: 1 
+REF_53(uint256) -> lvar[0]
+REF_54(uint256) -> lvar[1]
+REF_55(uint256) -> lvar[2]
+TMP_89 = CONVERT router to ILiquidXv2Router01
+REF_57(uint256) -> lvar[4]
+REF_58(uint256) -> lvar[5]
+REF_59(uint256) -> amount[1]
+REF_60(uint256) -> amount[2]
+TMP_90 = CONVERT this to address
+TUPLE_6(uint256,uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_89(ILiquidXv2Router01), function:addLiquidity, arguments:['token0', 'token1', 'REF_57', 'REF_58', 'REF_59', 'REF_60', 'TMP_90', 'block.timestamp']  
+EXPRESSION:(lvar[4],lvar[5]) = _depositSwap(token0,token1,inToken,lvar[3])	NodeType.EXPRESSION
+(lvar[0],lvar[1],lvar[2]) = ILiquidXv2Router01(router).addLiquidity(token0,token1,lvar[4],lvar[5],amount[1],amount[2],address(this),block.timestamp)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 145
+Call context: 
+None
+REF_53(uint256)= UNPACK TUPLE_6 index: 0 
+REF_54(uint256)= UNPACK TUPLE_6 index: 1 
+REF_55(uint256)= UNPACK TUPLE_6 index: 2 
+REF_61(uint256) -> lvar[4]
+REF_62(uint256) -> lvar[0]
+TMP_91(uint256) = REF_61 (c)- REF_62
+REF_63(uint256) -> lvar[5]
+REF_64(uint256) -> lvar[1]
+TMP_92(uint256) = REF_63 (c)- REF_64
+INTERNAL_CALL, LiquidXv2Zap._refundReserveToken(address,address,address,uint256,uint256)(account,token0,token1,TMP_91,TMP_92)
+EXPRESSION:(lvar[0],lvar[1],lvar[2]) = ILiquidXv2Router01(router).addLiquidity(token0,token1,lvar[4],lvar[5],amount[1],amount[2],address(this),block.timestamp)	NodeType.EXPRESSION
+_refundReserveToken(account,token0,token1,lvar[4] - lvar[0],lvar[5] - lvar[1])	NodeType.EXPRESSION" [shape=box];
+"BlockID: 146
+Call context: 
+None
+TMP_94(bool) = basketId == 0
+CONDITION TMP_94
+EXPRESSION:_refundReserveToken(account,token0,token1,lvar[4] - lvar[0],lvar[5] - lvar[1])	NodeType.EXPRESSION
+basketId == 0	NodeType.IF";
+"BlockID: 147
+Call context: 
+True
+TMP_95 = CONVERT pair to IERC20
+REF_66(uint256) -> lvar[2]
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['TMP_95', 'account', 'REF_66'] 
+EXPRESSION:IERC20(pair).safeTransfer(account,lvar[2])	NodeType.EXPRESSION";
+"BlockID: 149
+Call context: 
+False
+REF_67(uint256) -> lvar[2]
+INTERNAL_CALL, LiquidXv2Zap._addBalance(address,address,uint256,uint256)(account,pair,basketId,REF_67)
+EXPRESSION:_addBalance(account,pair,basketId,lvar[2])	NodeType.EXPRESSION";
+"BlockID: 151
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 152
+Call context: 
+None
+TMP_98 = CONVERT 0 to address
+TMP_99(bool) = rewarder != TMP_98
+TMP_100 = CONVERT rewarder to IRewarderv2
+TMP_101(uint256) = HIGH_LEVEL_CALL, dest:TMP_100(IRewarderv2), function:getReward, arguments:['account', 'pair']  
+EXPRESSION:rewarder != address(0) && IRewarderv2(rewarder).getReward(account,pair) > 0	NodeType.EXPRESSION";
+"BlockID: 153
+Call context: 
+None
+TMP_102(bool) = TMP_101 > 0
+TMP_103(bool) = TMP_99 && TMP_102
+CONDITION TMP_103
+EXPRESSION:rewarder != address(0) && IRewarderv2(rewarder).getReward(account,pair) > 0	NodeType.IF" [shape=box];
+"BlockID: 154
+Call context: 
+True
+TMP_104 = CONVERT rewarder to IRewarderv2
+HIGH_LEVEL_CALL, dest:TMP_104(IRewarderv2), function:claim, arguments:['account', 'pair']  
+EXPRESSION:IRewarderv2(rewarder).claim(account,pair)	NodeType.EXPRESSION";
+"BlockID: 156
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 157
+Call context: 
+None
+REF_71(uint256) -> lvar[2]
+RETURN REF_71
+EXPRESSION:lvar[2]	NodeType.RETURN";
+"BlockID: 141
+Call context: 
+None
+REF_46(uint256) -> lvar[3]
+TMP_87 = CONVERT swapPlus to ISwapPlusv1
+REF_48(uint256) -> lvar[3]
+TMP_88 = CONVERT this to address
+REF_49(ISwapPlusv1.swapBlock[]) -> path.path
+TUPLE_4(uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_87(ISwapPlusv1), function:swap, arguments:['inToken', 'REF_48', 'tokenM', 'TMP_88', 'REF_49']  
+EXPRESSION:_approveTokenIfNeeded(inToken,swapPlus,lvar[3])	NodeType.EXPRESSION
+(None,lvar[3]) = ISwapPlusv1(swapPlus).swap(inToken,lvar[3],tokenM,address(this),path.path)	NodeType.EXPRESSION";
+"BlockID: 158
+Call context: 
+None
+REF_46(uint256)= UNPACK TUPLE_4 index: 1 
+inToken(address) := tokenM(address)
+EXPRESSION:(None,lvar[3]) = ISwapPlusv1(swapPlus).swap(inToken,lvar[3],tokenM,address(this),path.path)	NodeType.EXPRESSION
+inToken = tokenM	NodeType.EXPRESSION" [shape=box];
+"BlockID: 135
+Call context: 
+None
+REF_34(uint256) (->lvar) := TMP_75(uint256)
+TMP_76 = CONVERT token to IERC20
+TMP_77 = CONVERT this to address
+REF_37(uint256) -> amount[0]
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransferFrom(IERC20,address,address,uint256), arguments:['TMP_76', 'account', 'TMP_77', 'REF_37'] 
+EXPRESSION:lvar[3] = IERC20(token).balanceOf(address(this))	NodeType.EXPRESSION
+IERC20(token).safeTransferFrom(account,address(this),amount[0])	NodeType.EXPRESSION" [shape=box];
+"BlockID: 159
+Call context: 
+None
+REF_38(uint256) -> lvar[3]
+TMP_79 = CONVERT token to IERC20
+TMP_80 = CONVERT this to address
+TMP_81(uint256) = HIGH_LEVEL_CALL, dest:TMP_79(IERC20), function:balanceOf, arguments:['TMP_80']  
+EXPRESSION:IERC20(token).safeTransferFrom(account,address(this),amount[0])	NodeType.EXPRESSION
+lvar[3] = IERC20(token).balanceOf(address(this)) - lvar[3]	NodeType.EXPRESSION";
+"BlockID: 160
+Call context: 
+None
+REF_40(uint256) -> lvar[3]
+TMP_82(uint256) = TMP_81 (c)- REF_40
+REF_38(uint256) (->lvar) := TMP_82(uint256)
+EXPRESSION:lvar[3] = IERC20(token).balanceOf(address(this)) - lvar[3]	NodeType.EXPRESSION" [shape=box];
+"BlockID: 161
+Call context: 
+None
+pair(address) := TMP_67(address)
+TMP_68 = CONVERT 0 to address
+TMP_69(bool) = pair != TMP_68
+CONDITION TMP_69
+EXPRESSION:TMP_69(bool) = pair != TMP_68	NodeType.IF";
+"BlockID: 162
+Call context: 
+True
+TMP_70(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 163
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 130
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 131
+Call context: 
+None
+TMP_66 = CONVERT factory to ILiquidXv2Factory
+TMP_67(address) = HIGH_LEVEL_CALL, dest:TMP_66(ILiquidXv2Factory), function:getPair, arguments:['token0', 'token1']  
+EXPRESSION:" [key=0];
+"BlockID: 131
+Call context: 
+None
+TMP_66 = CONVERT factory to ILiquidXv2Factory
+TMP_67(address) = HIGH_LEVEL_CALL, dest:TMP_66(ILiquidXv2Factory), function:getPair, arguments:['token0', 'token1']  
+EXPRESSION:" -> "BlockID: 161
+Call context: 
+None
+pair(address) := TMP_67(address)
+TMP_68 = CONVERT 0 to address
+TMP_69(bool) = pair != TMP_68
+CONDITION TMP_69
+EXPRESSION:TMP_69(bool) = pair != TMP_68	NodeType.IF" [key=0];
+"BlockID: 133
+Call context: 
+True
+NEW VARIABLE lvar
+REF_33(uint256) -> lvar[3]
+REF_33(uint256) (->lvar) := msg.value(uint256)
+inToken(address) := token(address)
+TMP_71 = CONVERT 0 to address
+TMP_72(bool) = token != TMP_71
+CONDITION TMP_72
+EXPRESSION:None	NodeType.VARIABLE
+lvar[3] = msg.value	NodeType.EXPRESSION
+inToken = token	NodeType.VARIABLE
+inToken = token	NodeType.EXPRESSION
+token != address(0)	NodeType.IF" -> "BlockID: 134
+Call context: 
+True
+REF_34(uint256) -> lvar[3]
+TMP_73 = CONVERT token to IERC20
+TMP_74 = CONVERT this to address
+TMP_75(uint256) = HIGH_LEVEL_CALL, dest:TMP_73(IERC20), function:balanceOf, arguments:['TMP_74']  
+EXPRESSION:lvar[3] = IERC20(token).balanceOf(address(this))	NodeType.EXPRESSION" [key=0];
+"BlockID: 133
+Call context: 
+True
+NEW VARIABLE lvar
+REF_33(uint256) -> lvar[3]
+REF_33(uint256) (->lvar) := msg.value(uint256)
+inToken(address) := token(address)
+TMP_71 = CONVERT 0 to address
+TMP_72(bool) = token != TMP_71
+CONDITION TMP_72
+EXPRESSION:None	NodeType.VARIABLE
+lvar[3] = msg.value	NodeType.EXPRESSION
+inToken = token	NodeType.VARIABLE
+inToken = token	NodeType.EXPRESSION
+token != address(0)	NodeType.IF" -> "BlockID: 136
+Call context: 
+False
+inToken(address) := wrappedETH(address)
+TMP_83 = CONVERT wrappedETH to IWETH
+REF_42(uint256) -> lvar[3]
+HIGH_LEVEL_CALL, dest:TMP_83(IWETH), function:deposit, arguments:[] value:REF_42 
+EXPRESSION:inToken = wrappedETH	NodeType.EXPRESSION
+IWETH(wrappedETH).deposit{value: lvar[3]}()	NodeType.EXPRESSION" [key=0];
+"BlockID: 134
+Call context: 
+True
+REF_34(uint256) -> lvar[3]
+TMP_73 = CONVERT token to IERC20
+TMP_74 = CONVERT this to address
+TMP_75(uint256) = HIGH_LEVEL_CALL, dest:TMP_73(IERC20), function:balanceOf, arguments:['TMP_74']  
+EXPRESSION:lvar[3] = IERC20(token).balanceOf(address(this))	NodeType.EXPRESSION" -> "BlockID: 135
+Call context: 
+None
+REF_34(uint256) (->lvar) := TMP_75(uint256)
+TMP_76 = CONVERT token to IERC20
+TMP_77 = CONVERT this to address
+REF_37(uint256) -> amount[0]
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransferFrom(IERC20,address,address,uint256), arguments:['TMP_76', 'account', 'TMP_77', 'REF_37'] 
+EXPRESSION:lvar[3] = IERC20(token).balanceOf(address(this))	NodeType.EXPRESSION
+IERC20(token).safeTransferFrom(account,address(this),amount[0])	NodeType.EXPRESSION" [key=0];
+"BlockID: 136
+Call context: 
+False
+inToken(address) := wrappedETH(address)
+TMP_83 = CONVERT wrappedETH to IWETH
+REF_42(uint256) -> lvar[3]
+HIGH_LEVEL_CALL, dest:TMP_83(IWETH), function:deposit, arguments:[] value:REF_42 
+EXPRESSION:inToken = wrappedETH	NodeType.EXPRESSION
+IWETH(wrappedETH).deposit{value: lvar[3]}()	NodeType.EXPRESSION" -> "BlockID: 138
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 138
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 139
+Call context: 
+None
+REF_43(ISwapPlusv1.swapBlock[]) -> path.path
+REF_44 -> LENGTH REF_43
+TMP_85(bool) = REF_44 > 0
+CONDITION TMP_85
+EXPRESSION:path.path.length > 0	NodeType.IF" [key=0];
+"BlockID: 139
+Call context: 
+None
+REF_43(ISwapPlusv1.swapBlock[]) -> path.path
+REF_44 -> LENGTH REF_43
+TMP_85(bool) = REF_44 > 0
+CONDITION TMP_85
+EXPRESSION:path.path.length > 0	NodeType.IF" -> "BlockID: 140
+Call context: 
+True
+REF_45(uint256) -> lvar[3]
+INTERNAL_CALL, LiquidXv2Zap._approveTokenIfNeeded(address,address,uint256)(inToken,swapPlus,REF_45)
+EXPRESSION:_approveTokenIfNeeded(inToken,swapPlus,lvar[3])	NodeType.EXPRESSION" [key=0];
+"BlockID: 139
+Call context: 
+None
+REF_43(ISwapPlusv1.swapBlock[]) -> path.path
+REF_44 -> LENGTH REF_43
+TMP_85(bool) = REF_44 > 0
+CONDITION TMP_85
+EXPRESSION:path.path.length > 0	NodeType.IF" -> "BlockID: 142
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 140
+Call context: 
+True
+REF_45(uint256) -> lvar[3]
+INTERNAL_CALL, LiquidXv2Zap._approveTokenIfNeeded(address,address,uint256)(inToken,swapPlus,REF_45)
+EXPRESSION:_approveTokenIfNeeded(inToken,swapPlus,lvar[3])	NodeType.EXPRESSION" -> "BlockID: 141
+Call context: 
+None
+REF_46(uint256) -> lvar[3]
+TMP_87 = CONVERT swapPlus to ISwapPlusv1
+REF_48(uint256) -> lvar[3]
+TMP_88 = CONVERT this to address
+REF_49(ISwapPlusv1.swapBlock[]) -> path.path
+TUPLE_4(uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_87(ISwapPlusv1), function:swap, arguments:['inToken', 'REF_48', 'tokenM', 'TMP_88', 'REF_49']  
+EXPRESSION:_approveTokenIfNeeded(inToken,swapPlus,lvar[3])	NodeType.EXPRESSION
+(None,lvar[3]) = ISwapPlusv1(swapPlus).swap(inToken,lvar[3],tokenM,address(this),path.path)	NodeType.EXPRESSION" [key=0];
+"BlockID: 142
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 143
+Call context: 
+None
+REF_50(uint256) -> lvar[4]
+REF_51(uint256) -> lvar[5]
+REF_52(uint256) -> lvar[3]
+TUPLE_5(uint256,uint256) = INTERNAL_CALL, LiquidXv2Zap._depositSwap(address,address,address,uint256)(token0,token1,inToken,REF_52)
+EXPRESSION:(lvar[4],lvar[5]) = _depositSwap(token0,token1,inToken,lvar[3])	NodeType.EXPRESSION" [key=0];
+"BlockID: 143
+Call context: 
+None
+REF_50(uint256) -> lvar[4]
+REF_51(uint256) -> lvar[5]
+REF_52(uint256) -> lvar[3]
+TUPLE_5(uint256,uint256) = INTERNAL_CALL, LiquidXv2Zap._depositSwap(address,address,address,uint256)(token0,token1,inToken,REF_52)
+EXPRESSION:(lvar[4],lvar[5]) = _depositSwap(token0,token1,inToken,lvar[3])	NodeType.EXPRESSION" -> "BlockID: 144
+Call context: 
+None
+REF_50(uint256)= UNPACK TUPLE_5 index: 0 
+REF_51(uint256)= UNPACK TUPLE_5 index: 1 
+REF_53(uint256) -> lvar[0]
+REF_54(uint256) -> lvar[1]
+REF_55(uint256) -> lvar[2]
+TMP_89 = CONVERT router to ILiquidXv2Router01
+REF_57(uint256) -> lvar[4]
+REF_58(uint256) -> lvar[5]
+REF_59(uint256) -> amount[1]
+REF_60(uint256) -> amount[2]
+TMP_90 = CONVERT this to address
+TUPLE_6(uint256,uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_89(ILiquidXv2Router01), function:addLiquidity, arguments:['token0', 'token1', 'REF_57', 'REF_58', 'REF_59', 'REF_60', 'TMP_90', 'block.timestamp']  
+EXPRESSION:(lvar[4],lvar[5]) = _depositSwap(token0,token1,inToken,lvar[3])	NodeType.EXPRESSION
+(lvar[0],lvar[1],lvar[2]) = ILiquidXv2Router01(router).addLiquidity(token0,token1,lvar[4],lvar[5],amount[1],amount[2],address(this),block.timestamp)	NodeType.EXPRESSION" [key=0];
+"BlockID: 144
+Call context: 
+None
+REF_50(uint256)= UNPACK TUPLE_5 index: 0 
+REF_51(uint256)= UNPACK TUPLE_5 index: 1 
+REF_53(uint256) -> lvar[0]
+REF_54(uint256) -> lvar[1]
+REF_55(uint256) -> lvar[2]
+TMP_89 = CONVERT router to ILiquidXv2Router01
+REF_57(uint256) -> lvar[4]
+REF_58(uint256) -> lvar[5]
+REF_59(uint256) -> amount[1]
+REF_60(uint256) -> amount[2]
+TMP_90 = CONVERT this to address
+TUPLE_6(uint256,uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_89(ILiquidXv2Router01), function:addLiquidity, arguments:['token0', 'token1', 'REF_57', 'REF_58', 'REF_59', 'REF_60', 'TMP_90', 'block.timestamp']  
+EXPRESSION:(lvar[4],lvar[5]) = _depositSwap(token0,token1,inToken,lvar[3])	NodeType.EXPRESSION
+(lvar[0],lvar[1],lvar[2]) = ILiquidXv2Router01(router).addLiquidity(token0,token1,lvar[4],lvar[5],amount[1],amount[2],address(this),block.timestamp)	NodeType.EXPRESSION" -> "BlockID: 145
+Call context: 
+None
+REF_53(uint256)= UNPACK TUPLE_6 index: 0 
+REF_54(uint256)= UNPACK TUPLE_6 index: 1 
+REF_55(uint256)= UNPACK TUPLE_6 index: 2 
+REF_61(uint256) -> lvar[4]
+REF_62(uint256) -> lvar[0]
+TMP_91(uint256) = REF_61 (c)- REF_62
+REF_63(uint256) -> lvar[5]
+REF_64(uint256) -> lvar[1]
+TMP_92(uint256) = REF_63 (c)- REF_64
+INTERNAL_CALL, LiquidXv2Zap._refundReserveToken(address,address,address,uint256,uint256)(account,token0,token1,TMP_91,TMP_92)
+EXPRESSION:(lvar[0],lvar[1],lvar[2]) = ILiquidXv2Router01(router).addLiquidity(token0,token1,lvar[4],lvar[5],amount[1],amount[2],address(this),block.timestamp)	NodeType.EXPRESSION
+_refundReserveToken(account,token0,token1,lvar[4] - lvar[0],lvar[5] - lvar[1])	NodeType.EXPRESSION" [key=0];
+"BlockID: 145
+Call context: 
+None
+REF_53(uint256)= UNPACK TUPLE_6 index: 0 
+REF_54(uint256)= UNPACK TUPLE_6 index: 1 
+REF_55(uint256)= UNPACK TUPLE_6 index: 2 
+REF_61(uint256) -> lvar[4]
+REF_62(uint256) -> lvar[0]
+TMP_91(uint256) = REF_61 (c)- REF_62
+REF_63(uint256) -> lvar[5]
+REF_64(uint256) -> lvar[1]
+TMP_92(uint256) = REF_63 (c)- REF_64
+INTERNAL_CALL, LiquidXv2Zap._refundReserveToken(address,address,address,uint256,uint256)(account,token0,token1,TMP_91,TMP_92)
+EXPRESSION:(lvar[0],lvar[1],lvar[2]) = ILiquidXv2Router01(router).addLiquidity(token0,token1,lvar[4],lvar[5],amount[1],amount[2],address(this),block.timestamp)	NodeType.EXPRESSION
+_refundReserveToken(account,token0,token1,lvar[4] - lvar[0],lvar[5] - lvar[1])	NodeType.EXPRESSION" -> "BlockID: 146
+Call context: 
+None
+TMP_94(bool) = basketId == 0
+CONDITION TMP_94
+EXPRESSION:_refundReserveToken(account,token0,token1,lvar[4] - lvar[0],lvar[5] - lvar[1])	NodeType.EXPRESSION
+basketId == 0	NodeType.IF" [key=0];
+"BlockID: 146
+Call context: 
+None
+TMP_94(bool) = basketId == 0
+CONDITION TMP_94
+EXPRESSION:_refundReserveToken(account,token0,token1,lvar[4] - lvar[0],lvar[5] - lvar[1])	NodeType.EXPRESSION
+basketId == 0	NodeType.IF" -> "BlockID: 147
+Call context: 
+True
+TMP_95 = CONVERT pair to IERC20
+REF_66(uint256) -> lvar[2]
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['TMP_95', 'account', 'REF_66'] 
+EXPRESSION:IERC20(pair).safeTransfer(account,lvar[2])	NodeType.EXPRESSION" [key=0];
+"BlockID: 146
+Call context: 
+None
+TMP_94(bool) = basketId == 0
+CONDITION TMP_94
+EXPRESSION:_refundReserveToken(account,token0,token1,lvar[4] - lvar[0],lvar[5] - lvar[1])	NodeType.EXPRESSION
+basketId == 0	NodeType.IF" -> "BlockID: 149
+Call context: 
+False
+REF_67(uint256) -> lvar[2]
+INTERNAL_CALL, LiquidXv2Zap._addBalance(address,address,uint256,uint256)(account,pair,basketId,REF_67)
+EXPRESSION:_addBalance(account,pair,basketId,lvar[2])	NodeType.EXPRESSION" [key=0];
+"BlockID: 147
+Call context: 
+True
+TMP_95 = CONVERT pair to IERC20
+REF_66(uint256) -> lvar[2]
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['TMP_95', 'account', 'REF_66'] 
+EXPRESSION:IERC20(pair).safeTransfer(account,lvar[2])	NodeType.EXPRESSION" -> "BlockID: 151
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 149
+Call context: 
+False
+REF_67(uint256) -> lvar[2]
+INTERNAL_CALL, LiquidXv2Zap._addBalance(address,address,uint256,uint256)(account,pair,basketId,REF_67)
+EXPRESSION:_addBalance(account,pair,basketId,lvar[2])	NodeType.EXPRESSION" -> "BlockID: 151
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 151
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 152
+Call context: 
+None
+TMP_98 = CONVERT 0 to address
+TMP_99(bool) = rewarder != TMP_98
+TMP_100 = CONVERT rewarder to IRewarderv2
+TMP_101(uint256) = HIGH_LEVEL_CALL, dest:TMP_100(IRewarderv2), function:getReward, arguments:['account', 'pair']  
+EXPRESSION:rewarder != address(0) && IRewarderv2(rewarder).getReward(account,pair) > 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 152
+Call context: 
+None
+TMP_98 = CONVERT 0 to address
+TMP_99(bool) = rewarder != TMP_98
+TMP_100 = CONVERT rewarder to IRewarderv2
+TMP_101(uint256) = HIGH_LEVEL_CALL, dest:TMP_100(IRewarderv2), function:getReward, arguments:['account', 'pair']  
+EXPRESSION:rewarder != address(0) && IRewarderv2(rewarder).getReward(account,pair) > 0	NodeType.EXPRESSION" -> "BlockID: 153
+Call context: 
+None
+TMP_102(bool) = TMP_101 > 0
+TMP_103(bool) = TMP_99 && TMP_102
+CONDITION TMP_103
+EXPRESSION:rewarder != address(0) && IRewarderv2(rewarder).getReward(account,pair) > 0	NodeType.IF" [key=0];
+"BlockID: 153
+Call context: 
+None
+TMP_102(bool) = TMP_101 > 0
+TMP_103(bool) = TMP_99 && TMP_102
+CONDITION TMP_103
+EXPRESSION:rewarder != address(0) && IRewarderv2(rewarder).getReward(account,pair) > 0	NodeType.IF" -> "BlockID: 154
+Call context: 
+True
+TMP_104 = CONVERT rewarder to IRewarderv2
+HIGH_LEVEL_CALL, dest:TMP_104(IRewarderv2), function:claim, arguments:['account', 'pair']  
+EXPRESSION:IRewarderv2(rewarder).claim(account,pair)	NodeType.EXPRESSION" [key=0];
+"BlockID: 153
+Call context: 
+None
+TMP_102(bool) = TMP_101 > 0
+TMP_103(bool) = TMP_99 && TMP_102
+CONDITION TMP_103
+EXPRESSION:rewarder != address(0) && IRewarderv2(rewarder).getReward(account,pair) > 0	NodeType.IF" -> "BlockID: 156
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 154
+Call context: 
+True
+TMP_104 = CONVERT rewarder to IRewarderv2
+HIGH_LEVEL_CALL, dest:TMP_104(IRewarderv2), function:claim, arguments:['account', 'pair']  
+EXPRESSION:IRewarderv2(rewarder).claim(account,pair)	NodeType.EXPRESSION" -> "BlockID: 156
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 156
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 157
+Call context: 
+None
+REF_71(uint256) -> lvar[2]
+RETURN REF_71
+EXPRESSION:lvar[2]	NodeType.RETURN" [key=0];
+"BlockID: 141
+Call context: 
+None
+REF_46(uint256) -> lvar[3]
+TMP_87 = CONVERT swapPlus to ISwapPlusv1
+REF_48(uint256) -> lvar[3]
+TMP_88 = CONVERT this to address
+REF_49(ISwapPlusv1.swapBlock[]) -> path.path
+TUPLE_4(uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_87(ISwapPlusv1), function:swap, arguments:['inToken', 'REF_48', 'tokenM', 'TMP_88', 'REF_49']  
+EXPRESSION:_approveTokenIfNeeded(inToken,swapPlus,lvar[3])	NodeType.EXPRESSION
+(None,lvar[3]) = ISwapPlusv1(swapPlus).swap(inToken,lvar[3],tokenM,address(this),path.path)	NodeType.EXPRESSION" -> "BlockID: 158
+Call context: 
+None
+REF_46(uint256)= UNPACK TUPLE_4 index: 1 
+inToken(address) := tokenM(address)
+EXPRESSION:(None,lvar[3]) = ISwapPlusv1(swapPlus).swap(inToken,lvar[3],tokenM,address(this),path.path)	NodeType.EXPRESSION
+inToken = tokenM	NodeType.EXPRESSION" [key=0];
+"BlockID: 158
+Call context: 
+None
+REF_46(uint256)= UNPACK TUPLE_4 index: 1 
+inToken(address) := tokenM(address)
+EXPRESSION:(None,lvar[3]) = ISwapPlusv1(swapPlus).swap(inToken,lvar[3],tokenM,address(this),path.path)	NodeType.EXPRESSION
+inToken = tokenM	NodeType.EXPRESSION" -> "BlockID: 142
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 135
+Call context: 
+None
+REF_34(uint256) (->lvar) := TMP_75(uint256)
+TMP_76 = CONVERT token to IERC20
+TMP_77 = CONVERT this to address
+REF_37(uint256) -> amount[0]
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransferFrom(IERC20,address,address,uint256), arguments:['TMP_76', 'account', 'TMP_77', 'REF_37'] 
+EXPRESSION:lvar[3] = IERC20(token).balanceOf(address(this))	NodeType.EXPRESSION
+IERC20(token).safeTransferFrom(account,address(this),amount[0])	NodeType.EXPRESSION" -> "BlockID: 159
+Call context: 
+None
+REF_38(uint256) -> lvar[3]
+TMP_79 = CONVERT token to IERC20
+TMP_80 = CONVERT this to address
+TMP_81(uint256) = HIGH_LEVEL_CALL, dest:TMP_79(IERC20), function:balanceOf, arguments:['TMP_80']  
+EXPRESSION:IERC20(token).safeTransferFrom(account,address(this),amount[0])	NodeType.EXPRESSION
+lvar[3] = IERC20(token).balanceOf(address(this)) - lvar[3]	NodeType.EXPRESSION" [key=0];
+"BlockID: 159
+Call context: 
+None
+REF_38(uint256) -> lvar[3]
+TMP_79 = CONVERT token to IERC20
+TMP_80 = CONVERT this to address
+TMP_81(uint256) = HIGH_LEVEL_CALL, dest:TMP_79(IERC20), function:balanceOf, arguments:['TMP_80']  
+EXPRESSION:IERC20(token).safeTransferFrom(account,address(this),amount[0])	NodeType.EXPRESSION
+lvar[3] = IERC20(token).balanceOf(address(this)) - lvar[3]	NodeType.EXPRESSION" -> "BlockID: 160
+Call context: 
+None
+REF_40(uint256) -> lvar[3]
+TMP_82(uint256) = TMP_81 (c)- REF_40
+REF_38(uint256) (->lvar) := TMP_82(uint256)
+EXPRESSION:lvar[3] = IERC20(token).balanceOf(address(this)) - lvar[3]	NodeType.EXPRESSION" [key=0];
+"BlockID: 160
+Call context: 
+None
+REF_40(uint256) -> lvar[3]
+TMP_82(uint256) = TMP_81 (c)- REF_40
+REF_38(uint256) (->lvar) := TMP_82(uint256)
+EXPRESSION:lvar[3] = IERC20(token).balanceOf(address(this)) - lvar[3]	NodeType.EXPRESSION" -> "BlockID: 138
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 161
+Call context: 
+None
+pair(address) := TMP_67(address)
+TMP_68 = CONVERT 0 to address
+TMP_69(bool) = pair != TMP_68
+CONDITION TMP_69
+EXPRESSION:TMP_69(bool) = pair != TMP_68	NodeType.IF" -> "BlockID: 162
+Call context: 
+True
+TMP_70(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 161
+Call context: 
+None
+pair(address) := TMP_67(address)
+TMP_68 = CONVERT 0 to address
+TMP_69(bool) = pair != TMP_68
+CONDITION TMP_69
+EXPRESSION:TMP_69(bool) = pair != TMP_68	NodeType.IF" -> "BlockID: 163
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 163
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 133
+Call context: 
+True
+NEW VARIABLE lvar
+REF_33(uint256) -> lvar[3]
+REF_33(uint256) (->lvar) := msg.value(uint256)
+inToken(address) := token(address)
+TMP_71 = CONVERT 0 to address
+TMP_72(bool) = token != TMP_71
+CONDITION TMP_72
+EXPRESSION:None	NodeType.VARIABLE
+lvar[3] = msg.value	NodeType.EXPRESSION
+inToken = token	NodeType.VARIABLE
+inToken = token	NodeType.EXPRESSION
+token != address(0)	NodeType.IF" [key=0];
+}

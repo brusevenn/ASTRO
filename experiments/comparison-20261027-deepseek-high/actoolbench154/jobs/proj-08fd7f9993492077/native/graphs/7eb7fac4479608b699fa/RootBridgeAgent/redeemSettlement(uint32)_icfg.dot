@@ -1,0 +1,523 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+TMP_1172(bool) = _unlocked == 1
+CONDITION TMP_1172
+EXPRESSION:TMP_1172(bool) = _unlocked == 1	NodeType.IF";
+"BlockID: 5
+Call context: 
+True
+TMP_794(None) = SOLIDITY_CALL revert SettlementRedeemUnavailable()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 6
+Call context: 
+False
+TMP_795(bool) = msg.sender != depositOwner
+TMP_796 = CONVERT localPortAddress to IRootPort
+TMP_797(VirtualAccount) = HIGH_LEVEL_CALL, dest:TMP_796(IRootPort), function:getUserAccount, arguments:['depositOwner']  
+EXPRESSION:msg.sender != depositOwner && msg.sender != address(IRootPort(localPortAddress).getUserAccount(depositOwner))	NodeType.EXPRESSION";
+"BlockID: 7
+Call context: 
+None
+TMP_798 = CONVERT TMP_797 to address
+TMP_799(bool) = msg.sender != TMP_798
+TMP_800(bool) = TMP_795 && TMP_799
+CONDITION TMP_800
+EXPRESSION:msg.sender != depositOwner && msg.sender != address(IRootPort(localPortAddress).getUserAccount(depositOwner))	NodeType.IF" [shape=box];
+"BlockID: 8
+Call context: 
+True
+TMP_801(None) = SOLIDITY_CALL revert NotSettlementOwner()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 13
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 14
+Call context: 
+None
+REF_191(Settlement) -> getSettlement[_settlementNonce]
+settlement(Settlement) := REF_191(Settlement)
+i(uint256) := 0(uint256)
+EXPRESSION:settlement = getSettlement[_settlementNonce]	NodeType.VARIABLE
+settlement = getSettlement[_settlementNonce]	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION";
+"BlockID: 4
+Call context: redeemSettlement
+True
+_unlocked(uint256) := 2(uint256)
+_unlocked(uint256) := 1(uint256)
+REF_116(Settlement) -> getSettlement[_depositNonce]
+REF_117(address) -> REF_116.owner
+depositOwner(address) := REF_117(address)
+REF_118(Settlement) -> getSettlement[_depositNonce]
+REF_119(SettlementStatus) -> REF_118.status
+REF_120(SettlementStatus) -> SettlementStatus.Failed
+TMP_790(bool) = REF_119 != REF_120
+TMP_791 = CONVERT 0 to address
+TMP_792(bool) = depositOwner == TMP_791
+TMP_793(bool) = TMP_790 || TMP_792
+CONDITION TMP_793
+EXPRESSION:_unlocked = 2	NodeType.EXPRESSION
+_unlocked = 1	NodeType.EXPRESSION
+lock()	NodeType.EXPRESSION
+depositOwner = getSettlement[_depositNonce].owner	NodeType.VARIABLE
+depositOwner = getSettlement[_depositNonce].owner	NodeType.EXPRESSION
+getSettlement[_depositNonce].status != SettlementStatus.Failed || depositOwner == address(0)	NodeType.IF";
+"BlockID: 2
+Call context: redeemSettlement
+True
+TMP_1173(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 3
+Call context: redeemSettlement
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 15
+Call context: redeemSettlement
+None
+BEGIN_LOOP
+REF_192(address[]) -> settlement.hTokens
+REF_193 -> LENGTH REF_192
+TMP_908(bool) = i < REF_193
+CONDITION TMP_908
+EXPRESSION:None	NodeType.STARTLOOP
+i < settlement.hTokens.length	NodeType.IFLOOP";
+"BlockID: 16
+Call context: redeemSettlement
+True
+REF_194(address[]) -> settlement.hTokens
+REF_195(address) -> REF_194[i]
+TMP_909 = CONVERT 0 to address
+TMP_910(bool) = REF_195 != TMP_909
+CONDITION TMP_910
+EXPRESSION:settlement.hTokens[i] != address(0)	NodeType.IF";
+"BlockID: 17
+Call context: redeemSettlement
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 20
+Call context: redeemSettlement
+None
+REF_206(Settlement) -> getSettlement[_settlementNonce]
+getSettlement = delete REF_206 
+EXPRESSION:delete getSettlement[_settlementNonce]	NodeType.EXPRESSION";
+"BlockID: 18
+Call context: redeemSettlement
+True
+TMP_911 = CONVERT localPortAddress to IRootPort
+TMP_912 = CONVERT localPortAddress to IRootPort
+REF_198(address[]) -> settlement.hTokens
+REF_199(address) -> REF_198[i]
+REF_200(uint24) -> settlement.toChain
+TMP_913(address) = HIGH_LEVEL_CALL, dest:TMP_912(IRootPort), function:getGlobalTokenFromLocal, arguments:['REF_199', 'REF_200']  
+EXPRESSION:IRootPort(localPortAddress).bridgeToRoot(msg.sender,IRootPort(localPortAddress).getGlobalTokenFromLocal(settlement.hTokens[i],settlement.toChain),settlement.amounts[i],settlement.deposits[i],settlement.toChain)	NodeType.EXPRESSION";
+"BlockID: 19
+Call context: redeemSettlement
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 22
+Call context: redeemSettlement
+None
+i(uint256) = i + 1
+EXPRESSION:++ i	NodeType.EXPRESSION";
+"BlockID: 21
+Call context: redeemSettlement
+None
+REF_201(uint256[]) -> settlement.amounts
+REF_202(uint256) -> REF_201[i]
+REF_203(uint256[]) -> settlement.deposits
+REF_204(uint256) -> REF_203[i]
+REF_205(uint24) -> settlement.toChain
+HIGH_LEVEL_CALL, dest:TMP_911(IRootPort), function:bridgeToRoot, arguments:['msg.sender', 'TMP_913', 'REF_202', 'REF_204', 'REF_205']  
+EXPRESSION:IRootPort(localPortAddress).bridgeToRoot(msg.sender,IRootPort(localPortAddress).getGlobalTokenFromLocal(settlement.hTokens[i],settlement.toChain),settlement.amounts[i],settlement.deposits[i],settlement.toChain)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 10
+Call context: 
+None
+TMP_798 = CONVERT TMP_797 to address
+TMP_799(bool) = msg.sender != TMP_798
+TMP_800(bool) = TMP_795 && TMP_799
+CONDITION TMP_800
+EXPRESSION:msg.sender != depositOwner && msg.sender != address(IRootPort(localPortAddress).getUserAccount(depositOwner))	NodeType.IF";
+"BlockID: 11
+Call context: 
+True
+TMP_800(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 12
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+TMP_1172(bool) = _unlocked == 1
+CONDITION TMP_1172
+EXPRESSION:TMP_1172(bool) = _unlocked == 1	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_1172(bool) = _unlocked == 1
+CONDITION TMP_1172
+EXPRESSION:TMP_1172(bool) = _unlocked == 1	NodeType.IF" -> "BlockID: 2
+Call context: redeemSettlement
+True
+TMP_1173(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+TMP_1172(bool) = _unlocked == 1
+CONDITION TMP_1172
+EXPRESSION:TMP_1172(bool) = _unlocked == 1	NodeType.IF" -> "BlockID: 3
+Call context: redeemSettlement
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 6
+Call context: 
+False
+TMP_795(bool) = msg.sender != depositOwner
+TMP_796 = CONVERT localPortAddress to IRootPort
+TMP_797(VirtualAccount) = HIGH_LEVEL_CALL, dest:TMP_796(IRootPort), function:getUserAccount, arguments:['depositOwner']  
+EXPRESSION:msg.sender != depositOwner && msg.sender != address(IRootPort(localPortAddress).getUserAccount(depositOwner))	NodeType.EXPRESSION" -> "BlockID: 7
+Call context: 
+None
+TMP_798 = CONVERT TMP_797 to address
+TMP_799(bool) = msg.sender != TMP_798
+TMP_800(bool) = TMP_795 && TMP_799
+CONDITION TMP_800
+EXPRESSION:msg.sender != depositOwner && msg.sender != address(IRootPort(localPortAddress).getUserAccount(depositOwner))	NodeType.IF" [key=0];
+"BlockID: 7
+Call context: 
+None
+TMP_798 = CONVERT TMP_797 to address
+TMP_799(bool) = msg.sender != TMP_798
+TMP_800(bool) = TMP_795 && TMP_799
+CONDITION TMP_800
+EXPRESSION:msg.sender != depositOwner && msg.sender != address(IRootPort(localPortAddress).getUserAccount(depositOwner))	NodeType.IF" -> "BlockID: 8
+Call context: 
+True
+TMP_801(None) = SOLIDITY_CALL revert NotSettlementOwner()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 7
+Call context: 
+None
+TMP_798 = CONVERT TMP_797 to address
+TMP_799(bool) = msg.sender != TMP_798
+TMP_800(bool) = TMP_795 && TMP_799
+CONDITION TMP_800
+EXPRESSION:msg.sender != depositOwner && msg.sender != address(IRootPort(localPortAddress).getUserAccount(depositOwner))	NodeType.IF" -> "BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 10
+Call context: 
+None
+TMP_798 = CONVERT TMP_797 to address
+TMP_799(bool) = msg.sender != TMP_798
+TMP_800(bool) = TMP_795 && TMP_799
+CONDITION TMP_800
+EXPRESSION:msg.sender != depositOwner && msg.sender != address(IRootPort(localPortAddress).getUserAccount(depositOwner))	NodeType.IF" [key=0];
+"BlockID: 13
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 14
+Call context: 
+None
+REF_191(Settlement) -> getSettlement[_settlementNonce]
+settlement(Settlement) := REF_191(Settlement)
+i(uint256) := 0(uint256)
+EXPRESSION:settlement = getSettlement[_settlementNonce]	NodeType.VARIABLE
+settlement = getSettlement[_settlementNonce]	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 14
+Call context: 
+None
+REF_191(Settlement) -> getSettlement[_settlementNonce]
+settlement(Settlement) := REF_191(Settlement)
+i(uint256) := 0(uint256)
+EXPRESSION:settlement = getSettlement[_settlementNonce]	NodeType.VARIABLE
+settlement = getSettlement[_settlementNonce]	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" -> "BlockID: 15
+Call context: redeemSettlement
+None
+BEGIN_LOOP
+REF_192(address[]) -> settlement.hTokens
+REF_193 -> LENGTH REF_192
+TMP_908(bool) = i < REF_193
+CONDITION TMP_908
+EXPRESSION:None	NodeType.STARTLOOP
+i < settlement.hTokens.length	NodeType.IFLOOP" [key="successor_5"];
+"BlockID: 4
+Call context: redeemSettlement
+True
+_unlocked(uint256) := 2(uint256)
+_unlocked(uint256) := 1(uint256)
+REF_116(Settlement) -> getSettlement[_depositNonce]
+REF_117(address) -> REF_116.owner
+depositOwner(address) := REF_117(address)
+REF_118(Settlement) -> getSettlement[_depositNonce]
+REF_119(SettlementStatus) -> REF_118.status
+REF_120(SettlementStatus) -> SettlementStatus.Failed
+TMP_790(bool) = REF_119 != REF_120
+TMP_791 = CONVERT 0 to address
+TMP_792(bool) = depositOwner == TMP_791
+TMP_793(bool) = TMP_790 || TMP_792
+CONDITION TMP_793
+EXPRESSION:_unlocked = 2	NodeType.EXPRESSION
+_unlocked = 1	NodeType.EXPRESSION
+lock()	NodeType.EXPRESSION
+depositOwner = getSettlement[_depositNonce].owner	NodeType.VARIABLE
+depositOwner = getSettlement[_depositNonce].owner	NodeType.EXPRESSION
+getSettlement[_depositNonce].status != SettlementStatus.Failed || depositOwner == address(0)	NodeType.IF" -> "BlockID: 5
+Call context: 
+True
+TMP_794(None) = SOLIDITY_CALL revert SettlementRedeemUnavailable()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_2"];
+"BlockID: 4
+Call context: redeemSettlement
+True
+_unlocked(uint256) := 2(uint256)
+_unlocked(uint256) := 1(uint256)
+REF_116(Settlement) -> getSettlement[_depositNonce]
+REF_117(address) -> REF_116.owner
+depositOwner(address) := REF_117(address)
+REF_118(Settlement) -> getSettlement[_depositNonce]
+REF_119(SettlementStatus) -> REF_118.status
+REF_120(SettlementStatus) -> SettlementStatus.Failed
+TMP_790(bool) = REF_119 != REF_120
+TMP_791 = CONVERT 0 to address
+TMP_792(bool) = depositOwner == TMP_791
+TMP_793(bool) = TMP_790 || TMP_792
+CONDITION TMP_793
+EXPRESSION:_unlocked = 2	NodeType.EXPRESSION
+_unlocked = 1	NodeType.EXPRESSION
+lock()	NodeType.EXPRESSION
+depositOwner = getSettlement[_depositNonce].owner	NodeType.VARIABLE
+depositOwner = getSettlement[_depositNonce].owner	NodeType.EXPRESSION
+getSettlement[_depositNonce].status != SettlementStatus.Failed || depositOwner == address(0)	NodeType.IF" -> "BlockID: 6
+Call context: 
+False
+TMP_795(bool) = msg.sender != depositOwner
+TMP_796 = CONVERT localPortAddress to IRootPort
+TMP_797(VirtualAccount) = HIGH_LEVEL_CALL, dest:TMP_796(IRootPort), function:getUserAccount, arguments:['depositOwner']  
+EXPRESSION:msg.sender != depositOwner && msg.sender != address(IRootPort(localPortAddress).getUserAccount(depositOwner))	NodeType.EXPRESSION" [key="successor_2"];
+"BlockID: 3
+Call context: redeemSettlement
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: redeemSettlement
+True
+_unlocked(uint256) := 2(uint256)
+_unlocked(uint256) := 1(uint256)
+REF_116(Settlement) -> getSettlement[_depositNonce]
+REF_117(address) -> REF_116.owner
+depositOwner(address) := REF_117(address)
+REF_118(Settlement) -> getSettlement[_depositNonce]
+REF_119(SettlementStatus) -> REF_118.status
+REF_120(SettlementStatus) -> SettlementStatus.Failed
+TMP_790(bool) = REF_119 != REF_120
+TMP_791 = CONVERT 0 to address
+TMP_792(bool) = depositOwner == TMP_791
+TMP_793(bool) = TMP_790 || TMP_792
+CONDITION TMP_793
+EXPRESSION:_unlocked = 2	NodeType.EXPRESSION
+_unlocked = 1	NodeType.EXPRESSION
+lock()	NodeType.EXPRESSION
+depositOwner = getSettlement[_depositNonce].owner	NodeType.VARIABLE
+depositOwner = getSettlement[_depositNonce].owner	NodeType.EXPRESSION
+getSettlement[_depositNonce].status != SettlementStatus.Failed || depositOwner == address(0)	NodeType.IF" [key=0];
+"BlockID: 15
+Call context: redeemSettlement
+None
+BEGIN_LOOP
+REF_192(address[]) -> settlement.hTokens
+REF_193 -> LENGTH REF_192
+TMP_908(bool) = i < REF_193
+CONDITION TMP_908
+EXPRESSION:None	NodeType.STARTLOOP
+i < settlement.hTokens.length	NodeType.IFLOOP" -> "BlockID: 16
+Call context: redeemSettlement
+True
+REF_194(address[]) -> settlement.hTokens
+REF_195(address) -> REF_194[i]
+TMP_909 = CONVERT 0 to address
+TMP_910(bool) = REF_195 != TMP_909
+CONDITION TMP_910
+EXPRESSION:settlement.hTokens[i] != address(0)	NodeType.IF" [key=0];
+"BlockID: 15
+Call context: redeemSettlement
+None
+BEGIN_LOOP
+REF_192(address[]) -> settlement.hTokens
+REF_193 -> LENGTH REF_192
+TMP_908(bool) = i < REF_193
+CONDITION TMP_908
+EXPRESSION:None	NodeType.STARTLOOP
+i < settlement.hTokens.length	NodeType.IFLOOP" -> "BlockID: 17
+Call context: redeemSettlement
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 16
+Call context: redeemSettlement
+True
+REF_194(address[]) -> settlement.hTokens
+REF_195(address) -> REF_194[i]
+TMP_909 = CONVERT 0 to address
+TMP_910(bool) = REF_195 != TMP_909
+CONDITION TMP_910
+EXPRESSION:settlement.hTokens[i] != address(0)	NodeType.IF" -> "BlockID: 18
+Call context: redeemSettlement
+True
+TMP_911 = CONVERT localPortAddress to IRootPort
+TMP_912 = CONVERT localPortAddress to IRootPort
+REF_198(address[]) -> settlement.hTokens
+REF_199(address) -> REF_198[i]
+REF_200(uint24) -> settlement.toChain
+TMP_913(address) = HIGH_LEVEL_CALL, dest:TMP_912(IRootPort), function:getGlobalTokenFromLocal, arguments:['REF_199', 'REF_200']  
+EXPRESSION:IRootPort(localPortAddress).bridgeToRoot(msg.sender,IRootPort(localPortAddress).getGlobalTokenFromLocal(settlement.hTokens[i],settlement.toChain),settlement.amounts[i],settlement.deposits[i],settlement.toChain)	NodeType.EXPRESSION" [key=0];
+"BlockID: 16
+Call context: redeemSettlement
+True
+REF_194(address[]) -> settlement.hTokens
+REF_195(address) -> REF_194[i]
+TMP_909 = CONVERT 0 to address
+TMP_910(bool) = REF_195 != TMP_909
+CONDITION TMP_910
+EXPRESSION:settlement.hTokens[i] != address(0)	NodeType.IF" -> "BlockID: 19
+Call context: redeemSettlement
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 17
+Call context: redeemSettlement
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 20
+Call context: redeemSettlement
+None
+REF_206(Settlement) -> getSettlement[_settlementNonce]
+getSettlement = delete REF_206 
+EXPRESSION:delete getSettlement[_settlementNonce]	NodeType.EXPRESSION" [key=0];
+"BlockID: 18
+Call context: redeemSettlement
+True
+TMP_911 = CONVERT localPortAddress to IRootPort
+TMP_912 = CONVERT localPortAddress to IRootPort
+REF_198(address[]) -> settlement.hTokens
+REF_199(address) -> REF_198[i]
+REF_200(uint24) -> settlement.toChain
+TMP_913(address) = HIGH_LEVEL_CALL, dest:TMP_912(IRootPort), function:getGlobalTokenFromLocal, arguments:['REF_199', 'REF_200']  
+EXPRESSION:IRootPort(localPortAddress).bridgeToRoot(msg.sender,IRootPort(localPortAddress).getGlobalTokenFromLocal(settlement.hTokens[i],settlement.toChain),settlement.amounts[i],settlement.deposits[i],settlement.toChain)	NodeType.EXPRESSION" -> "BlockID: 21
+Call context: redeemSettlement
+None
+REF_201(uint256[]) -> settlement.amounts
+REF_202(uint256) -> REF_201[i]
+REF_203(uint256[]) -> settlement.deposits
+REF_204(uint256) -> REF_203[i]
+REF_205(uint24) -> settlement.toChain
+HIGH_LEVEL_CALL, dest:TMP_911(IRootPort), function:bridgeToRoot, arguments:['msg.sender', 'TMP_913', 'REF_202', 'REF_204', 'REF_205']  
+EXPRESSION:IRootPort(localPortAddress).bridgeToRoot(msg.sender,IRootPort(localPortAddress).getGlobalTokenFromLocal(settlement.hTokens[i],settlement.toChain),settlement.amounts[i],settlement.deposits[i],settlement.toChain)	NodeType.EXPRESSION" [key=0];
+"BlockID: 19
+Call context: redeemSettlement
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 22
+Call context: redeemSettlement
+None
+i(uint256) = i + 1
+EXPRESSION:++ i	NodeType.EXPRESSION" [key=0];
+"BlockID: 22
+Call context: redeemSettlement
+None
+i(uint256) = i + 1
+EXPRESSION:++ i	NodeType.EXPRESSION" -> "BlockID: 15
+Call context: redeemSettlement
+None
+BEGIN_LOOP
+REF_192(address[]) -> settlement.hTokens
+REF_193 -> LENGTH REF_192
+TMP_908(bool) = i < REF_193
+CONDITION TMP_908
+EXPRESSION:None	NodeType.STARTLOOP
+i < settlement.hTokens.length	NodeType.IFLOOP" [key=0];
+"BlockID: 21
+Call context: redeemSettlement
+None
+REF_201(uint256[]) -> settlement.amounts
+REF_202(uint256) -> REF_201[i]
+REF_203(uint256[]) -> settlement.deposits
+REF_204(uint256) -> REF_203[i]
+REF_205(uint24) -> settlement.toChain
+HIGH_LEVEL_CALL, dest:TMP_911(IRootPort), function:bridgeToRoot, arguments:['msg.sender', 'TMP_913', 'REF_202', 'REF_204', 'REF_205']  
+EXPRESSION:IRootPort(localPortAddress).bridgeToRoot(msg.sender,IRootPort(localPortAddress).getGlobalTokenFromLocal(settlement.hTokens[i],settlement.toChain),settlement.amounts[i],settlement.deposits[i],settlement.toChain)	NodeType.EXPRESSION" -> "BlockID: 19
+Call context: redeemSettlement
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 10
+Call context: 
+None
+TMP_798 = CONVERT TMP_797 to address
+TMP_799(bool) = msg.sender != TMP_798
+TMP_800(bool) = TMP_795 && TMP_799
+CONDITION TMP_800
+EXPRESSION:msg.sender != depositOwner && msg.sender != address(IRootPort(localPortAddress).getUserAccount(depositOwner))	NodeType.IF" -> "BlockID: 11
+Call context: 
+True
+TMP_800(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 10
+Call context: 
+None
+TMP_798 = CONVERT TMP_797 to address
+TMP_799(bool) = msg.sender != TMP_798
+TMP_800(bool) = TMP_795 && TMP_799
+CONDITION TMP_800
+EXPRESSION:msg.sender != depositOwner && msg.sender != address(IRootPort(localPortAddress).getUserAccount(depositOwner))	NodeType.IF" -> "BlockID: 12
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 12
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 13
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

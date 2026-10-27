@@ -1,0 +1,398 @@
+digraph {
+"BlockID: 971
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 972
+Call context: 
+None
+MODIFIER_CALL, RootBridgeAgent.lock()()
+EXPRESSION:lock()	NodeType.EXPRESSION";
+"BlockID: 973
+Call context: 
+None
+MODIFIER_CALL, RootBridgeAgent.requiresRouter()()
+EXPRESSION:lock()	NodeType.EXPRESSION
+requiresRouter()	NodeType.EXPRESSION";
+"BlockID: 974
+Call context: 
+None
+REF_126 -> LENGTH _globalAddresses
+TMP_832address[])  = new address[](REF_126)
+hTokens(address[]) =  ['TMP_832(address[])']
+REF_127 -> LENGTH _globalAddresses
+TMP_834address[])  = new address[](REF_127)
+tokens(address[]) =  ['TMP_834(address[])']
+i(uint256) := 0(uint256)
+EXPRESSION:requiresRouter()	NodeType.EXPRESSION
+hTokens = new address[](_globalAddresses.length)	NodeType.VARIABLE
+hTokens = new address[](_globalAddresses.length)	NodeType.EXPRESSION
+tokens = new address[](_globalAddresses.length)	NodeType.VARIABLE
+tokens = new address[](_globalAddresses.length)	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION";
+"BlockID: 975
+Call context: 
+None
+BEGIN_LOOP
+REF_128 -> LENGTH _globalAddresses
+TMP_835(bool) = i < REF_128
+CONDITION TMP_835
+EXPRESSION:None	NodeType.STARTLOOP
+i < _globalAddresses.length	NodeType.IFLOOP";
+"BlockID: 976
+Call context: 
+True
+REF_129(address) -> hTokens[i]
+TMP_836 = CONVERT localPortAddress to IRootPort
+REF_131(address) -> _globalAddresses[i]
+TMP_837(address) = HIGH_LEVEL_CALL, dest:TMP_836(IRootPort), function:getLocalTokenFromGlobal, arguments:['REF_131', '_toChain']  
+EXPRESSION:hTokens[i] = IRootPort(localPortAddress).getLocalTokenFromGlobal(_globalAddresses[i],_toChain)	NodeType.EXPRESSION";
+"BlockID: 978
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 979
+Call context: 
+None
+TMP_849 = CONVERT 2 to bytes1
+REF_144 -> LENGTH hTokens
+TMP_850 = CONVERT REF_144 to uint8
+TMP_851(uint128) = INTERNAL_CALL, RootBridgeAgent._manageGasOut(uint24)(_toChain)
+EXPRESSION:";
+"BlockID: 980
+Call context: 
+None
+TMP_852(bytes) = SOLIDITY_CALL abi.encodePacked()(TMP_849,_recipient,TMP_850,settlementNonce,hTokens,tokens,_amounts,_deposits,_data,TMP_851)
+data(bytes) := TMP_852(bytes)
+INTERNAL_CALL, RootBridgeAgent._createMultipleSettlement(address,address,address[],address[],uint256[],uint256[],bytes,uint24)(_owner,_recipient,hTokens,tokens,_amounts,_deposits,data,_toChain)
+EXPRESSION:data = abi.encodePacked(bytes1(0x02),_recipient,uint8(hTokens.length),settlementNonce,hTokens,tokens,_amounts,_deposits,_data,_manageGasOut(_toChain))	NodeType.VARIABLE
+data = abi.encodePacked(bytes1(0x02),_recipient,uint8(hTokens.length),settlementNonce,hTokens,tokens,_amounts,_deposits,_data,_manageGasOut(_toChain))	NodeType.EXPRESSION
+_createMultipleSettlement(_owner,_recipient,hTokens,tokens,_amounts,_deposits,data,_toChain)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 981
+Call context: 
+None
+INTERNAL_CALL, RootBridgeAgent._performCall(bytes,uint256)(data,_toChain)
+EXPRESSION:_createMultipleSettlement(_owner,_recipient,hTokens,tokens,_amounts,_deposits,data,_toChain)	NodeType.EXPRESSION
+_performCall(data,_toChain)	NodeType.EXPRESSION";
+"BlockID: 977
+Call context: 
+None
+REF_129(address) (->hTokens) := TMP_837(address)
+REF_132(address) -> tokens[i]
+TMP_838 = CONVERT localPortAddress to IRootPort
+REF_134(address) -> hTokens[i]
+TMP_839(address) = HIGH_LEVEL_CALL, dest:TMP_838(IRootPort), function:getUnderlyingTokenFromLocal, arguments:['REF_134', '_toChain']  
+EXPRESSION:hTokens[i] = IRootPort(localPortAddress).getLocalTokenFromGlobal(_globalAddresses[i],_toChain)	NodeType.EXPRESSION
+tokens[i] = IRootPort(localPortAddress).getUnderlyingTokenFromLocal(hTokens[i],_toChain)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 983
+Call context: 
+None
+REF_132(address) (->tokens) := TMP_839(address)
+REF_135(address) -> hTokens[i]
+TMP_840 = CONVERT 0 to address
+TMP_841(bool) = REF_135 == TMP_840
+REF_136(address) -> tokens[i]
+TMP_842 = CONVERT 0 to address
+TMP_843(bool) = REF_136 == TMP_842
+REF_137(uint256) -> _deposits[i]
+TMP_844(bool) = REF_137 > 0
+TMP_845(bool) = TMP_843 && TMP_844
+TMP_846(bool) = TMP_841 || TMP_845
+CONDITION TMP_846
+EXPRESSION:tokens[i] = IRootPort(localPortAddress).getUnderlyingTokenFromLocal(hTokens[i],_toChain)	NodeType.EXPRESSION
+hTokens[i] == address(0) || (tokens[i] == address(0) && _deposits[i] > 0)	NodeType.IF" [shape=box];
+"BlockID: 984
+Call context: 
+True
+TMP_847(None) = SOLIDITY_CALL revert InvalidInputParams()()
+EXPRESSION:revert InvalidInputParams()()	NodeType.EXPRESSION";
+"BlockID: 985
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 986
+Call context: 
+None
+REF_138(address) -> _globalAddresses[i]
+REF_139(address) -> hTokens[i]
+REF_140(address) -> tokens[i]
+REF_141(uint256) -> _amounts[i]
+REF_142(uint256) -> _deposits[i]
+INTERNAL_CALL, RootBridgeAgent._updateStateOnBridgeOut(address,address,address,address,uint256,uint256,uint24)(msg.sender,REF_138,REF_139,REF_140,REF_141,REF_142,_toChain)
+EXPRESSION:_updateStateOnBridgeOut(msg.sender,_globalAddresses[i],hTokens[i],tokens[i],_amounts[i],_deposits[i],_toChain)	NodeType.EXPRESSION";
+"BlockID: 987
+Call context: 
+None
+i(uint256) = i + 1
+EXPRESSION:_updateStateOnBridgeOut(msg.sender,_globalAddresses[i],hTokens[i],tokens[i],_amounts[i],_deposits[i],_toChain)	NodeType.EXPRESSION
+++ i	NodeType.EXPRESSION";
+"BlockID: 971
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 972
+Call context: 
+None
+MODIFIER_CALL, RootBridgeAgent.lock()()
+EXPRESSION:lock()	NodeType.EXPRESSION" [key=0];
+"BlockID: 972
+Call context: 
+None
+MODIFIER_CALL, RootBridgeAgent.lock()()
+EXPRESSION:lock()	NodeType.EXPRESSION" -> "BlockID: 973
+Call context: 
+None
+MODIFIER_CALL, RootBridgeAgent.requiresRouter()()
+EXPRESSION:lock()	NodeType.EXPRESSION
+requiresRouter()	NodeType.EXPRESSION" [key=0];
+"BlockID: 973
+Call context: 
+None
+MODIFIER_CALL, RootBridgeAgent.requiresRouter()()
+EXPRESSION:lock()	NodeType.EXPRESSION
+requiresRouter()	NodeType.EXPRESSION" -> "BlockID: 974
+Call context: 
+None
+REF_126 -> LENGTH _globalAddresses
+TMP_832address[])  = new address[](REF_126)
+hTokens(address[]) =  ['TMP_832(address[])']
+REF_127 -> LENGTH _globalAddresses
+TMP_834address[])  = new address[](REF_127)
+tokens(address[]) =  ['TMP_834(address[])']
+i(uint256) := 0(uint256)
+EXPRESSION:requiresRouter()	NodeType.EXPRESSION
+hTokens = new address[](_globalAddresses.length)	NodeType.VARIABLE
+hTokens = new address[](_globalAddresses.length)	NodeType.EXPRESSION
+tokens = new address[](_globalAddresses.length)	NodeType.VARIABLE
+tokens = new address[](_globalAddresses.length)	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 974
+Call context: 
+None
+REF_126 -> LENGTH _globalAddresses
+TMP_832address[])  = new address[](REF_126)
+hTokens(address[]) =  ['TMP_832(address[])']
+REF_127 -> LENGTH _globalAddresses
+TMP_834address[])  = new address[](REF_127)
+tokens(address[]) =  ['TMP_834(address[])']
+i(uint256) := 0(uint256)
+EXPRESSION:requiresRouter()	NodeType.EXPRESSION
+hTokens = new address[](_globalAddresses.length)	NodeType.VARIABLE
+hTokens = new address[](_globalAddresses.length)	NodeType.EXPRESSION
+tokens = new address[](_globalAddresses.length)	NodeType.VARIABLE
+tokens = new address[](_globalAddresses.length)	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" -> "BlockID: 975
+Call context: 
+None
+BEGIN_LOOP
+REF_128 -> LENGTH _globalAddresses
+TMP_835(bool) = i < REF_128
+CONDITION TMP_835
+EXPRESSION:None	NodeType.STARTLOOP
+i < _globalAddresses.length	NodeType.IFLOOP" [key=0];
+"BlockID: 975
+Call context: 
+None
+BEGIN_LOOP
+REF_128 -> LENGTH _globalAddresses
+TMP_835(bool) = i < REF_128
+CONDITION TMP_835
+EXPRESSION:None	NodeType.STARTLOOP
+i < _globalAddresses.length	NodeType.IFLOOP" -> "BlockID: 976
+Call context: 
+True
+REF_129(address) -> hTokens[i]
+TMP_836 = CONVERT localPortAddress to IRootPort
+REF_131(address) -> _globalAddresses[i]
+TMP_837(address) = HIGH_LEVEL_CALL, dest:TMP_836(IRootPort), function:getLocalTokenFromGlobal, arguments:['REF_131', '_toChain']  
+EXPRESSION:hTokens[i] = IRootPort(localPortAddress).getLocalTokenFromGlobal(_globalAddresses[i],_toChain)	NodeType.EXPRESSION" [key=0];
+"BlockID: 975
+Call context: 
+None
+BEGIN_LOOP
+REF_128 -> LENGTH _globalAddresses
+TMP_835(bool) = i < REF_128
+CONDITION TMP_835
+EXPRESSION:None	NodeType.STARTLOOP
+i < _globalAddresses.length	NodeType.IFLOOP" -> "BlockID: 978
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 976
+Call context: 
+True
+REF_129(address) -> hTokens[i]
+TMP_836 = CONVERT localPortAddress to IRootPort
+REF_131(address) -> _globalAddresses[i]
+TMP_837(address) = HIGH_LEVEL_CALL, dest:TMP_836(IRootPort), function:getLocalTokenFromGlobal, arguments:['REF_131', '_toChain']  
+EXPRESSION:hTokens[i] = IRootPort(localPortAddress).getLocalTokenFromGlobal(_globalAddresses[i],_toChain)	NodeType.EXPRESSION" -> "BlockID: 977
+Call context: 
+None
+REF_129(address) (->hTokens) := TMP_837(address)
+REF_132(address) -> tokens[i]
+TMP_838 = CONVERT localPortAddress to IRootPort
+REF_134(address) -> hTokens[i]
+TMP_839(address) = HIGH_LEVEL_CALL, dest:TMP_838(IRootPort), function:getUnderlyingTokenFromLocal, arguments:['REF_134', '_toChain']  
+EXPRESSION:hTokens[i] = IRootPort(localPortAddress).getLocalTokenFromGlobal(_globalAddresses[i],_toChain)	NodeType.EXPRESSION
+tokens[i] = IRootPort(localPortAddress).getUnderlyingTokenFromLocal(hTokens[i],_toChain)	NodeType.EXPRESSION" [key=0];
+"BlockID: 978
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 979
+Call context: 
+None
+TMP_849 = CONVERT 2 to bytes1
+REF_144 -> LENGTH hTokens
+TMP_850 = CONVERT REF_144 to uint8
+TMP_851(uint128) = INTERNAL_CALL, RootBridgeAgent._manageGasOut(uint24)(_toChain)
+EXPRESSION:" [key=0];
+"BlockID: 979
+Call context: 
+None
+TMP_849 = CONVERT 2 to bytes1
+REF_144 -> LENGTH hTokens
+TMP_850 = CONVERT REF_144 to uint8
+TMP_851(uint128) = INTERNAL_CALL, RootBridgeAgent._manageGasOut(uint24)(_toChain)
+EXPRESSION:" -> "BlockID: 980
+Call context: 
+None
+TMP_852(bytes) = SOLIDITY_CALL abi.encodePacked()(TMP_849,_recipient,TMP_850,settlementNonce,hTokens,tokens,_amounts,_deposits,_data,TMP_851)
+data(bytes) := TMP_852(bytes)
+INTERNAL_CALL, RootBridgeAgent._createMultipleSettlement(address,address,address[],address[],uint256[],uint256[],bytes,uint24)(_owner,_recipient,hTokens,tokens,_amounts,_deposits,data,_toChain)
+EXPRESSION:data = abi.encodePacked(bytes1(0x02),_recipient,uint8(hTokens.length),settlementNonce,hTokens,tokens,_amounts,_deposits,_data,_manageGasOut(_toChain))	NodeType.VARIABLE
+data = abi.encodePacked(bytes1(0x02),_recipient,uint8(hTokens.length),settlementNonce,hTokens,tokens,_amounts,_deposits,_data,_manageGasOut(_toChain))	NodeType.EXPRESSION
+_createMultipleSettlement(_owner,_recipient,hTokens,tokens,_amounts,_deposits,data,_toChain)	NodeType.EXPRESSION" [key=0];
+"BlockID: 980
+Call context: 
+None
+TMP_852(bytes) = SOLIDITY_CALL abi.encodePacked()(TMP_849,_recipient,TMP_850,settlementNonce,hTokens,tokens,_amounts,_deposits,_data,TMP_851)
+data(bytes) := TMP_852(bytes)
+INTERNAL_CALL, RootBridgeAgent._createMultipleSettlement(address,address,address[],address[],uint256[],uint256[],bytes,uint24)(_owner,_recipient,hTokens,tokens,_amounts,_deposits,data,_toChain)
+EXPRESSION:data = abi.encodePacked(bytes1(0x02),_recipient,uint8(hTokens.length),settlementNonce,hTokens,tokens,_amounts,_deposits,_data,_manageGasOut(_toChain))	NodeType.VARIABLE
+data = abi.encodePacked(bytes1(0x02),_recipient,uint8(hTokens.length),settlementNonce,hTokens,tokens,_amounts,_deposits,_data,_manageGasOut(_toChain))	NodeType.EXPRESSION
+_createMultipleSettlement(_owner,_recipient,hTokens,tokens,_amounts,_deposits,data,_toChain)	NodeType.EXPRESSION" -> "BlockID: 981
+Call context: 
+None
+INTERNAL_CALL, RootBridgeAgent._performCall(bytes,uint256)(data,_toChain)
+EXPRESSION:_createMultipleSettlement(_owner,_recipient,hTokens,tokens,_amounts,_deposits,data,_toChain)	NodeType.EXPRESSION
+_performCall(data,_toChain)	NodeType.EXPRESSION" [key=0];
+"BlockID: 977
+Call context: 
+None
+REF_129(address) (->hTokens) := TMP_837(address)
+REF_132(address) -> tokens[i]
+TMP_838 = CONVERT localPortAddress to IRootPort
+REF_134(address) -> hTokens[i]
+TMP_839(address) = HIGH_LEVEL_CALL, dest:TMP_838(IRootPort), function:getUnderlyingTokenFromLocal, arguments:['REF_134', '_toChain']  
+EXPRESSION:hTokens[i] = IRootPort(localPortAddress).getLocalTokenFromGlobal(_globalAddresses[i],_toChain)	NodeType.EXPRESSION
+tokens[i] = IRootPort(localPortAddress).getUnderlyingTokenFromLocal(hTokens[i],_toChain)	NodeType.EXPRESSION" -> "BlockID: 983
+Call context: 
+None
+REF_132(address) (->tokens) := TMP_839(address)
+REF_135(address) -> hTokens[i]
+TMP_840 = CONVERT 0 to address
+TMP_841(bool) = REF_135 == TMP_840
+REF_136(address) -> tokens[i]
+TMP_842 = CONVERT 0 to address
+TMP_843(bool) = REF_136 == TMP_842
+REF_137(uint256) -> _deposits[i]
+TMP_844(bool) = REF_137 > 0
+TMP_845(bool) = TMP_843 && TMP_844
+TMP_846(bool) = TMP_841 || TMP_845
+CONDITION TMP_846
+EXPRESSION:tokens[i] = IRootPort(localPortAddress).getUnderlyingTokenFromLocal(hTokens[i],_toChain)	NodeType.EXPRESSION
+hTokens[i] == address(0) || (tokens[i] == address(0) && _deposits[i] > 0)	NodeType.IF" [key=0];
+"BlockID: 983
+Call context: 
+None
+REF_132(address) (->tokens) := TMP_839(address)
+REF_135(address) -> hTokens[i]
+TMP_840 = CONVERT 0 to address
+TMP_841(bool) = REF_135 == TMP_840
+REF_136(address) -> tokens[i]
+TMP_842 = CONVERT 0 to address
+TMP_843(bool) = REF_136 == TMP_842
+REF_137(uint256) -> _deposits[i]
+TMP_844(bool) = REF_137 > 0
+TMP_845(bool) = TMP_843 && TMP_844
+TMP_846(bool) = TMP_841 || TMP_845
+CONDITION TMP_846
+EXPRESSION:tokens[i] = IRootPort(localPortAddress).getUnderlyingTokenFromLocal(hTokens[i],_toChain)	NodeType.EXPRESSION
+hTokens[i] == address(0) || (tokens[i] == address(0) && _deposits[i] > 0)	NodeType.IF" -> "BlockID: 984
+Call context: 
+True
+TMP_847(None) = SOLIDITY_CALL revert InvalidInputParams()()
+EXPRESSION:revert InvalidInputParams()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 983
+Call context: 
+None
+REF_132(address) (->tokens) := TMP_839(address)
+REF_135(address) -> hTokens[i]
+TMP_840 = CONVERT 0 to address
+TMP_841(bool) = REF_135 == TMP_840
+REF_136(address) -> tokens[i]
+TMP_842 = CONVERT 0 to address
+TMP_843(bool) = REF_136 == TMP_842
+REF_137(uint256) -> _deposits[i]
+TMP_844(bool) = REF_137 > 0
+TMP_845(bool) = TMP_843 && TMP_844
+TMP_846(bool) = TMP_841 || TMP_845
+CONDITION TMP_846
+EXPRESSION:tokens[i] = IRootPort(localPortAddress).getUnderlyingTokenFromLocal(hTokens[i],_toChain)	NodeType.EXPRESSION
+hTokens[i] == address(0) || (tokens[i] == address(0) && _deposits[i] > 0)	NodeType.IF" -> "BlockID: 985
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 985
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 986
+Call context: 
+None
+REF_138(address) -> _globalAddresses[i]
+REF_139(address) -> hTokens[i]
+REF_140(address) -> tokens[i]
+REF_141(uint256) -> _amounts[i]
+REF_142(uint256) -> _deposits[i]
+INTERNAL_CALL, RootBridgeAgent._updateStateOnBridgeOut(address,address,address,address,uint256,uint256,uint24)(msg.sender,REF_138,REF_139,REF_140,REF_141,REF_142,_toChain)
+EXPRESSION:_updateStateOnBridgeOut(msg.sender,_globalAddresses[i],hTokens[i],tokens[i],_amounts[i],_deposits[i],_toChain)	NodeType.EXPRESSION" [key=0];
+"BlockID: 986
+Call context: 
+None
+REF_138(address) -> _globalAddresses[i]
+REF_139(address) -> hTokens[i]
+REF_140(address) -> tokens[i]
+REF_141(uint256) -> _amounts[i]
+REF_142(uint256) -> _deposits[i]
+INTERNAL_CALL, RootBridgeAgent._updateStateOnBridgeOut(address,address,address,address,uint256,uint256,uint24)(msg.sender,REF_138,REF_139,REF_140,REF_141,REF_142,_toChain)
+EXPRESSION:_updateStateOnBridgeOut(msg.sender,_globalAddresses[i],hTokens[i],tokens[i],_amounts[i],_deposits[i],_toChain)	NodeType.EXPRESSION" -> "BlockID: 987
+Call context: 
+None
+i(uint256) = i + 1
+EXPRESSION:_updateStateOnBridgeOut(msg.sender,_globalAddresses[i],hTokens[i],tokens[i],_amounts[i],_deposits[i],_toChain)	NodeType.EXPRESSION
+++ i	NodeType.EXPRESSION" [key=0];
+"BlockID: 987
+Call context: 
+None
+i(uint256) = i + 1
+EXPRESSION:_updateStateOnBridgeOut(msg.sender,_globalAddresses[i],hTokens[i],tokens[i],_amounts[i],_deposits[i],_toChain)	NodeType.EXPRESSION
+++ i	NodeType.EXPRESSION" -> "BlockID: 975
+Call context: 
+None
+BEGIN_LOOP
+REF_128 -> LENGTH _globalAddresses
+TMP_835(bool) = i < REF_128
+CONDITION TMP_835
+EXPRESSION:None	NodeType.STARTLOOP
+i < _globalAddresses.length	NodeType.IFLOOP" [key=0];
+}

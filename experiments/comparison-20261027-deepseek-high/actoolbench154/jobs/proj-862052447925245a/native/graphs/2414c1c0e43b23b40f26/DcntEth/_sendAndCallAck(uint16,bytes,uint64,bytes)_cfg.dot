@@ -1,0 +1,549 @@
+digraph {
+"BlockID: 2135
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 2136
+Call context: 
+None
+NEW VARIABLE from
+NEW VARIABLE to
+NEW VARIABLE amountSD
+NEW VARIABLE payloadForCall
+NEW VARIABLE gasForCall
+TUPLE_36(bytes32,address,uint64,bytes,uint64) = INTERNAL_CALL, OFTCoreV2._decodeSendAndCallPayload(bytes)(_payload)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(from,to,amountSD,payloadForCall,gasForCall) = _decodeSendAndCallPayload(_payload)	NodeType.EXPRESSION";
+"BlockID: 2137
+Call context: 
+None
+from(bytes32)= UNPACK TUPLE_36 index: 0 
+to(address)= UNPACK TUPLE_36 index: 1 
+amountSD(uint64)= UNPACK TUPLE_36 index: 2 
+payloadForCall(bytes)= UNPACK TUPLE_36 index: 3 
+gasForCall(uint64)= UNPACK TUPLE_36 index: 4 
+REF_349(mapping(bytes => mapping(uint64 => bool))) -> creditedPackets[_srcChainId]
+REF_350(mapping(uint64 => bool)) -> REF_349[_srcAddress]
+REF_351(bool) -> REF_350[_nonce]
+credited(bool) := REF_351(bool)
+TMP_1355(uint256) = INTERNAL_CALL, OFTCoreV2._sd2ld(uint64)(amountSD)
+EXPRESSION:(from,to,amountSD,payloadForCall,gasForCall) = _decodeSendAndCallPayload(_payload)	NodeType.EXPRESSION
+credited = creditedPackets[_srcChainId][_srcAddress][_nonce]	NodeType.VARIABLE
+credited = creditedPackets[_srcChainId][_srcAddress][_nonce]	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2138
+Call context: 
+None
+amount(uint256) := TMP_1355(uint256)
+TMP_1356 = ! credited 
+CONDITION TMP_1356
+EXPRESSION:amount = _sd2ld(amountSD)	NodeType.VARIABLE
+amount = _sd2ld(amountSD)	NodeType.EXPRESSION
+! credited	NodeType.IF" [shape=box];
+"BlockID: 2139
+Call context: 
+True
+TMP_1357 = CONVERT this to address
+TMP_1358(uint256) = INTERNAL_CALL, OFTV2._creditTo(uint16,address,uint256)(_srcChainId,TMP_1357,amount)
+EXPRESSION:amount = _creditTo(_srcChainId,address(this),amount)	NodeType.EXPRESSION";
+"BlockID: 2141
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2142
+Call context: 
+None
+TMP_1359(bool) = INTERNAL_CALL, OFTCoreV2._isContract(address)(to)
+EXPRESSION:! _isContract(to)	NodeType.EXPRESSION";
+"BlockID: 2143
+Call context: 
+None
+TMP_1360 = ! TMP_1359 
+CONDITION TMP_1360
+EXPRESSION:! _isContract(to)	NodeType.IF" [shape=box];
+"BlockID: 2148
+Call context: 
+True
+TMP_1368(uint256) = SOLIDITY_CALL gasleft()()
+gas(uint256) := TMP_1368(uint256)
+RETURN
+EXPRESSION:gas = gasleft()()	NodeType.EXPRESSION
+None	NodeType.RETURN";
+"BlockID: 2146
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2147
+Call context: 
+None
+srcChainId(uint16) := _srcChainId(uint16)
+srcAddress(bytes) := _srcAddress(bytes)
+nonce(uint64) := _nonce(uint64)
+payload(bytes) := _payload(bytes)
+from_(bytes32) := from(bytes32)
+to_(address) := to(address)
+amount_(uint256) := amount(uint256)
+payloadForCall_(bytes) := payloadForCall(bytes)
+CONDITION credited
+EXPRESSION:srcChainId = _srcChainId	NodeType.VARIABLE
+srcChainId = _srcChainId	NodeType.EXPRESSION
+srcAddress = _srcAddress	NodeType.VARIABLE
+srcAddress = _srcAddress	NodeType.EXPRESSION
+nonce = _nonce	NodeType.VARIABLE
+nonce = _nonce	NodeType.EXPRESSION
+payload = _payload	NodeType.VARIABLE
+payload = _payload	NodeType.EXPRESSION
+from_ = from	NodeType.VARIABLE
+from_ = from	NodeType.EXPRESSION
+to_ = to	NodeType.VARIABLE
+to_ = to	NodeType.EXPRESSION
+amount_ = amount	NodeType.VARIABLE
+amount_ = amount	NodeType.EXPRESSION
+payloadForCall_ = payloadForCall	NodeType.VARIABLE
+payloadForCall_ = payloadForCall	NodeType.EXPRESSION
+credited	NodeType.IF";
+"BlockID: 2149
+Call context: 
+False
+gas(uint256) := gasForCall(uint64)
+EXPRESSION:gas = gasForCall	NodeType.EXPRESSION";
+"BlockID: 2150
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2151
+Call context: 
+None
+NEW VARIABLE success
+NEW VARIABLE reason
+TMP_1362 = CONVERT this to address
+TMP_1363(uint256) = SOLIDITY_CALL gasleft()()
+REF_357(function(None,None,None,None,None,None,None,None)) -> this.callOnOFTReceived
+REF_358(None) -> REF_357.selector
+TMP_1364(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_358,srcChainId,srcAddress,nonce,from_,to_,amount_,payloadForCall_,gas)
+TUPLE_37(bool,bytes) = LIBRARY_CALL, dest:ExcessivelySafeCall, function:ExcessivelySafeCall.excessivelySafeCall(address,uint256,uint16,bytes), arguments:['TMP_1362', 'TMP_1363', '150', 'TMP_1364'] 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,reason) = address(this).excessivelySafeCall(gasleft()(),150,abi.encodeWithSelector(this.callOnOFTReceived.selector,srcChainId,srcAddress,nonce,from_,to_,amount_,payloadForCall_,gas))	NodeType.EXPRESSION";
+"BlockID: 2152
+Call context: 
+None
+success(bool)= UNPACK TUPLE_37 index: 0 
+reason(bytes)= UNPACK TUPLE_37 index: 1 
+CONDITION success
+EXPRESSION:(success,reason) = address(this).excessivelySafeCall(gasleft()(),150,abi.encodeWithSelector(this.callOnOFTReceived.selector,srcChainId,srcAddress,nonce,from_,to_,amount_,payloadForCall_,gas))	NodeType.EXPRESSION
+success	NodeType.IF" [shape=box];
+"BlockID: 2153
+Call context: 
+True
+TMP_1365(bytes32) = SOLIDITY_CALL keccak256(bytes)(payload)
+hash(bytes32) := TMP_1365(bytes32)
+EXPRESSION:hash = keccak256(bytes)(payload)	NodeType.VARIABLE
+hash = keccak256(bytes)(payload)	NodeType.EXPRESSION";
+"BlockID: 2154
+Call context: 
+False
+INTERNAL_CALL, NonblockingLzApp._storeFailedMessage(uint16,bytes,uint64,bytes,bytes)(srcChainId,srcAddress,nonce,payload,reason)
+EXPRESSION:_storeFailedMessage(srcChainId,srcAddress,nonce,payload,reason)	NodeType.EXPRESSION";
+"BlockID: 2156
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2140
+Call context: 
+None
+amount(uint256) := TMP_1358(uint256)
+REF_352(mapping(bytes => mapping(uint64 => bool))) -> creditedPackets[_srcChainId]
+REF_353(mapping(uint64 => bool)) -> REF_352[_srcAddress]
+REF_354(bool) -> REF_353[_nonce]
+REF_354(bool) (->creditedPackets) := True(bool)
+EXPRESSION:amount = _creditTo(_srcChainId,address(this),amount)	NodeType.EXPRESSION
+creditedPackets[_srcChainId][_srcAddress][_nonce] = true	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2135
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 2136
+Call context: 
+None
+NEW VARIABLE from
+NEW VARIABLE to
+NEW VARIABLE amountSD
+NEW VARIABLE payloadForCall
+NEW VARIABLE gasForCall
+TUPLE_36(bytes32,address,uint64,bytes,uint64) = INTERNAL_CALL, OFTCoreV2._decodeSendAndCallPayload(bytes)(_payload)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(from,to,amountSD,payloadForCall,gasForCall) = _decodeSendAndCallPayload(_payload)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2136
+Call context: 
+None
+NEW VARIABLE from
+NEW VARIABLE to
+NEW VARIABLE amountSD
+NEW VARIABLE payloadForCall
+NEW VARIABLE gasForCall
+TUPLE_36(bytes32,address,uint64,bytes,uint64) = INTERNAL_CALL, OFTCoreV2._decodeSendAndCallPayload(bytes)(_payload)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(from,to,amountSD,payloadForCall,gasForCall) = _decodeSendAndCallPayload(_payload)	NodeType.EXPRESSION" -> "BlockID: 2137
+Call context: 
+None
+from(bytes32)= UNPACK TUPLE_36 index: 0 
+to(address)= UNPACK TUPLE_36 index: 1 
+amountSD(uint64)= UNPACK TUPLE_36 index: 2 
+payloadForCall(bytes)= UNPACK TUPLE_36 index: 3 
+gasForCall(uint64)= UNPACK TUPLE_36 index: 4 
+REF_349(mapping(bytes => mapping(uint64 => bool))) -> creditedPackets[_srcChainId]
+REF_350(mapping(uint64 => bool)) -> REF_349[_srcAddress]
+REF_351(bool) -> REF_350[_nonce]
+credited(bool) := REF_351(bool)
+TMP_1355(uint256) = INTERNAL_CALL, OFTCoreV2._sd2ld(uint64)(amountSD)
+EXPRESSION:(from,to,amountSD,payloadForCall,gasForCall) = _decodeSendAndCallPayload(_payload)	NodeType.EXPRESSION
+credited = creditedPackets[_srcChainId][_srcAddress][_nonce]	NodeType.VARIABLE
+credited = creditedPackets[_srcChainId][_srcAddress][_nonce]	NodeType.EXPRESSION" [key=0];
+"BlockID: 2137
+Call context: 
+None
+from(bytes32)= UNPACK TUPLE_36 index: 0 
+to(address)= UNPACK TUPLE_36 index: 1 
+amountSD(uint64)= UNPACK TUPLE_36 index: 2 
+payloadForCall(bytes)= UNPACK TUPLE_36 index: 3 
+gasForCall(uint64)= UNPACK TUPLE_36 index: 4 
+REF_349(mapping(bytes => mapping(uint64 => bool))) -> creditedPackets[_srcChainId]
+REF_350(mapping(uint64 => bool)) -> REF_349[_srcAddress]
+REF_351(bool) -> REF_350[_nonce]
+credited(bool) := REF_351(bool)
+TMP_1355(uint256) = INTERNAL_CALL, OFTCoreV2._sd2ld(uint64)(amountSD)
+EXPRESSION:(from,to,amountSD,payloadForCall,gasForCall) = _decodeSendAndCallPayload(_payload)	NodeType.EXPRESSION
+credited = creditedPackets[_srcChainId][_srcAddress][_nonce]	NodeType.VARIABLE
+credited = creditedPackets[_srcChainId][_srcAddress][_nonce]	NodeType.EXPRESSION" -> "BlockID: 2138
+Call context: 
+None
+amount(uint256) := TMP_1355(uint256)
+TMP_1356 = ! credited 
+CONDITION TMP_1356
+EXPRESSION:amount = _sd2ld(amountSD)	NodeType.VARIABLE
+amount = _sd2ld(amountSD)	NodeType.EXPRESSION
+! credited	NodeType.IF" [key=0];
+"BlockID: 2138
+Call context: 
+None
+amount(uint256) := TMP_1355(uint256)
+TMP_1356 = ! credited 
+CONDITION TMP_1356
+EXPRESSION:amount = _sd2ld(amountSD)	NodeType.VARIABLE
+amount = _sd2ld(amountSD)	NodeType.EXPRESSION
+! credited	NodeType.IF" -> "BlockID: 2139
+Call context: 
+True
+TMP_1357 = CONVERT this to address
+TMP_1358(uint256) = INTERNAL_CALL, OFTV2._creditTo(uint16,address,uint256)(_srcChainId,TMP_1357,amount)
+EXPRESSION:amount = _creditTo(_srcChainId,address(this),amount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2138
+Call context: 
+None
+amount(uint256) := TMP_1355(uint256)
+TMP_1356 = ! credited 
+CONDITION TMP_1356
+EXPRESSION:amount = _sd2ld(amountSD)	NodeType.VARIABLE
+amount = _sd2ld(amountSD)	NodeType.EXPRESSION
+! credited	NodeType.IF" -> "BlockID: 2141
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2139
+Call context: 
+True
+TMP_1357 = CONVERT this to address
+TMP_1358(uint256) = INTERNAL_CALL, OFTV2._creditTo(uint16,address,uint256)(_srcChainId,TMP_1357,amount)
+EXPRESSION:amount = _creditTo(_srcChainId,address(this),amount)	NodeType.EXPRESSION" -> "BlockID: 2140
+Call context: 
+None
+amount(uint256) := TMP_1358(uint256)
+REF_352(mapping(bytes => mapping(uint64 => bool))) -> creditedPackets[_srcChainId]
+REF_353(mapping(uint64 => bool)) -> REF_352[_srcAddress]
+REF_354(bool) -> REF_353[_nonce]
+REF_354(bool) (->creditedPackets) := True(bool)
+EXPRESSION:amount = _creditTo(_srcChainId,address(this),amount)	NodeType.EXPRESSION
+creditedPackets[_srcChainId][_srcAddress][_nonce] = true	NodeType.EXPRESSION" [key=0];
+"BlockID: 2141
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2142
+Call context: 
+None
+TMP_1359(bool) = INTERNAL_CALL, OFTCoreV2._isContract(address)(to)
+EXPRESSION:! _isContract(to)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2142
+Call context: 
+None
+TMP_1359(bool) = INTERNAL_CALL, OFTCoreV2._isContract(address)(to)
+EXPRESSION:! _isContract(to)	NodeType.EXPRESSION" -> "BlockID: 2143
+Call context: 
+None
+TMP_1360 = ! TMP_1359 
+CONDITION TMP_1360
+EXPRESSION:! _isContract(to)	NodeType.IF" [key=0];
+"BlockID: 2143
+Call context: 
+None
+TMP_1360 = ! TMP_1359 
+CONDITION TMP_1360
+EXPRESSION:! _isContract(to)	NodeType.IF" -> "BlockID: 2148
+Call context: 
+True
+TMP_1368(uint256) = SOLIDITY_CALL gasleft()()
+gas(uint256) := TMP_1368(uint256)
+RETURN
+EXPRESSION:gas = gasleft()()	NodeType.EXPRESSION
+None	NodeType.RETURN" [key=0];
+"BlockID: 2143
+Call context: 
+None
+TMP_1360 = ! TMP_1359 
+CONDITION TMP_1360
+EXPRESSION:! _isContract(to)	NodeType.IF" -> "BlockID: 2146
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2148
+Call context: 
+True
+TMP_1368(uint256) = SOLIDITY_CALL gasleft()()
+gas(uint256) := TMP_1368(uint256)
+RETURN
+EXPRESSION:gas = gasleft()()	NodeType.EXPRESSION
+None	NodeType.RETURN" -> "BlockID: 2150
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2146
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2147
+Call context: 
+None
+srcChainId(uint16) := _srcChainId(uint16)
+srcAddress(bytes) := _srcAddress(bytes)
+nonce(uint64) := _nonce(uint64)
+payload(bytes) := _payload(bytes)
+from_(bytes32) := from(bytes32)
+to_(address) := to(address)
+amount_(uint256) := amount(uint256)
+payloadForCall_(bytes) := payloadForCall(bytes)
+CONDITION credited
+EXPRESSION:srcChainId = _srcChainId	NodeType.VARIABLE
+srcChainId = _srcChainId	NodeType.EXPRESSION
+srcAddress = _srcAddress	NodeType.VARIABLE
+srcAddress = _srcAddress	NodeType.EXPRESSION
+nonce = _nonce	NodeType.VARIABLE
+nonce = _nonce	NodeType.EXPRESSION
+payload = _payload	NodeType.VARIABLE
+payload = _payload	NodeType.EXPRESSION
+from_ = from	NodeType.VARIABLE
+from_ = from	NodeType.EXPRESSION
+to_ = to	NodeType.VARIABLE
+to_ = to	NodeType.EXPRESSION
+amount_ = amount	NodeType.VARIABLE
+amount_ = amount	NodeType.EXPRESSION
+payloadForCall_ = payloadForCall	NodeType.VARIABLE
+payloadForCall_ = payloadForCall	NodeType.EXPRESSION
+credited	NodeType.IF" [key=0];
+"BlockID: 2147
+Call context: 
+None
+srcChainId(uint16) := _srcChainId(uint16)
+srcAddress(bytes) := _srcAddress(bytes)
+nonce(uint64) := _nonce(uint64)
+payload(bytes) := _payload(bytes)
+from_(bytes32) := from(bytes32)
+to_(address) := to(address)
+amount_(uint256) := amount(uint256)
+payloadForCall_(bytes) := payloadForCall(bytes)
+CONDITION credited
+EXPRESSION:srcChainId = _srcChainId	NodeType.VARIABLE
+srcChainId = _srcChainId	NodeType.EXPRESSION
+srcAddress = _srcAddress	NodeType.VARIABLE
+srcAddress = _srcAddress	NodeType.EXPRESSION
+nonce = _nonce	NodeType.VARIABLE
+nonce = _nonce	NodeType.EXPRESSION
+payload = _payload	NodeType.VARIABLE
+payload = _payload	NodeType.EXPRESSION
+from_ = from	NodeType.VARIABLE
+from_ = from	NodeType.EXPRESSION
+to_ = to	NodeType.VARIABLE
+to_ = to	NodeType.EXPRESSION
+amount_ = amount	NodeType.VARIABLE
+amount_ = amount	NodeType.EXPRESSION
+payloadForCall_ = payloadForCall	NodeType.VARIABLE
+payloadForCall_ = payloadForCall	NodeType.EXPRESSION
+credited	NodeType.IF" -> "BlockID: 2148
+Call context: 
+True
+TMP_1368(uint256) = SOLIDITY_CALL gasleft()()
+gas(uint256) := TMP_1368(uint256)
+RETURN
+EXPRESSION:gas = gasleft()()	NodeType.EXPRESSION
+None	NodeType.RETURN" [key=0];
+"BlockID: 2147
+Call context: 
+None
+srcChainId(uint16) := _srcChainId(uint16)
+srcAddress(bytes) := _srcAddress(bytes)
+nonce(uint64) := _nonce(uint64)
+payload(bytes) := _payload(bytes)
+from_(bytes32) := from(bytes32)
+to_(address) := to(address)
+amount_(uint256) := amount(uint256)
+payloadForCall_(bytes) := payloadForCall(bytes)
+CONDITION credited
+EXPRESSION:srcChainId = _srcChainId	NodeType.VARIABLE
+srcChainId = _srcChainId	NodeType.EXPRESSION
+srcAddress = _srcAddress	NodeType.VARIABLE
+srcAddress = _srcAddress	NodeType.EXPRESSION
+nonce = _nonce	NodeType.VARIABLE
+nonce = _nonce	NodeType.EXPRESSION
+payload = _payload	NodeType.VARIABLE
+payload = _payload	NodeType.EXPRESSION
+from_ = from	NodeType.VARIABLE
+from_ = from	NodeType.EXPRESSION
+to_ = to	NodeType.VARIABLE
+to_ = to	NodeType.EXPRESSION
+amount_ = amount	NodeType.VARIABLE
+amount_ = amount	NodeType.EXPRESSION
+payloadForCall_ = payloadForCall	NodeType.VARIABLE
+payloadForCall_ = payloadForCall	NodeType.EXPRESSION
+credited	NodeType.IF" -> "BlockID: 2149
+Call context: 
+False
+gas(uint256) := gasForCall(uint64)
+EXPRESSION:gas = gasForCall	NodeType.EXPRESSION" [key=0];
+"BlockID: 2149
+Call context: 
+False
+gas(uint256) := gasForCall(uint64)
+EXPRESSION:gas = gasForCall	NodeType.EXPRESSION" -> "BlockID: 2150
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2150
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2151
+Call context: 
+None
+NEW VARIABLE success
+NEW VARIABLE reason
+TMP_1362 = CONVERT this to address
+TMP_1363(uint256) = SOLIDITY_CALL gasleft()()
+REF_357(function(None,None,None,None,None,None,None,None)) -> this.callOnOFTReceived
+REF_358(None) -> REF_357.selector
+TMP_1364(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_358,srcChainId,srcAddress,nonce,from_,to_,amount_,payloadForCall_,gas)
+TUPLE_37(bool,bytes) = LIBRARY_CALL, dest:ExcessivelySafeCall, function:ExcessivelySafeCall.excessivelySafeCall(address,uint256,uint16,bytes), arguments:['TMP_1362', 'TMP_1363', '150', 'TMP_1364'] 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,reason) = address(this).excessivelySafeCall(gasleft()(),150,abi.encodeWithSelector(this.callOnOFTReceived.selector,srcChainId,srcAddress,nonce,from_,to_,amount_,payloadForCall_,gas))	NodeType.EXPRESSION" [key=0];
+"BlockID: 2151
+Call context: 
+None
+NEW VARIABLE success
+NEW VARIABLE reason
+TMP_1362 = CONVERT this to address
+TMP_1363(uint256) = SOLIDITY_CALL gasleft()()
+REF_357(function(None,None,None,None,None,None,None,None)) -> this.callOnOFTReceived
+REF_358(None) -> REF_357.selector
+TMP_1364(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_358,srcChainId,srcAddress,nonce,from_,to_,amount_,payloadForCall_,gas)
+TUPLE_37(bool,bytes) = LIBRARY_CALL, dest:ExcessivelySafeCall, function:ExcessivelySafeCall.excessivelySafeCall(address,uint256,uint16,bytes), arguments:['TMP_1362', 'TMP_1363', '150', 'TMP_1364'] 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,reason) = address(this).excessivelySafeCall(gasleft()(),150,abi.encodeWithSelector(this.callOnOFTReceived.selector,srcChainId,srcAddress,nonce,from_,to_,amount_,payloadForCall_,gas))	NodeType.EXPRESSION" -> "BlockID: 2152
+Call context: 
+None
+success(bool)= UNPACK TUPLE_37 index: 0 
+reason(bytes)= UNPACK TUPLE_37 index: 1 
+CONDITION success
+EXPRESSION:(success,reason) = address(this).excessivelySafeCall(gasleft()(),150,abi.encodeWithSelector(this.callOnOFTReceived.selector,srcChainId,srcAddress,nonce,from_,to_,amount_,payloadForCall_,gas))	NodeType.EXPRESSION
+success	NodeType.IF" [key=0];
+"BlockID: 2152
+Call context: 
+None
+success(bool)= UNPACK TUPLE_37 index: 0 
+reason(bytes)= UNPACK TUPLE_37 index: 1 
+CONDITION success
+EXPRESSION:(success,reason) = address(this).excessivelySafeCall(gasleft()(),150,abi.encodeWithSelector(this.callOnOFTReceived.selector,srcChainId,srcAddress,nonce,from_,to_,amount_,payloadForCall_,gas))	NodeType.EXPRESSION
+success	NodeType.IF" -> "BlockID: 2153
+Call context: 
+True
+TMP_1365(bytes32) = SOLIDITY_CALL keccak256(bytes)(payload)
+hash(bytes32) := TMP_1365(bytes32)
+EXPRESSION:hash = keccak256(bytes)(payload)	NodeType.VARIABLE
+hash = keccak256(bytes)(payload)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2152
+Call context: 
+None
+success(bool)= UNPACK TUPLE_37 index: 0 
+reason(bytes)= UNPACK TUPLE_37 index: 1 
+CONDITION success
+EXPRESSION:(success,reason) = address(this).excessivelySafeCall(gasleft()(),150,abi.encodeWithSelector(this.callOnOFTReceived.selector,srcChainId,srcAddress,nonce,from_,to_,amount_,payloadForCall_,gas))	NodeType.EXPRESSION
+success	NodeType.IF" -> "BlockID: 2154
+Call context: 
+False
+INTERNAL_CALL, NonblockingLzApp._storeFailedMessage(uint16,bytes,uint64,bytes,bytes)(srcChainId,srcAddress,nonce,payload,reason)
+EXPRESSION:_storeFailedMessage(srcChainId,srcAddress,nonce,payload,reason)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2153
+Call context: 
+True
+TMP_1365(bytes32) = SOLIDITY_CALL keccak256(bytes)(payload)
+hash(bytes32) := TMP_1365(bytes32)
+EXPRESSION:hash = keccak256(bytes)(payload)	NodeType.VARIABLE
+hash = keccak256(bytes)(payload)	NodeType.EXPRESSION" -> "BlockID: 2156
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2154
+Call context: 
+False
+INTERNAL_CALL, NonblockingLzApp._storeFailedMessage(uint16,bytes,uint64,bytes,bytes)(srcChainId,srcAddress,nonce,payload,reason)
+EXPRESSION:_storeFailedMessage(srcChainId,srcAddress,nonce,payload,reason)	NodeType.EXPRESSION" -> "BlockID: 2156
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2140
+Call context: 
+None
+amount(uint256) := TMP_1358(uint256)
+REF_352(mapping(bytes => mapping(uint64 => bool))) -> creditedPackets[_srcChainId]
+REF_353(mapping(uint64 => bool)) -> REF_352[_srcAddress]
+REF_354(bool) -> REF_353[_nonce]
+REF_354(bool) (->creditedPackets) := True(bool)
+EXPRESSION:amount = _creditTo(_srcChainId,address(this),amount)	NodeType.EXPRESSION
+creditedPackets[_srcChainId][_srcAddress][_nonce] = true	NodeType.EXPRESSION" -> "BlockID: 2141
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

@@ -1,0 +1,430 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+TMP_579(bool) = _unlocked == 1
+CONDITION TMP_579
+EXPRESSION:TMP_579(bool) = _unlocked == 1	NodeType.IF";
+"BlockID: 5
+Call context: 
+True
+TMP_462(None) = SOLIDITY_CALL revert UnrecognizedStrategyToken()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 7
+Call context: 
+None
+REF_54(mapping(address => bool)) -> isPortStrategy[_strategy]
+REF_55(bool) -> REF_54[_token]
+TMP_463 = ! REF_55 
+CONDITION TMP_463
+EXPRESSION:! isPortStrategy[_strategy][_token]	NodeType.IF";
+"BlockID: 8
+Call context: 
+True
+TMP_464(None) = SOLIDITY_CALL revert UnrecognizedPortStrategy()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 10
+Call context: 
+None
+TMP_445 = CONVERT _token to ERC20
+TMP_446 = CONVERT this to address
+TMP_447(uint256) = HIGH_LEVEL_CALL, dest:TMP_445(ERC20), function:balanceOf, arguments:['TMP_446']  
+EXPRESSION:";
+"BlockID: 14
+Call context: 
+None
+reservesLacking(uint256) := TMP_465(uint256)
+TMP_471(bool) = _amount < reservesLacking
+CONDITION TMP_471
+EXPRESSION:reservesLacking = _reservesLacking(_token)	NodeType.VARIABLE
+reservesLacking = _reservesLacking(_token)	NodeType.EXPRESSION
+_amount < reservesLacking	NodeType.IF" [shape=box];
+"BlockID: 15
+Call context: 
+True
+amountToWithdraw(uint256) := _amount(uint256)
+EXPRESSION:amountToWithdraw = _amount	NodeType.EXPRESSION";
+"BlockID: 16
+Call context: 
+False
+amountToWithdraw(uint256) := reservesLacking(uint256)
+EXPRESSION:amountToWithdraw = reservesLacking	NodeType.EXPRESSION";
+"BlockID: 17
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 18
+Call context: 
+None
+TMP_466 = CONVERT _strategy to IPortStrategy
+TMP_467 = CONVERT this to address
+HIGH_LEVEL_CALL, dest:TMP_466(IPortStrategy), function:withdraw, arguments:['TMP_467', '_token', 'amountToWithdraw']  
+EXPRESSION:IPortStrategy(_strategy).withdraw(address(this),_token,amountToWithdraw)	NodeType.EXPRESSION";
+"BlockID: 19
+Call context: 
+None
+REF_57(mapping(address => uint256)) -> getPortStrategyTokenDebt[_strategy]
+REF_58(uint256) -> REF_57[_token]
+REF_58(-> getPortStrategyTokenDebt) = REF_58 (c)- amountToWithdraw
+REF_59(uint256) -> getStrategyTokenDebt[_token]
+REF_59(-> getStrategyTokenDebt) = REF_59 (c)- amountToWithdraw
+EXPRESSION:IPortStrategy(_strategy).withdraw(address(this),_token,amountToWithdraw)	NodeType.EXPRESSION
+getPortStrategyTokenDebt[_strategy][_token] -= amountToWithdraw	NodeType.EXPRESSION
+getStrategyTokenDebt[_token] -= amountToWithdraw	NodeType.EXPRESSION";
+"BlockID: 4
+Call context: replenishReserves
+True
+_unlocked(uint256) := 2(uint256)
+_unlocked(uint256) := 1(uint256)
+REF_53(bool) -> isStrategyToken[_token]
+TMP_461 = ! REF_53 
+CONDITION TMP_461
+EXPRESSION:_unlocked = 2	NodeType.EXPRESSION
+_unlocked = 1	NodeType.EXPRESSION
+lock()	NodeType.EXPRESSION
+! isStrategyToken[_token]	NodeType.IF";
+"BlockID: 2
+Call context: replenishReserves
+True
+TMP_580(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 3
+Call context: replenishReserves
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 11
+Call context: replenishReserves
+None
+currBalance(uint256) := TMP_447(uint256)
+REF_47(uint256) -> getStrategyTokenDebt[_token]
+TMP_451(uint256) = _currBalance (c)+ REF_47
+REF_48(uint256) -> getMinimumTokenReserveRatio[_token]
+TMP_452(uint256) = TMP_451 (c)* REF_48
+TMP_453(uint256) = TMP_452 (c)/ DIVISIONER
+TMP_663(None) := TMP_453(uint256)
+minReserves(uint256) := TMP_448(uint256)
+TMP_449(bool) = currBalance < minReserves
+CONDITION TMP_449
+EXPRESSION:currBalance = ERC20(_token).balanceOf(address(this))	NodeType.VARIABLE
+minReserves = _minimumReserves(currBalance,_token)	NodeType.VARIABLE
+minReserves = _minimumReserves(currBalance,_token)	NodeType.EXPRESSION
+currBalance < minReserves	NodeType.IF" [shape=box];
+"BlockID: 12
+Call context: replenishReserves
+True
+TMP_450(uint256) = minReserves (c)- currBalance
+TMP_662(None) := TMP_450(uint256)
+EXPRESSION:";
+"BlockID: 13
+Call context: replenishReserves
+False
+TMP_662(None) := 0(uint256)
+EXPRESSION:";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+TMP_579(bool) = _unlocked == 1
+CONDITION TMP_579
+EXPRESSION:TMP_579(bool) = _unlocked == 1	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_579(bool) = _unlocked == 1
+CONDITION TMP_579
+EXPRESSION:TMP_579(bool) = _unlocked == 1	NodeType.IF" -> "BlockID: 2
+Call context: replenishReserves
+True
+TMP_580(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+TMP_579(bool) = _unlocked == 1
+CONDITION TMP_579
+EXPRESSION:TMP_579(bool) = _unlocked == 1	NodeType.IF" -> "BlockID: 3
+Call context: replenishReserves
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 7
+Call context: 
+None
+REF_54(mapping(address => bool)) -> isPortStrategy[_strategy]
+REF_55(bool) -> REF_54[_token]
+TMP_463 = ! REF_55 
+CONDITION TMP_463
+EXPRESSION:! isPortStrategy[_strategy][_token]	NodeType.IF" [key=0];
+"BlockID: 7
+Call context: 
+None
+REF_54(mapping(address => bool)) -> isPortStrategy[_strategy]
+REF_55(bool) -> REF_54[_token]
+TMP_463 = ! REF_55 
+CONDITION TMP_463
+EXPRESSION:! isPortStrategy[_strategy][_token]	NodeType.IF" -> "BlockID: 8
+Call context: 
+True
+TMP_464(None) = SOLIDITY_CALL revert UnrecognizedPortStrategy()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 7
+Call context: 
+None
+REF_54(mapping(address => bool)) -> isPortStrategy[_strategy]
+REF_55(bool) -> REF_54[_token]
+TMP_463 = ! REF_55 
+CONDITION TMP_463
+EXPRESSION:! isPortStrategy[_strategy][_token]	NodeType.IF" -> "BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 10
+Call context: 
+None
+TMP_445 = CONVERT _token to ERC20
+TMP_446 = CONVERT this to address
+TMP_447(uint256) = HIGH_LEVEL_CALL, dest:TMP_445(ERC20), function:balanceOf, arguments:['TMP_446']  
+EXPRESSION:" [key=0];
+"BlockID: 10
+Call context: 
+None
+TMP_445 = CONVERT _token to ERC20
+TMP_446 = CONVERT this to address
+TMP_447(uint256) = HIGH_LEVEL_CALL, dest:TMP_445(ERC20), function:balanceOf, arguments:['TMP_446']  
+EXPRESSION:" -> "BlockID: 11
+Call context: replenishReserves
+None
+currBalance(uint256) := TMP_447(uint256)
+REF_47(uint256) -> getStrategyTokenDebt[_token]
+TMP_451(uint256) = _currBalance (c)+ REF_47
+REF_48(uint256) -> getMinimumTokenReserveRatio[_token]
+TMP_452(uint256) = TMP_451 (c)* REF_48
+TMP_453(uint256) = TMP_452 (c)/ DIVISIONER
+TMP_663(None) := TMP_453(uint256)
+minReserves(uint256) := TMP_448(uint256)
+TMP_449(bool) = currBalance < minReserves
+CONDITION TMP_449
+EXPRESSION:currBalance = ERC20(_token).balanceOf(address(this))	NodeType.VARIABLE
+minReserves = _minimumReserves(currBalance,_token)	NodeType.VARIABLE
+minReserves = _minimumReserves(currBalance,_token)	NodeType.EXPRESSION
+currBalance < minReserves	NodeType.IF" [key="successor_5"];
+"BlockID: 14
+Call context: 
+None
+reservesLacking(uint256) := TMP_465(uint256)
+TMP_471(bool) = _amount < reservesLacking
+CONDITION TMP_471
+EXPRESSION:reservesLacking = _reservesLacking(_token)	NodeType.VARIABLE
+reservesLacking = _reservesLacking(_token)	NodeType.EXPRESSION
+_amount < reservesLacking	NodeType.IF" -> "BlockID: 15
+Call context: 
+True
+amountToWithdraw(uint256) := _amount(uint256)
+EXPRESSION:amountToWithdraw = _amount	NodeType.EXPRESSION" [key=0];
+"BlockID: 14
+Call context: 
+None
+reservesLacking(uint256) := TMP_465(uint256)
+TMP_471(bool) = _amount < reservesLacking
+CONDITION TMP_471
+EXPRESSION:reservesLacking = _reservesLacking(_token)	NodeType.VARIABLE
+reservesLacking = _reservesLacking(_token)	NodeType.EXPRESSION
+_amount < reservesLacking	NodeType.IF" -> "BlockID: 16
+Call context: 
+False
+amountToWithdraw(uint256) := reservesLacking(uint256)
+EXPRESSION:amountToWithdraw = reservesLacking	NodeType.EXPRESSION" [key=0];
+"BlockID: 15
+Call context: 
+True
+amountToWithdraw(uint256) := _amount(uint256)
+EXPRESSION:amountToWithdraw = _amount	NodeType.EXPRESSION" -> "BlockID: 17
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 16
+Call context: 
+False
+amountToWithdraw(uint256) := reservesLacking(uint256)
+EXPRESSION:amountToWithdraw = reservesLacking	NodeType.EXPRESSION" -> "BlockID: 17
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 17
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 18
+Call context: 
+None
+TMP_466 = CONVERT _strategy to IPortStrategy
+TMP_467 = CONVERT this to address
+HIGH_LEVEL_CALL, dest:TMP_466(IPortStrategy), function:withdraw, arguments:['TMP_467', '_token', 'amountToWithdraw']  
+EXPRESSION:IPortStrategy(_strategy).withdraw(address(this),_token,amountToWithdraw)	NodeType.EXPRESSION" [key=0];
+"BlockID: 18
+Call context: 
+None
+TMP_466 = CONVERT _strategy to IPortStrategy
+TMP_467 = CONVERT this to address
+HIGH_LEVEL_CALL, dest:TMP_466(IPortStrategy), function:withdraw, arguments:['TMP_467', '_token', 'amountToWithdraw']  
+EXPRESSION:IPortStrategy(_strategy).withdraw(address(this),_token,amountToWithdraw)	NodeType.EXPRESSION" -> "BlockID: 19
+Call context: 
+None
+REF_57(mapping(address => uint256)) -> getPortStrategyTokenDebt[_strategy]
+REF_58(uint256) -> REF_57[_token]
+REF_58(-> getPortStrategyTokenDebt) = REF_58 (c)- amountToWithdraw
+REF_59(uint256) -> getStrategyTokenDebt[_token]
+REF_59(-> getStrategyTokenDebt) = REF_59 (c)- amountToWithdraw
+EXPRESSION:IPortStrategy(_strategy).withdraw(address(this),_token,amountToWithdraw)	NodeType.EXPRESSION
+getPortStrategyTokenDebt[_strategy][_token] -= amountToWithdraw	NodeType.EXPRESSION
+getStrategyTokenDebt[_token] -= amountToWithdraw	NodeType.EXPRESSION" [key=0];
+"BlockID: 4
+Call context: replenishReserves
+True
+_unlocked(uint256) := 2(uint256)
+_unlocked(uint256) := 1(uint256)
+REF_53(bool) -> isStrategyToken[_token]
+TMP_461 = ! REF_53 
+CONDITION TMP_461
+EXPRESSION:_unlocked = 2	NodeType.EXPRESSION
+_unlocked = 1	NodeType.EXPRESSION
+lock()	NodeType.EXPRESSION
+! isStrategyToken[_token]	NodeType.IF" -> "BlockID: 5
+Call context: 
+True
+TMP_462(None) = SOLIDITY_CALL revert UnrecognizedStrategyToken()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_2"];
+"BlockID: 4
+Call context: replenishReserves
+True
+_unlocked(uint256) := 2(uint256)
+_unlocked(uint256) := 1(uint256)
+REF_53(bool) -> isStrategyToken[_token]
+TMP_461 = ! REF_53 
+CONDITION TMP_461
+EXPRESSION:_unlocked = 2	NodeType.EXPRESSION
+_unlocked = 1	NodeType.EXPRESSION
+lock()	NodeType.EXPRESSION
+! isStrategyToken[_token]	NodeType.IF" -> "BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+"BlockID: 3
+Call context: replenishReserves
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: replenishReserves
+True
+_unlocked(uint256) := 2(uint256)
+_unlocked(uint256) := 1(uint256)
+REF_53(bool) -> isStrategyToken[_token]
+TMP_461 = ! REF_53 
+CONDITION TMP_461
+EXPRESSION:_unlocked = 2	NodeType.EXPRESSION
+_unlocked = 1	NodeType.EXPRESSION
+lock()	NodeType.EXPRESSION
+! isStrategyToken[_token]	NodeType.IF" [key=0];
+"BlockID: 11
+Call context: replenishReserves
+None
+currBalance(uint256) := TMP_447(uint256)
+REF_47(uint256) -> getStrategyTokenDebt[_token]
+TMP_451(uint256) = _currBalance (c)+ REF_47
+REF_48(uint256) -> getMinimumTokenReserveRatio[_token]
+TMP_452(uint256) = TMP_451 (c)* REF_48
+TMP_453(uint256) = TMP_452 (c)/ DIVISIONER
+TMP_663(None) := TMP_453(uint256)
+minReserves(uint256) := TMP_448(uint256)
+TMP_449(bool) = currBalance < minReserves
+CONDITION TMP_449
+EXPRESSION:currBalance = ERC20(_token).balanceOf(address(this))	NodeType.VARIABLE
+minReserves = _minimumReserves(currBalance,_token)	NodeType.VARIABLE
+minReserves = _minimumReserves(currBalance,_token)	NodeType.EXPRESSION
+currBalance < minReserves	NodeType.IF" -> "BlockID: 12
+Call context: replenishReserves
+True
+TMP_450(uint256) = minReserves (c)- currBalance
+TMP_662(None) := TMP_450(uint256)
+EXPRESSION:" [key="successor_3"];
+"BlockID: 11
+Call context: replenishReserves
+None
+currBalance(uint256) := TMP_447(uint256)
+REF_47(uint256) -> getStrategyTokenDebt[_token]
+TMP_451(uint256) = _currBalance (c)+ REF_47
+REF_48(uint256) -> getMinimumTokenReserveRatio[_token]
+TMP_452(uint256) = TMP_451 (c)* REF_48
+TMP_453(uint256) = TMP_452 (c)/ DIVISIONER
+TMP_663(None) := TMP_453(uint256)
+minReserves(uint256) := TMP_448(uint256)
+TMP_449(bool) = currBalance < minReserves
+CONDITION TMP_449
+EXPRESSION:currBalance = ERC20(_token).balanceOf(address(this))	NodeType.VARIABLE
+minReserves = _minimumReserves(currBalance,_token)	NodeType.VARIABLE
+minReserves = _minimumReserves(currBalance,_token)	NodeType.EXPRESSION
+currBalance < minReserves	NodeType.IF" -> "BlockID: 13
+Call context: replenishReserves
+False
+TMP_662(None) := 0(uint256)
+EXPRESSION:" [key="successor_3"];
+"BlockID: 12
+Call context: replenishReserves
+True
+TMP_450(uint256) = minReserves (c)- currBalance
+TMP_662(None) := TMP_450(uint256)
+EXPRESSION:" -> "BlockID: 14
+Call context: 
+None
+reservesLacking(uint256) := TMP_465(uint256)
+TMP_471(bool) = _amount < reservesLacking
+CONDITION TMP_471
+EXPRESSION:reservesLacking = _reservesLacking(_token)	NodeType.VARIABLE
+reservesLacking = _reservesLacking(_token)	NodeType.EXPRESSION
+_amount < reservesLacking	NodeType.IF" [key="successor_5", ref="BranchPort._reservesLacking"];
+"BlockID: 13
+Call context: replenishReserves
+False
+TMP_662(None) := 0(uint256)
+EXPRESSION:" -> "BlockID: 14
+Call context: 
+None
+reservesLacking(uint256) := TMP_465(uint256)
+TMP_471(bool) = _amount < reservesLacking
+CONDITION TMP_471
+EXPRESSION:reservesLacking = _reservesLacking(_token)	NodeType.VARIABLE
+reservesLacking = _reservesLacking(_token)	NodeType.EXPRESSION
+_amount < reservesLacking	NodeType.IF" [key="successor_5", ref="BranchPort._reservesLacking"];
+}

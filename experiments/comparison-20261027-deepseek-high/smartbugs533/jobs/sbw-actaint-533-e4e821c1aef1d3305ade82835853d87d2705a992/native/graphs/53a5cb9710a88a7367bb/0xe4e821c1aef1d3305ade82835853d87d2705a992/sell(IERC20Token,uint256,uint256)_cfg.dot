@@ -1,0 +1,522 @@
+digraph {
+"BlockID: 799
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 800
+Call context: 
+None
+MODIFIER_CALL, BancorChanger.changingAllowed()()
+EXPRESSION:changingAllowed()	NodeType.EXPRESSION";
+"BlockID: 801
+Call context: 
+None
+MODIFIER_CALL, Utils.greaterThanZero(uint256)(_minReturn)
+EXPRESSION:changingAllowed()	NodeType.EXPRESSION
+greaterThanZero(_minReturn)	NodeType.EXPRESSION";
+"BlockID: 802
+Call context: 
+None
+TMP_257(uint256) = HIGH_LEVEL_CALL, dest:token(ISmartToken), function:balanceOf, arguments:['msg.sender']  
+EXPRESSION:greaterThanZero(_minReturn)	NodeType.EXPRESSION
+require(bool)(_sellAmount <= token.balanceOf(msg.sender))	NodeType.EXPRESSION";
+"BlockID: 804
+Call context: 
+True
+TMP_260(uint256) = INTERNAL_CALL, BancorChanger.getSaleReturn(IERC20Token,uint256)(_reserveToken,_sellAmount)
+EXPRESSION:amount = getSaleReturn(_reserveToken,_sellAmount)	NodeType.EXPRESSION";
+"BlockID: 806
+Call context: 
+True
+TMP_265(uint256) = HIGH_LEVEL_CALL, dest:token(ISmartToken), function:totalSupply, arguments:[]  
+EXPRESSION:";
+"BlockID: 807
+Call context: 
+None
+tokenSupply(uint256) := TMP_265(uint256)
+TMP_266(uint256) = INTERNAL_CALL, BancorChanger.getReserveBalance(IERC20Token)(_reserveToken)
+EXPRESSION:tokenSupply = token.totalSupply()	NodeType.VARIABLE
+tokenSupply = token.totalSupply()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 809
+Call context: 
+True
+REF_64(BancorChanger.Reserve) -> reserves[_reserveToken]
+reserve(BancorChanger.Reserve) := REF_64(BancorChanger.Reserve)
+REF_65(bool) -> reserve.isVirtualBalanceEnabled
+CONDITION REF_65
+EXPRESSION:reserve = reserves[_reserveToken]	NodeType.VARIABLE
+reserve = reserves[_reserveToken]	NodeType.EXPRESSION
+reserve.isVirtualBalanceEnabled	NodeType.IF";
+"BlockID: 810
+Call context: 
+True
+REF_66(uint256) -> reserve.virtualBalance
+REF_67(uint256) -> reserve.virtualBalance
+TMP_273(uint256) = INTERNAL_CALL, Utils.safeSub(uint256,uint256)(REF_67,amount)
+EXPRESSION:reserve.virtualBalance = safeSub(reserve.virtualBalance,amount)	NodeType.EXPRESSION";
+"BlockID: 812
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 813
+Call context: 
+None
+HIGH_LEVEL_CALL, dest:token(ISmartToken), function:destroy, arguments:['msg.sender', '_sellAmount']  
+EXPRESSION:token.destroy(msg.sender,_sellAmount)	NodeType.EXPRESSION";
+"BlockID: 814
+Call context: 
+None
+TMP_275(bool) = HIGH_LEVEL_CALL, dest:_reserveToken(IERC20Token), function:transfer, arguments:['msg.sender', 'amount']  
+EXPRESSION:token.destroy(msg.sender,_sellAmount)	NodeType.EXPRESSION
+assert(bool)(_reserveToken.transfer(msg.sender,amount))	NodeType.EXPRESSION";
+"BlockID: 816
+Call context: 
+True
+TMP_277(uint256) = INTERNAL_CALL, BancorChanger.getReserveBalance(IERC20Token)(_reserveToken)
+EXPRESSION:";
+"BlockID: 817
+Call context: 
+None
+TMP_278(uint256) = INTERNAL_CALL, Utils.safeMul(uint256,uint256)(TMP_277,MAX_CRR)
+EXPRESSION:" [shape=box];
+"BlockID: 818
+Call context: 
+None
+reserveAmount(uint256) := TMP_278(uint256)
+TMP_279(uint256) = HIGH_LEVEL_CALL, dest:token(ISmartToken), function:totalSupply, arguments:[]  
+EXPRESSION:reserveAmount = safeMul(getReserveBalance(_reserveToken),MAX_CRR)	NodeType.VARIABLE
+reserveAmount = safeMul(getReserveBalance(_reserveToken),MAX_CRR)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 819
+Call context: 
+None
+REF_71(uint32) -> reserve.ratio
+TMP_280(uint256) = INTERNAL_CALL, Utils.safeMul(uint256,uint256)(TMP_279,REF_71)
+EXPRESSION:" [shape=box];
+"BlockID: 820
+Call context: 
+None
+tokenAmount(uint256) := TMP_280(uint256)
+RETURN amount
+EXPRESSION:tokenAmount = safeMul(token.totalSupply(),reserve.ratio)	NodeType.VARIABLE
+tokenAmount = safeMul(token.totalSupply(),reserve.ratio)	NodeType.EXPRESSION
+amount	NodeType.RETURN" [shape=box];
+"BlockID: 811
+Call context: 
+None
+REF_66(uint256) (->reserve) := TMP_273(uint256)
+EXPRESSION:reserve.virtualBalance = safeSub(reserve.virtualBalance,amount)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 821
+Call context: 
+None
+TMP_258(bool) = _sellAmount <= TMP_257
+CONDITION TMP_258
+EXPRESSION:TMP_258(bool) = _sellAmount <= TMP_257	NodeType.IF";
+"BlockID: 822
+Call context: 
+True
+TMP_259(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 823
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 824
+Call context: 
+None
+amount(uint256) := TMP_260(uint256)
+TMP_261(bool) = amount != 0
+TMP_262(bool) = amount >= _minReturn
+TMP_263(bool) = TMP_261 && TMP_262
+CONDITION TMP_263
+EXPRESSION:TMP_263(bool) = TMP_261 && TMP_262	NodeType.IF";
+"BlockID: 825
+Call context: 
+True
+TMP_264(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 826
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 827
+Call context: 
+None
+reserveBalance(uint256) := TMP_266(uint256)
+TMP_267(bool) = amount < reserveBalance
+TMP_268(bool) = amount == reserveBalance
+TMP_269(bool) = _sellAmount == tokenSupply
+TMP_270(bool) = TMP_268 && TMP_269
+TMP_271(bool) = TMP_267 || TMP_270
+CONDITION TMP_271
+EXPRESSION:TMP_271(bool) = TMP_267 || TMP_270	NodeType.IF";
+"BlockID: 828
+Call context: 
+True
+TMP_272(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 829
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 830
+Call context: 
+None
+CONDITION TMP_275
+EXPRESSION:TMP_276(None) = SOLIDITY_CALL assert(bool)(TMP_275)	NodeType.IF";
+"BlockID: 831
+Call context: 
+True
+TMP_276(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 832
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 799
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 800
+Call context: 
+None
+MODIFIER_CALL, BancorChanger.changingAllowed()()
+EXPRESSION:changingAllowed()	NodeType.EXPRESSION" [key=0];
+"BlockID: 800
+Call context: 
+None
+MODIFIER_CALL, BancorChanger.changingAllowed()()
+EXPRESSION:changingAllowed()	NodeType.EXPRESSION" -> "BlockID: 801
+Call context: 
+None
+MODIFIER_CALL, Utils.greaterThanZero(uint256)(_minReturn)
+EXPRESSION:changingAllowed()	NodeType.EXPRESSION
+greaterThanZero(_minReturn)	NodeType.EXPRESSION" [key=0];
+"BlockID: 801
+Call context: 
+None
+MODIFIER_CALL, Utils.greaterThanZero(uint256)(_minReturn)
+EXPRESSION:changingAllowed()	NodeType.EXPRESSION
+greaterThanZero(_minReturn)	NodeType.EXPRESSION" -> "BlockID: 802
+Call context: 
+None
+TMP_257(uint256) = HIGH_LEVEL_CALL, dest:token(ISmartToken), function:balanceOf, arguments:['msg.sender']  
+EXPRESSION:greaterThanZero(_minReturn)	NodeType.EXPRESSION
+require(bool)(_sellAmount <= token.balanceOf(msg.sender))	NodeType.EXPRESSION" [key=0];
+"BlockID: 802
+Call context: 
+None
+TMP_257(uint256) = HIGH_LEVEL_CALL, dest:token(ISmartToken), function:balanceOf, arguments:['msg.sender']  
+EXPRESSION:greaterThanZero(_minReturn)	NodeType.EXPRESSION
+require(bool)(_sellAmount <= token.balanceOf(msg.sender))	NodeType.EXPRESSION" -> "BlockID: 821
+Call context: 
+None
+TMP_258(bool) = _sellAmount <= TMP_257
+CONDITION TMP_258
+EXPRESSION:TMP_258(bool) = _sellAmount <= TMP_257	NodeType.IF" [key=0];
+"BlockID: 804
+Call context: 
+True
+TMP_260(uint256) = INTERNAL_CALL, BancorChanger.getSaleReturn(IERC20Token,uint256)(_reserveToken,_sellAmount)
+EXPRESSION:amount = getSaleReturn(_reserveToken,_sellAmount)	NodeType.EXPRESSION" -> "BlockID: 824
+Call context: 
+None
+amount(uint256) := TMP_260(uint256)
+TMP_261(bool) = amount != 0
+TMP_262(bool) = amount >= _minReturn
+TMP_263(bool) = TMP_261 && TMP_262
+CONDITION TMP_263
+EXPRESSION:TMP_263(bool) = TMP_261 && TMP_262	NodeType.IF" [key=0];
+"BlockID: 806
+Call context: 
+True
+TMP_265(uint256) = HIGH_LEVEL_CALL, dest:token(ISmartToken), function:totalSupply, arguments:[]  
+EXPRESSION:" -> "BlockID: 807
+Call context: 
+None
+tokenSupply(uint256) := TMP_265(uint256)
+TMP_266(uint256) = INTERNAL_CALL, BancorChanger.getReserveBalance(IERC20Token)(_reserveToken)
+EXPRESSION:tokenSupply = token.totalSupply()	NodeType.VARIABLE
+tokenSupply = token.totalSupply()	NodeType.EXPRESSION" [key=0];
+"BlockID: 807
+Call context: 
+None
+tokenSupply(uint256) := TMP_265(uint256)
+TMP_266(uint256) = INTERNAL_CALL, BancorChanger.getReserveBalance(IERC20Token)(_reserveToken)
+EXPRESSION:tokenSupply = token.totalSupply()	NodeType.VARIABLE
+tokenSupply = token.totalSupply()	NodeType.EXPRESSION" -> "BlockID: 827
+Call context: 
+None
+reserveBalance(uint256) := TMP_266(uint256)
+TMP_267(bool) = amount < reserveBalance
+TMP_268(bool) = amount == reserveBalance
+TMP_269(bool) = _sellAmount == tokenSupply
+TMP_270(bool) = TMP_268 && TMP_269
+TMP_271(bool) = TMP_267 || TMP_270
+CONDITION TMP_271
+EXPRESSION:TMP_271(bool) = TMP_267 || TMP_270	NodeType.IF" [key=0];
+"BlockID: 809
+Call context: 
+True
+REF_64(BancorChanger.Reserve) -> reserves[_reserveToken]
+reserve(BancorChanger.Reserve) := REF_64(BancorChanger.Reserve)
+REF_65(bool) -> reserve.isVirtualBalanceEnabled
+CONDITION REF_65
+EXPRESSION:reserve = reserves[_reserveToken]	NodeType.VARIABLE
+reserve = reserves[_reserveToken]	NodeType.EXPRESSION
+reserve.isVirtualBalanceEnabled	NodeType.IF" -> "BlockID: 810
+Call context: 
+True
+REF_66(uint256) -> reserve.virtualBalance
+REF_67(uint256) -> reserve.virtualBalance
+TMP_273(uint256) = INTERNAL_CALL, Utils.safeSub(uint256,uint256)(REF_67,amount)
+EXPRESSION:reserve.virtualBalance = safeSub(reserve.virtualBalance,amount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 809
+Call context: 
+True
+REF_64(BancorChanger.Reserve) -> reserves[_reserveToken]
+reserve(BancorChanger.Reserve) := REF_64(BancorChanger.Reserve)
+REF_65(bool) -> reserve.isVirtualBalanceEnabled
+CONDITION REF_65
+EXPRESSION:reserve = reserves[_reserveToken]	NodeType.VARIABLE
+reserve = reserves[_reserveToken]	NodeType.EXPRESSION
+reserve.isVirtualBalanceEnabled	NodeType.IF" -> "BlockID: 812
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 810
+Call context: 
+True
+REF_66(uint256) -> reserve.virtualBalance
+REF_67(uint256) -> reserve.virtualBalance
+TMP_273(uint256) = INTERNAL_CALL, Utils.safeSub(uint256,uint256)(REF_67,amount)
+EXPRESSION:reserve.virtualBalance = safeSub(reserve.virtualBalance,amount)	NodeType.EXPRESSION" -> "BlockID: 811
+Call context: 
+None
+REF_66(uint256) (->reserve) := TMP_273(uint256)
+EXPRESSION:reserve.virtualBalance = safeSub(reserve.virtualBalance,amount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 812
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 813
+Call context: 
+None
+HIGH_LEVEL_CALL, dest:token(ISmartToken), function:destroy, arguments:['msg.sender', '_sellAmount']  
+EXPRESSION:token.destroy(msg.sender,_sellAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 813
+Call context: 
+None
+HIGH_LEVEL_CALL, dest:token(ISmartToken), function:destroy, arguments:['msg.sender', '_sellAmount']  
+EXPRESSION:token.destroy(msg.sender,_sellAmount)	NodeType.EXPRESSION" -> "BlockID: 814
+Call context: 
+None
+TMP_275(bool) = HIGH_LEVEL_CALL, dest:_reserveToken(IERC20Token), function:transfer, arguments:['msg.sender', 'amount']  
+EXPRESSION:token.destroy(msg.sender,_sellAmount)	NodeType.EXPRESSION
+assert(bool)(_reserveToken.transfer(msg.sender,amount))	NodeType.EXPRESSION" [key=0];
+"BlockID: 814
+Call context: 
+None
+TMP_275(bool) = HIGH_LEVEL_CALL, dest:_reserveToken(IERC20Token), function:transfer, arguments:['msg.sender', 'amount']  
+EXPRESSION:token.destroy(msg.sender,_sellAmount)	NodeType.EXPRESSION
+assert(bool)(_reserveToken.transfer(msg.sender,amount))	NodeType.EXPRESSION" -> "BlockID: 830
+Call context: 
+None
+CONDITION TMP_275
+EXPRESSION:TMP_276(None) = SOLIDITY_CALL assert(bool)(TMP_275)	NodeType.IF" [key=0];
+"BlockID: 816
+Call context: 
+True
+TMP_277(uint256) = INTERNAL_CALL, BancorChanger.getReserveBalance(IERC20Token)(_reserveToken)
+EXPRESSION:" -> "BlockID: 817
+Call context: 
+None
+TMP_278(uint256) = INTERNAL_CALL, Utils.safeMul(uint256,uint256)(TMP_277,MAX_CRR)
+EXPRESSION:" [key=0];
+"BlockID: 817
+Call context: 
+None
+TMP_278(uint256) = INTERNAL_CALL, Utils.safeMul(uint256,uint256)(TMP_277,MAX_CRR)
+EXPRESSION:" -> "BlockID: 818
+Call context: 
+None
+reserveAmount(uint256) := TMP_278(uint256)
+TMP_279(uint256) = HIGH_LEVEL_CALL, dest:token(ISmartToken), function:totalSupply, arguments:[]  
+EXPRESSION:reserveAmount = safeMul(getReserveBalance(_reserveToken),MAX_CRR)	NodeType.VARIABLE
+reserveAmount = safeMul(getReserveBalance(_reserveToken),MAX_CRR)	NodeType.EXPRESSION" [key=0];
+"BlockID: 818
+Call context: 
+None
+reserveAmount(uint256) := TMP_278(uint256)
+TMP_279(uint256) = HIGH_LEVEL_CALL, dest:token(ISmartToken), function:totalSupply, arguments:[]  
+EXPRESSION:reserveAmount = safeMul(getReserveBalance(_reserveToken),MAX_CRR)	NodeType.VARIABLE
+reserveAmount = safeMul(getReserveBalance(_reserveToken),MAX_CRR)	NodeType.EXPRESSION" -> "BlockID: 819
+Call context: 
+None
+REF_71(uint32) -> reserve.ratio
+TMP_280(uint256) = INTERNAL_CALL, Utils.safeMul(uint256,uint256)(TMP_279,REF_71)
+EXPRESSION:" [key=0];
+"BlockID: 819
+Call context: 
+None
+REF_71(uint32) -> reserve.ratio
+TMP_280(uint256) = INTERNAL_CALL, Utils.safeMul(uint256,uint256)(TMP_279,REF_71)
+EXPRESSION:" -> "BlockID: 820
+Call context: 
+None
+tokenAmount(uint256) := TMP_280(uint256)
+RETURN amount
+EXPRESSION:tokenAmount = safeMul(token.totalSupply(),reserve.ratio)	NodeType.VARIABLE
+tokenAmount = safeMul(token.totalSupply(),reserve.ratio)	NodeType.EXPRESSION
+amount	NodeType.RETURN" [key=0];
+"BlockID: 811
+Call context: 
+None
+REF_66(uint256) (->reserve) := TMP_273(uint256)
+EXPRESSION:reserve.virtualBalance = safeSub(reserve.virtualBalance,amount)	NodeType.EXPRESSION" -> "BlockID: 812
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 821
+Call context: 
+None
+TMP_258(bool) = _sellAmount <= TMP_257
+CONDITION TMP_258
+EXPRESSION:TMP_258(bool) = _sellAmount <= TMP_257	NodeType.IF" -> "BlockID: 822
+Call context: 
+True
+TMP_259(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 821
+Call context: 
+None
+TMP_258(bool) = _sellAmount <= TMP_257
+CONDITION TMP_258
+EXPRESSION:TMP_258(bool) = _sellAmount <= TMP_257	NodeType.IF" -> "BlockID: 823
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 823
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 804
+Call context: 
+True
+TMP_260(uint256) = INTERNAL_CALL, BancorChanger.getSaleReturn(IERC20Token,uint256)(_reserveToken,_sellAmount)
+EXPRESSION:amount = getSaleReturn(_reserveToken,_sellAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 824
+Call context: 
+None
+amount(uint256) := TMP_260(uint256)
+TMP_261(bool) = amount != 0
+TMP_262(bool) = amount >= _minReturn
+TMP_263(bool) = TMP_261 && TMP_262
+CONDITION TMP_263
+EXPRESSION:TMP_263(bool) = TMP_261 && TMP_262	NodeType.IF" -> "BlockID: 825
+Call context: 
+True
+TMP_264(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 824
+Call context: 
+None
+amount(uint256) := TMP_260(uint256)
+TMP_261(bool) = amount != 0
+TMP_262(bool) = amount >= _minReturn
+TMP_263(bool) = TMP_261 && TMP_262
+CONDITION TMP_263
+EXPRESSION:TMP_263(bool) = TMP_261 && TMP_262	NodeType.IF" -> "BlockID: 826
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 826
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 806
+Call context: 
+True
+TMP_265(uint256) = HIGH_LEVEL_CALL, dest:token(ISmartToken), function:totalSupply, arguments:[]  
+EXPRESSION:" [key=0];
+"BlockID: 827
+Call context: 
+None
+reserveBalance(uint256) := TMP_266(uint256)
+TMP_267(bool) = amount < reserveBalance
+TMP_268(bool) = amount == reserveBalance
+TMP_269(bool) = _sellAmount == tokenSupply
+TMP_270(bool) = TMP_268 && TMP_269
+TMP_271(bool) = TMP_267 || TMP_270
+CONDITION TMP_271
+EXPRESSION:TMP_271(bool) = TMP_267 || TMP_270	NodeType.IF" -> "BlockID: 828
+Call context: 
+True
+TMP_272(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 827
+Call context: 
+None
+reserveBalance(uint256) := TMP_266(uint256)
+TMP_267(bool) = amount < reserveBalance
+TMP_268(bool) = amount == reserveBalance
+TMP_269(bool) = _sellAmount == tokenSupply
+TMP_270(bool) = TMP_268 && TMP_269
+TMP_271(bool) = TMP_267 || TMP_270
+CONDITION TMP_271
+EXPRESSION:TMP_271(bool) = TMP_267 || TMP_270	NodeType.IF" -> "BlockID: 829
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 829
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 809
+Call context: 
+True
+REF_64(BancorChanger.Reserve) -> reserves[_reserveToken]
+reserve(BancorChanger.Reserve) := REF_64(BancorChanger.Reserve)
+REF_65(bool) -> reserve.isVirtualBalanceEnabled
+CONDITION REF_65
+EXPRESSION:reserve = reserves[_reserveToken]	NodeType.VARIABLE
+reserve = reserves[_reserveToken]	NodeType.EXPRESSION
+reserve.isVirtualBalanceEnabled	NodeType.IF" [key=0];
+"BlockID: 830
+Call context: 
+None
+CONDITION TMP_275
+EXPRESSION:TMP_276(None) = SOLIDITY_CALL assert(bool)(TMP_275)	NodeType.IF" -> "BlockID: 831
+Call context: 
+True
+TMP_276(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 830
+Call context: 
+None
+CONDITION TMP_275
+EXPRESSION:TMP_276(None) = SOLIDITY_CALL assert(bool)(TMP_275)	NodeType.IF" -> "BlockID: 832
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 832
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 816
+Call context: 
+True
+TMP_277(uint256) = INTERNAL_CALL, BancorChanger.getReserveBalance(IERC20Token)(_reserveToken)
+EXPRESSION:" [key=0];
+}

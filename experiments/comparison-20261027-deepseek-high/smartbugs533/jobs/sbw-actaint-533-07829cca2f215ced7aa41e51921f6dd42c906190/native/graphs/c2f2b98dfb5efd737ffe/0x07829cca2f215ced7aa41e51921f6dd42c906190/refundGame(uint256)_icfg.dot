@@ -1,0 +1,583 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 7
+Call context: 
+True
+REF_18(uint256) -> bet.amount
+REF_18(uint256) (->bet) := 0(uint256)
+NEW VARIABLE diceWinAmount
+NEW VARIABLE inviteProfit
+REF_19(uint8) -> bet.rollUnder
+REF_20(address) -> bet.inviter
+TMP_96(bool) = MIN_ROLL_UNDER <= rollUnder
+TMP_97(bool) = rollUnder <= MAX_ROLL_UNDER
+TMP_98(bool) = TMP_96 && TMP_97
+CONDITION TMP_98
+EXPRESSION:bet.amount = 0	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+TMP_98(bool) = TMP_96 && TMP_97	NodeType.IF";
+"BlockID: 1
+Call context: 
+None
+REF_14(DiceGame.Game) -> bets[commit]
+bet(DiceGame.Game) := REF_14(DiceGame.Game)
+REF_15(bool) -> bet.finished
+REF_15(bool) (->bet) := True(bool)
+REF_16(uint256) -> bet.amount
+amount(uint256) := REF_16(uint256)
+TMP_70(bool) = amount != 0
+CONDITION TMP_70
+EXPRESSION:TMP_70(bool) = amount != 0	NodeType.IF";
+"BlockID: 2
+Call context: 
+True
+TMP_71(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 3
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 4
+Call context: 
+None
+REF_17(uint40) -> bet.placeBlockNumber
+TMP_72(uint40) = REF_17 + BET_EXPIRATION_BLOCKS
+TMP_73(bool) = block.number > TMP_72
+CONDITION TMP_73
+EXPRESSION:TMP_73(bool) = block.number > TMP_72	NodeType.IF";
+"BlockID: 5
+Call context: 
+True
+TMP_74(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 13
+Call context: refundGame
+True
+TMP_100(uint256) = amount / 50
+houseEdge(uint256) := TMP_100(uint256)
+inviteProfit(uint256) := 0(uint256)
+TMP_101(bool) = inviter > 0
+CONDITION TMP_101
+EXPRESSION:houseEdge = amount / 50	NodeType.VARIABLE
+houseEdge = amount / 50	NodeType.EXPRESSION
+inviteProfit = 0	NodeType.EXPRESSION
+inviter > 0	NodeType.IF";
+"BlockID: 14
+Call context: refundGame
+True
+TMP_102(uint256) = amount / 100
+inviteProfit(uint256) := TMP_102(uint256)
+TMP_103(uint256) = amount / 100
+houseEdge(uint256) := TMP_103(uint256)
+EXPRESSION:inviteProfit = amount / 100	NodeType.EXPRESSION
+houseEdge = amount / 100	NodeType.EXPRESSION";
+"BlockID: 15
+Call context: refundGame
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 16
+Call context: refundGame
+None
+TMP_104(bool) = houseEdge < HOUSE_EDGE_MINIMUM_AMOUNT
+CONDITION TMP_104
+EXPRESSION:houseEdge < HOUSE_EDGE_MINIMUM_AMOUNT	NodeType.IF";
+"BlockID: 17
+Call context: refundGame
+True
+houseEdge(uint256) := HOUSE_EDGE_MINIMUM_AMOUNT(uint256)
+EXPRESSION:houseEdge = HOUSE_EDGE_MINIMUM_AMOUNT	NodeType.EXPRESSION";
+"BlockID: 18
+Call context: refundGame
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 22
+Call context: refundGame
+True
+TMP_107(uint256) = amount - houseEdge
+TMP_108(uint256) = TMP_107 - inviteProfit
+TMP_109(uint256) = TMP_108 * 100
+TMP_110(uint256) = TMP_109 / rollUnder
+winAmount(uint256) := TMP_110(uint256)
+TMP_132(None) := winAmount(uint256)
+TMP_132(None) := inviteProfit(uint256)
+diceWinAmount(uint256)= UNPACK TUPLE_1 index: 0 
+inviteProfit(uint256)= UNPACK TUPLE_1 index: 1 
+TMP_75 = CONVERT diceWinAmount to uint128
+lockedInBets(uint128) = lockedInBets - TMP_75
+REF_21(address) -> bet.player
+TMP_92(bool) = amount > 0
+CONDITION TMP_92
+EXPRESSION:winAmount = (amount - houseEdge - inviteProfit) * 100 / rollUnder	NodeType.EXPRESSION
+(diceWinAmount,inviteProfit) = getDiceWinAmount(amount,bet.rollUnder,bet.inviter)	NodeType.EXPRESSION
+lockedInBets -= uint128(diceWinAmount)	NodeType.EXPRESSION
+amount > 0	NodeType.IF";
+"BlockID: 8
+Call context: refundGame
+True
+TMP_99(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 9
+Call context: refundGame
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 19
+Call context: refundGame
+None
+TMP_105(bool) = houseEdge <= amount
+CONDITION TMP_105
+EXPRESSION:TMP_105(bool) = houseEdge <= amount	NodeType.IF";
+"BlockID: 20
+Call context: refundGame
+True
+TMP_106(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 21
+Call context: refundGame
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 23
+Call context: refundGame
+True
+TMP_93 = SEND dest:beneficiary value:amount
+END_IF
+EXPRESSION:beneficiary.send(amount)	NodeType.EXPRESSION
+None	NodeType.ENDIF";
+"BlockID: 10
+Call context: 
+None
+REF_18(uint256) -> bet.amount
+REF_18(uint256) (->bet) := 0(uint256)
+NEW VARIABLE diceWinAmount
+NEW VARIABLE inviteProfit
+REF_19(uint8) -> bet.rollUnder
+REF_20(address) -> bet.inviter
+TMP_96(bool) = MIN_ROLL_UNDER <= rollUnder
+TMP_97(bool) = rollUnder <= MAX_ROLL_UNDER
+TMP_98(bool) = TMP_96 && TMP_97
+CONDITION TMP_98
+EXPRESSION:bet.amount = 0	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+TMP_98(bool) = TMP_96 && TMP_97	NodeType.IF";
+"BlockID: 11
+Call context: 
+True
+TMP_98(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 12
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+REF_14(DiceGame.Game) -> bets[commit]
+bet(DiceGame.Game) := REF_14(DiceGame.Game)
+REF_15(bool) -> bet.finished
+REF_15(bool) (->bet) := True(bool)
+REF_16(uint256) -> bet.amount
+amount(uint256) := REF_16(uint256)
+TMP_70(bool) = amount != 0
+CONDITION TMP_70
+EXPRESSION:TMP_70(bool) = amount != 0	NodeType.IF" [key=0];
+"BlockID: 7
+Call context: 
+True
+REF_18(uint256) -> bet.amount
+REF_18(uint256) (->bet) := 0(uint256)
+NEW VARIABLE diceWinAmount
+NEW VARIABLE inviteProfit
+REF_19(uint8) -> bet.rollUnder
+REF_20(address) -> bet.inviter
+TMP_96(bool) = MIN_ROLL_UNDER <= rollUnder
+TMP_97(bool) = rollUnder <= MAX_ROLL_UNDER
+TMP_98(bool) = TMP_96 && TMP_97
+CONDITION TMP_98
+EXPRESSION:bet.amount = 0	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+TMP_98(bool) = TMP_96 && TMP_97	NodeType.IF" -> "BlockID: 8
+Call context: refundGame
+True
+TMP_99(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 7
+Call context: 
+True
+REF_18(uint256) -> bet.amount
+REF_18(uint256) (->bet) := 0(uint256)
+NEW VARIABLE diceWinAmount
+NEW VARIABLE inviteProfit
+REF_19(uint8) -> bet.rollUnder
+REF_20(address) -> bet.inviter
+TMP_96(bool) = MIN_ROLL_UNDER <= rollUnder
+TMP_97(bool) = rollUnder <= MAX_ROLL_UNDER
+TMP_98(bool) = TMP_96 && TMP_97
+CONDITION TMP_98
+EXPRESSION:bet.amount = 0	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+TMP_98(bool) = TMP_96 && TMP_97	NodeType.IF" -> "BlockID: 9
+Call context: refundGame
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+REF_14(DiceGame.Game) -> bets[commit]
+bet(DiceGame.Game) := REF_14(DiceGame.Game)
+REF_15(bool) -> bet.finished
+REF_15(bool) (->bet) := True(bool)
+REF_16(uint256) -> bet.amount
+amount(uint256) := REF_16(uint256)
+TMP_70(bool) = amount != 0
+CONDITION TMP_70
+EXPRESSION:TMP_70(bool) = amount != 0	NodeType.IF" -> "BlockID: 2
+Call context: 
+True
+TMP_71(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 1
+Call context: 
+None
+REF_14(DiceGame.Game) -> bets[commit]
+bet(DiceGame.Game) := REF_14(DiceGame.Game)
+REF_15(bool) -> bet.finished
+REF_15(bool) (->bet) := True(bool)
+REF_16(uint256) -> bet.amount
+amount(uint256) := REF_16(uint256)
+TMP_70(bool) = amount != 0
+CONDITION TMP_70
+EXPRESSION:TMP_70(bool) = amount != 0	NodeType.IF" -> "BlockID: 3
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: 
+None
+REF_17(uint40) -> bet.placeBlockNumber
+TMP_72(uint40) = REF_17 + BET_EXPIRATION_BLOCKS
+TMP_73(bool) = block.number > TMP_72
+CONDITION TMP_73
+EXPRESSION:TMP_73(bool) = block.number > TMP_72	NodeType.IF" [key=0];
+"BlockID: 4
+Call context: 
+None
+REF_17(uint40) -> bet.placeBlockNumber
+TMP_72(uint40) = REF_17 + BET_EXPIRATION_BLOCKS
+TMP_73(bool) = block.number > TMP_72
+CONDITION TMP_73
+EXPRESSION:TMP_73(bool) = block.number > TMP_72	NodeType.IF" -> "BlockID: 5
+Call context: 
+True
+TMP_74(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 4
+Call context: 
+None
+REF_17(uint40) -> bet.placeBlockNumber
+TMP_72(uint40) = REF_17 + BET_EXPIRATION_BLOCKS
+TMP_73(bool) = block.number > TMP_72
+CONDITION TMP_73
+EXPRESSION:TMP_73(bool) = block.number > TMP_72	NodeType.IF" -> "BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 7
+Call context: 
+True
+REF_18(uint256) -> bet.amount
+REF_18(uint256) (->bet) := 0(uint256)
+NEW VARIABLE diceWinAmount
+NEW VARIABLE inviteProfit
+REF_19(uint8) -> bet.rollUnder
+REF_20(address) -> bet.inviter
+TMP_96(bool) = MIN_ROLL_UNDER <= rollUnder
+TMP_97(bool) = rollUnder <= MAX_ROLL_UNDER
+TMP_98(bool) = TMP_96 && TMP_97
+CONDITION TMP_98
+EXPRESSION:bet.amount = 0	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+TMP_98(bool) = TMP_96 && TMP_97	NodeType.IF" [key=0];
+"BlockID: 13
+Call context: refundGame
+True
+TMP_100(uint256) = amount / 50
+houseEdge(uint256) := TMP_100(uint256)
+inviteProfit(uint256) := 0(uint256)
+TMP_101(bool) = inviter > 0
+CONDITION TMP_101
+EXPRESSION:houseEdge = amount / 50	NodeType.VARIABLE
+houseEdge = amount / 50	NodeType.EXPRESSION
+inviteProfit = 0	NodeType.EXPRESSION
+inviter > 0	NodeType.IF" -> "BlockID: 14
+Call context: refundGame
+True
+TMP_102(uint256) = amount / 100
+inviteProfit(uint256) := TMP_102(uint256)
+TMP_103(uint256) = amount / 100
+houseEdge(uint256) := TMP_103(uint256)
+EXPRESSION:inviteProfit = amount / 100	NodeType.EXPRESSION
+houseEdge = amount / 100	NodeType.EXPRESSION" [key=0];
+"BlockID: 13
+Call context: refundGame
+True
+TMP_100(uint256) = amount / 50
+houseEdge(uint256) := TMP_100(uint256)
+inviteProfit(uint256) := 0(uint256)
+TMP_101(bool) = inviter > 0
+CONDITION TMP_101
+EXPRESSION:houseEdge = amount / 50	NodeType.VARIABLE
+houseEdge = amount / 50	NodeType.EXPRESSION
+inviteProfit = 0	NodeType.EXPRESSION
+inviter > 0	NodeType.IF" -> "BlockID: 15
+Call context: refundGame
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 14
+Call context: refundGame
+True
+TMP_102(uint256) = amount / 100
+inviteProfit(uint256) := TMP_102(uint256)
+TMP_103(uint256) = amount / 100
+houseEdge(uint256) := TMP_103(uint256)
+EXPRESSION:inviteProfit = amount / 100	NodeType.EXPRESSION
+houseEdge = amount / 100	NodeType.EXPRESSION" -> "BlockID: 15
+Call context: refundGame
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 15
+Call context: refundGame
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 16
+Call context: refundGame
+None
+TMP_104(bool) = houseEdge < HOUSE_EDGE_MINIMUM_AMOUNT
+CONDITION TMP_104
+EXPRESSION:houseEdge < HOUSE_EDGE_MINIMUM_AMOUNT	NodeType.IF" [key=0];
+"BlockID: 16
+Call context: refundGame
+None
+TMP_104(bool) = houseEdge < HOUSE_EDGE_MINIMUM_AMOUNT
+CONDITION TMP_104
+EXPRESSION:houseEdge < HOUSE_EDGE_MINIMUM_AMOUNT	NodeType.IF" -> "BlockID: 17
+Call context: refundGame
+True
+houseEdge(uint256) := HOUSE_EDGE_MINIMUM_AMOUNT(uint256)
+EXPRESSION:houseEdge = HOUSE_EDGE_MINIMUM_AMOUNT	NodeType.EXPRESSION" [key=0];
+"BlockID: 16
+Call context: refundGame
+None
+TMP_104(bool) = houseEdge < HOUSE_EDGE_MINIMUM_AMOUNT
+CONDITION TMP_104
+EXPRESSION:houseEdge < HOUSE_EDGE_MINIMUM_AMOUNT	NodeType.IF" -> "BlockID: 18
+Call context: refundGame
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 17
+Call context: refundGame
+True
+houseEdge(uint256) := HOUSE_EDGE_MINIMUM_AMOUNT(uint256)
+EXPRESSION:houseEdge = HOUSE_EDGE_MINIMUM_AMOUNT	NodeType.EXPRESSION" -> "BlockID: 18
+Call context: refundGame
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 18
+Call context: refundGame
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 19
+Call context: refundGame
+None
+TMP_105(bool) = houseEdge <= amount
+CONDITION TMP_105
+EXPRESSION:TMP_105(bool) = houseEdge <= amount	NodeType.IF" [key=0];
+"BlockID: 22
+Call context: refundGame
+True
+TMP_107(uint256) = amount - houseEdge
+TMP_108(uint256) = TMP_107 - inviteProfit
+TMP_109(uint256) = TMP_108 * 100
+TMP_110(uint256) = TMP_109 / rollUnder
+winAmount(uint256) := TMP_110(uint256)
+TMP_132(None) := winAmount(uint256)
+TMP_132(None) := inviteProfit(uint256)
+diceWinAmount(uint256)= UNPACK TUPLE_1 index: 0 
+inviteProfit(uint256)= UNPACK TUPLE_1 index: 1 
+TMP_75 = CONVERT diceWinAmount to uint128
+lockedInBets(uint128) = lockedInBets - TMP_75
+REF_21(address) -> bet.player
+TMP_92(bool) = amount > 0
+CONDITION TMP_92
+EXPRESSION:winAmount = (amount - houseEdge - inviteProfit) * 100 / rollUnder	NodeType.EXPRESSION
+(diceWinAmount,inviteProfit) = getDiceWinAmount(amount,bet.rollUnder,bet.inviter)	NodeType.EXPRESSION
+lockedInBets -= uint128(diceWinAmount)	NodeType.EXPRESSION
+amount > 0	NodeType.IF" -> "BlockID: 23
+Call context: refundGame
+True
+TMP_93 = SEND dest:beneficiary value:amount
+END_IF
+EXPRESSION:beneficiary.send(amount)	NodeType.EXPRESSION
+None	NodeType.ENDIF" [key="successor_1"];
+"BlockID: 9
+Call context: refundGame
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 10
+Call context: 
+None
+REF_18(uint256) -> bet.amount
+REF_18(uint256) (->bet) := 0(uint256)
+NEW VARIABLE diceWinAmount
+NEW VARIABLE inviteProfit
+REF_19(uint8) -> bet.rollUnder
+REF_20(address) -> bet.inviter
+TMP_96(bool) = MIN_ROLL_UNDER <= rollUnder
+TMP_97(bool) = rollUnder <= MAX_ROLL_UNDER
+TMP_98(bool) = TMP_96 && TMP_97
+CONDITION TMP_98
+EXPRESSION:bet.amount = 0	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+TMP_98(bool) = TMP_96 && TMP_97	NodeType.IF" [key=0];
+"BlockID: 19
+Call context: refundGame
+None
+TMP_105(bool) = houseEdge <= amount
+CONDITION TMP_105
+EXPRESSION:TMP_105(bool) = houseEdge <= amount	NodeType.IF" -> "BlockID: 20
+Call context: refundGame
+True
+TMP_106(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 19
+Call context: refundGame
+None
+TMP_105(bool) = houseEdge <= amount
+CONDITION TMP_105
+EXPRESSION:TMP_105(bool) = houseEdge <= amount	NodeType.IF" -> "BlockID: 21
+Call context: refundGame
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 21
+Call context: refundGame
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 22
+Call context: refundGame
+True
+TMP_107(uint256) = amount - houseEdge
+TMP_108(uint256) = TMP_107 - inviteProfit
+TMP_109(uint256) = TMP_108 * 100
+TMP_110(uint256) = TMP_109 / rollUnder
+winAmount(uint256) := TMP_110(uint256)
+TMP_132(None) := winAmount(uint256)
+TMP_132(None) := inviteProfit(uint256)
+diceWinAmount(uint256)= UNPACK TUPLE_1 index: 0 
+inviteProfit(uint256)= UNPACK TUPLE_1 index: 1 
+TMP_75 = CONVERT diceWinAmount to uint128
+lockedInBets(uint128) = lockedInBets - TMP_75
+REF_21(address) -> bet.player
+TMP_92(bool) = amount > 0
+CONDITION TMP_92
+EXPRESSION:winAmount = (amount - houseEdge - inviteProfit) * 100 / rollUnder	NodeType.EXPRESSION
+(diceWinAmount,inviteProfit) = getDiceWinAmount(amount,bet.rollUnder,bet.inviter)	NodeType.EXPRESSION
+lockedInBets -= uint128(diceWinAmount)	NodeType.EXPRESSION
+amount > 0	NodeType.IF" [key=0];
+"BlockID: 10
+Call context: 
+None
+REF_18(uint256) -> bet.amount
+REF_18(uint256) (->bet) := 0(uint256)
+NEW VARIABLE diceWinAmount
+NEW VARIABLE inviteProfit
+REF_19(uint8) -> bet.rollUnder
+REF_20(address) -> bet.inviter
+TMP_96(bool) = MIN_ROLL_UNDER <= rollUnder
+TMP_97(bool) = rollUnder <= MAX_ROLL_UNDER
+TMP_98(bool) = TMP_96 && TMP_97
+CONDITION TMP_98
+EXPRESSION:bet.amount = 0	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+TMP_98(bool) = TMP_96 && TMP_97	NodeType.IF" -> "BlockID: 11
+Call context: 
+True
+TMP_98(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 10
+Call context: 
+None
+REF_18(uint256) -> bet.amount
+REF_18(uint256) (->bet) := 0(uint256)
+NEW VARIABLE diceWinAmount
+NEW VARIABLE inviteProfit
+REF_19(uint8) -> bet.rollUnder
+REF_20(address) -> bet.inviter
+TMP_96(bool) = MIN_ROLL_UNDER <= rollUnder
+TMP_97(bool) = rollUnder <= MAX_ROLL_UNDER
+TMP_98(bool) = TMP_96 && TMP_97
+CONDITION TMP_98
+EXPRESSION:bet.amount = 0	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+TMP_98(bool) = TMP_96 && TMP_97	NodeType.IF" -> "BlockID: 12
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 12
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 13
+Call context: refundGame
+True
+TMP_100(uint256) = amount / 50
+houseEdge(uint256) := TMP_100(uint256)
+inviteProfit(uint256) := 0(uint256)
+TMP_101(bool) = inviter > 0
+CONDITION TMP_101
+EXPRESSION:houseEdge = amount / 50	NodeType.VARIABLE
+houseEdge = amount / 50	NodeType.EXPRESSION
+inviteProfit = 0	NodeType.EXPRESSION
+inviter > 0	NodeType.IF" [key=0];
+}

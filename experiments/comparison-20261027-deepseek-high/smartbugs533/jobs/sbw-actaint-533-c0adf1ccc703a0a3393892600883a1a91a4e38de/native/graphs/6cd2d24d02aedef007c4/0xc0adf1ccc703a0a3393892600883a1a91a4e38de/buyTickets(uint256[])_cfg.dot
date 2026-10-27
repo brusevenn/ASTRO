@@ -1,0 +1,766 @@
+digraph {
+"BlockID: 64
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 65
+Call context: 
+None
+MODIFIER_CALL, EthereumLottery.afterInitialization()()
+EXPRESSION:afterInitialization()	NodeType.EXPRESSION";
+"BlockID: 66
+Call context: 
+None
+TMP_24 = CONVERT btcRelay to BTCRelay
+TMP_25(int256) = HIGH_LEVEL_CALL, dest:TMP_24(BTCRelay), function:getLastBlockHeight, arguments:[]  
+EXPRESSION:afterInitialization()	NodeType.EXPRESSION";
+"BlockID: 71
+Call context: 
+True
+i(uint256) := 0(uint256)
+EXPRESSION:i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION";
+"BlockID: 72
+Call context: 
+None
+BEGIN_LOOP
+REF_25 -> LENGTH _tickets
+TMP_36(bool) = i < REF_25
+CONDITION TMP_36
+EXPRESSION:None	NodeType.STARTLOOP
+i < _tickets.length	NodeType.IFLOOP";
+"BlockID: 74
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 75
+Call context: 
+None
+REF_37(EthereumLottery.Lottery) -> lotteries[id]
+REF_38(uint256) -> REF_37.numTicketsSold
+REF_39 -> LENGTH _tickets
+REF_38(-> lotteries) = REF_38 + REF_39
+lastSaleTimestamp(uint256) := now(uint256)
+REF_40(EthereumLottery.Lottery) -> lotteries[id]
+REF_41(int256) -> REF_40.decidingBlock
+TMP_45(int256) = REF_41 - blockHeight
+remainingDurationInBlocks(int256) := TMP_45(int256)
+TMP_46 = CONVERT poissonData to PoissonData
+TMP_47(int256) = remainingDurationInBlocks - 1
+TMP_48(uint256) = HIGH_LEVEL_CALL, dest:TMP_46(PoissonData), function:lookup, arguments:['TMP_47']  
+EXPRESSION:lotteries[id].numTicketsSold += _tickets.length	NodeType.EXPRESSION
+lastSaleTimestamp = now	NodeType.EXPRESSION
+remainingDurationInBlocks = lotteries[id].decidingBlock - blockHeight	NodeType.VARIABLE
+remainingDurationInBlocks = lotteries[id].decidingBlock - blockHeight	NodeType.EXPRESSION";
+"BlockID: 76
+Call context: 
+None
+ticketSaleDuration(uint256) := TMP_48(uint256)
+TMP_49(uint256) = now + ticketSaleDuration
+REF_43(EthereumLottery.Lottery) -> lotteries[id]
+REF_44(uint256) -> REF_43.cutoffTimestamp
+TMP_50(bool) = TMP_49 < REF_44
+CONDITION TMP_50
+EXPRESSION:ticketSaleDuration = PoissonData(poissonData).lookup(remainingDurationInBlocks - 1)	NodeType.VARIABLE
+ticketSaleDuration = PoissonData(poissonData).lookup(remainingDurationInBlocks - 1)	NodeType.EXPRESSION
+now + ticketSaleDuration < lotteries[id].cutoffTimestamp	NodeType.IF" [shape=box];
+"BlockID: 77
+Call context: 
+True
+REF_45(EthereumLottery.Lottery) -> lotteries[id]
+REF_46(uint256) -> REF_45.cutoffTimestamp
+TMP_51(uint256) = now + ticketSaleDuration
+REF_46(uint256) (->lotteries) := TMP_51(uint256)
+EXPRESSION:lotteries[id].cutoffTimestamp = now + ticketSaleDuration	NodeType.EXPRESSION";
+"BlockID: 78
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 82
+Call context: 
+True
+REF_32(EthereumLottery.Lottery) -> lotteries[id]
+REF_33(mapping(uint256 => address)) -> REF_32.tickets
+REF_34(address) -> REF_33[ticket]
+REF_34(address) (->lotteries) := msg.sender(address)
+REF_35(uint256) -> recentActivity[recentActivityIdx]
+REF_35(uint256) (->recentActivity) := ticket(uint256)
+recentActivityIdx(uint256) = recentActivityIdx + 1
+REF_36 -> LENGTH recentActivity
+TMP_43(bool) = recentActivityIdx >= REF_36
+CONDITION TMP_43
+EXPRESSION:lotteries[id].tickets[ticket] = msg.sender	NodeType.EXPRESSION
+recentActivity[recentActivityIdx] = ticket	NodeType.EXPRESSION
+recentActivityIdx += 1	NodeType.EXPRESSION
+recentActivityIdx >= recentActivity.length	NodeType.IF";
+"BlockID: 83
+Call context: 
+True
+recentActivityIdx(uint256) := 0(uint256)
+EXPRESSION:recentActivityIdx = 0	NodeType.EXPRESSION";
+"BlockID: 84
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 85
+Call context: 
+None
+TMP_44(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:i ++	NodeType.EXPRESSION";
+"BlockID: 86
+Call context: 
+None
+blockHeight(int256) := TMP_25(int256)
+TMP_26(int256) = blockHeight + 1
+REF_17(EthereumLottery.Lottery) -> lotteries[id]
+REF_18(int256) -> REF_17.decidingBlock
+TMP_27(bool) = TMP_26 < REF_18
+CONDITION TMP_27
+EXPRESSION:TMP_27(bool) = TMP_26 < REF_18	NodeType.IF";
+"BlockID: 87
+Call context: 
+True
+TMP_28(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 88
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 89
+Call context: 
+None
+REF_19(EthereumLottery.Lottery) -> lotteries[id]
+REF_20(uint256) -> REF_19.cutoffTimestamp
+TMP_29(bool) = now < REF_20
+CONDITION TMP_29
+EXPRESSION:TMP_29(bool) = now < REF_20	NodeType.IF";
+"BlockID: 90
+Call context: 
+True
+TMP_30(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 91
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 92
+Call context: 
+None
+REF_21 -> LENGTH _tickets
+TMP_31(bool) = REF_21 > 0
+CONDITION TMP_31
+EXPRESSION:TMP_31(bool) = REF_21 > 0	NodeType.IF";
+"BlockID: 93
+Call context: 
+True
+TMP_32(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 94
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 95
+Call context: 
+None
+REF_22 -> LENGTH _tickets
+REF_23(EthereumLottery.Lottery) -> lotteries[id]
+REF_24(uint256) -> REF_23.ticketPrice
+TMP_33(uint256) = REF_22 * REF_24
+TMP_34(bool) = msg.value == TMP_33
+CONDITION TMP_34
+EXPRESSION:TMP_34(bool) = msg.value == TMP_33	NodeType.IF";
+"BlockID: 96
+Call context: 
+True
+TMP_35(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 97
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 98
+Call context: 
+None
+REF_26(uint256) -> _tickets[i]
+ticket(uint256) := REF_26(uint256)
+TMP_37(bool) = ticket >= 0
+CONDITION TMP_37
+EXPRESSION:TMP_37(bool) = ticket >= 0	NodeType.IF";
+"BlockID: 99
+Call context: 
+True
+TMP_38(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 100
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 101
+Call context: 
+None
+REF_27(EthereumLottery.Lottery) -> lotteries[id]
+REF_28(uint256) -> REF_27.numTickets
+TMP_39(bool) = ticket < REF_28
+CONDITION TMP_39
+EXPRESSION:TMP_39(bool) = ticket < REF_28	NodeType.IF";
+"BlockID: 102
+Call context: 
+True
+TMP_40(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 103
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 104
+Call context: 
+None
+REF_29(EthereumLottery.Lottery) -> lotteries[id]
+REF_30(mapping(uint256 => address)) -> REF_29.tickets
+REF_31(address) -> REF_30[ticket]
+TMP_41(bool) = REF_31 == 0
+CONDITION TMP_41
+EXPRESSION:TMP_41(bool) = REF_31 == 0	NodeType.IF";
+"BlockID: 105
+Call context: 
+True
+TMP_42(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 106
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 64
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 65
+Call context: 
+None
+MODIFIER_CALL, EthereumLottery.afterInitialization()()
+EXPRESSION:afterInitialization()	NodeType.EXPRESSION" [key=0];
+"BlockID: 65
+Call context: 
+None
+MODIFIER_CALL, EthereumLottery.afterInitialization()()
+EXPRESSION:afterInitialization()	NodeType.EXPRESSION" -> "BlockID: 66
+Call context: 
+None
+TMP_24 = CONVERT btcRelay to BTCRelay
+TMP_25(int256) = HIGH_LEVEL_CALL, dest:TMP_24(BTCRelay), function:getLastBlockHeight, arguments:[]  
+EXPRESSION:afterInitialization()	NodeType.EXPRESSION" [key=0];
+"BlockID: 66
+Call context: 
+None
+TMP_24 = CONVERT btcRelay to BTCRelay
+TMP_25(int256) = HIGH_LEVEL_CALL, dest:TMP_24(BTCRelay), function:getLastBlockHeight, arguments:[]  
+EXPRESSION:afterInitialization()	NodeType.EXPRESSION" -> "BlockID: 86
+Call context: 
+None
+blockHeight(int256) := TMP_25(int256)
+TMP_26(int256) = blockHeight + 1
+REF_17(EthereumLottery.Lottery) -> lotteries[id]
+REF_18(int256) -> REF_17.decidingBlock
+TMP_27(bool) = TMP_26 < REF_18
+CONDITION TMP_27
+EXPRESSION:TMP_27(bool) = TMP_26 < REF_18	NodeType.IF" [key=0];
+"BlockID: 71
+Call context: 
+True
+i(uint256) := 0(uint256)
+EXPRESSION:i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" -> "BlockID: 72
+Call context: 
+None
+BEGIN_LOOP
+REF_25 -> LENGTH _tickets
+TMP_36(bool) = i < REF_25
+CONDITION TMP_36
+EXPRESSION:None	NodeType.STARTLOOP
+i < _tickets.length	NodeType.IFLOOP" [key=0];
+"BlockID: 72
+Call context: 
+None
+BEGIN_LOOP
+REF_25 -> LENGTH _tickets
+TMP_36(bool) = i < REF_25
+CONDITION TMP_36
+EXPRESSION:None	NodeType.STARTLOOP
+i < _tickets.length	NodeType.IFLOOP" -> "BlockID: 74
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 72
+Call context: 
+None
+BEGIN_LOOP
+REF_25 -> LENGTH _tickets
+TMP_36(bool) = i < REF_25
+CONDITION TMP_36
+EXPRESSION:None	NodeType.STARTLOOP
+i < _tickets.length	NodeType.IFLOOP" -> "BlockID: 98
+Call context: 
+None
+REF_26(uint256) -> _tickets[i]
+ticket(uint256) := REF_26(uint256)
+TMP_37(bool) = ticket >= 0
+CONDITION TMP_37
+EXPRESSION:TMP_37(bool) = ticket >= 0	NodeType.IF" [key=0];
+"BlockID: 74
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 75
+Call context: 
+None
+REF_37(EthereumLottery.Lottery) -> lotteries[id]
+REF_38(uint256) -> REF_37.numTicketsSold
+REF_39 -> LENGTH _tickets
+REF_38(-> lotteries) = REF_38 + REF_39
+lastSaleTimestamp(uint256) := now(uint256)
+REF_40(EthereumLottery.Lottery) -> lotteries[id]
+REF_41(int256) -> REF_40.decidingBlock
+TMP_45(int256) = REF_41 - blockHeight
+remainingDurationInBlocks(int256) := TMP_45(int256)
+TMP_46 = CONVERT poissonData to PoissonData
+TMP_47(int256) = remainingDurationInBlocks - 1
+TMP_48(uint256) = HIGH_LEVEL_CALL, dest:TMP_46(PoissonData), function:lookup, arguments:['TMP_47']  
+EXPRESSION:lotteries[id].numTicketsSold += _tickets.length	NodeType.EXPRESSION
+lastSaleTimestamp = now	NodeType.EXPRESSION
+remainingDurationInBlocks = lotteries[id].decidingBlock - blockHeight	NodeType.VARIABLE
+remainingDurationInBlocks = lotteries[id].decidingBlock - blockHeight	NodeType.EXPRESSION" [key=0];
+"BlockID: 75
+Call context: 
+None
+REF_37(EthereumLottery.Lottery) -> lotteries[id]
+REF_38(uint256) -> REF_37.numTicketsSold
+REF_39 -> LENGTH _tickets
+REF_38(-> lotteries) = REF_38 + REF_39
+lastSaleTimestamp(uint256) := now(uint256)
+REF_40(EthereumLottery.Lottery) -> lotteries[id]
+REF_41(int256) -> REF_40.decidingBlock
+TMP_45(int256) = REF_41 - blockHeight
+remainingDurationInBlocks(int256) := TMP_45(int256)
+TMP_46 = CONVERT poissonData to PoissonData
+TMP_47(int256) = remainingDurationInBlocks - 1
+TMP_48(uint256) = HIGH_LEVEL_CALL, dest:TMP_46(PoissonData), function:lookup, arguments:['TMP_47']  
+EXPRESSION:lotteries[id].numTicketsSold += _tickets.length	NodeType.EXPRESSION
+lastSaleTimestamp = now	NodeType.EXPRESSION
+remainingDurationInBlocks = lotteries[id].decidingBlock - blockHeight	NodeType.VARIABLE
+remainingDurationInBlocks = lotteries[id].decidingBlock - blockHeight	NodeType.EXPRESSION" -> "BlockID: 76
+Call context: 
+None
+ticketSaleDuration(uint256) := TMP_48(uint256)
+TMP_49(uint256) = now + ticketSaleDuration
+REF_43(EthereumLottery.Lottery) -> lotteries[id]
+REF_44(uint256) -> REF_43.cutoffTimestamp
+TMP_50(bool) = TMP_49 < REF_44
+CONDITION TMP_50
+EXPRESSION:ticketSaleDuration = PoissonData(poissonData).lookup(remainingDurationInBlocks - 1)	NodeType.VARIABLE
+ticketSaleDuration = PoissonData(poissonData).lookup(remainingDurationInBlocks - 1)	NodeType.EXPRESSION
+now + ticketSaleDuration < lotteries[id].cutoffTimestamp	NodeType.IF" [key=0];
+"BlockID: 76
+Call context: 
+None
+ticketSaleDuration(uint256) := TMP_48(uint256)
+TMP_49(uint256) = now + ticketSaleDuration
+REF_43(EthereumLottery.Lottery) -> lotteries[id]
+REF_44(uint256) -> REF_43.cutoffTimestamp
+TMP_50(bool) = TMP_49 < REF_44
+CONDITION TMP_50
+EXPRESSION:ticketSaleDuration = PoissonData(poissonData).lookup(remainingDurationInBlocks - 1)	NodeType.VARIABLE
+ticketSaleDuration = PoissonData(poissonData).lookup(remainingDurationInBlocks - 1)	NodeType.EXPRESSION
+now + ticketSaleDuration < lotteries[id].cutoffTimestamp	NodeType.IF" -> "BlockID: 77
+Call context: 
+True
+REF_45(EthereumLottery.Lottery) -> lotteries[id]
+REF_46(uint256) -> REF_45.cutoffTimestamp
+TMP_51(uint256) = now + ticketSaleDuration
+REF_46(uint256) (->lotteries) := TMP_51(uint256)
+EXPRESSION:lotteries[id].cutoffTimestamp = now + ticketSaleDuration	NodeType.EXPRESSION" [key=0];
+"BlockID: 76
+Call context: 
+None
+ticketSaleDuration(uint256) := TMP_48(uint256)
+TMP_49(uint256) = now + ticketSaleDuration
+REF_43(EthereumLottery.Lottery) -> lotteries[id]
+REF_44(uint256) -> REF_43.cutoffTimestamp
+TMP_50(bool) = TMP_49 < REF_44
+CONDITION TMP_50
+EXPRESSION:ticketSaleDuration = PoissonData(poissonData).lookup(remainingDurationInBlocks - 1)	NodeType.VARIABLE
+ticketSaleDuration = PoissonData(poissonData).lookup(remainingDurationInBlocks - 1)	NodeType.EXPRESSION
+now + ticketSaleDuration < lotteries[id].cutoffTimestamp	NodeType.IF" -> "BlockID: 78
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 77
+Call context: 
+True
+REF_45(EthereumLottery.Lottery) -> lotteries[id]
+REF_46(uint256) -> REF_45.cutoffTimestamp
+TMP_51(uint256) = now + ticketSaleDuration
+REF_46(uint256) (->lotteries) := TMP_51(uint256)
+EXPRESSION:lotteries[id].cutoffTimestamp = now + ticketSaleDuration	NodeType.EXPRESSION" -> "BlockID: 78
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 82
+Call context: 
+True
+REF_32(EthereumLottery.Lottery) -> lotteries[id]
+REF_33(mapping(uint256 => address)) -> REF_32.tickets
+REF_34(address) -> REF_33[ticket]
+REF_34(address) (->lotteries) := msg.sender(address)
+REF_35(uint256) -> recentActivity[recentActivityIdx]
+REF_35(uint256) (->recentActivity) := ticket(uint256)
+recentActivityIdx(uint256) = recentActivityIdx + 1
+REF_36 -> LENGTH recentActivity
+TMP_43(bool) = recentActivityIdx >= REF_36
+CONDITION TMP_43
+EXPRESSION:lotteries[id].tickets[ticket] = msg.sender	NodeType.EXPRESSION
+recentActivity[recentActivityIdx] = ticket	NodeType.EXPRESSION
+recentActivityIdx += 1	NodeType.EXPRESSION
+recentActivityIdx >= recentActivity.length	NodeType.IF" -> "BlockID: 83
+Call context: 
+True
+recentActivityIdx(uint256) := 0(uint256)
+EXPRESSION:recentActivityIdx = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 82
+Call context: 
+True
+REF_32(EthereumLottery.Lottery) -> lotteries[id]
+REF_33(mapping(uint256 => address)) -> REF_32.tickets
+REF_34(address) -> REF_33[ticket]
+REF_34(address) (->lotteries) := msg.sender(address)
+REF_35(uint256) -> recentActivity[recentActivityIdx]
+REF_35(uint256) (->recentActivity) := ticket(uint256)
+recentActivityIdx(uint256) = recentActivityIdx + 1
+REF_36 -> LENGTH recentActivity
+TMP_43(bool) = recentActivityIdx >= REF_36
+CONDITION TMP_43
+EXPRESSION:lotteries[id].tickets[ticket] = msg.sender	NodeType.EXPRESSION
+recentActivity[recentActivityIdx] = ticket	NodeType.EXPRESSION
+recentActivityIdx += 1	NodeType.EXPRESSION
+recentActivityIdx >= recentActivity.length	NodeType.IF" -> "BlockID: 84
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 83
+Call context: 
+True
+recentActivityIdx(uint256) := 0(uint256)
+EXPRESSION:recentActivityIdx = 0	NodeType.EXPRESSION" -> "BlockID: 84
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 84
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 85
+Call context: 
+None
+TMP_44(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:i ++	NodeType.EXPRESSION" [key=0];
+"BlockID: 85
+Call context: 
+None
+TMP_44(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:i ++	NodeType.EXPRESSION" -> "BlockID: 72
+Call context: 
+None
+BEGIN_LOOP
+REF_25 -> LENGTH _tickets
+TMP_36(bool) = i < REF_25
+CONDITION TMP_36
+EXPRESSION:None	NodeType.STARTLOOP
+i < _tickets.length	NodeType.IFLOOP" [key=0];
+"BlockID: 86
+Call context: 
+None
+blockHeight(int256) := TMP_25(int256)
+TMP_26(int256) = blockHeight + 1
+REF_17(EthereumLottery.Lottery) -> lotteries[id]
+REF_18(int256) -> REF_17.decidingBlock
+TMP_27(bool) = TMP_26 < REF_18
+CONDITION TMP_27
+EXPRESSION:TMP_27(bool) = TMP_26 < REF_18	NodeType.IF" -> "BlockID: 87
+Call context: 
+True
+TMP_28(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 86
+Call context: 
+None
+blockHeight(int256) := TMP_25(int256)
+TMP_26(int256) = blockHeight + 1
+REF_17(EthereumLottery.Lottery) -> lotteries[id]
+REF_18(int256) -> REF_17.decidingBlock
+TMP_27(bool) = TMP_26 < REF_18
+CONDITION TMP_27
+EXPRESSION:TMP_27(bool) = TMP_26 < REF_18	NodeType.IF" -> "BlockID: 88
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 88
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 89
+Call context: 
+None
+REF_19(EthereumLottery.Lottery) -> lotteries[id]
+REF_20(uint256) -> REF_19.cutoffTimestamp
+TMP_29(bool) = now < REF_20
+CONDITION TMP_29
+EXPRESSION:TMP_29(bool) = now < REF_20	NodeType.IF" [key=0];
+"BlockID: 89
+Call context: 
+None
+REF_19(EthereumLottery.Lottery) -> lotteries[id]
+REF_20(uint256) -> REF_19.cutoffTimestamp
+TMP_29(bool) = now < REF_20
+CONDITION TMP_29
+EXPRESSION:TMP_29(bool) = now < REF_20	NodeType.IF" -> "BlockID: 90
+Call context: 
+True
+TMP_30(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 89
+Call context: 
+None
+REF_19(EthereumLottery.Lottery) -> lotteries[id]
+REF_20(uint256) -> REF_19.cutoffTimestamp
+TMP_29(bool) = now < REF_20
+CONDITION TMP_29
+EXPRESSION:TMP_29(bool) = now < REF_20	NodeType.IF" -> "BlockID: 91
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 91
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 92
+Call context: 
+None
+REF_21 -> LENGTH _tickets
+TMP_31(bool) = REF_21 > 0
+CONDITION TMP_31
+EXPRESSION:TMP_31(bool) = REF_21 > 0	NodeType.IF" [key=0];
+"BlockID: 92
+Call context: 
+None
+REF_21 -> LENGTH _tickets
+TMP_31(bool) = REF_21 > 0
+CONDITION TMP_31
+EXPRESSION:TMP_31(bool) = REF_21 > 0	NodeType.IF" -> "BlockID: 93
+Call context: 
+True
+TMP_32(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 92
+Call context: 
+None
+REF_21 -> LENGTH _tickets
+TMP_31(bool) = REF_21 > 0
+CONDITION TMP_31
+EXPRESSION:TMP_31(bool) = REF_21 > 0	NodeType.IF" -> "BlockID: 94
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 94
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 95
+Call context: 
+None
+REF_22 -> LENGTH _tickets
+REF_23(EthereumLottery.Lottery) -> lotteries[id]
+REF_24(uint256) -> REF_23.ticketPrice
+TMP_33(uint256) = REF_22 * REF_24
+TMP_34(bool) = msg.value == TMP_33
+CONDITION TMP_34
+EXPRESSION:TMP_34(bool) = msg.value == TMP_33	NodeType.IF" [key=0];
+"BlockID: 95
+Call context: 
+None
+REF_22 -> LENGTH _tickets
+REF_23(EthereumLottery.Lottery) -> lotteries[id]
+REF_24(uint256) -> REF_23.ticketPrice
+TMP_33(uint256) = REF_22 * REF_24
+TMP_34(bool) = msg.value == TMP_33
+CONDITION TMP_34
+EXPRESSION:TMP_34(bool) = msg.value == TMP_33	NodeType.IF" -> "BlockID: 96
+Call context: 
+True
+TMP_35(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 95
+Call context: 
+None
+REF_22 -> LENGTH _tickets
+REF_23(EthereumLottery.Lottery) -> lotteries[id]
+REF_24(uint256) -> REF_23.ticketPrice
+TMP_33(uint256) = REF_22 * REF_24
+TMP_34(bool) = msg.value == TMP_33
+CONDITION TMP_34
+EXPRESSION:TMP_34(bool) = msg.value == TMP_33	NodeType.IF" -> "BlockID: 97
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 97
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 71
+Call context: 
+True
+i(uint256) := 0(uint256)
+EXPRESSION:i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 98
+Call context: 
+None
+REF_26(uint256) -> _tickets[i]
+ticket(uint256) := REF_26(uint256)
+TMP_37(bool) = ticket >= 0
+CONDITION TMP_37
+EXPRESSION:TMP_37(bool) = ticket >= 0	NodeType.IF" -> "BlockID: 99
+Call context: 
+True
+TMP_38(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 98
+Call context: 
+None
+REF_26(uint256) -> _tickets[i]
+ticket(uint256) := REF_26(uint256)
+TMP_37(bool) = ticket >= 0
+CONDITION TMP_37
+EXPRESSION:TMP_37(bool) = ticket >= 0	NodeType.IF" -> "BlockID: 100
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 100
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 101
+Call context: 
+None
+REF_27(EthereumLottery.Lottery) -> lotteries[id]
+REF_28(uint256) -> REF_27.numTickets
+TMP_39(bool) = ticket < REF_28
+CONDITION TMP_39
+EXPRESSION:TMP_39(bool) = ticket < REF_28	NodeType.IF" [key=0];
+"BlockID: 101
+Call context: 
+None
+REF_27(EthereumLottery.Lottery) -> lotteries[id]
+REF_28(uint256) -> REF_27.numTickets
+TMP_39(bool) = ticket < REF_28
+CONDITION TMP_39
+EXPRESSION:TMP_39(bool) = ticket < REF_28	NodeType.IF" -> "BlockID: 102
+Call context: 
+True
+TMP_40(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 101
+Call context: 
+None
+REF_27(EthereumLottery.Lottery) -> lotteries[id]
+REF_28(uint256) -> REF_27.numTickets
+TMP_39(bool) = ticket < REF_28
+CONDITION TMP_39
+EXPRESSION:TMP_39(bool) = ticket < REF_28	NodeType.IF" -> "BlockID: 103
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 103
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 104
+Call context: 
+None
+REF_29(EthereumLottery.Lottery) -> lotteries[id]
+REF_30(mapping(uint256 => address)) -> REF_29.tickets
+REF_31(address) -> REF_30[ticket]
+TMP_41(bool) = REF_31 == 0
+CONDITION TMP_41
+EXPRESSION:TMP_41(bool) = REF_31 == 0	NodeType.IF" [key=0];
+"BlockID: 104
+Call context: 
+None
+REF_29(EthereumLottery.Lottery) -> lotteries[id]
+REF_30(mapping(uint256 => address)) -> REF_29.tickets
+REF_31(address) -> REF_30[ticket]
+TMP_41(bool) = REF_31 == 0
+CONDITION TMP_41
+EXPRESSION:TMP_41(bool) = REF_31 == 0	NodeType.IF" -> "BlockID: 105
+Call context: 
+True
+TMP_42(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 104
+Call context: 
+None
+REF_29(EthereumLottery.Lottery) -> lotteries[id]
+REF_30(mapping(uint256 => address)) -> REF_29.tickets
+REF_31(address) -> REF_30[ticket]
+TMP_41(bool) = REF_31 == 0
+CONDITION TMP_41
+EXPRESSION:TMP_41(bool) = REF_31 == 0	NodeType.IF" -> "BlockID: 106
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 106
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 82
+Call context: 
+True
+REF_32(EthereumLottery.Lottery) -> lotteries[id]
+REF_33(mapping(uint256 => address)) -> REF_32.tickets
+REF_34(address) -> REF_33[ticket]
+REF_34(address) (->lotteries) := msg.sender(address)
+REF_35(uint256) -> recentActivity[recentActivityIdx]
+REF_35(uint256) (->recentActivity) := ticket(uint256)
+recentActivityIdx(uint256) = recentActivityIdx + 1
+REF_36 -> LENGTH recentActivity
+TMP_43(bool) = recentActivityIdx >= REF_36
+CONDITION TMP_43
+EXPRESSION:lotteries[id].tickets[ticket] = msg.sender	NodeType.EXPRESSION
+recentActivity[recentActivityIdx] = ticket	NodeType.EXPRESSION
+recentActivityIdx += 1	NodeType.EXPRESSION
+recentActivityIdx >= recentActivity.length	NodeType.IF" [key=0];
+}

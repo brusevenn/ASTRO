@@ -1,0 +1,906 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+REF_128(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+REF_129(uint256) -> REF_128.value
+TMP_137(bool) = REF_129 == 0
+CONDITION TMP_137
+EXPRESSION:TMP_137(bool) = REF_129 == 0	NodeType.IF";
+"BlockID: 4
+Call context: 
+None
+TMP_141 = CONVERT 0 to address
+TMP_142(bool) = addressToCheck != TMP_141
+CONDITION TMP_142
+EXPRESSION:transactionDoesNotExist(scriptHash)	NodeType.EXPRESSION
+TMP_142(bool) = addressToCheck != TMP_141	NodeType.IF";
+"BlockID: 7
+Call context: 
+None
+TMP_141 = CONVERT 0 to address
+TMP_142(bool) = addressToCheck != TMP_141
+CONDITION TMP_142
+EXPRESSION:nonZeroAddress(buyer)	NodeType.EXPRESSION
+TMP_142(bool) = addressToCheck != TMP_141	NodeType.IF";
+"BlockID: 10
+Call context: 
+None
+TMP_141 = CONVERT 0 to address
+TMP_142(bool) = addressToCheck != TMP_141
+CONDITION TMP_142
+EXPRESSION:nonZeroAddress(seller)	NodeType.EXPRESSION
+TMP_142(bool) = addressToCheck != TMP_141	NodeType.IF";
+"BlockID: 13
+Call context: 
+None
+REF_1(Escrow_v1_0.TransactionType) -> TransactionType.TOKEN
+TMP_108(bool) = buyer != seller
+CONDITION TMP_108
+EXPRESSION:nonZeroAddress(tokenAddress)	NodeType.EXPRESSION
+TMP_108(bool) = buyer != seller	NodeType.IF";
+"BlockID: 41
+Call context: 
+None
+TMP_7 = CONVERT tokenAddress to ITokenContract
+token(ITokenContract) := TMP_7(ITokenContract)
+TMP_8 = CONVERT this to address
+TMP_9(bool) = HIGH_LEVEL_CALL, dest:token(ITokenContract), function:transferFrom, arguments:['msg.sender', 'TMP_8', 'value']  
+EXPRESSION:_addTransaction(buyer,seller,moderator,threshold,timeoutHours,scriptHash,value,uniqueId,TransactionType.TOKEN,tokenAddress)	NodeType.EXPRESSION
+token = ITokenContract(tokenAddress)	NodeType.VARIABLE
+token = ITokenContract(tokenAddress)	NodeType.EXPRESSION
+require(bool,string)(token.transferFrom(msg.sender,address(this),value),Token transfer failed, maybe you did not approve escrow contract to spend on behalf of sender)	NodeType.EXPRESSION";
+"BlockID: 42
+Call context: 
+None
+CONDITION TMP_9
+EXPRESSION:qiantao require	NodeType.IF";
+"BlockID: 43
+Call context: 
+True
+TMP_10(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 44
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2
+Call context: addTokenTransaction
+True
+TMP_138(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 3
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 5
+Call context: addTokenTransaction
+True
+TMP_143(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 6
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 8
+Call context: addTokenTransaction
+True
+TMP_143(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 9
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 11
+Call context: addTokenTransaction
+True
+TMP_143(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 12
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 28
+Call context: addTokenTransaction
+True
+TMP_47 = CONVERT 0 to address
+TMP_48(bool) = tokenAddress == TMP_47
+CONDITION TMP_48
+EXPRESSION:tokenAddress == address(0)	NodeType.IF";
+"BlockID: 37
+Call context: addTokenTransaction
+True
+TMP_127(bool) = threshold > 1
+CONDITION TMP_127
+EXPRESSION:threshold > 1	NodeType.IF";
+"BlockID: 38
+Call context: addTokenTransaction
+True
+REF_115(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+REF_116(mapping(address => bool)) -> REF_115.isOwner
+REF_117(bool) -> REF_116[moderator]
+REF_117(bool) (->transactions) := True(bool)
+EXPRESSION:transactions[scriptHash].isOwner[moderator] = true	NodeType.EXPRESSION";
+"BlockID: 39
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 40
+Call context: addTokenTransaction
+None
+TMP_128(uint256) := transactionCount(uint256)
+transactionCount(uint256) = transactionCount + 1
+REF_118(bytes32[]) -> partyVsTransaction[buyer]
+REF_120 -> LENGTH REF_118
+TMP_130(uint256) := REF_120(uint256)
+TMP_131(uint256) = TMP_130 + 1
+REF_120(uint256) (->partyVsTransaction) := TMP_131(uint256)
+REF_121(bytes32) -> REF_118[TMP_130]
+REF_121(bytes32) (->partyVsTransaction) := scriptHash(bytes32)
+REF_122(bytes32[]) -> partyVsTransaction[seller]
+REF_124 -> LENGTH REF_122
+TMP_133(uint256) := REF_124(uint256)
+TMP_134(uint256) = TMP_133 + 1
+REF_124(uint256) (->partyVsTransaction) := TMP_134(uint256)
+REF_125(bytes32) -> REF_122[TMP_133]
+REF_125(bytes32) (->partyVsTransaction) := scriptHash(bytes32)
+EXPRESSION:transactionCount ++	NodeType.EXPRESSION
+partyVsTransaction[buyer].push(scriptHash)	NodeType.EXPRESSION
+partyVsTransaction[seller].push(scriptHash)	NodeType.EXPRESSION";
+"BlockID: 14
+Call context: addTokenTransaction
+True
+TMP_109(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 15
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 16
+Call context: addTokenTransaction
+None
+TMP_110(bool) = value > 0
+CONDITION TMP_110
+EXPRESSION:TMP_110(bool) = value > 0	NodeType.IF";
+"BlockID: 17
+Call context: addTokenTransaction
+True
+TMP_111(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 18
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 19
+Call context: addTokenTransaction
+None
+TMP_112(bool) = threshold > 0
+CONDITION TMP_112
+EXPRESSION:TMP_112(bool) = threshold > 0	NodeType.IF";
+"BlockID: 20
+Call context: addTokenTransaction
+True
+TMP_113(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 21
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 22
+Call context: addTokenTransaction
+None
+TMP_114(bool) = threshold <= 3
+CONDITION TMP_114
+EXPRESSION:TMP_114(bool) = threshold <= 3	NodeType.IF";
+"BlockID: 23
+Call context: addTokenTransaction
+True
+TMP_115(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 24
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 25
+Call context: addTokenTransaction
+None
+TMP_116(bool) = threshold == 1
+TMP_117 = CONVERT 0 to address
+TMP_118(bool) = moderator != TMP_117
+TMP_119(bool) = TMP_116 || TMP_118
+CONDITION TMP_119
+EXPRESSION:TMP_119(bool) = TMP_116 || TMP_118	NodeType.IF";
+"BlockID: 26
+Call context: addTokenTransaction
+True
+TMP_120(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 27
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 31
+Call context: addTokenTransaction
+None
+TMP_122(bool) = scriptHash == TMP_121
+CONDITION TMP_122
+EXPRESSION:TMP_122(bool) = scriptHash == TMP_121	NodeType.IF";
+"BlockID: 32
+Call context: addTokenTransaction
+True
+TMP_123(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 33
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 34
+Call context: addTokenTransaction
+None
+REF_104(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+REF_105(Escrow_v1_0.Status) -> Status.FUNDED
+TMP_124(Escrow_v1_0.Transaction) = new Transaction(buyer,seller,moderator,value,REF_105,block.timestamp,threshold,timeoutHours,transactionType,tokenAddress)
+REF_104(Escrow_v1_0.Transaction) (->transactions) := TMP_124(Escrow_v1_0.Transaction)
+REF_106(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+REF_107(mapping(address => bool)) -> REF_106.isOwner
+REF_108(bool) -> REF_107[seller]
+REF_108(bool) (->transactions) := True(bool)
+REF_109(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+REF_110(mapping(address => bool)) -> REF_109.isOwner
+REF_111(bool) -> REF_110[buyer]
+REF_111(bool) (->transactions) := True(bool)
+REF_112(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+REF_113(mapping(address => bool)) -> REF_112.isOwner
+REF_114(bool) -> REF_113[moderator]
+TMP_125 = ! REF_114 
+CONDITION TMP_125
+EXPRESSION:TMP_125 = ! REF_114 	NodeType.IF";
+"BlockID: 35
+Call context: addTokenTransaction
+True
+TMP_126(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 36
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 29
+Call context: addTokenTransaction,_addTransaction
+True
+TMP_49 = CONVERT this to address
+TMP_50(bytes) = SOLIDITY_CALL abi.encodePacked()(uniqueId,threshold,timeoutHours,buyer,seller,moderator,TMP_49)
+TMP_51(bytes32) = SOLIDITY_CALL keccak256()(TMP_50)
+TMP_179(None) := TMP_51(bytes32)
+EXPRESSION:";
+"BlockID: 30
+Call context: addTokenTransaction,_addTransaction
+False
+TMP_52 = CONVERT this to address
+TMP_53(bytes) = SOLIDITY_CALL abi.encodePacked()(uniqueId,threshold,timeoutHours,buyer,seller,moderator,TMP_52,tokenAddress)
+TMP_54(bytes32) = SOLIDITY_CALL keccak256()(TMP_53)
+TMP_179(None) := TMP_54(bytes32)
+EXPRESSION:";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+REF_128(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+REF_129(uint256) -> REF_128.value
+TMP_137(bool) = REF_129 == 0
+CONDITION TMP_137
+EXPRESSION:TMP_137(bool) = REF_129 == 0	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+REF_128(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+REF_129(uint256) -> REF_128.value
+TMP_137(bool) = REF_129 == 0
+CONDITION TMP_137
+EXPRESSION:TMP_137(bool) = REF_129 == 0	NodeType.IF" -> "BlockID: 2
+Call context: addTokenTransaction
+True
+TMP_138(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+REF_128(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+REF_129(uint256) -> REF_128.value
+TMP_137(bool) = REF_129 == 0
+CONDITION TMP_137
+EXPRESSION:TMP_137(bool) = REF_129 == 0	NodeType.IF" -> "BlockID: 3
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 4
+Call context: 
+None
+TMP_141 = CONVERT 0 to address
+TMP_142(bool) = addressToCheck != TMP_141
+CONDITION TMP_142
+EXPRESSION:transactionDoesNotExist(scriptHash)	NodeType.EXPRESSION
+TMP_142(bool) = addressToCheck != TMP_141	NodeType.IF" -> "BlockID: 5
+Call context: addTokenTransaction
+True
+TMP_143(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 4
+Call context: 
+None
+TMP_141 = CONVERT 0 to address
+TMP_142(bool) = addressToCheck != TMP_141
+CONDITION TMP_142
+EXPRESSION:transactionDoesNotExist(scriptHash)	NodeType.EXPRESSION
+TMP_142(bool) = addressToCheck != TMP_141	NodeType.IF" -> "BlockID: 6
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 7
+Call context: 
+None
+TMP_141 = CONVERT 0 to address
+TMP_142(bool) = addressToCheck != TMP_141
+CONDITION TMP_142
+EXPRESSION:nonZeroAddress(buyer)	NodeType.EXPRESSION
+TMP_142(bool) = addressToCheck != TMP_141	NodeType.IF" -> "BlockID: 8
+Call context: addTokenTransaction
+True
+TMP_143(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 7
+Call context: 
+None
+TMP_141 = CONVERT 0 to address
+TMP_142(bool) = addressToCheck != TMP_141
+CONDITION TMP_142
+EXPRESSION:nonZeroAddress(buyer)	NodeType.EXPRESSION
+TMP_142(bool) = addressToCheck != TMP_141	NodeType.IF" -> "BlockID: 9
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 10
+Call context: 
+None
+TMP_141 = CONVERT 0 to address
+TMP_142(bool) = addressToCheck != TMP_141
+CONDITION TMP_142
+EXPRESSION:nonZeroAddress(seller)	NodeType.EXPRESSION
+TMP_142(bool) = addressToCheck != TMP_141	NodeType.IF" -> "BlockID: 11
+Call context: addTokenTransaction
+True
+TMP_143(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 10
+Call context: 
+None
+TMP_141 = CONVERT 0 to address
+TMP_142(bool) = addressToCheck != TMP_141
+CONDITION TMP_142
+EXPRESSION:nonZeroAddress(seller)	NodeType.EXPRESSION
+TMP_142(bool) = addressToCheck != TMP_141	NodeType.IF" -> "BlockID: 12
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 13
+Call context: 
+None
+REF_1(Escrow_v1_0.TransactionType) -> TransactionType.TOKEN
+TMP_108(bool) = buyer != seller
+CONDITION TMP_108
+EXPRESSION:nonZeroAddress(tokenAddress)	NodeType.EXPRESSION
+TMP_108(bool) = buyer != seller	NodeType.IF" -> "BlockID: 14
+Call context: addTokenTransaction
+True
+TMP_109(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 13
+Call context: 
+None
+REF_1(Escrow_v1_0.TransactionType) -> TransactionType.TOKEN
+TMP_108(bool) = buyer != seller
+CONDITION TMP_108
+EXPRESSION:nonZeroAddress(tokenAddress)	NodeType.EXPRESSION
+TMP_108(bool) = buyer != seller	NodeType.IF" -> "BlockID: 15
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 41
+Call context: 
+None
+TMP_7 = CONVERT tokenAddress to ITokenContract
+token(ITokenContract) := TMP_7(ITokenContract)
+TMP_8 = CONVERT this to address
+TMP_9(bool) = HIGH_LEVEL_CALL, dest:token(ITokenContract), function:transferFrom, arguments:['msg.sender', 'TMP_8', 'value']  
+EXPRESSION:_addTransaction(buyer,seller,moderator,threshold,timeoutHours,scriptHash,value,uniqueId,TransactionType.TOKEN,tokenAddress)	NodeType.EXPRESSION
+token = ITokenContract(tokenAddress)	NodeType.VARIABLE
+token = ITokenContract(tokenAddress)	NodeType.EXPRESSION
+require(bool,string)(token.transferFrom(msg.sender,address(this),value),Token transfer failed, maybe you did not approve escrow contract to spend on behalf of sender)	NodeType.EXPRESSION" -> "BlockID: 42
+Call context: 
+None
+CONDITION TMP_9
+EXPRESSION:qiantao require	NodeType.IF" [key=0];
+"BlockID: 42
+Call context: 
+None
+CONDITION TMP_9
+EXPRESSION:qiantao require	NodeType.IF" -> "BlockID: 43
+Call context: 
+True
+TMP_10(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 42
+Call context: 
+None
+CONDITION TMP_9
+EXPRESSION:qiantao require	NodeType.IF" -> "BlockID: 44
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: 
+None
+TMP_141 = CONVERT 0 to address
+TMP_142(bool) = addressToCheck != TMP_141
+CONDITION TMP_142
+EXPRESSION:transactionDoesNotExist(scriptHash)	NodeType.EXPRESSION
+TMP_142(bool) = addressToCheck != TMP_141	NodeType.IF" [key="Exit: transactionDoesNotExist", ref="Escrow_v1_0.transactionDoesNotExist"];
+"BlockID: 6
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 7
+Call context: 
+None
+TMP_141 = CONVERT 0 to address
+TMP_142(bool) = addressToCheck != TMP_141
+CONDITION TMP_142
+EXPRESSION:nonZeroAddress(buyer)	NodeType.EXPRESSION
+TMP_142(bool) = addressToCheck != TMP_141	NodeType.IF" [key="Exit: nonZeroAddress", ref="Escrow_v1_0.nonZeroAddress"];
+"BlockID: 9
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 10
+Call context: 
+None
+TMP_141 = CONVERT 0 to address
+TMP_142(bool) = addressToCheck != TMP_141
+CONDITION TMP_142
+EXPRESSION:nonZeroAddress(seller)	NodeType.EXPRESSION
+TMP_142(bool) = addressToCheck != TMP_141	NodeType.IF" [key="Exit: nonZeroAddress", ref="Escrow_v1_0.nonZeroAddress"];
+"BlockID: 12
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 13
+Call context: 
+None
+REF_1(Escrow_v1_0.TransactionType) -> TransactionType.TOKEN
+TMP_108(bool) = buyer != seller
+CONDITION TMP_108
+EXPRESSION:nonZeroAddress(tokenAddress)	NodeType.EXPRESSION
+TMP_108(bool) = buyer != seller	NodeType.IF" [key="Exit: nonZeroAddress", ref="Escrow_v1_0.nonZeroAddress"];
+"BlockID: 28
+Call context: addTokenTransaction
+True
+TMP_47 = CONVERT 0 to address
+TMP_48(bool) = tokenAddress == TMP_47
+CONDITION TMP_48
+EXPRESSION:tokenAddress == address(0)	NodeType.IF" -> "BlockID: 29
+Call context: addTokenTransaction,_addTransaction
+True
+TMP_49 = CONVERT this to address
+TMP_50(bytes) = SOLIDITY_CALL abi.encodePacked()(uniqueId,threshold,timeoutHours,buyer,seller,moderator,TMP_49)
+TMP_51(bytes32) = SOLIDITY_CALL keccak256()(TMP_50)
+TMP_179(None) := TMP_51(bytes32)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 28
+Call context: addTokenTransaction
+True
+TMP_47 = CONVERT 0 to address
+TMP_48(bool) = tokenAddress == TMP_47
+CONDITION TMP_48
+EXPRESSION:tokenAddress == address(0)	NodeType.IF" -> "BlockID: 30
+Call context: addTokenTransaction,_addTransaction
+False
+TMP_52 = CONVERT this to address
+TMP_53(bytes) = SOLIDITY_CALL abi.encodePacked()(uniqueId,threshold,timeoutHours,buyer,seller,moderator,TMP_52,tokenAddress)
+TMP_54(bytes32) = SOLIDITY_CALL keccak256()(TMP_53)
+TMP_179(None) := TMP_54(bytes32)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 37
+Call context: addTokenTransaction
+True
+TMP_127(bool) = threshold > 1
+CONDITION TMP_127
+EXPRESSION:threshold > 1	NodeType.IF" -> "BlockID: 38
+Call context: addTokenTransaction
+True
+REF_115(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+REF_116(mapping(address => bool)) -> REF_115.isOwner
+REF_117(bool) -> REF_116[moderator]
+REF_117(bool) (->transactions) := True(bool)
+EXPRESSION:transactions[scriptHash].isOwner[moderator] = true	NodeType.EXPRESSION" [key=0];
+"BlockID: 37
+Call context: addTokenTransaction
+True
+TMP_127(bool) = threshold > 1
+CONDITION TMP_127
+EXPRESSION:threshold > 1	NodeType.IF" -> "BlockID: 39
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 38
+Call context: addTokenTransaction
+True
+REF_115(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+REF_116(mapping(address => bool)) -> REF_115.isOwner
+REF_117(bool) -> REF_116[moderator]
+REF_117(bool) (->transactions) := True(bool)
+EXPRESSION:transactions[scriptHash].isOwner[moderator] = true	NodeType.EXPRESSION" -> "BlockID: 39
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 39
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 40
+Call context: addTokenTransaction
+None
+TMP_128(uint256) := transactionCount(uint256)
+transactionCount(uint256) = transactionCount + 1
+REF_118(bytes32[]) -> partyVsTransaction[buyer]
+REF_120 -> LENGTH REF_118
+TMP_130(uint256) := REF_120(uint256)
+TMP_131(uint256) = TMP_130 + 1
+REF_120(uint256) (->partyVsTransaction) := TMP_131(uint256)
+REF_121(bytes32) -> REF_118[TMP_130]
+REF_121(bytes32) (->partyVsTransaction) := scriptHash(bytes32)
+REF_122(bytes32[]) -> partyVsTransaction[seller]
+REF_124 -> LENGTH REF_122
+TMP_133(uint256) := REF_124(uint256)
+TMP_134(uint256) = TMP_133 + 1
+REF_124(uint256) (->partyVsTransaction) := TMP_134(uint256)
+REF_125(bytes32) -> REF_122[TMP_133]
+REF_125(bytes32) (->partyVsTransaction) := scriptHash(bytes32)
+EXPRESSION:transactionCount ++	NodeType.EXPRESSION
+partyVsTransaction[buyer].push(scriptHash)	NodeType.EXPRESSION
+partyVsTransaction[seller].push(scriptHash)	NodeType.EXPRESSION" [key=0];
+"BlockID: 40
+Call context: addTokenTransaction
+None
+TMP_128(uint256) := transactionCount(uint256)
+transactionCount(uint256) = transactionCount + 1
+REF_118(bytes32[]) -> partyVsTransaction[buyer]
+REF_120 -> LENGTH REF_118
+TMP_130(uint256) := REF_120(uint256)
+TMP_131(uint256) = TMP_130 + 1
+REF_120(uint256) (->partyVsTransaction) := TMP_131(uint256)
+REF_121(bytes32) -> REF_118[TMP_130]
+REF_121(bytes32) (->partyVsTransaction) := scriptHash(bytes32)
+REF_122(bytes32[]) -> partyVsTransaction[seller]
+REF_124 -> LENGTH REF_122
+TMP_133(uint256) := REF_124(uint256)
+TMP_134(uint256) = TMP_133 + 1
+REF_124(uint256) (->partyVsTransaction) := TMP_134(uint256)
+REF_125(bytes32) -> REF_122[TMP_133]
+REF_125(bytes32) (->partyVsTransaction) := scriptHash(bytes32)
+EXPRESSION:transactionCount ++	NodeType.EXPRESSION
+partyVsTransaction[buyer].push(scriptHash)	NodeType.EXPRESSION
+partyVsTransaction[seller].push(scriptHash)	NodeType.EXPRESSION" -> "BlockID: 41
+Call context: 
+None
+TMP_7 = CONVERT tokenAddress to ITokenContract
+token(ITokenContract) := TMP_7(ITokenContract)
+TMP_8 = CONVERT this to address
+TMP_9(bool) = HIGH_LEVEL_CALL, dest:token(ITokenContract), function:transferFrom, arguments:['msg.sender', 'TMP_8', 'value']  
+EXPRESSION:_addTransaction(buyer,seller,moderator,threshold,timeoutHours,scriptHash,value,uniqueId,TransactionType.TOKEN,tokenAddress)	NodeType.EXPRESSION
+token = ITokenContract(tokenAddress)	NodeType.VARIABLE
+token = ITokenContract(tokenAddress)	NodeType.EXPRESSION
+require(bool,string)(token.transferFrom(msg.sender,address(this),value),Token transfer failed, maybe you did not approve escrow contract to spend on behalf of sender)	NodeType.EXPRESSION" [key="Exit: _addTransaction", ref="Escrow_v1_0._addTransaction"];
+"BlockID: 15
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 16
+Call context: addTokenTransaction
+None
+TMP_110(bool) = value > 0
+CONDITION TMP_110
+EXPRESSION:TMP_110(bool) = value > 0	NodeType.IF" [key=0];
+"BlockID: 16
+Call context: addTokenTransaction
+None
+TMP_110(bool) = value > 0
+CONDITION TMP_110
+EXPRESSION:TMP_110(bool) = value > 0	NodeType.IF" -> "BlockID: 17
+Call context: addTokenTransaction
+True
+TMP_111(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 16
+Call context: addTokenTransaction
+None
+TMP_110(bool) = value > 0
+CONDITION TMP_110
+EXPRESSION:TMP_110(bool) = value > 0	NodeType.IF" -> "BlockID: 18
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 18
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 19
+Call context: addTokenTransaction
+None
+TMP_112(bool) = threshold > 0
+CONDITION TMP_112
+EXPRESSION:TMP_112(bool) = threshold > 0	NodeType.IF" [key=0];
+"BlockID: 19
+Call context: addTokenTransaction
+None
+TMP_112(bool) = threshold > 0
+CONDITION TMP_112
+EXPRESSION:TMP_112(bool) = threshold > 0	NodeType.IF" -> "BlockID: 20
+Call context: addTokenTransaction
+True
+TMP_113(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 19
+Call context: addTokenTransaction
+None
+TMP_112(bool) = threshold > 0
+CONDITION TMP_112
+EXPRESSION:TMP_112(bool) = threshold > 0	NodeType.IF" -> "BlockID: 21
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 21
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 22
+Call context: addTokenTransaction
+None
+TMP_114(bool) = threshold <= 3
+CONDITION TMP_114
+EXPRESSION:TMP_114(bool) = threshold <= 3	NodeType.IF" [key=0];
+"BlockID: 22
+Call context: addTokenTransaction
+None
+TMP_114(bool) = threshold <= 3
+CONDITION TMP_114
+EXPRESSION:TMP_114(bool) = threshold <= 3	NodeType.IF" -> "BlockID: 23
+Call context: addTokenTransaction
+True
+TMP_115(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 22
+Call context: addTokenTransaction
+None
+TMP_114(bool) = threshold <= 3
+CONDITION TMP_114
+EXPRESSION:TMP_114(bool) = threshold <= 3	NodeType.IF" -> "BlockID: 24
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 24
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 25
+Call context: addTokenTransaction
+None
+TMP_116(bool) = threshold == 1
+TMP_117 = CONVERT 0 to address
+TMP_118(bool) = moderator != TMP_117
+TMP_119(bool) = TMP_116 || TMP_118
+CONDITION TMP_119
+EXPRESSION:TMP_119(bool) = TMP_116 || TMP_118	NodeType.IF" [key=0];
+"BlockID: 25
+Call context: addTokenTransaction
+None
+TMP_116(bool) = threshold == 1
+TMP_117 = CONVERT 0 to address
+TMP_118(bool) = moderator != TMP_117
+TMP_119(bool) = TMP_116 || TMP_118
+CONDITION TMP_119
+EXPRESSION:TMP_119(bool) = TMP_116 || TMP_118	NodeType.IF" -> "BlockID: 26
+Call context: addTokenTransaction
+True
+TMP_120(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 25
+Call context: addTokenTransaction
+None
+TMP_116(bool) = threshold == 1
+TMP_117 = CONVERT 0 to address
+TMP_118(bool) = moderator != TMP_117
+TMP_119(bool) = TMP_116 || TMP_118
+CONDITION TMP_119
+EXPRESSION:TMP_119(bool) = TMP_116 || TMP_118	NodeType.IF" -> "BlockID: 27
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 27
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 28
+Call context: addTokenTransaction
+True
+TMP_47 = CONVERT 0 to address
+TMP_48(bool) = tokenAddress == TMP_47
+CONDITION TMP_48
+EXPRESSION:tokenAddress == address(0)	NodeType.IF" [key=0];
+"BlockID: 31
+Call context: addTokenTransaction
+None
+TMP_122(bool) = scriptHash == TMP_121
+CONDITION TMP_122
+EXPRESSION:TMP_122(bool) = scriptHash == TMP_121	NodeType.IF" -> "BlockID: 32
+Call context: addTokenTransaction
+True
+TMP_123(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 31
+Call context: addTokenTransaction
+None
+TMP_122(bool) = scriptHash == TMP_121
+CONDITION TMP_122
+EXPRESSION:TMP_122(bool) = scriptHash == TMP_121	NodeType.IF" -> "BlockID: 33
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 33
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 34
+Call context: addTokenTransaction
+None
+REF_104(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+REF_105(Escrow_v1_0.Status) -> Status.FUNDED
+TMP_124(Escrow_v1_0.Transaction) = new Transaction(buyer,seller,moderator,value,REF_105,block.timestamp,threshold,timeoutHours,transactionType,tokenAddress)
+REF_104(Escrow_v1_0.Transaction) (->transactions) := TMP_124(Escrow_v1_0.Transaction)
+REF_106(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+REF_107(mapping(address => bool)) -> REF_106.isOwner
+REF_108(bool) -> REF_107[seller]
+REF_108(bool) (->transactions) := True(bool)
+REF_109(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+REF_110(mapping(address => bool)) -> REF_109.isOwner
+REF_111(bool) -> REF_110[buyer]
+REF_111(bool) (->transactions) := True(bool)
+REF_112(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+REF_113(mapping(address => bool)) -> REF_112.isOwner
+REF_114(bool) -> REF_113[moderator]
+TMP_125 = ! REF_114 
+CONDITION TMP_125
+EXPRESSION:TMP_125 = ! REF_114 	NodeType.IF" [key=0];
+"BlockID: 34
+Call context: addTokenTransaction
+None
+REF_104(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+REF_105(Escrow_v1_0.Status) -> Status.FUNDED
+TMP_124(Escrow_v1_0.Transaction) = new Transaction(buyer,seller,moderator,value,REF_105,block.timestamp,threshold,timeoutHours,transactionType,tokenAddress)
+REF_104(Escrow_v1_0.Transaction) (->transactions) := TMP_124(Escrow_v1_0.Transaction)
+REF_106(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+REF_107(mapping(address => bool)) -> REF_106.isOwner
+REF_108(bool) -> REF_107[seller]
+REF_108(bool) (->transactions) := True(bool)
+REF_109(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+REF_110(mapping(address => bool)) -> REF_109.isOwner
+REF_111(bool) -> REF_110[buyer]
+REF_111(bool) (->transactions) := True(bool)
+REF_112(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+REF_113(mapping(address => bool)) -> REF_112.isOwner
+REF_114(bool) -> REF_113[moderator]
+TMP_125 = ! REF_114 
+CONDITION TMP_125
+EXPRESSION:TMP_125 = ! REF_114 	NodeType.IF" -> "BlockID: 35
+Call context: addTokenTransaction
+True
+TMP_126(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 34
+Call context: addTokenTransaction
+None
+REF_104(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+REF_105(Escrow_v1_0.Status) -> Status.FUNDED
+TMP_124(Escrow_v1_0.Transaction) = new Transaction(buyer,seller,moderator,value,REF_105,block.timestamp,threshold,timeoutHours,transactionType,tokenAddress)
+REF_104(Escrow_v1_0.Transaction) (->transactions) := TMP_124(Escrow_v1_0.Transaction)
+REF_106(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+REF_107(mapping(address => bool)) -> REF_106.isOwner
+REF_108(bool) -> REF_107[seller]
+REF_108(bool) (->transactions) := True(bool)
+REF_109(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+REF_110(mapping(address => bool)) -> REF_109.isOwner
+REF_111(bool) -> REF_110[buyer]
+REF_111(bool) (->transactions) := True(bool)
+REF_112(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+REF_113(mapping(address => bool)) -> REF_112.isOwner
+REF_114(bool) -> REF_113[moderator]
+TMP_125 = ! REF_114 
+CONDITION TMP_125
+EXPRESSION:TMP_125 = ! REF_114 	NodeType.IF" -> "BlockID: 36
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 36
+Call context: addTokenTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 37
+Call context: addTokenTransaction
+True
+TMP_127(bool) = threshold > 1
+CONDITION TMP_127
+EXPRESSION:threshold > 1	NodeType.IF" [key=0];
+"BlockID: 29
+Call context: addTokenTransaction,_addTransaction
+True
+TMP_49 = CONVERT this to address
+TMP_50(bytes) = SOLIDITY_CALL abi.encodePacked()(uniqueId,threshold,timeoutHours,buyer,seller,moderator,TMP_49)
+TMP_51(bytes32) = SOLIDITY_CALL keccak256()(TMP_50)
+TMP_179(None) := TMP_51(bytes32)
+EXPRESSION:" -> "BlockID: 31
+Call context: addTokenTransaction
+None
+TMP_122(bool) = scriptHash == TMP_121
+CONDITION TMP_122
+EXPRESSION:TMP_122(bool) = scriptHash == TMP_121	NodeType.IF" [key="successor_5", ref="Escrow_v1_0.calculateRedeemScriptHash"];
+"BlockID: 30
+Call context: addTokenTransaction,_addTransaction
+False
+TMP_52 = CONVERT this to address
+TMP_53(bytes) = SOLIDITY_CALL abi.encodePacked()(uniqueId,threshold,timeoutHours,buyer,seller,moderator,TMP_52,tokenAddress)
+TMP_54(bytes32) = SOLIDITY_CALL keccak256()(TMP_53)
+TMP_179(None) := TMP_54(bytes32)
+EXPRESSION:" -> "BlockID: 31
+Call context: addTokenTransaction
+None
+TMP_122(bool) = scriptHash == TMP_121
+CONDITION TMP_122
+EXPRESSION:TMP_122(bool) = scriptHash == TMP_121	NodeType.IF" [key="successor_5", ref="Escrow_v1_0.calculateRedeemScriptHash"];
+}

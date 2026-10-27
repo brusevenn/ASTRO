@@ -1,0 +1,854 @@
+digraph {
+"BlockID: 2653
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 2654
+Call context: 
+None
+TMP_1758(uint256) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:getFx, arguments:['USDTUSDC']  
+EXPRESSION:";
+"BlockID: 2655
+Call context: 
+None
+fx_USDTUSDC_Mantissa(uint256) := TMP_1758(uint256)
+NEW VARIABLE targetLevRatio
+NEW VARIABLE releverageTrigger
+NEW VARIABLE deleverageTrigger
+TUPLE_10(uint256,uint256,uint256) = INTERNAL_CALL, LevToken.refreshTargetLevRatio(uint256)(fx_USDTUSDC_Mantissa)
+EXPRESSION:fx_USDTUSDC_Mantissa = tensorpricer.getFx(USDTUSDC)	NodeType.VARIABLE
+fx_USDTUSDC_Mantissa = tensorpricer.getFx(USDTUSDC)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(targetLevRatio,releverageTrigger,deleverageTrigger) = refreshTargetLevRatio(fx_USDTUSDC_Mantissa)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2656
+Call context: 
+None
+targetLevRatio(uint256)= UNPACK TUPLE_10 index: 0 
+releverageTrigger(uint256)= UNPACK TUPLE_10 index: 1 
+deleverageTrigger(uint256)= UNPACK TUPLE_10 index: 2 
+TMP_1759(ExponentialNoError.Exp) = new Exp(fx_USDTUSDC_Mantissa)
+fx_USDTUSDC(ExponentialNoError.Exp) := TMP_1759(ExponentialNoError.Exp)
+TMP_1760(bool) = callingSrc == 0
+CONDITION TMP_1760
+EXPRESSION:(targetLevRatio,releverageTrigger,deleverageTrigger) = refreshTargetLevRatio(fx_USDTUSDC_Mantissa)	NodeType.EXPRESSION
+fx_USDTUSDC = Exp(fx_USDTUSDC_Mantissa)	NodeType.VARIABLE
+fx_USDTUSDC = Exp(fx_USDTUSDC_Mantissa)	NodeType.EXPRESSION
+callingSrc == 0	NodeType.IF" [shape=box];
+"BlockID: 2657
+Call context: 
+True
+TMP_1761(uint256) = INTERNAL_CALL, ExponentialNoError.mul_(uint256,ExponentialNoError.Exp)(borrowBalanceUSDT,fx_USDTUSDC)
+EXPRESSION:";
+"BlockID: 2659
+Call context: 
+False
+TMP_1775(bool) = callingSrc == 1
+CONDITION TMP_1775
+EXPRESSION:callingSrc == 1	NodeType.IF";
+"BlockID: 2660
+Call context: 
+True
+TMP_1776(bool) = totalSupply > 0
+CONDITION TMP_1776
+EXPRESSION:totalSupply > 0	NodeType.IF";
+"BlockID: 2661
+Call context: 
+False
+TMP_1793(bool) = totalSupply > 0
+CONDITION TMP_1793
+EXPRESSION:totalSupply > 0	NodeType.IF";
+"BlockID: 2662
+Call context: 
+True
+TMP_1794(uint256) = INTERNAL_CALL, ExponentialNoError.mul_(uint256,ExponentialNoError.Exp)(borrowBalanceUSDT,fx_USDTUSDC)
+EXPRESSION:";
+"BlockID: 2664
+Call context: 
+False
+TMP_1808(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(0,0,0,0,0)
+RETURN TMP_1808
+EXPRESSION:checkRebalanceRes(0,0,0,0,0)	NodeType.RETURN";
+"BlockID: 2663
+Call context: 
+None
+tmpBorrowBalanceUSDC_scope_4(uint256) := TMP_1794(uint256)
+TMP_1795(uint256) = INTERNAL_CALL, LevToken.getCashExReserves()()
+EXPRESSION:tmpBorrowBalanceUSDC_scope_4 = mul_(borrowBalanceUSDT,fx_USDTUSDC)	NodeType.VARIABLE
+tmpBorrowBalanceUSDC_scope_4 = mul_(borrowBalanceUSDT,fx_USDTUSDC)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2665
+Call context: 
+None
+TMP_1796(uint256) = INTERNAL_CALL, LevToken.getCmpBalanceInternal()()
+EXPRESSION:" [shape=box];
+"BlockID: 2666
+Call context: 
+None
+TMP_1797(uint256) = TMP_1795 (c)+ TMP_1796
+tmpBalanceUSDC_scope_5(uint256) := TMP_1797(uint256)
+TMP_1798(bool) = tmpBalanceUSDC_scope_5 > tmpBorrowBalanceUSDC_scope_4
+CONDITION TMP_1798
+EXPRESSION:tmpBalanceUSDC_scope_5 = getCashExReserves() + getCmpBalanceInternal()	NodeType.VARIABLE
+tmpBalanceUSDC_scope_5 = getCashExReserves() + getCmpBalanceInternal()	NodeType.EXPRESSION
+tmpBalanceUSDC_scope_5 > tmpBorrowBalanceUSDC_scope_4	NodeType.IF" [shape=box];
+"BlockID: 2667
+Call context: 
+True
+TMP_1799(uint256) = tmpBalanceUSDC_scope_5 (c)- tmpBorrowBalanceUSDC_scope_4
+tmpTotalAssetValue_scope_6(uint256) := TMP_1799(uint256)
+TMP_1800(uint256) = tmpBorrowBalanceUSDC_scope_4 (c)* expScale
+TMP_1801(uint256) = TMP_1800 (c)/ tmpTotalAssetValue_scope_6
+tmpLevRatio_scope_7(uint256) := TMP_1801(uint256)
+TMP_1802(bool) = tmpLevRatio_scope_7 < releverageTrigger
+CONDITION TMP_1802
+EXPRESSION:tmpTotalAssetValue_scope_6 = tmpBalanceUSDC_scope_5 - tmpBorrowBalanceUSDC_scope_4	NodeType.VARIABLE
+tmpTotalAssetValue_scope_6 = tmpBalanceUSDC_scope_5 - tmpBorrowBalanceUSDC_scope_4	NodeType.EXPRESSION
+tmpLevRatio_scope_7 = tmpBorrowBalanceUSDC_scope_4 * expScale / tmpTotalAssetValue_scope_6	NodeType.VARIABLE
+tmpLevRatio_scope_7 = tmpBorrowBalanceUSDC_scope_4 * expScale / tmpTotalAssetValue_scope_6	NodeType.EXPRESSION
+tmpLevRatio_scope_7 < releverageTrigger	NodeType.IF";
+"BlockID: 2668
+Call context: 
+False
+TMP_1807(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(3,targetLevRatio,tmpBorrowBalanceUSDC_scope_4,0,0)
+RETURN TMP_1807
+EXPRESSION:checkRebalanceRes(3,targetLevRatio,tmpBorrowBalanceUSDC_scope_4,0,0)	NodeType.RETURN";
+"BlockID: 2669
+Call context: 
+True
+TMP_1803(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(1,targetLevRatio,tmpBorrowBalanceUSDC_scope_4,tmpTotalAssetValue_scope_6,tmpLevRatio_scope_7)
+RETURN TMP_1803
+EXPRESSION:checkRebalanceRes(1,targetLevRatio,tmpBorrowBalanceUSDC_scope_4,tmpTotalAssetValue_scope_6,tmpLevRatio_scope_7)	NodeType.RETURN";
+"BlockID: 2670
+Call context: 
+False
+TMP_1804(bool) = tmpLevRatio_scope_7 > deleverageTrigger
+CONDITION TMP_1804
+EXPRESSION:tmpLevRatio_scope_7 > deleverageTrigger	NodeType.IF";
+"BlockID: 2671
+Call context: 
+True
+TMP_1805(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(2,targetLevRatio,tmpBorrowBalanceUSDC_scope_4,tmpTotalAssetValue_scope_6,tmpLevRatio_scope_7)
+RETURN TMP_1805
+EXPRESSION:checkRebalanceRes(2,targetLevRatio,tmpBorrowBalanceUSDC_scope_4,tmpTotalAssetValue_scope_6,tmpLevRatio_scope_7)	NodeType.RETURN";
+"BlockID: 2672
+Call context: 
+False
+TMP_1806(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(0,targetLevRatio,tmpBorrowBalanceUSDC_scope_4,tmpTotalAssetValue_scope_6,tmpLevRatio_scope_7)
+RETURN TMP_1806
+EXPRESSION:checkRebalanceRes(0,targetLevRatio,tmpBorrowBalanceUSDC_scope_4,tmpTotalAssetValue_scope_6,tmpLevRatio_scope_7)	NodeType.RETURN";
+"BlockID: 2673
+Call context: 
+True
+TMP_1777(uint256) = INTERNAL_CALL, LevToken.getCashExReserves()()
+EXPRESSION:";
+"BlockID: 2676
+Call context: 
+False
+TMP_1792(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(0,0,0,0,0)
+RETURN TMP_1792
+EXPRESSION:checkRebalanceRes(0,0,0,0,0)	NodeType.RETURN";
+"BlockID: 2674
+Call context: 
+None
+TMP_1778(uint256) = INTERNAL_CALL, LevToken.getCmpBalanceInternal()()
+EXPRESSION:" [shape=box];
+"BlockID: 2675
+Call context: 
+None
+TMP_1779(uint256) = TMP_1777 (c)+ TMP_1778
+TMP_1780(uint256) = TMP_1779 (c)- tmpRedeemAmountInUSDC
+tmpBalanceUSDC_scope_0(uint256) := TMP_1780(uint256)
+TMP_1781(uint256) = INTERNAL_CALL, ExponentialNoError.mul_(uint256,ExponentialNoError.Exp)(borrowBalanceUSDT,fx_USDTUSDC)
+EXPRESSION:tmpBalanceUSDC_scope_0 = getCashExReserves() + getCmpBalanceInternal() - tmpRedeemAmountInUSDC	NodeType.VARIABLE
+tmpBalanceUSDC_scope_0 = getCashExReserves() + getCmpBalanceInternal() - tmpRedeemAmountInUSDC	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2677
+Call context: 
+None
+tmpBorrowBalanceUSDC_scope_1(uint256) := TMP_1781(uint256)
+TMP_1782(bool) = tmpBalanceUSDC_scope_0 > tmpBorrowBalanceUSDC_scope_1
+CONDITION TMP_1782
+EXPRESSION:tmpBorrowBalanceUSDC_scope_1 = mul_(borrowBalanceUSDT,fx_USDTUSDC)	NodeType.VARIABLE
+tmpBorrowBalanceUSDC_scope_1 = mul_(borrowBalanceUSDT,fx_USDTUSDC)	NodeType.EXPRESSION
+tmpBalanceUSDC_scope_0 > tmpBorrowBalanceUSDC_scope_1	NodeType.IF" [shape=box];
+"BlockID: 2678
+Call context: 
+True
+TMP_1783(uint256) = tmpBalanceUSDC_scope_0 (c)- tmpBorrowBalanceUSDC_scope_1
+tmpTotalAssetValue_scope_2(uint256) := TMP_1783(uint256)
+TMP_1784(uint256) = tmpBorrowBalanceUSDC_scope_1 (c)* expScale
+TMP_1785(uint256) = TMP_1784 (c)/ tmpTotalAssetValue_scope_2
+tmpLevRatio_scope_3(uint256) := TMP_1785(uint256)
+TMP_1786(bool) = tmpLevRatio_scope_3 > deleverageTrigger
+CONDITION TMP_1786
+EXPRESSION:tmpTotalAssetValue_scope_2 = tmpBalanceUSDC_scope_0 - tmpBorrowBalanceUSDC_scope_1	NodeType.VARIABLE
+tmpTotalAssetValue_scope_2 = tmpBalanceUSDC_scope_0 - tmpBorrowBalanceUSDC_scope_1	NodeType.EXPRESSION
+tmpLevRatio_scope_3 = tmpBorrowBalanceUSDC_scope_1 * expScale / tmpTotalAssetValue_scope_2	NodeType.VARIABLE
+tmpLevRatio_scope_3 = tmpBorrowBalanceUSDC_scope_1 * expScale / tmpTotalAssetValue_scope_2	NodeType.EXPRESSION
+tmpLevRatio_scope_3 > deleverageTrigger	NodeType.IF";
+"BlockID: 2679
+Call context: 
+False
+TMP_1791(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(3,targetLevRatio,tmpBorrowBalanceUSDC_scope_1,0,0)
+RETURN TMP_1791
+EXPRESSION:checkRebalanceRes(3,targetLevRatio,tmpBorrowBalanceUSDC_scope_1,0,0)	NodeType.RETURN";
+"BlockID: 2680
+Call context: 
+True
+TMP_1787(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(2,targetLevRatio,tmpBorrowBalanceUSDC_scope_1,tmpTotalAssetValue_scope_2,tmpLevRatio_scope_3)
+RETURN TMP_1787
+EXPRESSION:checkRebalanceRes(2,targetLevRatio,tmpBorrowBalanceUSDC_scope_1,tmpTotalAssetValue_scope_2,tmpLevRatio_scope_3)	NodeType.RETURN";
+"BlockID: 2681
+Call context: 
+False
+TMP_1788(bool) = tmpLevRatio_scope_3 < releverageTrigger
+CONDITION TMP_1788
+EXPRESSION:tmpLevRatio_scope_3 < releverageTrigger	NodeType.IF";
+"BlockID: 2682
+Call context: 
+True
+TMP_1789(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(1,targetLevRatio,tmpBorrowBalanceUSDC_scope_1,tmpTotalAssetValue_scope_2,tmpLevRatio_scope_3)
+RETURN TMP_1789
+EXPRESSION:checkRebalanceRes(1,targetLevRatio,tmpBorrowBalanceUSDC_scope_1,tmpTotalAssetValue_scope_2,tmpLevRatio_scope_3)	NodeType.RETURN";
+"BlockID: 2683
+Call context: 
+False
+TMP_1790(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(0,targetLevRatio,tmpBorrowBalanceUSDC_scope_1,tmpTotalAssetValue_scope_2,tmpLevRatio_scope_3)
+RETURN TMP_1790
+EXPRESSION:checkRebalanceRes(0,targetLevRatio,tmpBorrowBalanceUSDC_scope_1,tmpTotalAssetValue_scope_2,tmpLevRatio_scope_3)	NodeType.RETURN";
+"BlockID: 2658
+Call context: 
+None
+tmpBorrowBalanceUSDC(uint256) := TMP_1761(uint256)
+TMP_1762(uint256) = INTERNAL_CALL, LevToken.getCashExReserves()()
+EXPRESSION:tmpBorrowBalanceUSDC = mul_(borrowBalanceUSDT,fx_USDTUSDC)	NodeType.VARIABLE
+tmpBorrowBalanceUSDC = mul_(borrowBalanceUSDT,fx_USDTUSDC)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2684
+Call context: 
+None
+TMP_1763(uint256) = INTERNAL_CALL, LevToken.getCmpBalanceInternal()()
+EXPRESSION:" [shape=box];
+"BlockID: 2685
+Call context: 
+None
+TMP_1764(uint256) = TMP_1762 (c)+ TMP_1763
+tmpBalanceUSDC(uint256) := TMP_1764(uint256)
+TMP_1765(bool) = tmpBalanceUSDC > tmpBorrowBalanceUSDC
+CONDITION TMP_1765
+EXPRESSION:tmpBalanceUSDC = getCashExReserves() + getCmpBalanceInternal()	NodeType.VARIABLE
+tmpBalanceUSDC = getCashExReserves() + getCmpBalanceInternal()	NodeType.EXPRESSION
+tmpBalanceUSDC > tmpBorrowBalanceUSDC	NodeType.IF" [shape=box];
+"BlockID: 2686
+Call context: 
+True
+TMP_1766(uint256) = tmpBalanceUSDC (c)- tmpBorrowBalanceUSDC
+tmpTotalAssetValue(uint256) := TMP_1766(uint256)
+TMP_1767(uint256) = tmpBorrowBalanceUSDC (c)* expScale
+TMP_1768(uint256) = TMP_1767 (c)/ tmpTotalAssetValue
+tmpLevRatio(uint256) := TMP_1768(uint256)
+TMP_1769(bool) = tmpLevRatio < releverageTrigger
+CONDITION TMP_1769
+EXPRESSION:tmpTotalAssetValue = tmpBalanceUSDC - tmpBorrowBalanceUSDC	NodeType.VARIABLE
+tmpTotalAssetValue = tmpBalanceUSDC - tmpBorrowBalanceUSDC	NodeType.EXPRESSION
+tmpLevRatio = tmpBorrowBalanceUSDC * expScale / tmpTotalAssetValue	NodeType.VARIABLE
+tmpLevRatio = tmpBorrowBalanceUSDC * expScale / tmpTotalAssetValue	NodeType.EXPRESSION
+tmpLevRatio < releverageTrigger	NodeType.IF";
+"BlockID: 2687
+Call context: 
+False
+TMP_1774(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(3,targetLevRatio,tmpBorrowBalanceUSDC,0,0)
+RETURN TMP_1774
+EXPRESSION:checkRebalanceRes(3,targetLevRatio,tmpBorrowBalanceUSDC,0,0)	NodeType.RETURN";
+"BlockID: 2688
+Call context: 
+True
+TMP_1770(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(1,targetLevRatio,tmpBorrowBalanceUSDC,tmpTotalAssetValue,tmpLevRatio)
+RETURN TMP_1770
+EXPRESSION:checkRebalanceRes(1,targetLevRatio,tmpBorrowBalanceUSDC,tmpTotalAssetValue,tmpLevRatio)	NodeType.RETURN";
+"BlockID: 2689
+Call context: 
+False
+TMP_1771(bool) = tmpLevRatio > deleverageTrigger
+CONDITION TMP_1771
+EXPRESSION:tmpLevRatio > deleverageTrigger	NodeType.IF";
+"BlockID: 2690
+Call context: 
+True
+TMP_1772(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(2,targetLevRatio,tmpBorrowBalanceUSDC,tmpTotalAssetValue,tmpLevRatio)
+RETURN TMP_1772
+EXPRESSION:checkRebalanceRes(2,targetLevRatio,tmpBorrowBalanceUSDC,tmpTotalAssetValue,tmpLevRatio)	NodeType.RETURN";
+"BlockID: 2691
+Call context: 
+False
+TMP_1773(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(0,targetLevRatio,tmpBorrowBalanceUSDC,tmpTotalAssetValue,tmpLevRatio)
+RETURN TMP_1773
+EXPRESSION:checkRebalanceRes(0,targetLevRatio,tmpBorrowBalanceUSDC,tmpTotalAssetValue,tmpLevRatio)	NodeType.RETURN";
+"BlockID: 2653
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 2654
+Call context: 
+None
+TMP_1758(uint256) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:getFx, arguments:['USDTUSDC']  
+EXPRESSION:" [key=0];
+"BlockID: 2654
+Call context: 
+None
+TMP_1758(uint256) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:getFx, arguments:['USDTUSDC']  
+EXPRESSION:" -> "BlockID: 2655
+Call context: 
+None
+fx_USDTUSDC_Mantissa(uint256) := TMP_1758(uint256)
+NEW VARIABLE targetLevRatio
+NEW VARIABLE releverageTrigger
+NEW VARIABLE deleverageTrigger
+TUPLE_10(uint256,uint256,uint256) = INTERNAL_CALL, LevToken.refreshTargetLevRatio(uint256)(fx_USDTUSDC_Mantissa)
+EXPRESSION:fx_USDTUSDC_Mantissa = tensorpricer.getFx(USDTUSDC)	NodeType.VARIABLE
+fx_USDTUSDC_Mantissa = tensorpricer.getFx(USDTUSDC)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(targetLevRatio,releverageTrigger,deleverageTrigger) = refreshTargetLevRatio(fx_USDTUSDC_Mantissa)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2655
+Call context: 
+None
+fx_USDTUSDC_Mantissa(uint256) := TMP_1758(uint256)
+NEW VARIABLE targetLevRatio
+NEW VARIABLE releverageTrigger
+NEW VARIABLE deleverageTrigger
+TUPLE_10(uint256,uint256,uint256) = INTERNAL_CALL, LevToken.refreshTargetLevRatio(uint256)(fx_USDTUSDC_Mantissa)
+EXPRESSION:fx_USDTUSDC_Mantissa = tensorpricer.getFx(USDTUSDC)	NodeType.VARIABLE
+fx_USDTUSDC_Mantissa = tensorpricer.getFx(USDTUSDC)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(targetLevRatio,releverageTrigger,deleverageTrigger) = refreshTargetLevRatio(fx_USDTUSDC_Mantissa)	NodeType.EXPRESSION" -> "BlockID: 2656
+Call context: 
+None
+targetLevRatio(uint256)= UNPACK TUPLE_10 index: 0 
+releverageTrigger(uint256)= UNPACK TUPLE_10 index: 1 
+deleverageTrigger(uint256)= UNPACK TUPLE_10 index: 2 
+TMP_1759(ExponentialNoError.Exp) = new Exp(fx_USDTUSDC_Mantissa)
+fx_USDTUSDC(ExponentialNoError.Exp) := TMP_1759(ExponentialNoError.Exp)
+TMP_1760(bool) = callingSrc == 0
+CONDITION TMP_1760
+EXPRESSION:(targetLevRatio,releverageTrigger,deleverageTrigger) = refreshTargetLevRatio(fx_USDTUSDC_Mantissa)	NodeType.EXPRESSION
+fx_USDTUSDC = Exp(fx_USDTUSDC_Mantissa)	NodeType.VARIABLE
+fx_USDTUSDC = Exp(fx_USDTUSDC_Mantissa)	NodeType.EXPRESSION
+callingSrc == 0	NodeType.IF" [key=0];
+"BlockID: 2656
+Call context: 
+None
+targetLevRatio(uint256)= UNPACK TUPLE_10 index: 0 
+releverageTrigger(uint256)= UNPACK TUPLE_10 index: 1 
+deleverageTrigger(uint256)= UNPACK TUPLE_10 index: 2 
+TMP_1759(ExponentialNoError.Exp) = new Exp(fx_USDTUSDC_Mantissa)
+fx_USDTUSDC(ExponentialNoError.Exp) := TMP_1759(ExponentialNoError.Exp)
+TMP_1760(bool) = callingSrc == 0
+CONDITION TMP_1760
+EXPRESSION:(targetLevRatio,releverageTrigger,deleverageTrigger) = refreshTargetLevRatio(fx_USDTUSDC_Mantissa)	NodeType.EXPRESSION
+fx_USDTUSDC = Exp(fx_USDTUSDC_Mantissa)	NodeType.VARIABLE
+fx_USDTUSDC = Exp(fx_USDTUSDC_Mantissa)	NodeType.EXPRESSION
+callingSrc == 0	NodeType.IF" -> "BlockID: 2657
+Call context: 
+True
+TMP_1761(uint256) = INTERNAL_CALL, ExponentialNoError.mul_(uint256,ExponentialNoError.Exp)(borrowBalanceUSDT,fx_USDTUSDC)
+EXPRESSION:" [key=0];
+"BlockID: 2656
+Call context: 
+None
+targetLevRatio(uint256)= UNPACK TUPLE_10 index: 0 
+releverageTrigger(uint256)= UNPACK TUPLE_10 index: 1 
+deleverageTrigger(uint256)= UNPACK TUPLE_10 index: 2 
+TMP_1759(ExponentialNoError.Exp) = new Exp(fx_USDTUSDC_Mantissa)
+fx_USDTUSDC(ExponentialNoError.Exp) := TMP_1759(ExponentialNoError.Exp)
+TMP_1760(bool) = callingSrc == 0
+CONDITION TMP_1760
+EXPRESSION:(targetLevRatio,releverageTrigger,deleverageTrigger) = refreshTargetLevRatio(fx_USDTUSDC_Mantissa)	NodeType.EXPRESSION
+fx_USDTUSDC = Exp(fx_USDTUSDC_Mantissa)	NodeType.VARIABLE
+fx_USDTUSDC = Exp(fx_USDTUSDC_Mantissa)	NodeType.EXPRESSION
+callingSrc == 0	NodeType.IF" -> "BlockID: 2659
+Call context: 
+False
+TMP_1775(bool) = callingSrc == 1
+CONDITION TMP_1775
+EXPRESSION:callingSrc == 1	NodeType.IF" [key=0];
+"BlockID: 2657
+Call context: 
+True
+TMP_1761(uint256) = INTERNAL_CALL, ExponentialNoError.mul_(uint256,ExponentialNoError.Exp)(borrowBalanceUSDT,fx_USDTUSDC)
+EXPRESSION:" -> "BlockID: 2658
+Call context: 
+None
+tmpBorrowBalanceUSDC(uint256) := TMP_1761(uint256)
+TMP_1762(uint256) = INTERNAL_CALL, LevToken.getCashExReserves()()
+EXPRESSION:tmpBorrowBalanceUSDC = mul_(borrowBalanceUSDT,fx_USDTUSDC)	NodeType.VARIABLE
+tmpBorrowBalanceUSDC = mul_(borrowBalanceUSDT,fx_USDTUSDC)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2659
+Call context: 
+False
+TMP_1775(bool) = callingSrc == 1
+CONDITION TMP_1775
+EXPRESSION:callingSrc == 1	NodeType.IF" -> "BlockID: 2660
+Call context: 
+True
+TMP_1776(bool) = totalSupply > 0
+CONDITION TMP_1776
+EXPRESSION:totalSupply > 0	NodeType.IF" [key=0];
+"BlockID: 2659
+Call context: 
+False
+TMP_1775(bool) = callingSrc == 1
+CONDITION TMP_1775
+EXPRESSION:callingSrc == 1	NodeType.IF" -> "BlockID: 2661
+Call context: 
+False
+TMP_1793(bool) = totalSupply > 0
+CONDITION TMP_1793
+EXPRESSION:totalSupply > 0	NodeType.IF" [key=0];
+"BlockID: 2660
+Call context: 
+True
+TMP_1776(bool) = totalSupply > 0
+CONDITION TMP_1776
+EXPRESSION:totalSupply > 0	NodeType.IF" -> "BlockID: 2673
+Call context: 
+True
+TMP_1777(uint256) = INTERNAL_CALL, LevToken.getCashExReserves()()
+EXPRESSION:" [key=0];
+"BlockID: 2660
+Call context: 
+True
+TMP_1776(bool) = totalSupply > 0
+CONDITION TMP_1776
+EXPRESSION:totalSupply > 0	NodeType.IF" -> "BlockID: 2676
+Call context: 
+False
+TMP_1792(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(0,0,0,0,0)
+RETURN TMP_1792
+EXPRESSION:checkRebalanceRes(0,0,0,0,0)	NodeType.RETURN" [key=0];
+"BlockID: 2661
+Call context: 
+False
+TMP_1793(bool) = totalSupply > 0
+CONDITION TMP_1793
+EXPRESSION:totalSupply > 0	NodeType.IF" -> "BlockID: 2662
+Call context: 
+True
+TMP_1794(uint256) = INTERNAL_CALL, ExponentialNoError.mul_(uint256,ExponentialNoError.Exp)(borrowBalanceUSDT,fx_USDTUSDC)
+EXPRESSION:" [key=0];
+"BlockID: 2661
+Call context: 
+False
+TMP_1793(bool) = totalSupply > 0
+CONDITION TMP_1793
+EXPRESSION:totalSupply > 0	NodeType.IF" -> "BlockID: 2664
+Call context: 
+False
+TMP_1808(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(0,0,0,0,0)
+RETURN TMP_1808
+EXPRESSION:checkRebalanceRes(0,0,0,0,0)	NodeType.RETURN" [key=0];
+"BlockID: 2662
+Call context: 
+True
+TMP_1794(uint256) = INTERNAL_CALL, ExponentialNoError.mul_(uint256,ExponentialNoError.Exp)(borrowBalanceUSDT,fx_USDTUSDC)
+EXPRESSION:" -> "BlockID: 2663
+Call context: 
+None
+tmpBorrowBalanceUSDC_scope_4(uint256) := TMP_1794(uint256)
+TMP_1795(uint256) = INTERNAL_CALL, LevToken.getCashExReserves()()
+EXPRESSION:tmpBorrowBalanceUSDC_scope_4 = mul_(borrowBalanceUSDT,fx_USDTUSDC)	NodeType.VARIABLE
+tmpBorrowBalanceUSDC_scope_4 = mul_(borrowBalanceUSDT,fx_USDTUSDC)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2663
+Call context: 
+None
+tmpBorrowBalanceUSDC_scope_4(uint256) := TMP_1794(uint256)
+TMP_1795(uint256) = INTERNAL_CALL, LevToken.getCashExReserves()()
+EXPRESSION:tmpBorrowBalanceUSDC_scope_4 = mul_(borrowBalanceUSDT,fx_USDTUSDC)	NodeType.VARIABLE
+tmpBorrowBalanceUSDC_scope_4 = mul_(borrowBalanceUSDT,fx_USDTUSDC)	NodeType.EXPRESSION" -> "BlockID: 2665
+Call context: 
+None
+TMP_1796(uint256) = INTERNAL_CALL, LevToken.getCmpBalanceInternal()()
+EXPRESSION:" [key=0];
+"BlockID: 2665
+Call context: 
+None
+TMP_1796(uint256) = INTERNAL_CALL, LevToken.getCmpBalanceInternal()()
+EXPRESSION:" -> "BlockID: 2666
+Call context: 
+None
+TMP_1797(uint256) = TMP_1795 (c)+ TMP_1796
+tmpBalanceUSDC_scope_5(uint256) := TMP_1797(uint256)
+TMP_1798(bool) = tmpBalanceUSDC_scope_5 > tmpBorrowBalanceUSDC_scope_4
+CONDITION TMP_1798
+EXPRESSION:tmpBalanceUSDC_scope_5 = getCashExReserves() + getCmpBalanceInternal()	NodeType.VARIABLE
+tmpBalanceUSDC_scope_5 = getCashExReserves() + getCmpBalanceInternal()	NodeType.EXPRESSION
+tmpBalanceUSDC_scope_5 > tmpBorrowBalanceUSDC_scope_4	NodeType.IF" [key=0];
+"BlockID: 2666
+Call context: 
+None
+TMP_1797(uint256) = TMP_1795 (c)+ TMP_1796
+tmpBalanceUSDC_scope_5(uint256) := TMP_1797(uint256)
+TMP_1798(bool) = tmpBalanceUSDC_scope_5 > tmpBorrowBalanceUSDC_scope_4
+CONDITION TMP_1798
+EXPRESSION:tmpBalanceUSDC_scope_5 = getCashExReserves() + getCmpBalanceInternal()	NodeType.VARIABLE
+tmpBalanceUSDC_scope_5 = getCashExReserves() + getCmpBalanceInternal()	NodeType.EXPRESSION
+tmpBalanceUSDC_scope_5 > tmpBorrowBalanceUSDC_scope_4	NodeType.IF" -> "BlockID: 2667
+Call context: 
+True
+TMP_1799(uint256) = tmpBalanceUSDC_scope_5 (c)- tmpBorrowBalanceUSDC_scope_4
+tmpTotalAssetValue_scope_6(uint256) := TMP_1799(uint256)
+TMP_1800(uint256) = tmpBorrowBalanceUSDC_scope_4 (c)* expScale
+TMP_1801(uint256) = TMP_1800 (c)/ tmpTotalAssetValue_scope_6
+tmpLevRatio_scope_7(uint256) := TMP_1801(uint256)
+TMP_1802(bool) = tmpLevRatio_scope_7 < releverageTrigger
+CONDITION TMP_1802
+EXPRESSION:tmpTotalAssetValue_scope_6 = tmpBalanceUSDC_scope_5 - tmpBorrowBalanceUSDC_scope_4	NodeType.VARIABLE
+tmpTotalAssetValue_scope_6 = tmpBalanceUSDC_scope_5 - tmpBorrowBalanceUSDC_scope_4	NodeType.EXPRESSION
+tmpLevRatio_scope_7 = tmpBorrowBalanceUSDC_scope_4 * expScale / tmpTotalAssetValue_scope_6	NodeType.VARIABLE
+tmpLevRatio_scope_7 = tmpBorrowBalanceUSDC_scope_4 * expScale / tmpTotalAssetValue_scope_6	NodeType.EXPRESSION
+tmpLevRatio_scope_7 < releverageTrigger	NodeType.IF" [key=0];
+"BlockID: 2666
+Call context: 
+None
+TMP_1797(uint256) = TMP_1795 (c)+ TMP_1796
+tmpBalanceUSDC_scope_5(uint256) := TMP_1797(uint256)
+TMP_1798(bool) = tmpBalanceUSDC_scope_5 > tmpBorrowBalanceUSDC_scope_4
+CONDITION TMP_1798
+EXPRESSION:tmpBalanceUSDC_scope_5 = getCashExReserves() + getCmpBalanceInternal()	NodeType.VARIABLE
+tmpBalanceUSDC_scope_5 = getCashExReserves() + getCmpBalanceInternal()	NodeType.EXPRESSION
+tmpBalanceUSDC_scope_5 > tmpBorrowBalanceUSDC_scope_4	NodeType.IF" -> "BlockID: 2668
+Call context: 
+False
+TMP_1807(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(3,targetLevRatio,tmpBorrowBalanceUSDC_scope_4,0,0)
+RETURN TMP_1807
+EXPRESSION:checkRebalanceRes(3,targetLevRatio,tmpBorrowBalanceUSDC_scope_4,0,0)	NodeType.RETURN" [key=0];
+"BlockID: 2667
+Call context: 
+True
+TMP_1799(uint256) = tmpBalanceUSDC_scope_5 (c)- tmpBorrowBalanceUSDC_scope_4
+tmpTotalAssetValue_scope_6(uint256) := TMP_1799(uint256)
+TMP_1800(uint256) = tmpBorrowBalanceUSDC_scope_4 (c)* expScale
+TMP_1801(uint256) = TMP_1800 (c)/ tmpTotalAssetValue_scope_6
+tmpLevRatio_scope_7(uint256) := TMP_1801(uint256)
+TMP_1802(bool) = tmpLevRatio_scope_7 < releverageTrigger
+CONDITION TMP_1802
+EXPRESSION:tmpTotalAssetValue_scope_6 = tmpBalanceUSDC_scope_5 - tmpBorrowBalanceUSDC_scope_4	NodeType.VARIABLE
+tmpTotalAssetValue_scope_6 = tmpBalanceUSDC_scope_5 - tmpBorrowBalanceUSDC_scope_4	NodeType.EXPRESSION
+tmpLevRatio_scope_7 = tmpBorrowBalanceUSDC_scope_4 * expScale / tmpTotalAssetValue_scope_6	NodeType.VARIABLE
+tmpLevRatio_scope_7 = tmpBorrowBalanceUSDC_scope_4 * expScale / tmpTotalAssetValue_scope_6	NodeType.EXPRESSION
+tmpLevRatio_scope_7 < releverageTrigger	NodeType.IF" -> "BlockID: 2669
+Call context: 
+True
+TMP_1803(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(1,targetLevRatio,tmpBorrowBalanceUSDC_scope_4,tmpTotalAssetValue_scope_6,tmpLevRatio_scope_7)
+RETURN TMP_1803
+EXPRESSION:checkRebalanceRes(1,targetLevRatio,tmpBorrowBalanceUSDC_scope_4,tmpTotalAssetValue_scope_6,tmpLevRatio_scope_7)	NodeType.RETURN" [key=0];
+"BlockID: 2667
+Call context: 
+True
+TMP_1799(uint256) = tmpBalanceUSDC_scope_5 (c)- tmpBorrowBalanceUSDC_scope_4
+tmpTotalAssetValue_scope_6(uint256) := TMP_1799(uint256)
+TMP_1800(uint256) = tmpBorrowBalanceUSDC_scope_4 (c)* expScale
+TMP_1801(uint256) = TMP_1800 (c)/ tmpTotalAssetValue_scope_6
+tmpLevRatio_scope_7(uint256) := TMP_1801(uint256)
+TMP_1802(bool) = tmpLevRatio_scope_7 < releverageTrigger
+CONDITION TMP_1802
+EXPRESSION:tmpTotalAssetValue_scope_6 = tmpBalanceUSDC_scope_5 - tmpBorrowBalanceUSDC_scope_4	NodeType.VARIABLE
+tmpTotalAssetValue_scope_6 = tmpBalanceUSDC_scope_5 - tmpBorrowBalanceUSDC_scope_4	NodeType.EXPRESSION
+tmpLevRatio_scope_7 = tmpBorrowBalanceUSDC_scope_4 * expScale / tmpTotalAssetValue_scope_6	NodeType.VARIABLE
+tmpLevRatio_scope_7 = tmpBorrowBalanceUSDC_scope_4 * expScale / tmpTotalAssetValue_scope_6	NodeType.EXPRESSION
+tmpLevRatio_scope_7 < releverageTrigger	NodeType.IF" -> "BlockID: 2670
+Call context: 
+False
+TMP_1804(bool) = tmpLevRatio_scope_7 > deleverageTrigger
+CONDITION TMP_1804
+EXPRESSION:tmpLevRatio_scope_7 > deleverageTrigger	NodeType.IF" [key=0];
+"BlockID: 2670
+Call context: 
+False
+TMP_1804(bool) = tmpLevRatio_scope_7 > deleverageTrigger
+CONDITION TMP_1804
+EXPRESSION:tmpLevRatio_scope_7 > deleverageTrigger	NodeType.IF" -> "BlockID: 2671
+Call context: 
+True
+TMP_1805(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(2,targetLevRatio,tmpBorrowBalanceUSDC_scope_4,tmpTotalAssetValue_scope_6,tmpLevRatio_scope_7)
+RETURN TMP_1805
+EXPRESSION:checkRebalanceRes(2,targetLevRatio,tmpBorrowBalanceUSDC_scope_4,tmpTotalAssetValue_scope_6,tmpLevRatio_scope_7)	NodeType.RETURN" [key=0];
+"BlockID: 2670
+Call context: 
+False
+TMP_1804(bool) = tmpLevRatio_scope_7 > deleverageTrigger
+CONDITION TMP_1804
+EXPRESSION:tmpLevRatio_scope_7 > deleverageTrigger	NodeType.IF" -> "BlockID: 2672
+Call context: 
+False
+TMP_1806(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(0,targetLevRatio,tmpBorrowBalanceUSDC_scope_4,tmpTotalAssetValue_scope_6,tmpLevRatio_scope_7)
+RETURN TMP_1806
+EXPRESSION:checkRebalanceRes(0,targetLevRatio,tmpBorrowBalanceUSDC_scope_4,tmpTotalAssetValue_scope_6,tmpLevRatio_scope_7)	NodeType.RETURN" [key=0];
+"BlockID: 2673
+Call context: 
+True
+TMP_1777(uint256) = INTERNAL_CALL, LevToken.getCashExReserves()()
+EXPRESSION:" -> "BlockID: 2674
+Call context: 
+None
+TMP_1778(uint256) = INTERNAL_CALL, LevToken.getCmpBalanceInternal()()
+EXPRESSION:" [key=0];
+"BlockID: 2674
+Call context: 
+None
+TMP_1778(uint256) = INTERNAL_CALL, LevToken.getCmpBalanceInternal()()
+EXPRESSION:" -> "BlockID: 2675
+Call context: 
+None
+TMP_1779(uint256) = TMP_1777 (c)+ TMP_1778
+TMP_1780(uint256) = TMP_1779 (c)- tmpRedeemAmountInUSDC
+tmpBalanceUSDC_scope_0(uint256) := TMP_1780(uint256)
+TMP_1781(uint256) = INTERNAL_CALL, ExponentialNoError.mul_(uint256,ExponentialNoError.Exp)(borrowBalanceUSDT,fx_USDTUSDC)
+EXPRESSION:tmpBalanceUSDC_scope_0 = getCashExReserves() + getCmpBalanceInternal() - tmpRedeemAmountInUSDC	NodeType.VARIABLE
+tmpBalanceUSDC_scope_0 = getCashExReserves() + getCmpBalanceInternal() - tmpRedeemAmountInUSDC	NodeType.EXPRESSION" [key=0];
+"BlockID: 2675
+Call context: 
+None
+TMP_1779(uint256) = TMP_1777 (c)+ TMP_1778
+TMP_1780(uint256) = TMP_1779 (c)- tmpRedeemAmountInUSDC
+tmpBalanceUSDC_scope_0(uint256) := TMP_1780(uint256)
+TMP_1781(uint256) = INTERNAL_CALL, ExponentialNoError.mul_(uint256,ExponentialNoError.Exp)(borrowBalanceUSDT,fx_USDTUSDC)
+EXPRESSION:tmpBalanceUSDC_scope_0 = getCashExReserves() + getCmpBalanceInternal() - tmpRedeemAmountInUSDC	NodeType.VARIABLE
+tmpBalanceUSDC_scope_0 = getCashExReserves() + getCmpBalanceInternal() - tmpRedeemAmountInUSDC	NodeType.EXPRESSION" -> "BlockID: 2677
+Call context: 
+None
+tmpBorrowBalanceUSDC_scope_1(uint256) := TMP_1781(uint256)
+TMP_1782(bool) = tmpBalanceUSDC_scope_0 > tmpBorrowBalanceUSDC_scope_1
+CONDITION TMP_1782
+EXPRESSION:tmpBorrowBalanceUSDC_scope_1 = mul_(borrowBalanceUSDT,fx_USDTUSDC)	NodeType.VARIABLE
+tmpBorrowBalanceUSDC_scope_1 = mul_(borrowBalanceUSDT,fx_USDTUSDC)	NodeType.EXPRESSION
+tmpBalanceUSDC_scope_0 > tmpBorrowBalanceUSDC_scope_1	NodeType.IF" [key=0];
+"BlockID: 2677
+Call context: 
+None
+tmpBorrowBalanceUSDC_scope_1(uint256) := TMP_1781(uint256)
+TMP_1782(bool) = tmpBalanceUSDC_scope_0 > tmpBorrowBalanceUSDC_scope_1
+CONDITION TMP_1782
+EXPRESSION:tmpBorrowBalanceUSDC_scope_1 = mul_(borrowBalanceUSDT,fx_USDTUSDC)	NodeType.VARIABLE
+tmpBorrowBalanceUSDC_scope_1 = mul_(borrowBalanceUSDT,fx_USDTUSDC)	NodeType.EXPRESSION
+tmpBalanceUSDC_scope_0 > tmpBorrowBalanceUSDC_scope_1	NodeType.IF" -> "BlockID: 2678
+Call context: 
+True
+TMP_1783(uint256) = tmpBalanceUSDC_scope_0 (c)- tmpBorrowBalanceUSDC_scope_1
+tmpTotalAssetValue_scope_2(uint256) := TMP_1783(uint256)
+TMP_1784(uint256) = tmpBorrowBalanceUSDC_scope_1 (c)* expScale
+TMP_1785(uint256) = TMP_1784 (c)/ tmpTotalAssetValue_scope_2
+tmpLevRatio_scope_3(uint256) := TMP_1785(uint256)
+TMP_1786(bool) = tmpLevRatio_scope_3 > deleverageTrigger
+CONDITION TMP_1786
+EXPRESSION:tmpTotalAssetValue_scope_2 = tmpBalanceUSDC_scope_0 - tmpBorrowBalanceUSDC_scope_1	NodeType.VARIABLE
+tmpTotalAssetValue_scope_2 = tmpBalanceUSDC_scope_0 - tmpBorrowBalanceUSDC_scope_1	NodeType.EXPRESSION
+tmpLevRatio_scope_3 = tmpBorrowBalanceUSDC_scope_1 * expScale / tmpTotalAssetValue_scope_2	NodeType.VARIABLE
+tmpLevRatio_scope_3 = tmpBorrowBalanceUSDC_scope_1 * expScale / tmpTotalAssetValue_scope_2	NodeType.EXPRESSION
+tmpLevRatio_scope_3 > deleverageTrigger	NodeType.IF" [key=0];
+"BlockID: 2677
+Call context: 
+None
+tmpBorrowBalanceUSDC_scope_1(uint256) := TMP_1781(uint256)
+TMP_1782(bool) = tmpBalanceUSDC_scope_0 > tmpBorrowBalanceUSDC_scope_1
+CONDITION TMP_1782
+EXPRESSION:tmpBorrowBalanceUSDC_scope_1 = mul_(borrowBalanceUSDT,fx_USDTUSDC)	NodeType.VARIABLE
+tmpBorrowBalanceUSDC_scope_1 = mul_(borrowBalanceUSDT,fx_USDTUSDC)	NodeType.EXPRESSION
+tmpBalanceUSDC_scope_0 > tmpBorrowBalanceUSDC_scope_1	NodeType.IF" -> "BlockID: 2679
+Call context: 
+False
+TMP_1791(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(3,targetLevRatio,tmpBorrowBalanceUSDC_scope_1,0,0)
+RETURN TMP_1791
+EXPRESSION:checkRebalanceRes(3,targetLevRatio,tmpBorrowBalanceUSDC_scope_1,0,0)	NodeType.RETURN" [key=0];
+"BlockID: 2678
+Call context: 
+True
+TMP_1783(uint256) = tmpBalanceUSDC_scope_0 (c)- tmpBorrowBalanceUSDC_scope_1
+tmpTotalAssetValue_scope_2(uint256) := TMP_1783(uint256)
+TMP_1784(uint256) = tmpBorrowBalanceUSDC_scope_1 (c)* expScale
+TMP_1785(uint256) = TMP_1784 (c)/ tmpTotalAssetValue_scope_2
+tmpLevRatio_scope_3(uint256) := TMP_1785(uint256)
+TMP_1786(bool) = tmpLevRatio_scope_3 > deleverageTrigger
+CONDITION TMP_1786
+EXPRESSION:tmpTotalAssetValue_scope_2 = tmpBalanceUSDC_scope_0 - tmpBorrowBalanceUSDC_scope_1	NodeType.VARIABLE
+tmpTotalAssetValue_scope_2 = tmpBalanceUSDC_scope_0 - tmpBorrowBalanceUSDC_scope_1	NodeType.EXPRESSION
+tmpLevRatio_scope_3 = tmpBorrowBalanceUSDC_scope_1 * expScale / tmpTotalAssetValue_scope_2	NodeType.VARIABLE
+tmpLevRatio_scope_3 = tmpBorrowBalanceUSDC_scope_1 * expScale / tmpTotalAssetValue_scope_2	NodeType.EXPRESSION
+tmpLevRatio_scope_3 > deleverageTrigger	NodeType.IF" -> "BlockID: 2680
+Call context: 
+True
+TMP_1787(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(2,targetLevRatio,tmpBorrowBalanceUSDC_scope_1,tmpTotalAssetValue_scope_2,tmpLevRatio_scope_3)
+RETURN TMP_1787
+EXPRESSION:checkRebalanceRes(2,targetLevRatio,tmpBorrowBalanceUSDC_scope_1,tmpTotalAssetValue_scope_2,tmpLevRatio_scope_3)	NodeType.RETURN" [key=0];
+"BlockID: 2678
+Call context: 
+True
+TMP_1783(uint256) = tmpBalanceUSDC_scope_0 (c)- tmpBorrowBalanceUSDC_scope_1
+tmpTotalAssetValue_scope_2(uint256) := TMP_1783(uint256)
+TMP_1784(uint256) = tmpBorrowBalanceUSDC_scope_1 (c)* expScale
+TMP_1785(uint256) = TMP_1784 (c)/ tmpTotalAssetValue_scope_2
+tmpLevRatio_scope_3(uint256) := TMP_1785(uint256)
+TMP_1786(bool) = tmpLevRatio_scope_3 > deleverageTrigger
+CONDITION TMP_1786
+EXPRESSION:tmpTotalAssetValue_scope_2 = tmpBalanceUSDC_scope_0 - tmpBorrowBalanceUSDC_scope_1	NodeType.VARIABLE
+tmpTotalAssetValue_scope_2 = tmpBalanceUSDC_scope_0 - tmpBorrowBalanceUSDC_scope_1	NodeType.EXPRESSION
+tmpLevRatio_scope_3 = tmpBorrowBalanceUSDC_scope_1 * expScale / tmpTotalAssetValue_scope_2	NodeType.VARIABLE
+tmpLevRatio_scope_3 = tmpBorrowBalanceUSDC_scope_1 * expScale / tmpTotalAssetValue_scope_2	NodeType.EXPRESSION
+tmpLevRatio_scope_3 > deleverageTrigger	NodeType.IF" -> "BlockID: 2681
+Call context: 
+False
+TMP_1788(bool) = tmpLevRatio_scope_3 < releverageTrigger
+CONDITION TMP_1788
+EXPRESSION:tmpLevRatio_scope_3 < releverageTrigger	NodeType.IF" [key=0];
+"BlockID: 2681
+Call context: 
+False
+TMP_1788(bool) = tmpLevRatio_scope_3 < releverageTrigger
+CONDITION TMP_1788
+EXPRESSION:tmpLevRatio_scope_3 < releverageTrigger	NodeType.IF" -> "BlockID: 2682
+Call context: 
+True
+TMP_1789(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(1,targetLevRatio,tmpBorrowBalanceUSDC_scope_1,tmpTotalAssetValue_scope_2,tmpLevRatio_scope_3)
+RETURN TMP_1789
+EXPRESSION:checkRebalanceRes(1,targetLevRatio,tmpBorrowBalanceUSDC_scope_1,tmpTotalAssetValue_scope_2,tmpLevRatio_scope_3)	NodeType.RETURN" [key=0];
+"BlockID: 2681
+Call context: 
+False
+TMP_1788(bool) = tmpLevRatio_scope_3 < releverageTrigger
+CONDITION TMP_1788
+EXPRESSION:tmpLevRatio_scope_3 < releverageTrigger	NodeType.IF" -> "BlockID: 2683
+Call context: 
+False
+TMP_1790(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(0,targetLevRatio,tmpBorrowBalanceUSDC_scope_1,tmpTotalAssetValue_scope_2,tmpLevRatio_scope_3)
+RETURN TMP_1790
+EXPRESSION:checkRebalanceRes(0,targetLevRatio,tmpBorrowBalanceUSDC_scope_1,tmpTotalAssetValue_scope_2,tmpLevRatio_scope_3)	NodeType.RETURN" [key=0];
+"BlockID: 2658
+Call context: 
+None
+tmpBorrowBalanceUSDC(uint256) := TMP_1761(uint256)
+TMP_1762(uint256) = INTERNAL_CALL, LevToken.getCashExReserves()()
+EXPRESSION:tmpBorrowBalanceUSDC = mul_(borrowBalanceUSDT,fx_USDTUSDC)	NodeType.VARIABLE
+tmpBorrowBalanceUSDC = mul_(borrowBalanceUSDT,fx_USDTUSDC)	NodeType.EXPRESSION" -> "BlockID: 2684
+Call context: 
+None
+TMP_1763(uint256) = INTERNAL_CALL, LevToken.getCmpBalanceInternal()()
+EXPRESSION:" [key=0];
+"BlockID: 2684
+Call context: 
+None
+TMP_1763(uint256) = INTERNAL_CALL, LevToken.getCmpBalanceInternal()()
+EXPRESSION:" -> "BlockID: 2685
+Call context: 
+None
+TMP_1764(uint256) = TMP_1762 (c)+ TMP_1763
+tmpBalanceUSDC(uint256) := TMP_1764(uint256)
+TMP_1765(bool) = tmpBalanceUSDC > tmpBorrowBalanceUSDC
+CONDITION TMP_1765
+EXPRESSION:tmpBalanceUSDC = getCashExReserves() + getCmpBalanceInternal()	NodeType.VARIABLE
+tmpBalanceUSDC = getCashExReserves() + getCmpBalanceInternal()	NodeType.EXPRESSION
+tmpBalanceUSDC > tmpBorrowBalanceUSDC	NodeType.IF" [key=0];
+"BlockID: 2685
+Call context: 
+None
+TMP_1764(uint256) = TMP_1762 (c)+ TMP_1763
+tmpBalanceUSDC(uint256) := TMP_1764(uint256)
+TMP_1765(bool) = tmpBalanceUSDC > tmpBorrowBalanceUSDC
+CONDITION TMP_1765
+EXPRESSION:tmpBalanceUSDC = getCashExReserves() + getCmpBalanceInternal()	NodeType.VARIABLE
+tmpBalanceUSDC = getCashExReserves() + getCmpBalanceInternal()	NodeType.EXPRESSION
+tmpBalanceUSDC > tmpBorrowBalanceUSDC	NodeType.IF" -> "BlockID: 2686
+Call context: 
+True
+TMP_1766(uint256) = tmpBalanceUSDC (c)- tmpBorrowBalanceUSDC
+tmpTotalAssetValue(uint256) := TMP_1766(uint256)
+TMP_1767(uint256) = tmpBorrowBalanceUSDC (c)* expScale
+TMP_1768(uint256) = TMP_1767 (c)/ tmpTotalAssetValue
+tmpLevRatio(uint256) := TMP_1768(uint256)
+TMP_1769(bool) = tmpLevRatio < releverageTrigger
+CONDITION TMP_1769
+EXPRESSION:tmpTotalAssetValue = tmpBalanceUSDC - tmpBorrowBalanceUSDC	NodeType.VARIABLE
+tmpTotalAssetValue = tmpBalanceUSDC - tmpBorrowBalanceUSDC	NodeType.EXPRESSION
+tmpLevRatio = tmpBorrowBalanceUSDC * expScale / tmpTotalAssetValue	NodeType.VARIABLE
+tmpLevRatio = tmpBorrowBalanceUSDC * expScale / tmpTotalAssetValue	NodeType.EXPRESSION
+tmpLevRatio < releverageTrigger	NodeType.IF" [key=0];
+"BlockID: 2685
+Call context: 
+None
+TMP_1764(uint256) = TMP_1762 (c)+ TMP_1763
+tmpBalanceUSDC(uint256) := TMP_1764(uint256)
+TMP_1765(bool) = tmpBalanceUSDC > tmpBorrowBalanceUSDC
+CONDITION TMP_1765
+EXPRESSION:tmpBalanceUSDC = getCashExReserves() + getCmpBalanceInternal()	NodeType.VARIABLE
+tmpBalanceUSDC = getCashExReserves() + getCmpBalanceInternal()	NodeType.EXPRESSION
+tmpBalanceUSDC > tmpBorrowBalanceUSDC	NodeType.IF" -> "BlockID: 2687
+Call context: 
+False
+TMP_1774(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(3,targetLevRatio,tmpBorrowBalanceUSDC,0,0)
+RETURN TMP_1774
+EXPRESSION:checkRebalanceRes(3,targetLevRatio,tmpBorrowBalanceUSDC,0,0)	NodeType.RETURN" [key=0];
+"BlockID: 2686
+Call context: 
+True
+TMP_1766(uint256) = tmpBalanceUSDC (c)- tmpBorrowBalanceUSDC
+tmpTotalAssetValue(uint256) := TMP_1766(uint256)
+TMP_1767(uint256) = tmpBorrowBalanceUSDC (c)* expScale
+TMP_1768(uint256) = TMP_1767 (c)/ tmpTotalAssetValue
+tmpLevRatio(uint256) := TMP_1768(uint256)
+TMP_1769(bool) = tmpLevRatio < releverageTrigger
+CONDITION TMP_1769
+EXPRESSION:tmpTotalAssetValue = tmpBalanceUSDC - tmpBorrowBalanceUSDC	NodeType.VARIABLE
+tmpTotalAssetValue = tmpBalanceUSDC - tmpBorrowBalanceUSDC	NodeType.EXPRESSION
+tmpLevRatio = tmpBorrowBalanceUSDC * expScale / tmpTotalAssetValue	NodeType.VARIABLE
+tmpLevRatio = tmpBorrowBalanceUSDC * expScale / tmpTotalAssetValue	NodeType.EXPRESSION
+tmpLevRatio < releverageTrigger	NodeType.IF" -> "BlockID: 2688
+Call context: 
+True
+TMP_1770(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(1,targetLevRatio,tmpBorrowBalanceUSDC,tmpTotalAssetValue,tmpLevRatio)
+RETURN TMP_1770
+EXPRESSION:checkRebalanceRes(1,targetLevRatio,tmpBorrowBalanceUSDC,tmpTotalAssetValue,tmpLevRatio)	NodeType.RETURN" [key=0];
+"BlockID: 2686
+Call context: 
+True
+TMP_1766(uint256) = tmpBalanceUSDC (c)- tmpBorrowBalanceUSDC
+tmpTotalAssetValue(uint256) := TMP_1766(uint256)
+TMP_1767(uint256) = tmpBorrowBalanceUSDC (c)* expScale
+TMP_1768(uint256) = TMP_1767 (c)/ tmpTotalAssetValue
+tmpLevRatio(uint256) := TMP_1768(uint256)
+TMP_1769(bool) = tmpLevRatio < releverageTrigger
+CONDITION TMP_1769
+EXPRESSION:tmpTotalAssetValue = tmpBalanceUSDC - tmpBorrowBalanceUSDC	NodeType.VARIABLE
+tmpTotalAssetValue = tmpBalanceUSDC - tmpBorrowBalanceUSDC	NodeType.EXPRESSION
+tmpLevRatio = tmpBorrowBalanceUSDC * expScale / tmpTotalAssetValue	NodeType.VARIABLE
+tmpLevRatio = tmpBorrowBalanceUSDC * expScale / tmpTotalAssetValue	NodeType.EXPRESSION
+tmpLevRatio < releverageTrigger	NodeType.IF" -> "BlockID: 2689
+Call context: 
+False
+TMP_1771(bool) = tmpLevRatio > deleverageTrigger
+CONDITION TMP_1771
+EXPRESSION:tmpLevRatio > deleverageTrigger	NodeType.IF" [key=0];
+"BlockID: 2689
+Call context: 
+False
+TMP_1771(bool) = tmpLevRatio > deleverageTrigger
+CONDITION TMP_1771
+EXPRESSION:tmpLevRatio > deleverageTrigger	NodeType.IF" -> "BlockID: 2690
+Call context: 
+True
+TMP_1772(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(2,targetLevRatio,tmpBorrowBalanceUSDC,tmpTotalAssetValue,tmpLevRatio)
+RETURN TMP_1772
+EXPRESSION:checkRebalanceRes(2,targetLevRatio,tmpBorrowBalanceUSDC,tmpTotalAssetValue,tmpLevRatio)	NodeType.RETURN" [key=0];
+"BlockID: 2689
+Call context: 
+False
+TMP_1771(bool) = tmpLevRatio > deleverageTrigger
+CONDITION TMP_1771
+EXPRESSION:tmpLevRatio > deleverageTrigger	NodeType.IF" -> "BlockID: 2691
+Call context: 
+False
+TMP_1773(LevTokenStorage.checkRebalanceRes) = new checkRebalanceRes(0,targetLevRatio,tmpBorrowBalanceUSDC,tmpTotalAssetValue,tmpLevRatio)
+RETURN TMP_1773
+EXPRESSION:checkRebalanceRes(0,targetLevRatio,tmpBorrowBalanceUSDC,tmpTotalAssetValue,tmpLevRatio)	NodeType.RETURN" [key=0];
+}

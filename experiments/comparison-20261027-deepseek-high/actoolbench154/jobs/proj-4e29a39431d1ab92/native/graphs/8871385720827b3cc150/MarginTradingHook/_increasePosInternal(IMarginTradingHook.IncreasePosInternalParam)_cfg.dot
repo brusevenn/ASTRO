@@ -1,0 +1,303 @@
+digraph {
+"BlockID: 782
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 783
+Call context: 
+None
+REF_130(address) -> _param.tokenIn
+REF_131(uint256) -> _param.amtIn
+INTERNAL_CALL, MarginTradingHook._transmitTokenIn(address,uint256)(REF_130,REF_131)
+EXPRESSION:_transmitTokenIn(_param.tokenIn,_param.amtIn)	NodeType.EXPRESSION";
+"BlockID: 784
+Call context: 
+None
+TMP_449bytes[])  = new bytes[](4)
+multicallData(bytes[]) =  ['TMP_449(bytes[])']
+REF_132(bytes) -> multicallData[0]
+TMP_450 = CONVERT CORE to IInitCore
+REF_135(bytes4) (->None) := 585716652(uint256)
+REF_136(address) -> _param.borrPool
+REF_137(uint256) -> _param.borrAmt
+REF_138(uint256) -> _param.initPosId
+TMP_451 = CONVERT this to address
+TMP_452(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_135,REF_136,REF_137,REF_138,TMP_451)
+REF_132(bytes) (->multicallData) := TMP_452(bytes)
+REF_139(address) -> _param.collPool
+TMP_453 = CONVERT REF_139 to ILendingPool
+TMP_454(address) = HIGH_LEVEL_CALL, dest:TMP_453(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:_transmitTokenIn(_param.tokenIn,_param.amtIn)	NodeType.EXPRESSION
+multicallData = new bytes[](4)	NodeType.VARIABLE
+multicallData = new bytes[](4)	NodeType.EXPRESSION
+multicallData[0] = abi.encodeWithSelector(IInitCore(CORE).borrow.selector,_param.borrPool,_param.borrAmt,_param.initPosId,address(this))	NodeType.EXPRESSION";
+"BlockID: 785
+Call context: 
+None
+collToken(address) := TMP_454(address)
+REF_141(address) -> _param.borrPool
+TMP_455 = CONVERT REF_141 to ILendingPool
+TMP_456(address) = HIGH_LEVEL_CALL, dest:TMP_455(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:collToken = ILendingPool(_param.collPool).underlyingToken()	NodeType.VARIABLE
+collToken = ILendingPool(_param.collPool).underlyingToken()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 786
+Call context: 
+None
+borrToken(address) := TMP_456(address)
+REF_143(address) -> _param.tokenIn
+TMP_457(bool) = REF_143 == collToken
+REF_144(address) -> _param.tokenIn
+TMP_458(bool) = REF_144 == borrToken
+TMP_459(bool) = TMP_457 || TMP_458
+REF_145(uint32) -> Errors.INVALID_INPUT
+INTERNAL_CALL, _require(bool,uint32)(TMP_459,REF_145)
+EXPRESSION:borrToken = ILendingPool(_param.borrPool).underlyingToken()	NodeType.VARIABLE
+borrToken = ILendingPool(_param.borrPool).underlyingToken()	NodeType.EXPRESSION
+_require(_param.tokenIn == collToken || _param.tokenIn == borrToken,Errors.INVALID_INPUT)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 787
+Call context: 
+None
+REF_146(uint256) -> _param.initPosId
+REF_147(SwapType) -> SwapType.OpenExactIn
+REF_148(bytes) -> _param.data
+TMP_461(SwapInfo) = new SwapInfo(REF_146,REF_147,borrToken,collToken,0,REF_148)
+swapInfo(SwapInfo) := TMP_461(SwapInfo)
+REF_149(bytes) -> multicallData[1]
+TMP_462 = CONVERT CORE to IInitCore
+REF_152(bytes4) (->None) := 2103493374(uint256)
+TMP_463 = CONVERT this to address
+TMP_464(bytes) = SOLIDITY_CALL abi.encode()(swapInfo)
+TMP_465(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_152,TMP_463,0,TMP_464)
+REF_149(bytes) (->multicallData) := TMP_465(bytes)
+REF_154(bytes) -> multicallData[2]
+TMP_466 = CONVERT CORE to IInitCore
+REF_157(bytes4) (->None) := 2501602306(uint256)
+REF_158(address) -> _param.collPool
+TMP_467(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_157,REF_158,POS_MANAGER)
+REF_154(bytes) (->multicallData) := TMP_467(bytes)
+REF_159(bytes) -> multicallData[3]
+TMP_468 = CONVERT CORE to IInitCore
+REF_162(bytes4) (->None) := 2884951353(uint256)
+REF_163(uint256) -> _param.initPosId
+REF_164(address) -> _param.collPool
+TMP_469(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_162,REF_163,REF_164)
+REF_159(bytes) (->multicallData) := TMP_469(bytes)
+TMP_470 = CONVERT CORE to IMulticall
+TMP_471(bytes[]) = HIGH_LEVEL_CALL, dest:TMP_470(IMulticall), function:multicall, arguments:['multicallData']  
+EXPRESSION:_require(_param.tokenIn == collToken || _param.tokenIn == borrToken,Errors.INVALID_INPUT)	NodeType.EXPRESSION
+swapInfo = SwapInfo(_param.initPosId,SwapType.OpenExactIn,borrToken,collToken,0,_param.data)	NodeType.VARIABLE
+swapInfo = SwapInfo(_param.initPosId,SwapType.OpenExactIn,borrToken,collToken,0,_param.data)	NodeType.EXPRESSION
+multicallData[1] = abi.encodeWithSelector(IInitCore(CORE).callback.selector,address(this),0,abi.encode(swapInfo))	NodeType.EXPRESSION
+multicallData[2] = abi.encodeWithSelector(IInitCore(CORE).mintTo.selector,_param.collPool,POS_MANAGER)	NodeType.EXPRESSION
+multicallData[3] = abi.encodeWithSelector(IInitCore(CORE).collateralize.selector,_param.initPosId,_param.collPool)	NodeType.EXPRESSION
+IMulticall(CORE).multicall(multicallData)	NodeType.EXPRESSION";
+"BlockID: 788
+Call context: 
+None
+REF_166(uint256) -> _param.initPosId
+REF_167(uint256) -> _param.minHealth_e18
+TMP_472(uint256) = INTERNAL_CALL, MarginTradingHook._validateHealth(uint256,uint256)(REF_166,REF_167)
+EXPRESSION:IMulticall(CORE).multicall(multicallData)	NodeType.EXPRESSION
+health_e18 = _validateHealth(_param.initPosId,_param.minHealth_e18)	NodeType.EXPRESSION";
+"BlockID: 789
+Call context: 
+None
+health_e18(uint256) := TMP_472(uint256)
+EXPRESSION:health_e18 = _validateHealth(_param.initPosId,_param.minHealth_e18)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 782
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 783
+Call context: 
+None
+REF_130(address) -> _param.tokenIn
+REF_131(uint256) -> _param.amtIn
+INTERNAL_CALL, MarginTradingHook._transmitTokenIn(address,uint256)(REF_130,REF_131)
+EXPRESSION:_transmitTokenIn(_param.tokenIn,_param.amtIn)	NodeType.EXPRESSION" [key=0];
+"BlockID: 783
+Call context: 
+None
+REF_130(address) -> _param.tokenIn
+REF_131(uint256) -> _param.amtIn
+INTERNAL_CALL, MarginTradingHook._transmitTokenIn(address,uint256)(REF_130,REF_131)
+EXPRESSION:_transmitTokenIn(_param.tokenIn,_param.amtIn)	NodeType.EXPRESSION" -> "BlockID: 784
+Call context: 
+None
+TMP_449bytes[])  = new bytes[](4)
+multicallData(bytes[]) =  ['TMP_449(bytes[])']
+REF_132(bytes) -> multicallData[0]
+TMP_450 = CONVERT CORE to IInitCore
+REF_135(bytes4) (->None) := 585716652(uint256)
+REF_136(address) -> _param.borrPool
+REF_137(uint256) -> _param.borrAmt
+REF_138(uint256) -> _param.initPosId
+TMP_451 = CONVERT this to address
+TMP_452(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_135,REF_136,REF_137,REF_138,TMP_451)
+REF_132(bytes) (->multicallData) := TMP_452(bytes)
+REF_139(address) -> _param.collPool
+TMP_453 = CONVERT REF_139 to ILendingPool
+TMP_454(address) = HIGH_LEVEL_CALL, dest:TMP_453(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:_transmitTokenIn(_param.tokenIn,_param.amtIn)	NodeType.EXPRESSION
+multicallData = new bytes[](4)	NodeType.VARIABLE
+multicallData = new bytes[](4)	NodeType.EXPRESSION
+multicallData[0] = abi.encodeWithSelector(IInitCore(CORE).borrow.selector,_param.borrPool,_param.borrAmt,_param.initPosId,address(this))	NodeType.EXPRESSION" [key=0];
+"BlockID: 784
+Call context: 
+None
+TMP_449bytes[])  = new bytes[](4)
+multicallData(bytes[]) =  ['TMP_449(bytes[])']
+REF_132(bytes) -> multicallData[0]
+TMP_450 = CONVERT CORE to IInitCore
+REF_135(bytes4) (->None) := 585716652(uint256)
+REF_136(address) -> _param.borrPool
+REF_137(uint256) -> _param.borrAmt
+REF_138(uint256) -> _param.initPosId
+TMP_451 = CONVERT this to address
+TMP_452(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_135,REF_136,REF_137,REF_138,TMP_451)
+REF_132(bytes) (->multicallData) := TMP_452(bytes)
+REF_139(address) -> _param.collPool
+TMP_453 = CONVERT REF_139 to ILendingPool
+TMP_454(address) = HIGH_LEVEL_CALL, dest:TMP_453(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:_transmitTokenIn(_param.tokenIn,_param.amtIn)	NodeType.EXPRESSION
+multicallData = new bytes[](4)	NodeType.VARIABLE
+multicallData = new bytes[](4)	NodeType.EXPRESSION
+multicallData[0] = abi.encodeWithSelector(IInitCore(CORE).borrow.selector,_param.borrPool,_param.borrAmt,_param.initPosId,address(this))	NodeType.EXPRESSION" -> "BlockID: 785
+Call context: 
+None
+collToken(address) := TMP_454(address)
+REF_141(address) -> _param.borrPool
+TMP_455 = CONVERT REF_141 to ILendingPool
+TMP_456(address) = HIGH_LEVEL_CALL, dest:TMP_455(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:collToken = ILendingPool(_param.collPool).underlyingToken()	NodeType.VARIABLE
+collToken = ILendingPool(_param.collPool).underlyingToken()	NodeType.EXPRESSION" [key=0];
+"BlockID: 785
+Call context: 
+None
+collToken(address) := TMP_454(address)
+REF_141(address) -> _param.borrPool
+TMP_455 = CONVERT REF_141 to ILendingPool
+TMP_456(address) = HIGH_LEVEL_CALL, dest:TMP_455(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:collToken = ILendingPool(_param.collPool).underlyingToken()	NodeType.VARIABLE
+collToken = ILendingPool(_param.collPool).underlyingToken()	NodeType.EXPRESSION" -> "BlockID: 786
+Call context: 
+None
+borrToken(address) := TMP_456(address)
+REF_143(address) -> _param.tokenIn
+TMP_457(bool) = REF_143 == collToken
+REF_144(address) -> _param.tokenIn
+TMP_458(bool) = REF_144 == borrToken
+TMP_459(bool) = TMP_457 || TMP_458
+REF_145(uint32) -> Errors.INVALID_INPUT
+INTERNAL_CALL, _require(bool,uint32)(TMP_459,REF_145)
+EXPRESSION:borrToken = ILendingPool(_param.borrPool).underlyingToken()	NodeType.VARIABLE
+borrToken = ILendingPool(_param.borrPool).underlyingToken()	NodeType.EXPRESSION
+_require(_param.tokenIn == collToken || _param.tokenIn == borrToken,Errors.INVALID_INPUT)	NodeType.EXPRESSION" [key=0];
+"BlockID: 786
+Call context: 
+None
+borrToken(address) := TMP_456(address)
+REF_143(address) -> _param.tokenIn
+TMP_457(bool) = REF_143 == collToken
+REF_144(address) -> _param.tokenIn
+TMP_458(bool) = REF_144 == borrToken
+TMP_459(bool) = TMP_457 || TMP_458
+REF_145(uint32) -> Errors.INVALID_INPUT
+INTERNAL_CALL, _require(bool,uint32)(TMP_459,REF_145)
+EXPRESSION:borrToken = ILendingPool(_param.borrPool).underlyingToken()	NodeType.VARIABLE
+borrToken = ILendingPool(_param.borrPool).underlyingToken()	NodeType.EXPRESSION
+_require(_param.tokenIn == collToken || _param.tokenIn == borrToken,Errors.INVALID_INPUT)	NodeType.EXPRESSION" -> "BlockID: 787
+Call context: 
+None
+REF_146(uint256) -> _param.initPosId
+REF_147(SwapType) -> SwapType.OpenExactIn
+REF_148(bytes) -> _param.data
+TMP_461(SwapInfo) = new SwapInfo(REF_146,REF_147,borrToken,collToken,0,REF_148)
+swapInfo(SwapInfo) := TMP_461(SwapInfo)
+REF_149(bytes) -> multicallData[1]
+TMP_462 = CONVERT CORE to IInitCore
+REF_152(bytes4) (->None) := 2103493374(uint256)
+TMP_463 = CONVERT this to address
+TMP_464(bytes) = SOLIDITY_CALL abi.encode()(swapInfo)
+TMP_465(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_152,TMP_463,0,TMP_464)
+REF_149(bytes) (->multicallData) := TMP_465(bytes)
+REF_154(bytes) -> multicallData[2]
+TMP_466 = CONVERT CORE to IInitCore
+REF_157(bytes4) (->None) := 2501602306(uint256)
+REF_158(address) -> _param.collPool
+TMP_467(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_157,REF_158,POS_MANAGER)
+REF_154(bytes) (->multicallData) := TMP_467(bytes)
+REF_159(bytes) -> multicallData[3]
+TMP_468 = CONVERT CORE to IInitCore
+REF_162(bytes4) (->None) := 2884951353(uint256)
+REF_163(uint256) -> _param.initPosId
+REF_164(address) -> _param.collPool
+TMP_469(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_162,REF_163,REF_164)
+REF_159(bytes) (->multicallData) := TMP_469(bytes)
+TMP_470 = CONVERT CORE to IMulticall
+TMP_471(bytes[]) = HIGH_LEVEL_CALL, dest:TMP_470(IMulticall), function:multicall, arguments:['multicallData']  
+EXPRESSION:_require(_param.tokenIn == collToken || _param.tokenIn == borrToken,Errors.INVALID_INPUT)	NodeType.EXPRESSION
+swapInfo = SwapInfo(_param.initPosId,SwapType.OpenExactIn,borrToken,collToken,0,_param.data)	NodeType.VARIABLE
+swapInfo = SwapInfo(_param.initPosId,SwapType.OpenExactIn,borrToken,collToken,0,_param.data)	NodeType.EXPRESSION
+multicallData[1] = abi.encodeWithSelector(IInitCore(CORE).callback.selector,address(this),0,abi.encode(swapInfo))	NodeType.EXPRESSION
+multicallData[2] = abi.encodeWithSelector(IInitCore(CORE).mintTo.selector,_param.collPool,POS_MANAGER)	NodeType.EXPRESSION
+multicallData[3] = abi.encodeWithSelector(IInitCore(CORE).collateralize.selector,_param.initPosId,_param.collPool)	NodeType.EXPRESSION
+IMulticall(CORE).multicall(multicallData)	NodeType.EXPRESSION" [key=0];
+"BlockID: 787
+Call context: 
+None
+REF_146(uint256) -> _param.initPosId
+REF_147(SwapType) -> SwapType.OpenExactIn
+REF_148(bytes) -> _param.data
+TMP_461(SwapInfo) = new SwapInfo(REF_146,REF_147,borrToken,collToken,0,REF_148)
+swapInfo(SwapInfo) := TMP_461(SwapInfo)
+REF_149(bytes) -> multicallData[1]
+TMP_462 = CONVERT CORE to IInitCore
+REF_152(bytes4) (->None) := 2103493374(uint256)
+TMP_463 = CONVERT this to address
+TMP_464(bytes) = SOLIDITY_CALL abi.encode()(swapInfo)
+TMP_465(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_152,TMP_463,0,TMP_464)
+REF_149(bytes) (->multicallData) := TMP_465(bytes)
+REF_154(bytes) -> multicallData[2]
+TMP_466 = CONVERT CORE to IInitCore
+REF_157(bytes4) (->None) := 2501602306(uint256)
+REF_158(address) -> _param.collPool
+TMP_467(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_157,REF_158,POS_MANAGER)
+REF_154(bytes) (->multicallData) := TMP_467(bytes)
+REF_159(bytes) -> multicallData[3]
+TMP_468 = CONVERT CORE to IInitCore
+REF_162(bytes4) (->None) := 2884951353(uint256)
+REF_163(uint256) -> _param.initPosId
+REF_164(address) -> _param.collPool
+TMP_469(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_162,REF_163,REF_164)
+REF_159(bytes) (->multicallData) := TMP_469(bytes)
+TMP_470 = CONVERT CORE to IMulticall
+TMP_471(bytes[]) = HIGH_LEVEL_CALL, dest:TMP_470(IMulticall), function:multicall, arguments:['multicallData']  
+EXPRESSION:_require(_param.tokenIn == collToken || _param.tokenIn == borrToken,Errors.INVALID_INPUT)	NodeType.EXPRESSION
+swapInfo = SwapInfo(_param.initPosId,SwapType.OpenExactIn,borrToken,collToken,0,_param.data)	NodeType.VARIABLE
+swapInfo = SwapInfo(_param.initPosId,SwapType.OpenExactIn,borrToken,collToken,0,_param.data)	NodeType.EXPRESSION
+multicallData[1] = abi.encodeWithSelector(IInitCore(CORE).callback.selector,address(this),0,abi.encode(swapInfo))	NodeType.EXPRESSION
+multicallData[2] = abi.encodeWithSelector(IInitCore(CORE).mintTo.selector,_param.collPool,POS_MANAGER)	NodeType.EXPRESSION
+multicallData[3] = abi.encodeWithSelector(IInitCore(CORE).collateralize.selector,_param.initPosId,_param.collPool)	NodeType.EXPRESSION
+IMulticall(CORE).multicall(multicallData)	NodeType.EXPRESSION" -> "BlockID: 788
+Call context: 
+None
+REF_166(uint256) -> _param.initPosId
+REF_167(uint256) -> _param.minHealth_e18
+TMP_472(uint256) = INTERNAL_CALL, MarginTradingHook._validateHealth(uint256,uint256)(REF_166,REF_167)
+EXPRESSION:IMulticall(CORE).multicall(multicallData)	NodeType.EXPRESSION
+health_e18 = _validateHealth(_param.initPosId,_param.minHealth_e18)	NodeType.EXPRESSION" [key=0];
+"BlockID: 788
+Call context: 
+None
+REF_166(uint256) -> _param.initPosId
+REF_167(uint256) -> _param.minHealth_e18
+TMP_472(uint256) = INTERNAL_CALL, MarginTradingHook._validateHealth(uint256,uint256)(REF_166,REF_167)
+EXPRESSION:IMulticall(CORE).multicall(multicallData)	NodeType.EXPRESSION
+health_e18 = _validateHealth(_param.initPosId,_param.minHealth_e18)	NodeType.EXPRESSION" -> "BlockID: 789
+Call context: 
+None
+health_e18(uint256) := TMP_472(uint256)
+EXPRESSION:health_e18 = _validateHealth(_param.initPosId,_param.minHealth_e18)	NodeType.EXPRESSION" [key=0];
+}

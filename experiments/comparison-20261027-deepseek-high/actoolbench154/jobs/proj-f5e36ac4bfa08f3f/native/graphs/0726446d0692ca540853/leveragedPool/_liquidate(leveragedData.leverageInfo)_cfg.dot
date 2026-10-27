@@ -1,0 +1,531 @@
+digraph {
+"BlockID: 3082
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 3083
+Call context: 
+None
+NEW VARIABLE token0
+NEW VARIABLE token1
+REF_340(uint8) -> coinInfo.id
+TMP_994(bool) = REF_340 == 0
+CONDITION TMP_994
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(coinInfo.id == 0)	NodeType.IF";
+"BlockID: 3084
+Call context: 
+True
+REF_341(address) -> hedgeCoin.token
+REF_342(address) -> leverageCoin.token
+token0(address) := REF_341(address)
+token1(address) := REF_342(address)
+EXPRESSION:(token0,token1) = (hedgeCoin.token,leverageCoin.token)	NodeType.EXPRESSION";
+"BlockID: 3085
+Call context: 
+False
+REF_343(address) -> leverageCoin.token
+REF_344(address) -> hedgeCoin.token
+token0(address) := REF_343(address)
+token1(address) := REF_344(address)
+EXPRESSION:(token0,token1) = (leverageCoin.token,hedgeCoin.token)	NodeType.EXPRESSION";
+"BlockID: 3086
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3087
+Call context: 
+None
+REF_329(uint8) -> coinInfo.id
+TMP_973(uint256) = INTERNAL_CALL, leveragedPool.underlyingBalance(uint8)(REF_329)
+EXPRESSION:";
+"BlockID: 3088
+Call context: 
+None
+TMP_974(uint256) = INTERNAL_CALL, leveragedPool._swap(address,address,uint256)(token0,token1,TMP_973)
+EXPRESSION:" [shape=box];
+"BlockID: 3089
+Call context: 
+None
+amount(uint256) := TMP_974(uint256)
+TMP_975(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['amount', 'rebalanceFee'] 
+EXPRESSION:amount = _swap(token0,token1,underlyingBalance(coinInfo.id))	NodeType.VARIABLE
+amount = _swap(token0,token1,underlyingBalance(coinInfo.id))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3090
+Call context: 
+None
+TMP_976(uint256) = TMP_975 / feeDecimal
+fee(uint256) := TMP_976(uint256)
+TMP_977(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['amount', 'fee'] 
+EXPRESSION:fee = amount.mul(rebalanceFee) / feeDecimal	NodeType.VARIABLE
+fee = amount.mul(rebalanceFee) / feeDecimal	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3091
+Call context: 
+None
+leftAmount(uint256) := TMP_977(uint256)
+REF_332(IStakePool) -> coinInfo.stakePool
+TMP_978 = CONVERT this to address
+TMP_979(uint256) = HIGH_LEVEL_CALL, dest:REF_332(IStakePool), function:loan, arguments:['TMP_978']  
+EXPRESSION:leftAmount = amount.sub(fee)	NodeType.VARIABLE
+leftAmount = amount.sub(fee)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3092
+Call context: 
+None
+allLoan(uint256) := TMP_979(uint256)
+TMP_980(bool) = amount < allLoan
+CONDITION TMP_980
+EXPRESSION:allLoan = coinInfo.stakePool.loan(address(this))	NodeType.VARIABLE
+allLoan = coinInfo.stakePool.loan(address(this))	NodeType.EXPRESSION
+amount < allLoan	NodeType.IF" [shape=box];
+"BlockID: 3093
+Call context: 
+True
+allLoan(uint256) := amount(uint256)
+leftAmount(uint256) := amount(uint256)
+fee(uint256) := 0(uint256)
+EXPRESSION:allLoan = amount	NodeType.EXPRESSION
+leftAmount = amount	NodeType.EXPRESSION
+fee = 0	NodeType.EXPRESSION";
+"BlockID: 3094
+Call context: 
+False
+TMP_981(bool) = leftAmount < allLoan
+CONDITION TMP_981
+EXPRESSION:leftAmount < allLoan	NodeType.IF";
+"BlockID: 3095
+Call context: 
+True
+leftAmount(uint256) := allLoan(uint256)
+TMP_982(uint256) = amount - leftAmount
+fee(uint256) := TMP_982(uint256)
+EXPRESSION:leftAmount = allLoan	NodeType.EXPRESSION
+fee = amount - leftAmount	NodeType.EXPRESSION";
+"BlockID: 3096
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3098
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3099
+Call context: 
+None
+TMP_983(bool) = fee > 0
+CONDITION TMP_983
+EXPRESSION:fee > 0	NodeType.IF";
+"BlockID: 3100
+Call context: 
+True
+REF_334(address) -> coinInfo.token
+INTERNAL_CALL, safeTransfer._redeem(address,address,uint256)(feeAddress,REF_334,fee)
+EXPRESSION:_redeem(feeAddress,coinInfo.token,fee)	NodeType.EXPRESSION";
+"BlockID: 3102
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3103
+Call context: 
+None
+INTERNAL_CALL, leveragedPool._repay(leveragedData.leverageInfo,uint256,bool)(coinInfo,allLoan,True)
+EXPRESSION:_repay(coinInfo,allLoan,true)	NodeType.EXPRESSION";
+"BlockID: 3104
+Call context: 
+None
+TMP_986(uint256) = leftAmount - allLoan
+leftAmount(uint256) := TMP_986(uint256)
+TMP_987(bool) = leftAmount > 0
+CONDITION TMP_987
+EXPRESSION:_repay(coinInfo,allLoan,true)	NodeType.EXPRESSION
+leftAmount = leftAmount - allLoan	NodeType.EXPRESSION
+leftAmount > 0	NodeType.IF";
+"BlockID: 3105
+Call context: 
+True
+REF_335(IRebaseToken) -> coinInfo.leverageToken
+TMP_988 = CONVERT REF_335 to address
+TMP_989 = CONVERT TMP_988 to uint160
+TMP_990 = CONVERT TMP_989 to address
+REF_336(address) -> coinInfo.token
+INTERNAL_CALL, safeTransfer._redeem(address,address,uint256)(TMP_990,REF_336,leftAmount)
+EXPRESSION:_redeem(address(uint160(address(coinInfo.leverageToken))),coinInfo.token,leftAmount)	NodeType.EXPRESSION";
+"BlockID: 3107
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3108
+Call context: 
+None
+REF_337(IRebaseToken) -> coinInfo.leverageToken
+HIGH_LEVEL_CALL, dest:REF_337(IRebaseToken), function:newErc20, arguments:['leftAmount']  
+EXPRESSION:coinInfo.leverageToken.newErc20(leftAmount)	NodeType.EXPRESSION";
+"BlockID: 3082
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 3083
+Call context: 
+None
+NEW VARIABLE token0
+NEW VARIABLE token1
+REF_340(uint8) -> coinInfo.id
+TMP_994(bool) = REF_340 == 0
+CONDITION TMP_994
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(coinInfo.id == 0)	NodeType.IF" [key=0];
+"BlockID: 3083
+Call context: 
+None
+NEW VARIABLE token0
+NEW VARIABLE token1
+REF_340(uint8) -> coinInfo.id
+TMP_994(bool) = REF_340 == 0
+CONDITION TMP_994
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(coinInfo.id == 0)	NodeType.IF" -> "BlockID: 3084
+Call context: 
+True
+REF_341(address) -> hedgeCoin.token
+REF_342(address) -> leverageCoin.token
+token0(address) := REF_341(address)
+token1(address) := REF_342(address)
+EXPRESSION:(token0,token1) = (hedgeCoin.token,leverageCoin.token)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3083
+Call context: 
+None
+NEW VARIABLE token0
+NEW VARIABLE token1
+REF_340(uint8) -> coinInfo.id
+TMP_994(bool) = REF_340 == 0
+CONDITION TMP_994
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(coinInfo.id == 0)	NodeType.IF" -> "BlockID: 3085
+Call context: 
+False
+REF_343(address) -> leverageCoin.token
+REF_344(address) -> hedgeCoin.token
+token0(address) := REF_343(address)
+token1(address) := REF_344(address)
+EXPRESSION:(token0,token1) = (leverageCoin.token,hedgeCoin.token)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3084
+Call context: 
+True
+REF_341(address) -> hedgeCoin.token
+REF_342(address) -> leverageCoin.token
+token0(address) := REF_341(address)
+token1(address) := REF_342(address)
+EXPRESSION:(token0,token1) = (hedgeCoin.token,leverageCoin.token)	NodeType.EXPRESSION" -> "BlockID: 3086
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3085
+Call context: 
+False
+REF_343(address) -> leverageCoin.token
+REF_344(address) -> hedgeCoin.token
+token0(address) := REF_343(address)
+token1(address) := REF_344(address)
+EXPRESSION:(token0,token1) = (leverageCoin.token,hedgeCoin.token)	NodeType.EXPRESSION" -> "BlockID: 3086
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3086
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3087
+Call context: 
+None
+REF_329(uint8) -> coinInfo.id
+TMP_973(uint256) = INTERNAL_CALL, leveragedPool.underlyingBalance(uint8)(REF_329)
+EXPRESSION:" [key=0];
+"BlockID: 3087
+Call context: 
+None
+REF_329(uint8) -> coinInfo.id
+TMP_973(uint256) = INTERNAL_CALL, leveragedPool.underlyingBalance(uint8)(REF_329)
+EXPRESSION:" -> "BlockID: 3088
+Call context: 
+None
+TMP_974(uint256) = INTERNAL_CALL, leveragedPool._swap(address,address,uint256)(token0,token1,TMP_973)
+EXPRESSION:" [key=0];
+"BlockID: 3088
+Call context: 
+None
+TMP_974(uint256) = INTERNAL_CALL, leveragedPool._swap(address,address,uint256)(token0,token1,TMP_973)
+EXPRESSION:" -> "BlockID: 3089
+Call context: 
+None
+amount(uint256) := TMP_974(uint256)
+TMP_975(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['amount', 'rebalanceFee'] 
+EXPRESSION:amount = _swap(token0,token1,underlyingBalance(coinInfo.id))	NodeType.VARIABLE
+amount = _swap(token0,token1,underlyingBalance(coinInfo.id))	NodeType.EXPRESSION" [key=0];
+"BlockID: 3089
+Call context: 
+None
+amount(uint256) := TMP_974(uint256)
+TMP_975(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['amount', 'rebalanceFee'] 
+EXPRESSION:amount = _swap(token0,token1,underlyingBalance(coinInfo.id))	NodeType.VARIABLE
+amount = _swap(token0,token1,underlyingBalance(coinInfo.id))	NodeType.EXPRESSION" -> "BlockID: 3090
+Call context: 
+None
+TMP_976(uint256) = TMP_975 / feeDecimal
+fee(uint256) := TMP_976(uint256)
+TMP_977(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['amount', 'fee'] 
+EXPRESSION:fee = amount.mul(rebalanceFee) / feeDecimal	NodeType.VARIABLE
+fee = amount.mul(rebalanceFee) / feeDecimal	NodeType.EXPRESSION" [key=0];
+"BlockID: 3090
+Call context: 
+None
+TMP_976(uint256) = TMP_975 / feeDecimal
+fee(uint256) := TMP_976(uint256)
+TMP_977(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['amount', 'fee'] 
+EXPRESSION:fee = amount.mul(rebalanceFee) / feeDecimal	NodeType.VARIABLE
+fee = amount.mul(rebalanceFee) / feeDecimal	NodeType.EXPRESSION" -> "BlockID: 3091
+Call context: 
+None
+leftAmount(uint256) := TMP_977(uint256)
+REF_332(IStakePool) -> coinInfo.stakePool
+TMP_978 = CONVERT this to address
+TMP_979(uint256) = HIGH_LEVEL_CALL, dest:REF_332(IStakePool), function:loan, arguments:['TMP_978']  
+EXPRESSION:leftAmount = amount.sub(fee)	NodeType.VARIABLE
+leftAmount = amount.sub(fee)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3091
+Call context: 
+None
+leftAmount(uint256) := TMP_977(uint256)
+REF_332(IStakePool) -> coinInfo.stakePool
+TMP_978 = CONVERT this to address
+TMP_979(uint256) = HIGH_LEVEL_CALL, dest:REF_332(IStakePool), function:loan, arguments:['TMP_978']  
+EXPRESSION:leftAmount = amount.sub(fee)	NodeType.VARIABLE
+leftAmount = amount.sub(fee)	NodeType.EXPRESSION" -> "BlockID: 3092
+Call context: 
+None
+allLoan(uint256) := TMP_979(uint256)
+TMP_980(bool) = amount < allLoan
+CONDITION TMP_980
+EXPRESSION:allLoan = coinInfo.stakePool.loan(address(this))	NodeType.VARIABLE
+allLoan = coinInfo.stakePool.loan(address(this))	NodeType.EXPRESSION
+amount < allLoan	NodeType.IF" [key=0];
+"BlockID: 3092
+Call context: 
+None
+allLoan(uint256) := TMP_979(uint256)
+TMP_980(bool) = amount < allLoan
+CONDITION TMP_980
+EXPRESSION:allLoan = coinInfo.stakePool.loan(address(this))	NodeType.VARIABLE
+allLoan = coinInfo.stakePool.loan(address(this))	NodeType.EXPRESSION
+amount < allLoan	NodeType.IF" -> "BlockID: 3093
+Call context: 
+True
+allLoan(uint256) := amount(uint256)
+leftAmount(uint256) := amount(uint256)
+fee(uint256) := 0(uint256)
+EXPRESSION:allLoan = amount	NodeType.EXPRESSION
+leftAmount = amount	NodeType.EXPRESSION
+fee = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 3092
+Call context: 
+None
+allLoan(uint256) := TMP_979(uint256)
+TMP_980(bool) = amount < allLoan
+CONDITION TMP_980
+EXPRESSION:allLoan = coinInfo.stakePool.loan(address(this))	NodeType.VARIABLE
+allLoan = coinInfo.stakePool.loan(address(this))	NodeType.EXPRESSION
+amount < allLoan	NodeType.IF" -> "BlockID: 3094
+Call context: 
+False
+TMP_981(bool) = leftAmount < allLoan
+CONDITION TMP_981
+EXPRESSION:leftAmount < allLoan	NodeType.IF" [key=0];
+"BlockID: 3093
+Call context: 
+True
+allLoan(uint256) := amount(uint256)
+leftAmount(uint256) := amount(uint256)
+fee(uint256) := 0(uint256)
+EXPRESSION:allLoan = amount	NodeType.EXPRESSION
+leftAmount = amount	NodeType.EXPRESSION
+fee = 0	NodeType.EXPRESSION" -> "BlockID: 3098
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3094
+Call context: 
+False
+TMP_981(bool) = leftAmount < allLoan
+CONDITION TMP_981
+EXPRESSION:leftAmount < allLoan	NodeType.IF" -> "BlockID: 3095
+Call context: 
+True
+leftAmount(uint256) := allLoan(uint256)
+TMP_982(uint256) = amount - leftAmount
+fee(uint256) := TMP_982(uint256)
+EXPRESSION:leftAmount = allLoan	NodeType.EXPRESSION
+fee = amount - leftAmount	NodeType.EXPRESSION" [key=0];
+"BlockID: 3094
+Call context: 
+False
+TMP_981(bool) = leftAmount < allLoan
+CONDITION TMP_981
+EXPRESSION:leftAmount < allLoan	NodeType.IF" -> "BlockID: 3096
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3095
+Call context: 
+True
+leftAmount(uint256) := allLoan(uint256)
+TMP_982(uint256) = amount - leftAmount
+fee(uint256) := TMP_982(uint256)
+EXPRESSION:leftAmount = allLoan	NodeType.EXPRESSION
+fee = amount - leftAmount	NodeType.EXPRESSION" -> "BlockID: 3096
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3096
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3098
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3098
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3099
+Call context: 
+None
+TMP_983(bool) = fee > 0
+CONDITION TMP_983
+EXPRESSION:fee > 0	NodeType.IF" [key=0];
+"BlockID: 3099
+Call context: 
+None
+TMP_983(bool) = fee > 0
+CONDITION TMP_983
+EXPRESSION:fee > 0	NodeType.IF" -> "BlockID: 3100
+Call context: 
+True
+REF_334(address) -> coinInfo.token
+INTERNAL_CALL, safeTransfer._redeem(address,address,uint256)(feeAddress,REF_334,fee)
+EXPRESSION:_redeem(feeAddress,coinInfo.token,fee)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3099
+Call context: 
+None
+TMP_983(bool) = fee > 0
+CONDITION TMP_983
+EXPRESSION:fee > 0	NodeType.IF" -> "BlockID: 3102
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3100
+Call context: 
+True
+REF_334(address) -> coinInfo.token
+INTERNAL_CALL, safeTransfer._redeem(address,address,uint256)(feeAddress,REF_334,fee)
+EXPRESSION:_redeem(feeAddress,coinInfo.token,fee)	NodeType.EXPRESSION" -> "BlockID: 3102
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3102
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3103
+Call context: 
+None
+INTERNAL_CALL, leveragedPool._repay(leveragedData.leverageInfo,uint256,bool)(coinInfo,allLoan,True)
+EXPRESSION:_repay(coinInfo,allLoan,true)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3103
+Call context: 
+None
+INTERNAL_CALL, leveragedPool._repay(leveragedData.leverageInfo,uint256,bool)(coinInfo,allLoan,True)
+EXPRESSION:_repay(coinInfo,allLoan,true)	NodeType.EXPRESSION" -> "BlockID: 3104
+Call context: 
+None
+TMP_986(uint256) = leftAmount - allLoan
+leftAmount(uint256) := TMP_986(uint256)
+TMP_987(bool) = leftAmount > 0
+CONDITION TMP_987
+EXPRESSION:_repay(coinInfo,allLoan,true)	NodeType.EXPRESSION
+leftAmount = leftAmount - allLoan	NodeType.EXPRESSION
+leftAmount > 0	NodeType.IF" [key=0];
+"BlockID: 3104
+Call context: 
+None
+TMP_986(uint256) = leftAmount - allLoan
+leftAmount(uint256) := TMP_986(uint256)
+TMP_987(bool) = leftAmount > 0
+CONDITION TMP_987
+EXPRESSION:_repay(coinInfo,allLoan,true)	NodeType.EXPRESSION
+leftAmount = leftAmount - allLoan	NodeType.EXPRESSION
+leftAmount > 0	NodeType.IF" -> "BlockID: 3105
+Call context: 
+True
+REF_335(IRebaseToken) -> coinInfo.leverageToken
+TMP_988 = CONVERT REF_335 to address
+TMP_989 = CONVERT TMP_988 to uint160
+TMP_990 = CONVERT TMP_989 to address
+REF_336(address) -> coinInfo.token
+INTERNAL_CALL, safeTransfer._redeem(address,address,uint256)(TMP_990,REF_336,leftAmount)
+EXPRESSION:_redeem(address(uint160(address(coinInfo.leverageToken))),coinInfo.token,leftAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3104
+Call context: 
+None
+TMP_986(uint256) = leftAmount - allLoan
+leftAmount(uint256) := TMP_986(uint256)
+TMP_987(bool) = leftAmount > 0
+CONDITION TMP_987
+EXPRESSION:_repay(coinInfo,allLoan,true)	NodeType.EXPRESSION
+leftAmount = leftAmount - allLoan	NodeType.EXPRESSION
+leftAmount > 0	NodeType.IF" -> "BlockID: 3107
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3105
+Call context: 
+True
+REF_335(IRebaseToken) -> coinInfo.leverageToken
+TMP_988 = CONVERT REF_335 to address
+TMP_989 = CONVERT TMP_988 to uint160
+TMP_990 = CONVERT TMP_989 to address
+REF_336(address) -> coinInfo.token
+INTERNAL_CALL, safeTransfer._redeem(address,address,uint256)(TMP_990,REF_336,leftAmount)
+EXPRESSION:_redeem(address(uint160(address(coinInfo.leverageToken))),coinInfo.token,leftAmount)	NodeType.EXPRESSION" -> "BlockID: 3107
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3107
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3108
+Call context: 
+None
+REF_337(IRebaseToken) -> coinInfo.leverageToken
+HIGH_LEVEL_CALL, dest:REF_337(IRebaseToken), function:newErc20, arguments:['leftAmount']  
+EXPRESSION:coinInfo.leverageToken.newErc20(leftAmount)	NodeType.EXPRESSION" [key=0];
+}

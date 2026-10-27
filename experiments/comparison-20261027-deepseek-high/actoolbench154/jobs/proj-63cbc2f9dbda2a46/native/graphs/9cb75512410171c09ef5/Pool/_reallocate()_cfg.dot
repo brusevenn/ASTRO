@@ -1,0 +1,280 @@
+digraph {
+"BlockID: 1753
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1754
+Call context: 
+None
+TMP_1613 = CONVERT this to address
+TMP_1614(uint256) = HIGH_LEVEL_CALL, dest:asset(ERC20), function:balanceOf, arguments:['TMP_1613']  
+EXPRESSION:";
+"BlockID: 1755
+Call context: 
+None
+TMP_1615(uint256) = TMP_1614 (c)- getAvailableToWithdraw
+currentBalance(uint256) := TMP_1615(uint256)
+TMP_1616(bool) = currentBalance == 0
+CONDITION TMP_1616
+EXPRESSION:currentBalance = asset.balanceOf(address(this)) - getAvailableToWithdraw	NodeType.VARIABLE
+currentBalance = asset.balanceOf(address(this)) - getAvailableToWithdraw	NodeType.EXPRESSION
+currentBalance == 0	NodeType.IF" [shape=box];
+"BlockID: 1756
+Call context: 
+True
+TMP_1617(None) = SOLIDITY_CALL revert AllocationAlreadyOptimalError()()
+EXPRESSION:revert AllocationAlreadyOptimalError()()	NodeType.EXPRESSION";
+"BlockID: 1757
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1758
+Call context: 
+None
+TMP_1618 = CONVERT getBaseInterestAllocator to IBaseInterestAllocator
+TMP_1619(uint256) = HIGH_LEVEL_CALL, dest:TMP_1618(IBaseInterestAllocator), function:getAssetsAllocated, arguments:[]  
+EXPRESSION:";
+"BlockID: 1759
+Call context: 
+None
+baseRateBalance(uint256) := TMP_1619(uint256)
+TMP_1620(uint256) = currentBalance (c)+ baseRateBalance
+total(uint256) := TMP_1620(uint256)
+TMP_1621(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivDown(uint256,uint256,uint256), arguments:['currentBalance', 'PRINCIPAL_PRECISION', 'total'] 
+EXPRESSION:baseRateBalance = IBaseInterestAllocator(getBaseInterestAllocator).getAssetsAllocated()	NodeType.VARIABLE
+baseRateBalance = IBaseInterestAllocator(getBaseInterestAllocator).getAssetsAllocated()	NodeType.EXPRESSION
+total = currentBalance + baseRateBalance	NodeType.VARIABLE
+total = currentBalance + baseRateBalance	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1760
+Call context: 
+None
+fraction(uint256) := TMP_1621(uint256)
+optimalIdleRange(IPool.OptimalIdleRange) := getOptimalIdleRange(IPool.OptimalIdleRange)
+REF_430(uint80) -> optimalIdleRange.min
+TMP_1622(bool) = fraction >= REF_430
+REF_431(uint80) -> optimalIdleRange.max
+TMP_1623(bool) = fraction < REF_431
+TMP_1624(bool) = TMP_1622 && TMP_1623
+CONDITION TMP_1624
+EXPRESSION:fraction = currentBalance.mulDivDown(PRINCIPAL_PRECISION,total)	NodeType.VARIABLE
+fraction = currentBalance.mulDivDown(PRINCIPAL_PRECISION,total)	NodeType.EXPRESSION
+optimalIdleRange = getOptimalIdleRange	NodeType.VARIABLE
+optimalIdleRange = getOptimalIdleRange	NodeType.EXPRESSION
+fraction >= optimalIdleRange.min && fraction < optimalIdleRange.max	NodeType.IF" [shape=box];
+"BlockID: 1761
+Call context: 
+True
+TMP_1625(None) = SOLIDITY_CALL revert AllocationAlreadyOptimalError()()
+EXPRESSION:revert AllocationAlreadyOptimalError()()	NodeType.EXPRESSION";
+"BlockID: 1762
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1763
+Call context: 
+None
+REF_433(uint80) -> optimalIdleRange.mid
+TMP_1626(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivDown(uint256,uint256,uint256), arguments:['total', 'REF_433', 'PRINCIPAL_PRECISION'] 
+EXPRESSION:";
+"BlockID: 1764
+Call context: 
+None
+targetIdle(uint256) := TMP_1626(uint256)
+TMP_1627 = CONVERT getBaseInterestAllocator to IBaseInterestAllocator
+HIGH_LEVEL_CALL, dest:TMP_1627(IBaseInterestAllocator), function:reallocate, arguments:['currentBalance', 'targetIdle', 'False']  
+EXPRESSION:targetIdle = total.mulDivDown(optimalIdleRange.mid,PRINCIPAL_PRECISION)	NodeType.VARIABLE
+targetIdle = total.mulDivDown(optimalIdleRange.mid,PRINCIPAL_PRECISION)	NodeType.EXPRESSION
+IBaseInterestAllocator(getBaseInterestAllocator).reallocate(currentBalance,targetIdle,false)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1765
+Call context: 
+None
+RETURN currentBalance,targetIdle
+EXPRESSION:IBaseInterestAllocator(getBaseInterestAllocator).reallocate(currentBalance,targetIdle,false)	NodeType.EXPRESSION
+(currentBalance,targetIdle)	NodeType.RETURN";
+"BlockID: 1753
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1754
+Call context: 
+None
+TMP_1613 = CONVERT this to address
+TMP_1614(uint256) = HIGH_LEVEL_CALL, dest:asset(ERC20), function:balanceOf, arguments:['TMP_1613']  
+EXPRESSION:" [key=0];
+"BlockID: 1754
+Call context: 
+None
+TMP_1613 = CONVERT this to address
+TMP_1614(uint256) = HIGH_LEVEL_CALL, dest:asset(ERC20), function:balanceOf, arguments:['TMP_1613']  
+EXPRESSION:" -> "BlockID: 1755
+Call context: 
+None
+TMP_1615(uint256) = TMP_1614 (c)- getAvailableToWithdraw
+currentBalance(uint256) := TMP_1615(uint256)
+TMP_1616(bool) = currentBalance == 0
+CONDITION TMP_1616
+EXPRESSION:currentBalance = asset.balanceOf(address(this)) - getAvailableToWithdraw	NodeType.VARIABLE
+currentBalance = asset.balanceOf(address(this)) - getAvailableToWithdraw	NodeType.EXPRESSION
+currentBalance == 0	NodeType.IF" [key=0];
+"BlockID: 1755
+Call context: 
+None
+TMP_1615(uint256) = TMP_1614 (c)- getAvailableToWithdraw
+currentBalance(uint256) := TMP_1615(uint256)
+TMP_1616(bool) = currentBalance == 0
+CONDITION TMP_1616
+EXPRESSION:currentBalance = asset.balanceOf(address(this)) - getAvailableToWithdraw	NodeType.VARIABLE
+currentBalance = asset.balanceOf(address(this)) - getAvailableToWithdraw	NodeType.EXPRESSION
+currentBalance == 0	NodeType.IF" -> "BlockID: 1756
+Call context: 
+True
+TMP_1617(None) = SOLIDITY_CALL revert AllocationAlreadyOptimalError()()
+EXPRESSION:revert AllocationAlreadyOptimalError()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1755
+Call context: 
+None
+TMP_1615(uint256) = TMP_1614 (c)- getAvailableToWithdraw
+currentBalance(uint256) := TMP_1615(uint256)
+TMP_1616(bool) = currentBalance == 0
+CONDITION TMP_1616
+EXPRESSION:currentBalance = asset.balanceOf(address(this)) - getAvailableToWithdraw	NodeType.VARIABLE
+currentBalance = asset.balanceOf(address(this)) - getAvailableToWithdraw	NodeType.EXPRESSION
+currentBalance == 0	NodeType.IF" -> "BlockID: 1757
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1757
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1758
+Call context: 
+None
+TMP_1618 = CONVERT getBaseInterestAllocator to IBaseInterestAllocator
+TMP_1619(uint256) = HIGH_LEVEL_CALL, dest:TMP_1618(IBaseInterestAllocator), function:getAssetsAllocated, arguments:[]  
+EXPRESSION:" [key=0];
+"BlockID: 1758
+Call context: 
+None
+TMP_1618 = CONVERT getBaseInterestAllocator to IBaseInterestAllocator
+TMP_1619(uint256) = HIGH_LEVEL_CALL, dest:TMP_1618(IBaseInterestAllocator), function:getAssetsAllocated, arguments:[]  
+EXPRESSION:" -> "BlockID: 1759
+Call context: 
+None
+baseRateBalance(uint256) := TMP_1619(uint256)
+TMP_1620(uint256) = currentBalance (c)+ baseRateBalance
+total(uint256) := TMP_1620(uint256)
+TMP_1621(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivDown(uint256,uint256,uint256), arguments:['currentBalance', 'PRINCIPAL_PRECISION', 'total'] 
+EXPRESSION:baseRateBalance = IBaseInterestAllocator(getBaseInterestAllocator).getAssetsAllocated()	NodeType.VARIABLE
+baseRateBalance = IBaseInterestAllocator(getBaseInterestAllocator).getAssetsAllocated()	NodeType.EXPRESSION
+total = currentBalance + baseRateBalance	NodeType.VARIABLE
+total = currentBalance + baseRateBalance	NodeType.EXPRESSION" [key=0];
+"BlockID: 1759
+Call context: 
+None
+baseRateBalance(uint256) := TMP_1619(uint256)
+TMP_1620(uint256) = currentBalance (c)+ baseRateBalance
+total(uint256) := TMP_1620(uint256)
+TMP_1621(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivDown(uint256,uint256,uint256), arguments:['currentBalance', 'PRINCIPAL_PRECISION', 'total'] 
+EXPRESSION:baseRateBalance = IBaseInterestAllocator(getBaseInterestAllocator).getAssetsAllocated()	NodeType.VARIABLE
+baseRateBalance = IBaseInterestAllocator(getBaseInterestAllocator).getAssetsAllocated()	NodeType.EXPRESSION
+total = currentBalance + baseRateBalance	NodeType.VARIABLE
+total = currentBalance + baseRateBalance	NodeType.EXPRESSION" -> "BlockID: 1760
+Call context: 
+None
+fraction(uint256) := TMP_1621(uint256)
+optimalIdleRange(IPool.OptimalIdleRange) := getOptimalIdleRange(IPool.OptimalIdleRange)
+REF_430(uint80) -> optimalIdleRange.min
+TMP_1622(bool) = fraction >= REF_430
+REF_431(uint80) -> optimalIdleRange.max
+TMP_1623(bool) = fraction < REF_431
+TMP_1624(bool) = TMP_1622 && TMP_1623
+CONDITION TMP_1624
+EXPRESSION:fraction = currentBalance.mulDivDown(PRINCIPAL_PRECISION,total)	NodeType.VARIABLE
+fraction = currentBalance.mulDivDown(PRINCIPAL_PRECISION,total)	NodeType.EXPRESSION
+optimalIdleRange = getOptimalIdleRange	NodeType.VARIABLE
+optimalIdleRange = getOptimalIdleRange	NodeType.EXPRESSION
+fraction >= optimalIdleRange.min && fraction < optimalIdleRange.max	NodeType.IF" [key=0];
+"BlockID: 1760
+Call context: 
+None
+fraction(uint256) := TMP_1621(uint256)
+optimalIdleRange(IPool.OptimalIdleRange) := getOptimalIdleRange(IPool.OptimalIdleRange)
+REF_430(uint80) -> optimalIdleRange.min
+TMP_1622(bool) = fraction >= REF_430
+REF_431(uint80) -> optimalIdleRange.max
+TMP_1623(bool) = fraction < REF_431
+TMP_1624(bool) = TMP_1622 && TMP_1623
+CONDITION TMP_1624
+EXPRESSION:fraction = currentBalance.mulDivDown(PRINCIPAL_PRECISION,total)	NodeType.VARIABLE
+fraction = currentBalance.mulDivDown(PRINCIPAL_PRECISION,total)	NodeType.EXPRESSION
+optimalIdleRange = getOptimalIdleRange	NodeType.VARIABLE
+optimalIdleRange = getOptimalIdleRange	NodeType.EXPRESSION
+fraction >= optimalIdleRange.min && fraction < optimalIdleRange.max	NodeType.IF" -> "BlockID: 1761
+Call context: 
+True
+TMP_1625(None) = SOLIDITY_CALL revert AllocationAlreadyOptimalError()()
+EXPRESSION:revert AllocationAlreadyOptimalError()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1760
+Call context: 
+None
+fraction(uint256) := TMP_1621(uint256)
+optimalIdleRange(IPool.OptimalIdleRange) := getOptimalIdleRange(IPool.OptimalIdleRange)
+REF_430(uint80) -> optimalIdleRange.min
+TMP_1622(bool) = fraction >= REF_430
+REF_431(uint80) -> optimalIdleRange.max
+TMP_1623(bool) = fraction < REF_431
+TMP_1624(bool) = TMP_1622 && TMP_1623
+CONDITION TMP_1624
+EXPRESSION:fraction = currentBalance.mulDivDown(PRINCIPAL_PRECISION,total)	NodeType.VARIABLE
+fraction = currentBalance.mulDivDown(PRINCIPAL_PRECISION,total)	NodeType.EXPRESSION
+optimalIdleRange = getOptimalIdleRange	NodeType.VARIABLE
+optimalIdleRange = getOptimalIdleRange	NodeType.EXPRESSION
+fraction >= optimalIdleRange.min && fraction < optimalIdleRange.max	NodeType.IF" -> "BlockID: 1762
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1762
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1763
+Call context: 
+None
+REF_433(uint80) -> optimalIdleRange.mid
+TMP_1626(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivDown(uint256,uint256,uint256), arguments:['total', 'REF_433', 'PRINCIPAL_PRECISION'] 
+EXPRESSION:" [key=0];
+"BlockID: 1763
+Call context: 
+None
+REF_433(uint80) -> optimalIdleRange.mid
+TMP_1626(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivDown(uint256,uint256,uint256), arguments:['total', 'REF_433', 'PRINCIPAL_PRECISION'] 
+EXPRESSION:" -> "BlockID: 1764
+Call context: 
+None
+targetIdle(uint256) := TMP_1626(uint256)
+TMP_1627 = CONVERT getBaseInterestAllocator to IBaseInterestAllocator
+HIGH_LEVEL_CALL, dest:TMP_1627(IBaseInterestAllocator), function:reallocate, arguments:['currentBalance', 'targetIdle', 'False']  
+EXPRESSION:targetIdle = total.mulDivDown(optimalIdleRange.mid,PRINCIPAL_PRECISION)	NodeType.VARIABLE
+targetIdle = total.mulDivDown(optimalIdleRange.mid,PRINCIPAL_PRECISION)	NodeType.EXPRESSION
+IBaseInterestAllocator(getBaseInterestAllocator).reallocate(currentBalance,targetIdle,false)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1764
+Call context: 
+None
+targetIdle(uint256) := TMP_1626(uint256)
+TMP_1627 = CONVERT getBaseInterestAllocator to IBaseInterestAllocator
+HIGH_LEVEL_CALL, dest:TMP_1627(IBaseInterestAllocator), function:reallocate, arguments:['currentBalance', 'targetIdle', 'False']  
+EXPRESSION:targetIdle = total.mulDivDown(optimalIdleRange.mid,PRINCIPAL_PRECISION)	NodeType.VARIABLE
+targetIdle = total.mulDivDown(optimalIdleRange.mid,PRINCIPAL_PRECISION)	NodeType.EXPRESSION
+IBaseInterestAllocator(getBaseInterestAllocator).reallocate(currentBalance,targetIdle,false)	NodeType.EXPRESSION" -> "BlockID: 1765
+Call context: 
+None
+RETURN currentBalance,targetIdle
+EXPRESSION:IBaseInterestAllocator(getBaseInterestAllocator).reallocate(currentBalance,targetIdle,false)	NodeType.EXPRESSION
+(currentBalance,targetIdle)	NodeType.RETURN" [key=0];
+}

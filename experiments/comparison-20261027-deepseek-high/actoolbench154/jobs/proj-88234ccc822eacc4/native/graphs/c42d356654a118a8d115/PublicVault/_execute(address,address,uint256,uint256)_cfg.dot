@@ -1,0 +1,505 @@
+digraph {
+"BlockID: 1823
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1824
+Call context: 
+None
+TMP_1210(address) = INTERNAL_CALL, Clone._getArgAddress(uint256)(0)
+EXPRESSION:";
+"BlockID: 1825
+Call context: 
+None
+TMP_1211 = CONVERT TMP_1210 to IAstariaRouter
+ASTARIA_ROUTER(IAstariaRouter) := TMP_1211(IAstariaRouter)
+TMP_1212(ClearingHouse.ClearingHouseStorage) = INTERNAL_CALL, ClearingHouse._getStorage()()
+EXPRESSION:ASTARIA_ROUTER = IAstariaRouter(_getArgAddress(0))	NodeType.VARIABLE
+ASTARIA_ROUTER = IAstariaRouter(_getArgAddress(0))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1826
+Call context: 
+None
+s(ClearingHouse.ClearingHouseStorage) := TMP_1212(ClearingHouse.ClearingHouseStorage)
+TMP_1213 = CONVERT encodedMetaData to bytes32
+TMP_1214(address) = LIBRARY_CALL, dest:Bytes32AddressLib, function:Bytes32AddressLib.fromLast20Bytes(bytes32), arguments:['TMP_1213'] 
+EXPRESSION:s = _getStorage()	NodeType.VARIABLE
+s = _getStorage()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1827
+Call context: 
+None
+paymentToken(address) := TMP_1214(address)
+REF_353(ILienToken.AuctionData) -> s.auctionStack
+REF_354(uint88) -> REF_353.startAmount
+REF_355(ILienToken.AuctionData) -> s.auctionStack
+REF_356(uint88) -> REF_355.endAmount
+REF_357(ILienToken.AuctionData) -> s.auctionStack
+REF_358(uint48) -> REF_357.startTime
+REF_359(ILienToken.AuctionData) -> s.auctionStack
+REF_360(uint48) -> REF_359.endTime
+TMP_1215(uint256) = INTERNAL_CALL, AmountDeriver._locateCurrentAmount(uint256,uint256,uint256,uint256,bool)(REF_354,REF_356,REF_358,REF_360,True)
+EXPRESSION:paymentToken = bytes32(encodedMetaData).fromLast20Bytes()	NodeType.VARIABLE
+paymentToken = bytes32(encodedMetaData).fromLast20Bytes()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1828
+Call context: 
+None
+currentOfferPrice(uint256) := TMP_1215(uint256)
+TMP_1216 = CONVERT paymentToken to ERC20
+TMP_1217 = CONVERT this to address
+TMP_1218(uint256) = HIGH_LEVEL_CALL, dest:TMP_1216(ERC20), function:balanceOf, arguments:['TMP_1217']  
+EXPRESSION:currentOfferPrice = _locateCurrentAmount(s.auctionStack.startAmount,s.auctionStack.endAmount,s.auctionStack.startTime,s.auctionStack.endTime,true)	NodeType.VARIABLE
+currentOfferPrice = _locateCurrentAmount(s.auctionStack.startAmount,s.auctionStack.endAmount,s.auctionStack.startTime,s.auctionStack.endTime,true)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1830
+Call context: 
+True
+TMP_1221(uint256) = INTERNAL_CALL, Clone._getArgUint256(uint256)(21)
+EXPRESSION:";
+"BlockID: 1831
+Call context: 
+None
+collateralId(uint256) := TMP_1221(uint256)
+REF_362(ILienToken.AuctionData) -> s.auctionStack
+REF_363(ILienToken.AuctionStack[]) -> REF_362.stack
+stack(ILienToken.AuctionStack[]) =  ['REF_363(ILienToken.AuctionStack[])']
+TMP_1222(uint256) = HIGH_LEVEL_CALL, dest:ASTARIA_ROUTER(IAstariaRouter), function:getLiquidatorFee, arguments:['payment']  
+EXPRESSION:collateralId = _getArgUint256(21)	NodeType.VARIABLE
+collateralId = _getArgUint256(21)	NodeType.EXPRESSION
+stack = s.auctionStack.stack	NodeType.VARIABLE
+stack = s.auctionStack.stack	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1832
+Call context: 
+None
+liquidatorPayment(uint256) := TMP_1222(uint256)
+TMP_1223 = CONVERT paymentToken to ERC20
+REF_366(ILienToken.AuctionData) -> s.auctionStack
+REF_367(address) -> REF_366.liquidator
+LIBRARY_CALL, dest:SafeTransferLib, function:SafeTransferLib.safeTransfer(ERC20,address,uint256), arguments:['TMP_1223', 'REF_367', 'liquidatorPayment'] 
+EXPRESSION:liquidatorPayment = ASTARIA_ROUTER.getLiquidatorFee(payment)	NodeType.VARIABLE
+liquidatorPayment = ASTARIA_ROUTER.getLiquidatorFee(payment)	NodeType.EXPRESSION
+ERC20(paymentToken).safeTransfer(s.auctionStack.liquidator,liquidatorPayment)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1833
+Call context: 
+None
+TMP_1225 = CONVERT paymentToken to ERC20
+TMP_1226(ITransferProxy) = HIGH_LEVEL_CALL, dest:ASTARIA_ROUTER(IAstariaRouter), function:TRANSFER_PROXY, arguments:[]  
+EXPRESSION:ERC20(paymentToken).safeTransfer(s.auctionStack.liquidator,liquidatorPayment)	NodeType.EXPRESSION
+ERC20(paymentToken).safeApprove(address(ASTARIA_ROUTER.TRANSFER_PROXY()),payment - liquidatorPayment)	NodeType.EXPRESSION";
+"BlockID: 1834
+Call context: 
+None
+TMP_1227 = CONVERT TMP_1226 to address
+TMP_1228(uint256) = payment (c)- liquidatorPayment
+LIBRARY_CALL, dest:SafeTransferLib, function:SafeTransferLib.safeApprove(ERC20,address,uint256), arguments:['TMP_1225', 'TMP_1227', 'TMP_1228'] 
+EXPRESSION:ERC20(paymentToken).safeApprove(address(ASTARIA_ROUTER.TRANSFER_PROXY()),payment - liquidatorPayment)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1835
+Call context: 
+None
+TMP_1230(ILienToken) = HIGH_LEVEL_CALL, dest:ASTARIA_ROUTER(IAstariaRouter), function:LIEN_TOKEN, arguments:[]  
+EXPRESSION:ERC20(paymentToken).safeApprove(address(ASTARIA_ROUTER.TRANSFER_PROXY()),payment - liquidatorPayment)	NodeType.EXPRESSION
+ASTARIA_ROUTER.LIEN_TOKEN().payDebtViaClearingHouse(paymentToken,collateralId,payment - liquidatorPayment,s.auctionStack.stack)	NodeType.EXPRESSION";
+"BlockID: 1836
+Call context: 
+None
+TMP_1231(uint256) = payment (c)- liquidatorPayment
+REF_372(ILienToken.AuctionData) -> s.auctionStack
+REF_373(ILienToken.AuctionStack[]) -> REF_372.stack
+HIGH_LEVEL_CALL, dest:TMP_1230(ILienToken), function:payDebtViaClearingHouse, arguments:['paymentToken', 'collateralId', 'TMP_1231', 'REF_373']  
+EXPRESSION:ASTARIA_ROUTER.LIEN_TOKEN().payDebtViaClearingHouse(paymentToken,collateralId,payment - liquidatorPayment,s.auctionStack.stack)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1837
+Call context: 
+None
+TMP_1233 = CONVERT paymentToken to ERC20
+TMP_1234 = CONVERT this to address
+TMP_1235(uint256) = HIGH_LEVEL_CALL, dest:TMP_1233(ERC20), function:balanceOf, arguments:['TMP_1234']  
+EXPRESSION:ASTARIA_ROUTER.LIEN_TOKEN().payDebtViaClearingHouse(paymentToken,collateralId,payment - liquidatorPayment,s.auctionStack.stack)	NodeType.EXPRESSION
+ERC20(paymentToken).balanceOf(address(this)) > 0	NodeType.EXPRESSION";
+"BlockID: 1838
+Call context: 
+None
+TMP_1236(bool) = TMP_1235 > 0
+CONDITION TMP_1236
+EXPRESSION:ERC20(paymentToken).balanceOf(address(this)) > 0	NodeType.IF" [shape=box];
+"BlockID: 1839
+Call context: 
+True
+TMP_1237 = CONVERT paymentToken to ERC20
+TMP_1238(ICollateralToken) = HIGH_LEVEL_CALL, dest:ASTARIA_ROUTER(IAstariaRouter), function:COLLATERAL_TOKEN, arguments:[]  
+EXPRESSION:ERC20(paymentToken).safeTransfer(ASTARIA_ROUTER.COLLATERAL_TOKEN().ownerOf(collateralId),ERC20(paymentToken).balanceOf(address(this)))	NodeType.EXPRESSION";
+"BlockID: 1844
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1845
+Call context: 
+None
+TMP_1244(ICollateralToken) = HIGH_LEVEL_CALL, dest:ASTARIA_ROUTER(IAstariaRouter), function:COLLATERAL_TOKEN, arguments:[]  
+EXPRESSION:ASTARIA_ROUTER.COLLATERAL_TOKEN().settleAuction(collateralId)	NodeType.EXPRESSION";
+"BlockID: 1846
+Call context: 
+None
+HIGH_LEVEL_CALL, dest:TMP_1244(ICollateralToken), function:settleAuction, arguments:['collateralId']  
+EXPRESSION:ASTARIA_ROUTER.COLLATERAL_TOKEN().settleAuction(collateralId)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1840
+Call context: 
+None
+TMP_1239(address) = HIGH_LEVEL_CALL, dest:TMP_1238(ICollateralToken), function:ownerOf, arguments:['collateralId']  
+EXPRESSION:ERC20(paymentToken).safeTransfer(ASTARIA_ROUTER.COLLATERAL_TOKEN().ownerOf(collateralId),ERC20(paymentToken).balanceOf(address(this)))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1841
+Call context: 
+None
+TMP_1240 = CONVERT paymentToken to ERC20
+TMP_1241 = CONVERT this to address
+TMP_1242(uint256) = HIGH_LEVEL_CALL, dest:TMP_1240(ERC20), function:balanceOf, arguments:['TMP_1241']  
+EXPRESSION:ERC20(paymentToken).safeTransfer(ASTARIA_ROUTER.COLLATERAL_TOKEN().ownerOf(collateralId),ERC20(paymentToken).balanceOf(address(this)))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1842
+Call context: 
+None
+LIBRARY_CALL, dest:SafeTransferLib, function:SafeTransferLib.safeTransfer(ERC20,address,uint256), arguments:['TMP_1237', 'TMP_1239', 'TMP_1242'] 
+EXPRESSION:ERC20(paymentToken).safeTransfer(ASTARIA_ROUTER.COLLATERAL_TOKEN().ownerOf(collateralId),ERC20(paymentToken).balanceOf(address(this)))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1848
+Call context: 
+None
+payment(uint256) := TMP_1218(uint256)
+TMP_1219(bool) = payment >= currentOfferPrice
+CONDITION TMP_1219
+EXPRESSION:TMP_1219(bool) = payment >= currentOfferPrice	NodeType.IF";
+"BlockID: 1849
+Call context: 
+True
+TMP_1220(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 1850
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1823
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1824
+Call context: 
+None
+TMP_1210(address) = INTERNAL_CALL, Clone._getArgAddress(uint256)(0)
+EXPRESSION:" [key=0];
+"BlockID: 1824
+Call context: 
+None
+TMP_1210(address) = INTERNAL_CALL, Clone._getArgAddress(uint256)(0)
+EXPRESSION:" -> "BlockID: 1825
+Call context: 
+None
+TMP_1211 = CONVERT TMP_1210 to IAstariaRouter
+ASTARIA_ROUTER(IAstariaRouter) := TMP_1211(IAstariaRouter)
+TMP_1212(ClearingHouse.ClearingHouseStorage) = INTERNAL_CALL, ClearingHouse._getStorage()()
+EXPRESSION:ASTARIA_ROUTER = IAstariaRouter(_getArgAddress(0))	NodeType.VARIABLE
+ASTARIA_ROUTER = IAstariaRouter(_getArgAddress(0))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1825
+Call context: 
+None
+TMP_1211 = CONVERT TMP_1210 to IAstariaRouter
+ASTARIA_ROUTER(IAstariaRouter) := TMP_1211(IAstariaRouter)
+TMP_1212(ClearingHouse.ClearingHouseStorage) = INTERNAL_CALL, ClearingHouse._getStorage()()
+EXPRESSION:ASTARIA_ROUTER = IAstariaRouter(_getArgAddress(0))	NodeType.VARIABLE
+ASTARIA_ROUTER = IAstariaRouter(_getArgAddress(0))	NodeType.EXPRESSION" -> "BlockID: 1826
+Call context: 
+None
+s(ClearingHouse.ClearingHouseStorage) := TMP_1212(ClearingHouse.ClearingHouseStorage)
+TMP_1213 = CONVERT encodedMetaData to bytes32
+TMP_1214(address) = LIBRARY_CALL, dest:Bytes32AddressLib, function:Bytes32AddressLib.fromLast20Bytes(bytes32), arguments:['TMP_1213'] 
+EXPRESSION:s = _getStorage()	NodeType.VARIABLE
+s = _getStorage()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1826
+Call context: 
+None
+s(ClearingHouse.ClearingHouseStorage) := TMP_1212(ClearingHouse.ClearingHouseStorage)
+TMP_1213 = CONVERT encodedMetaData to bytes32
+TMP_1214(address) = LIBRARY_CALL, dest:Bytes32AddressLib, function:Bytes32AddressLib.fromLast20Bytes(bytes32), arguments:['TMP_1213'] 
+EXPRESSION:s = _getStorage()	NodeType.VARIABLE
+s = _getStorage()	NodeType.EXPRESSION" -> "BlockID: 1827
+Call context: 
+None
+paymentToken(address) := TMP_1214(address)
+REF_353(ILienToken.AuctionData) -> s.auctionStack
+REF_354(uint88) -> REF_353.startAmount
+REF_355(ILienToken.AuctionData) -> s.auctionStack
+REF_356(uint88) -> REF_355.endAmount
+REF_357(ILienToken.AuctionData) -> s.auctionStack
+REF_358(uint48) -> REF_357.startTime
+REF_359(ILienToken.AuctionData) -> s.auctionStack
+REF_360(uint48) -> REF_359.endTime
+TMP_1215(uint256) = INTERNAL_CALL, AmountDeriver._locateCurrentAmount(uint256,uint256,uint256,uint256,bool)(REF_354,REF_356,REF_358,REF_360,True)
+EXPRESSION:paymentToken = bytes32(encodedMetaData).fromLast20Bytes()	NodeType.VARIABLE
+paymentToken = bytes32(encodedMetaData).fromLast20Bytes()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1827
+Call context: 
+None
+paymentToken(address) := TMP_1214(address)
+REF_353(ILienToken.AuctionData) -> s.auctionStack
+REF_354(uint88) -> REF_353.startAmount
+REF_355(ILienToken.AuctionData) -> s.auctionStack
+REF_356(uint88) -> REF_355.endAmount
+REF_357(ILienToken.AuctionData) -> s.auctionStack
+REF_358(uint48) -> REF_357.startTime
+REF_359(ILienToken.AuctionData) -> s.auctionStack
+REF_360(uint48) -> REF_359.endTime
+TMP_1215(uint256) = INTERNAL_CALL, AmountDeriver._locateCurrentAmount(uint256,uint256,uint256,uint256,bool)(REF_354,REF_356,REF_358,REF_360,True)
+EXPRESSION:paymentToken = bytes32(encodedMetaData).fromLast20Bytes()	NodeType.VARIABLE
+paymentToken = bytes32(encodedMetaData).fromLast20Bytes()	NodeType.EXPRESSION" -> "BlockID: 1828
+Call context: 
+None
+currentOfferPrice(uint256) := TMP_1215(uint256)
+TMP_1216 = CONVERT paymentToken to ERC20
+TMP_1217 = CONVERT this to address
+TMP_1218(uint256) = HIGH_LEVEL_CALL, dest:TMP_1216(ERC20), function:balanceOf, arguments:['TMP_1217']  
+EXPRESSION:currentOfferPrice = _locateCurrentAmount(s.auctionStack.startAmount,s.auctionStack.endAmount,s.auctionStack.startTime,s.auctionStack.endTime,true)	NodeType.VARIABLE
+currentOfferPrice = _locateCurrentAmount(s.auctionStack.startAmount,s.auctionStack.endAmount,s.auctionStack.startTime,s.auctionStack.endTime,true)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1828
+Call context: 
+None
+currentOfferPrice(uint256) := TMP_1215(uint256)
+TMP_1216 = CONVERT paymentToken to ERC20
+TMP_1217 = CONVERT this to address
+TMP_1218(uint256) = HIGH_LEVEL_CALL, dest:TMP_1216(ERC20), function:balanceOf, arguments:['TMP_1217']  
+EXPRESSION:currentOfferPrice = _locateCurrentAmount(s.auctionStack.startAmount,s.auctionStack.endAmount,s.auctionStack.startTime,s.auctionStack.endTime,true)	NodeType.VARIABLE
+currentOfferPrice = _locateCurrentAmount(s.auctionStack.startAmount,s.auctionStack.endAmount,s.auctionStack.startTime,s.auctionStack.endTime,true)	NodeType.EXPRESSION" -> "BlockID: 1848
+Call context: 
+None
+payment(uint256) := TMP_1218(uint256)
+TMP_1219(bool) = payment >= currentOfferPrice
+CONDITION TMP_1219
+EXPRESSION:TMP_1219(bool) = payment >= currentOfferPrice	NodeType.IF" [key=0];
+"BlockID: 1830
+Call context: 
+True
+TMP_1221(uint256) = INTERNAL_CALL, Clone._getArgUint256(uint256)(21)
+EXPRESSION:" -> "BlockID: 1831
+Call context: 
+None
+collateralId(uint256) := TMP_1221(uint256)
+REF_362(ILienToken.AuctionData) -> s.auctionStack
+REF_363(ILienToken.AuctionStack[]) -> REF_362.stack
+stack(ILienToken.AuctionStack[]) =  ['REF_363(ILienToken.AuctionStack[])']
+TMP_1222(uint256) = HIGH_LEVEL_CALL, dest:ASTARIA_ROUTER(IAstariaRouter), function:getLiquidatorFee, arguments:['payment']  
+EXPRESSION:collateralId = _getArgUint256(21)	NodeType.VARIABLE
+collateralId = _getArgUint256(21)	NodeType.EXPRESSION
+stack = s.auctionStack.stack	NodeType.VARIABLE
+stack = s.auctionStack.stack	NodeType.EXPRESSION" [key=0];
+"BlockID: 1831
+Call context: 
+None
+collateralId(uint256) := TMP_1221(uint256)
+REF_362(ILienToken.AuctionData) -> s.auctionStack
+REF_363(ILienToken.AuctionStack[]) -> REF_362.stack
+stack(ILienToken.AuctionStack[]) =  ['REF_363(ILienToken.AuctionStack[])']
+TMP_1222(uint256) = HIGH_LEVEL_CALL, dest:ASTARIA_ROUTER(IAstariaRouter), function:getLiquidatorFee, arguments:['payment']  
+EXPRESSION:collateralId = _getArgUint256(21)	NodeType.VARIABLE
+collateralId = _getArgUint256(21)	NodeType.EXPRESSION
+stack = s.auctionStack.stack	NodeType.VARIABLE
+stack = s.auctionStack.stack	NodeType.EXPRESSION" -> "BlockID: 1832
+Call context: 
+None
+liquidatorPayment(uint256) := TMP_1222(uint256)
+TMP_1223 = CONVERT paymentToken to ERC20
+REF_366(ILienToken.AuctionData) -> s.auctionStack
+REF_367(address) -> REF_366.liquidator
+LIBRARY_CALL, dest:SafeTransferLib, function:SafeTransferLib.safeTransfer(ERC20,address,uint256), arguments:['TMP_1223', 'REF_367', 'liquidatorPayment'] 
+EXPRESSION:liquidatorPayment = ASTARIA_ROUTER.getLiquidatorFee(payment)	NodeType.VARIABLE
+liquidatorPayment = ASTARIA_ROUTER.getLiquidatorFee(payment)	NodeType.EXPRESSION
+ERC20(paymentToken).safeTransfer(s.auctionStack.liquidator,liquidatorPayment)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1832
+Call context: 
+None
+liquidatorPayment(uint256) := TMP_1222(uint256)
+TMP_1223 = CONVERT paymentToken to ERC20
+REF_366(ILienToken.AuctionData) -> s.auctionStack
+REF_367(address) -> REF_366.liquidator
+LIBRARY_CALL, dest:SafeTransferLib, function:SafeTransferLib.safeTransfer(ERC20,address,uint256), arguments:['TMP_1223', 'REF_367', 'liquidatorPayment'] 
+EXPRESSION:liquidatorPayment = ASTARIA_ROUTER.getLiquidatorFee(payment)	NodeType.VARIABLE
+liquidatorPayment = ASTARIA_ROUTER.getLiquidatorFee(payment)	NodeType.EXPRESSION
+ERC20(paymentToken).safeTransfer(s.auctionStack.liquidator,liquidatorPayment)	NodeType.EXPRESSION" -> "BlockID: 1833
+Call context: 
+None
+TMP_1225 = CONVERT paymentToken to ERC20
+TMP_1226(ITransferProxy) = HIGH_LEVEL_CALL, dest:ASTARIA_ROUTER(IAstariaRouter), function:TRANSFER_PROXY, arguments:[]  
+EXPRESSION:ERC20(paymentToken).safeTransfer(s.auctionStack.liquidator,liquidatorPayment)	NodeType.EXPRESSION
+ERC20(paymentToken).safeApprove(address(ASTARIA_ROUTER.TRANSFER_PROXY()),payment - liquidatorPayment)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1833
+Call context: 
+None
+TMP_1225 = CONVERT paymentToken to ERC20
+TMP_1226(ITransferProxy) = HIGH_LEVEL_CALL, dest:ASTARIA_ROUTER(IAstariaRouter), function:TRANSFER_PROXY, arguments:[]  
+EXPRESSION:ERC20(paymentToken).safeTransfer(s.auctionStack.liquidator,liquidatorPayment)	NodeType.EXPRESSION
+ERC20(paymentToken).safeApprove(address(ASTARIA_ROUTER.TRANSFER_PROXY()),payment - liquidatorPayment)	NodeType.EXPRESSION" -> "BlockID: 1834
+Call context: 
+None
+TMP_1227 = CONVERT TMP_1226 to address
+TMP_1228(uint256) = payment (c)- liquidatorPayment
+LIBRARY_CALL, dest:SafeTransferLib, function:SafeTransferLib.safeApprove(ERC20,address,uint256), arguments:['TMP_1225', 'TMP_1227', 'TMP_1228'] 
+EXPRESSION:ERC20(paymentToken).safeApprove(address(ASTARIA_ROUTER.TRANSFER_PROXY()),payment - liquidatorPayment)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1834
+Call context: 
+None
+TMP_1227 = CONVERT TMP_1226 to address
+TMP_1228(uint256) = payment (c)- liquidatorPayment
+LIBRARY_CALL, dest:SafeTransferLib, function:SafeTransferLib.safeApprove(ERC20,address,uint256), arguments:['TMP_1225', 'TMP_1227', 'TMP_1228'] 
+EXPRESSION:ERC20(paymentToken).safeApprove(address(ASTARIA_ROUTER.TRANSFER_PROXY()),payment - liquidatorPayment)	NodeType.EXPRESSION" -> "BlockID: 1835
+Call context: 
+None
+TMP_1230(ILienToken) = HIGH_LEVEL_CALL, dest:ASTARIA_ROUTER(IAstariaRouter), function:LIEN_TOKEN, arguments:[]  
+EXPRESSION:ERC20(paymentToken).safeApprove(address(ASTARIA_ROUTER.TRANSFER_PROXY()),payment - liquidatorPayment)	NodeType.EXPRESSION
+ASTARIA_ROUTER.LIEN_TOKEN().payDebtViaClearingHouse(paymentToken,collateralId,payment - liquidatorPayment,s.auctionStack.stack)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1835
+Call context: 
+None
+TMP_1230(ILienToken) = HIGH_LEVEL_CALL, dest:ASTARIA_ROUTER(IAstariaRouter), function:LIEN_TOKEN, arguments:[]  
+EXPRESSION:ERC20(paymentToken).safeApprove(address(ASTARIA_ROUTER.TRANSFER_PROXY()),payment - liquidatorPayment)	NodeType.EXPRESSION
+ASTARIA_ROUTER.LIEN_TOKEN().payDebtViaClearingHouse(paymentToken,collateralId,payment - liquidatorPayment,s.auctionStack.stack)	NodeType.EXPRESSION" -> "BlockID: 1836
+Call context: 
+None
+TMP_1231(uint256) = payment (c)- liquidatorPayment
+REF_372(ILienToken.AuctionData) -> s.auctionStack
+REF_373(ILienToken.AuctionStack[]) -> REF_372.stack
+HIGH_LEVEL_CALL, dest:TMP_1230(ILienToken), function:payDebtViaClearingHouse, arguments:['paymentToken', 'collateralId', 'TMP_1231', 'REF_373']  
+EXPRESSION:ASTARIA_ROUTER.LIEN_TOKEN().payDebtViaClearingHouse(paymentToken,collateralId,payment - liquidatorPayment,s.auctionStack.stack)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1836
+Call context: 
+None
+TMP_1231(uint256) = payment (c)- liquidatorPayment
+REF_372(ILienToken.AuctionData) -> s.auctionStack
+REF_373(ILienToken.AuctionStack[]) -> REF_372.stack
+HIGH_LEVEL_CALL, dest:TMP_1230(ILienToken), function:payDebtViaClearingHouse, arguments:['paymentToken', 'collateralId', 'TMP_1231', 'REF_373']  
+EXPRESSION:ASTARIA_ROUTER.LIEN_TOKEN().payDebtViaClearingHouse(paymentToken,collateralId,payment - liquidatorPayment,s.auctionStack.stack)	NodeType.EXPRESSION" -> "BlockID: 1837
+Call context: 
+None
+TMP_1233 = CONVERT paymentToken to ERC20
+TMP_1234 = CONVERT this to address
+TMP_1235(uint256) = HIGH_LEVEL_CALL, dest:TMP_1233(ERC20), function:balanceOf, arguments:['TMP_1234']  
+EXPRESSION:ASTARIA_ROUTER.LIEN_TOKEN().payDebtViaClearingHouse(paymentToken,collateralId,payment - liquidatorPayment,s.auctionStack.stack)	NodeType.EXPRESSION
+ERC20(paymentToken).balanceOf(address(this)) > 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 1837
+Call context: 
+None
+TMP_1233 = CONVERT paymentToken to ERC20
+TMP_1234 = CONVERT this to address
+TMP_1235(uint256) = HIGH_LEVEL_CALL, dest:TMP_1233(ERC20), function:balanceOf, arguments:['TMP_1234']  
+EXPRESSION:ASTARIA_ROUTER.LIEN_TOKEN().payDebtViaClearingHouse(paymentToken,collateralId,payment - liquidatorPayment,s.auctionStack.stack)	NodeType.EXPRESSION
+ERC20(paymentToken).balanceOf(address(this)) > 0	NodeType.EXPRESSION" -> "BlockID: 1838
+Call context: 
+None
+TMP_1236(bool) = TMP_1235 > 0
+CONDITION TMP_1236
+EXPRESSION:ERC20(paymentToken).balanceOf(address(this)) > 0	NodeType.IF" [key=0];
+"BlockID: 1838
+Call context: 
+None
+TMP_1236(bool) = TMP_1235 > 0
+CONDITION TMP_1236
+EXPRESSION:ERC20(paymentToken).balanceOf(address(this)) > 0	NodeType.IF" -> "BlockID: 1839
+Call context: 
+True
+TMP_1237 = CONVERT paymentToken to ERC20
+TMP_1238(ICollateralToken) = HIGH_LEVEL_CALL, dest:ASTARIA_ROUTER(IAstariaRouter), function:COLLATERAL_TOKEN, arguments:[]  
+EXPRESSION:ERC20(paymentToken).safeTransfer(ASTARIA_ROUTER.COLLATERAL_TOKEN().ownerOf(collateralId),ERC20(paymentToken).balanceOf(address(this)))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1838
+Call context: 
+None
+TMP_1236(bool) = TMP_1235 > 0
+CONDITION TMP_1236
+EXPRESSION:ERC20(paymentToken).balanceOf(address(this)) > 0	NodeType.IF" -> "BlockID: 1844
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1839
+Call context: 
+True
+TMP_1237 = CONVERT paymentToken to ERC20
+TMP_1238(ICollateralToken) = HIGH_LEVEL_CALL, dest:ASTARIA_ROUTER(IAstariaRouter), function:COLLATERAL_TOKEN, arguments:[]  
+EXPRESSION:ERC20(paymentToken).safeTransfer(ASTARIA_ROUTER.COLLATERAL_TOKEN().ownerOf(collateralId),ERC20(paymentToken).balanceOf(address(this)))	NodeType.EXPRESSION" -> "BlockID: 1840
+Call context: 
+None
+TMP_1239(address) = HIGH_LEVEL_CALL, dest:TMP_1238(ICollateralToken), function:ownerOf, arguments:['collateralId']  
+EXPRESSION:ERC20(paymentToken).safeTransfer(ASTARIA_ROUTER.COLLATERAL_TOKEN().ownerOf(collateralId),ERC20(paymentToken).balanceOf(address(this)))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1844
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1845
+Call context: 
+None
+TMP_1244(ICollateralToken) = HIGH_LEVEL_CALL, dest:ASTARIA_ROUTER(IAstariaRouter), function:COLLATERAL_TOKEN, arguments:[]  
+EXPRESSION:ASTARIA_ROUTER.COLLATERAL_TOKEN().settleAuction(collateralId)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1845
+Call context: 
+None
+TMP_1244(ICollateralToken) = HIGH_LEVEL_CALL, dest:ASTARIA_ROUTER(IAstariaRouter), function:COLLATERAL_TOKEN, arguments:[]  
+EXPRESSION:ASTARIA_ROUTER.COLLATERAL_TOKEN().settleAuction(collateralId)	NodeType.EXPRESSION" -> "BlockID: 1846
+Call context: 
+None
+HIGH_LEVEL_CALL, dest:TMP_1244(ICollateralToken), function:settleAuction, arguments:['collateralId']  
+EXPRESSION:ASTARIA_ROUTER.COLLATERAL_TOKEN().settleAuction(collateralId)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1840
+Call context: 
+None
+TMP_1239(address) = HIGH_LEVEL_CALL, dest:TMP_1238(ICollateralToken), function:ownerOf, arguments:['collateralId']  
+EXPRESSION:ERC20(paymentToken).safeTransfer(ASTARIA_ROUTER.COLLATERAL_TOKEN().ownerOf(collateralId),ERC20(paymentToken).balanceOf(address(this)))	NodeType.EXPRESSION" -> "BlockID: 1841
+Call context: 
+None
+TMP_1240 = CONVERT paymentToken to ERC20
+TMP_1241 = CONVERT this to address
+TMP_1242(uint256) = HIGH_LEVEL_CALL, dest:TMP_1240(ERC20), function:balanceOf, arguments:['TMP_1241']  
+EXPRESSION:ERC20(paymentToken).safeTransfer(ASTARIA_ROUTER.COLLATERAL_TOKEN().ownerOf(collateralId),ERC20(paymentToken).balanceOf(address(this)))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1841
+Call context: 
+None
+TMP_1240 = CONVERT paymentToken to ERC20
+TMP_1241 = CONVERT this to address
+TMP_1242(uint256) = HIGH_LEVEL_CALL, dest:TMP_1240(ERC20), function:balanceOf, arguments:['TMP_1241']  
+EXPRESSION:ERC20(paymentToken).safeTransfer(ASTARIA_ROUTER.COLLATERAL_TOKEN().ownerOf(collateralId),ERC20(paymentToken).balanceOf(address(this)))	NodeType.EXPRESSION" -> "BlockID: 1842
+Call context: 
+None
+LIBRARY_CALL, dest:SafeTransferLib, function:SafeTransferLib.safeTransfer(ERC20,address,uint256), arguments:['TMP_1237', 'TMP_1239', 'TMP_1242'] 
+EXPRESSION:ERC20(paymentToken).safeTransfer(ASTARIA_ROUTER.COLLATERAL_TOKEN().ownerOf(collateralId),ERC20(paymentToken).balanceOf(address(this)))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1842
+Call context: 
+None
+LIBRARY_CALL, dest:SafeTransferLib, function:SafeTransferLib.safeTransfer(ERC20,address,uint256), arguments:['TMP_1237', 'TMP_1239', 'TMP_1242'] 
+EXPRESSION:ERC20(paymentToken).safeTransfer(ASTARIA_ROUTER.COLLATERAL_TOKEN().ownerOf(collateralId),ERC20(paymentToken).balanceOf(address(this)))	NodeType.EXPRESSION" -> "BlockID: 1844
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1848
+Call context: 
+None
+payment(uint256) := TMP_1218(uint256)
+TMP_1219(bool) = payment >= currentOfferPrice
+CONDITION TMP_1219
+EXPRESSION:TMP_1219(bool) = payment >= currentOfferPrice	NodeType.IF" -> "BlockID: 1849
+Call context: 
+True
+TMP_1220(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1848
+Call context: 
+None
+payment(uint256) := TMP_1218(uint256)
+TMP_1219(bool) = payment >= currentOfferPrice
+CONDITION TMP_1219
+EXPRESSION:TMP_1219(bool) = payment >= currentOfferPrice	NodeType.IF" -> "BlockID: 1850
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1850
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1830
+Call context: 
+True
+TMP_1221(uint256) = INTERNAL_CALL, Clone._getArgUint256(uint256)(21)
+EXPRESSION:" [key=0];
+}

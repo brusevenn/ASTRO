@@ -1,0 +1,821 @@
+digraph {
+"BlockID: 156
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 157
+Call context: 
+None
+REF_49(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+t(Escrow_v1_0.Transaction) := REF_49(Escrow_v1_0.Transaction)
+valueTransferred(uint256) := 0(uint256)
+REF_50(Escrow_v1_0.TransactionType) -> t.transactionType
+REF_51(Escrow_v1_0.TransactionType) -> TransactionType.ETHER
+TMP_62(bool) = REF_50 == REF_51
+CONDITION TMP_62
+EXPRESSION:t = transactions[scriptHash]	NodeType.VARIABLE
+t = transactions[scriptHash]	NodeType.EXPRESSION
+valueTransferred = 0	NodeType.VARIABLE
+valueTransferred = 0	NodeType.EXPRESSION
+t.transactionType == TransactionType.ETHER	NodeType.IF";
+"BlockID: 158
+Call context: 
+True
+i(uint256) := 0(uint256)
+EXPRESSION:i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION";
+"BlockID: 159
+Call context: 
+False
+REF_66(Escrow_v1_0.TransactionType) -> t.transactionType
+REF_67(Escrow_v1_0.TransactionType) -> TransactionType.TOKEN
+TMP_73(bool) = REF_66 == REF_67
+CONDITION TMP_73
+EXPRESSION:t.transactionType == TransactionType.TOKEN	NodeType.IF";
+"BlockID: 160
+Call context: 
+True
+REF_68(address) -> t.tokenAddress
+TMP_74 = CONVERT REF_68 to ITokenContract
+token(ITokenContract) := TMP_74(ITokenContract)
+j(uint256) := 0(uint256)
+EXPRESSION:token = ITokenContract(t.tokenAddress)	NodeType.VARIABLE
+token = ITokenContract(t.tokenAddress)	NodeType.EXPRESSION
+j = 0	NodeType.VARIABLE
+j = 0	NodeType.EXPRESSION";
+"BlockID: 161
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 163
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 164
+Call context: 
+None
+RETURN valueTransferred
+EXPRESSION:valueTransferred	NodeType.RETURN";
+"BlockID: 165
+Call context: 
+None
+BEGIN_LOOP
+REF_69 -> LENGTH destinations
+TMP_75(bool) = j < REF_69
+CONDITION TMP_75
+EXPRESSION:None	NodeType.STARTLOOP
+j < destinations.length	NodeType.IFLOOP";
+"BlockID: 167
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 171
+Call context: 
+True
+REF_76(uint256) -> amounts[j]
+TMP_82(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['valueTransferred', 'REF_76'] 
+EXPRESSION:valueTransferred = valueTransferred.add(amounts[j])	NodeType.EXPRESSION";
+"BlockID: 172
+Call context: 
+None
+valueTransferred(uint256) := TMP_82(uint256)
+REF_77(mapping(address => bool)) -> t.beneficiaries
+REF_78(address) -> destinations[j]
+REF_79(bool) -> REF_77[REF_78]
+REF_79(bool) (->t) := True(bool)
+REF_81(address) -> destinations[j]
+REF_82(uint256) -> amounts[j]
+TMP_83(bool) = HIGH_LEVEL_CALL, dest:token(ITokenContract), function:transfer, arguments:['REF_81', 'REF_82']  
+EXPRESSION:valueTransferred = valueTransferred.add(amounts[j])	NodeType.EXPRESSION
+t.beneficiaries[destinations[j]] = true	NodeType.EXPRESSION
+require(bool,string)(token.transfer(destinations[j],amounts[j]),Token transfer failed.)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 174
+Call context: 
+True
+TMP_85(uint256) := j(uint256)
+j(uint256) = j + 1
+EXPRESSION:j ++	NodeType.EXPRESSION";
+"BlockID: 175
+Call context: 
+None
+BEGIN_LOOP
+REF_52 -> LENGTH destinations
+TMP_63(bool) = i < REF_52
+CONDITION TMP_63
+EXPRESSION:None	NodeType.STARTLOOP
+i < destinations.length	NodeType.IFLOOP";
+"BlockID: 177
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 181
+Call context: 
+True
+REF_59(uint256) -> amounts[i]
+TMP_70(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['valueTransferred', 'REF_59'] 
+EXPRESSION:valueTransferred = valueTransferred.add(amounts[i])	NodeType.EXPRESSION";
+"BlockID: 182
+Call context: 
+None
+valueTransferred(uint256) := TMP_70(uint256)
+REF_60(mapping(address => bool)) -> t.beneficiaries
+REF_61(address) -> destinations[i]
+REF_62(bool) -> REF_60[REF_61]
+REF_62(bool) (->t) := True(bool)
+REF_63(address) -> destinations[i]
+REF_65(uint256) -> amounts[i]
+Transfer dest:REF_63 value:REF_65
+EXPRESSION:valueTransferred = valueTransferred.add(amounts[i])	NodeType.EXPRESSION
+t.beneficiaries[destinations[i]] = true	NodeType.EXPRESSION
+destinations[i].transfer(amounts[i])	NodeType.EXPRESSION" [shape=box];
+"BlockID: 183
+Call context: 
+None
+TMP_72(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:destinations[i].transfer(amounts[i])	NodeType.EXPRESSION
+i ++	NodeType.EXPRESSION";
+"BlockID: 184
+Call context: 
+None
+REF_70(address) -> destinations[j]
+TMP_76 = CONVERT 0 to address
+TMP_77(bool) = REF_70 != TMP_76
+CONDITION TMP_77
+EXPRESSION:TMP_77(bool) = REF_70 != TMP_76	NodeType.IF";
+"BlockID: 185
+Call context: 
+True
+TMP_78(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 186
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 187
+Call context: 
+None
+REF_71(mapping(address => bool)) -> t.isOwner
+REF_72(address) -> destinations[j]
+REF_73(bool) -> REF_71[REF_72]
+CONDITION REF_73
+EXPRESSION:REF_73(bool) -> REF_71[REF_72]	NodeType.IF";
+"BlockID: 188
+Call context: 
+True
+TMP_79(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 189
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 190
+Call context: 
+None
+REF_74(uint256) -> amounts[j]
+TMP_80(bool) = REF_74 > 0
+CONDITION TMP_80
+EXPRESSION:TMP_80(bool) = REF_74 > 0	NodeType.IF";
+"BlockID: 191
+Call context: 
+True
+TMP_81(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 192
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 193
+Call context: 
+None
+CONDITION TMP_83
+EXPRESSION:qiantao require	NodeType.IF";
+"BlockID: 194
+Call context: 
+True
+TMP_84(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 195
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 196
+Call context: 
+None
+REF_53(address) -> destinations[i]
+TMP_64 = CONVERT 0 to address
+TMP_65(bool) = REF_53 != TMP_64
+CONDITION TMP_65
+EXPRESSION:TMP_65(bool) = REF_53 != TMP_64	NodeType.IF";
+"BlockID: 197
+Call context: 
+True
+TMP_66(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 198
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 199
+Call context: 
+None
+REF_54(mapping(address => bool)) -> t.isOwner
+REF_55(address) -> destinations[i]
+REF_56(bool) -> REF_54[REF_55]
+CONDITION REF_56
+EXPRESSION:REF_56(bool) -> REF_54[REF_55]	NodeType.IF";
+"BlockID: 200
+Call context: 
+True
+TMP_67(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 201
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 202
+Call context: 
+None
+REF_57(uint256) -> amounts[i]
+TMP_68(bool) = REF_57 > 0
+CONDITION TMP_68
+EXPRESSION:TMP_68(bool) = REF_57 > 0	NodeType.IF";
+"BlockID: 203
+Call context: 
+True
+TMP_69(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 204
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 156
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 157
+Call context: 
+None
+REF_49(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+t(Escrow_v1_0.Transaction) := REF_49(Escrow_v1_0.Transaction)
+valueTransferred(uint256) := 0(uint256)
+REF_50(Escrow_v1_0.TransactionType) -> t.transactionType
+REF_51(Escrow_v1_0.TransactionType) -> TransactionType.ETHER
+TMP_62(bool) = REF_50 == REF_51
+CONDITION TMP_62
+EXPRESSION:t = transactions[scriptHash]	NodeType.VARIABLE
+t = transactions[scriptHash]	NodeType.EXPRESSION
+valueTransferred = 0	NodeType.VARIABLE
+valueTransferred = 0	NodeType.EXPRESSION
+t.transactionType == TransactionType.ETHER	NodeType.IF" [key=0];
+"BlockID: 157
+Call context: 
+None
+REF_49(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+t(Escrow_v1_0.Transaction) := REF_49(Escrow_v1_0.Transaction)
+valueTransferred(uint256) := 0(uint256)
+REF_50(Escrow_v1_0.TransactionType) -> t.transactionType
+REF_51(Escrow_v1_0.TransactionType) -> TransactionType.ETHER
+TMP_62(bool) = REF_50 == REF_51
+CONDITION TMP_62
+EXPRESSION:t = transactions[scriptHash]	NodeType.VARIABLE
+t = transactions[scriptHash]	NodeType.EXPRESSION
+valueTransferred = 0	NodeType.VARIABLE
+valueTransferred = 0	NodeType.EXPRESSION
+t.transactionType == TransactionType.ETHER	NodeType.IF" -> "BlockID: 158
+Call context: 
+True
+i(uint256) := 0(uint256)
+EXPRESSION:i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 157
+Call context: 
+None
+REF_49(Escrow_v1_0.Transaction) -> transactions[scriptHash]
+t(Escrow_v1_0.Transaction) := REF_49(Escrow_v1_0.Transaction)
+valueTransferred(uint256) := 0(uint256)
+REF_50(Escrow_v1_0.TransactionType) -> t.transactionType
+REF_51(Escrow_v1_0.TransactionType) -> TransactionType.ETHER
+TMP_62(bool) = REF_50 == REF_51
+CONDITION TMP_62
+EXPRESSION:t = transactions[scriptHash]	NodeType.VARIABLE
+t = transactions[scriptHash]	NodeType.EXPRESSION
+valueTransferred = 0	NodeType.VARIABLE
+valueTransferred = 0	NodeType.EXPRESSION
+t.transactionType == TransactionType.ETHER	NodeType.IF" -> "BlockID: 159
+Call context: 
+False
+REF_66(Escrow_v1_0.TransactionType) -> t.transactionType
+REF_67(Escrow_v1_0.TransactionType) -> TransactionType.TOKEN
+TMP_73(bool) = REF_66 == REF_67
+CONDITION TMP_73
+EXPRESSION:t.transactionType == TransactionType.TOKEN	NodeType.IF" [key=0];
+"BlockID: 158
+Call context: 
+True
+i(uint256) := 0(uint256)
+EXPRESSION:i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" -> "BlockID: 175
+Call context: 
+None
+BEGIN_LOOP
+REF_52 -> LENGTH destinations
+TMP_63(bool) = i < REF_52
+CONDITION TMP_63
+EXPRESSION:None	NodeType.STARTLOOP
+i < destinations.length	NodeType.IFLOOP" [key=0];
+"BlockID: 159
+Call context: 
+False
+REF_66(Escrow_v1_0.TransactionType) -> t.transactionType
+REF_67(Escrow_v1_0.TransactionType) -> TransactionType.TOKEN
+TMP_73(bool) = REF_66 == REF_67
+CONDITION TMP_73
+EXPRESSION:t.transactionType == TransactionType.TOKEN	NodeType.IF" -> "BlockID: 160
+Call context: 
+True
+REF_68(address) -> t.tokenAddress
+TMP_74 = CONVERT REF_68 to ITokenContract
+token(ITokenContract) := TMP_74(ITokenContract)
+j(uint256) := 0(uint256)
+EXPRESSION:token = ITokenContract(t.tokenAddress)	NodeType.VARIABLE
+token = ITokenContract(t.tokenAddress)	NodeType.EXPRESSION
+j = 0	NodeType.VARIABLE
+j = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 159
+Call context: 
+False
+REF_66(Escrow_v1_0.TransactionType) -> t.transactionType
+REF_67(Escrow_v1_0.TransactionType) -> TransactionType.TOKEN
+TMP_73(bool) = REF_66 == REF_67
+CONDITION TMP_73
+EXPRESSION:t.transactionType == TransactionType.TOKEN	NodeType.IF" -> "BlockID: 161
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 160
+Call context: 
+True
+REF_68(address) -> t.tokenAddress
+TMP_74 = CONVERT REF_68 to ITokenContract
+token(ITokenContract) := TMP_74(ITokenContract)
+j(uint256) := 0(uint256)
+EXPRESSION:token = ITokenContract(t.tokenAddress)	NodeType.VARIABLE
+token = ITokenContract(t.tokenAddress)	NodeType.EXPRESSION
+j = 0	NodeType.VARIABLE
+j = 0	NodeType.EXPRESSION" -> "BlockID: 165
+Call context: 
+None
+BEGIN_LOOP
+REF_69 -> LENGTH destinations
+TMP_75(bool) = j < REF_69
+CONDITION TMP_75
+EXPRESSION:None	NodeType.STARTLOOP
+j < destinations.length	NodeType.IFLOOP" [key=0];
+"BlockID: 161
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 163
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 163
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 164
+Call context: 
+None
+RETURN valueTransferred
+EXPRESSION:valueTransferred	NodeType.RETURN" [key=0];
+"BlockID: 165
+Call context: 
+None
+BEGIN_LOOP
+REF_69 -> LENGTH destinations
+TMP_75(bool) = j < REF_69
+CONDITION TMP_75
+EXPRESSION:None	NodeType.STARTLOOP
+j < destinations.length	NodeType.IFLOOP" -> "BlockID: 167
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 165
+Call context: 
+None
+BEGIN_LOOP
+REF_69 -> LENGTH destinations
+TMP_75(bool) = j < REF_69
+CONDITION TMP_75
+EXPRESSION:None	NodeType.STARTLOOP
+j < destinations.length	NodeType.IFLOOP" -> "BlockID: 184
+Call context: 
+None
+REF_70(address) -> destinations[j]
+TMP_76 = CONVERT 0 to address
+TMP_77(bool) = REF_70 != TMP_76
+CONDITION TMP_77
+EXPRESSION:TMP_77(bool) = REF_70 != TMP_76	NodeType.IF" [key=0];
+"BlockID: 167
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 161
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 171
+Call context: 
+True
+REF_76(uint256) -> amounts[j]
+TMP_82(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['valueTransferred', 'REF_76'] 
+EXPRESSION:valueTransferred = valueTransferred.add(amounts[j])	NodeType.EXPRESSION" -> "BlockID: 172
+Call context: 
+None
+valueTransferred(uint256) := TMP_82(uint256)
+REF_77(mapping(address => bool)) -> t.beneficiaries
+REF_78(address) -> destinations[j]
+REF_79(bool) -> REF_77[REF_78]
+REF_79(bool) (->t) := True(bool)
+REF_81(address) -> destinations[j]
+REF_82(uint256) -> amounts[j]
+TMP_83(bool) = HIGH_LEVEL_CALL, dest:token(ITokenContract), function:transfer, arguments:['REF_81', 'REF_82']  
+EXPRESSION:valueTransferred = valueTransferred.add(amounts[j])	NodeType.EXPRESSION
+t.beneficiaries[destinations[j]] = true	NodeType.EXPRESSION
+require(bool,string)(token.transfer(destinations[j],amounts[j]),Token transfer failed.)	NodeType.EXPRESSION" [key=0];
+"BlockID: 172
+Call context: 
+None
+valueTransferred(uint256) := TMP_82(uint256)
+REF_77(mapping(address => bool)) -> t.beneficiaries
+REF_78(address) -> destinations[j]
+REF_79(bool) -> REF_77[REF_78]
+REF_79(bool) (->t) := True(bool)
+REF_81(address) -> destinations[j]
+REF_82(uint256) -> amounts[j]
+TMP_83(bool) = HIGH_LEVEL_CALL, dest:token(ITokenContract), function:transfer, arguments:['REF_81', 'REF_82']  
+EXPRESSION:valueTransferred = valueTransferred.add(amounts[j])	NodeType.EXPRESSION
+t.beneficiaries[destinations[j]] = true	NodeType.EXPRESSION
+require(bool,string)(token.transfer(destinations[j],amounts[j]),Token transfer failed.)	NodeType.EXPRESSION" -> "BlockID: 193
+Call context: 
+None
+CONDITION TMP_83
+EXPRESSION:qiantao require	NodeType.IF" [key=0];
+"BlockID: 174
+Call context: 
+True
+TMP_85(uint256) := j(uint256)
+j(uint256) = j + 1
+EXPRESSION:j ++	NodeType.EXPRESSION" -> "BlockID: 165
+Call context: 
+None
+BEGIN_LOOP
+REF_69 -> LENGTH destinations
+TMP_75(bool) = j < REF_69
+CONDITION TMP_75
+EXPRESSION:None	NodeType.STARTLOOP
+j < destinations.length	NodeType.IFLOOP" [key=0];
+"BlockID: 175
+Call context: 
+None
+BEGIN_LOOP
+REF_52 -> LENGTH destinations
+TMP_63(bool) = i < REF_52
+CONDITION TMP_63
+EXPRESSION:None	NodeType.STARTLOOP
+i < destinations.length	NodeType.IFLOOP" -> "BlockID: 177
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 175
+Call context: 
+None
+BEGIN_LOOP
+REF_52 -> LENGTH destinations
+TMP_63(bool) = i < REF_52
+CONDITION TMP_63
+EXPRESSION:None	NodeType.STARTLOOP
+i < destinations.length	NodeType.IFLOOP" -> "BlockID: 196
+Call context: 
+None
+REF_53(address) -> destinations[i]
+TMP_64 = CONVERT 0 to address
+TMP_65(bool) = REF_53 != TMP_64
+CONDITION TMP_65
+EXPRESSION:TMP_65(bool) = REF_53 != TMP_64	NodeType.IF" [key=0];
+"BlockID: 177
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 163
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 181
+Call context: 
+True
+REF_59(uint256) -> amounts[i]
+TMP_70(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['valueTransferred', 'REF_59'] 
+EXPRESSION:valueTransferred = valueTransferred.add(amounts[i])	NodeType.EXPRESSION" -> "BlockID: 182
+Call context: 
+None
+valueTransferred(uint256) := TMP_70(uint256)
+REF_60(mapping(address => bool)) -> t.beneficiaries
+REF_61(address) -> destinations[i]
+REF_62(bool) -> REF_60[REF_61]
+REF_62(bool) (->t) := True(bool)
+REF_63(address) -> destinations[i]
+REF_65(uint256) -> amounts[i]
+Transfer dest:REF_63 value:REF_65
+EXPRESSION:valueTransferred = valueTransferred.add(amounts[i])	NodeType.EXPRESSION
+t.beneficiaries[destinations[i]] = true	NodeType.EXPRESSION
+destinations[i].transfer(amounts[i])	NodeType.EXPRESSION" [key=0];
+"BlockID: 182
+Call context: 
+None
+valueTransferred(uint256) := TMP_70(uint256)
+REF_60(mapping(address => bool)) -> t.beneficiaries
+REF_61(address) -> destinations[i]
+REF_62(bool) -> REF_60[REF_61]
+REF_62(bool) (->t) := True(bool)
+REF_63(address) -> destinations[i]
+REF_65(uint256) -> amounts[i]
+Transfer dest:REF_63 value:REF_65
+EXPRESSION:valueTransferred = valueTransferred.add(amounts[i])	NodeType.EXPRESSION
+t.beneficiaries[destinations[i]] = true	NodeType.EXPRESSION
+destinations[i].transfer(amounts[i])	NodeType.EXPRESSION" -> "BlockID: 183
+Call context: 
+None
+TMP_72(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:destinations[i].transfer(amounts[i])	NodeType.EXPRESSION
+i ++	NodeType.EXPRESSION" [key=0];
+"BlockID: 183
+Call context: 
+None
+TMP_72(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:destinations[i].transfer(amounts[i])	NodeType.EXPRESSION
+i ++	NodeType.EXPRESSION" -> "BlockID: 175
+Call context: 
+None
+BEGIN_LOOP
+REF_52 -> LENGTH destinations
+TMP_63(bool) = i < REF_52
+CONDITION TMP_63
+EXPRESSION:None	NodeType.STARTLOOP
+i < destinations.length	NodeType.IFLOOP" [key=0];
+"BlockID: 184
+Call context: 
+None
+REF_70(address) -> destinations[j]
+TMP_76 = CONVERT 0 to address
+TMP_77(bool) = REF_70 != TMP_76
+CONDITION TMP_77
+EXPRESSION:TMP_77(bool) = REF_70 != TMP_76	NodeType.IF" -> "BlockID: 185
+Call context: 
+True
+TMP_78(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 184
+Call context: 
+None
+REF_70(address) -> destinations[j]
+TMP_76 = CONVERT 0 to address
+TMP_77(bool) = REF_70 != TMP_76
+CONDITION TMP_77
+EXPRESSION:TMP_77(bool) = REF_70 != TMP_76	NodeType.IF" -> "BlockID: 186
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 186
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 187
+Call context: 
+None
+REF_71(mapping(address => bool)) -> t.isOwner
+REF_72(address) -> destinations[j]
+REF_73(bool) -> REF_71[REF_72]
+CONDITION REF_73
+EXPRESSION:REF_73(bool) -> REF_71[REF_72]	NodeType.IF" [key=0];
+"BlockID: 187
+Call context: 
+None
+REF_71(mapping(address => bool)) -> t.isOwner
+REF_72(address) -> destinations[j]
+REF_73(bool) -> REF_71[REF_72]
+CONDITION REF_73
+EXPRESSION:REF_73(bool) -> REF_71[REF_72]	NodeType.IF" -> "BlockID: 188
+Call context: 
+True
+TMP_79(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 187
+Call context: 
+None
+REF_71(mapping(address => bool)) -> t.isOwner
+REF_72(address) -> destinations[j]
+REF_73(bool) -> REF_71[REF_72]
+CONDITION REF_73
+EXPRESSION:REF_73(bool) -> REF_71[REF_72]	NodeType.IF" -> "BlockID: 189
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 189
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 190
+Call context: 
+None
+REF_74(uint256) -> amounts[j]
+TMP_80(bool) = REF_74 > 0
+CONDITION TMP_80
+EXPRESSION:TMP_80(bool) = REF_74 > 0	NodeType.IF" [key=0];
+"BlockID: 190
+Call context: 
+None
+REF_74(uint256) -> amounts[j]
+TMP_80(bool) = REF_74 > 0
+CONDITION TMP_80
+EXPRESSION:TMP_80(bool) = REF_74 > 0	NodeType.IF" -> "BlockID: 191
+Call context: 
+True
+TMP_81(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 190
+Call context: 
+None
+REF_74(uint256) -> amounts[j]
+TMP_80(bool) = REF_74 > 0
+CONDITION TMP_80
+EXPRESSION:TMP_80(bool) = REF_74 > 0	NodeType.IF" -> "BlockID: 192
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 192
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 171
+Call context: 
+True
+REF_76(uint256) -> amounts[j]
+TMP_82(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['valueTransferred', 'REF_76'] 
+EXPRESSION:valueTransferred = valueTransferred.add(amounts[j])	NodeType.EXPRESSION" [key=0];
+"BlockID: 193
+Call context: 
+None
+CONDITION TMP_83
+EXPRESSION:qiantao require	NodeType.IF" -> "BlockID: 194
+Call context: 
+True
+TMP_84(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 193
+Call context: 
+None
+CONDITION TMP_83
+EXPRESSION:qiantao require	NodeType.IF" -> "BlockID: 195
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 195
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 174
+Call context: 
+True
+TMP_85(uint256) := j(uint256)
+j(uint256) = j + 1
+EXPRESSION:j ++	NodeType.EXPRESSION" [key=0];
+"BlockID: 196
+Call context: 
+None
+REF_53(address) -> destinations[i]
+TMP_64 = CONVERT 0 to address
+TMP_65(bool) = REF_53 != TMP_64
+CONDITION TMP_65
+EXPRESSION:TMP_65(bool) = REF_53 != TMP_64	NodeType.IF" -> "BlockID: 197
+Call context: 
+True
+TMP_66(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 196
+Call context: 
+None
+REF_53(address) -> destinations[i]
+TMP_64 = CONVERT 0 to address
+TMP_65(bool) = REF_53 != TMP_64
+CONDITION TMP_65
+EXPRESSION:TMP_65(bool) = REF_53 != TMP_64	NodeType.IF" -> "BlockID: 198
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 198
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 199
+Call context: 
+None
+REF_54(mapping(address => bool)) -> t.isOwner
+REF_55(address) -> destinations[i]
+REF_56(bool) -> REF_54[REF_55]
+CONDITION REF_56
+EXPRESSION:REF_56(bool) -> REF_54[REF_55]	NodeType.IF" [key=0];
+"BlockID: 199
+Call context: 
+None
+REF_54(mapping(address => bool)) -> t.isOwner
+REF_55(address) -> destinations[i]
+REF_56(bool) -> REF_54[REF_55]
+CONDITION REF_56
+EXPRESSION:REF_56(bool) -> REF_54[REF_55]	NodeType.IF" -> "BlockID: 200
+Call context: 
+True
+TMP_67(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 199
+Call context: 
+None
+REF_54(mapping(address => bool)) -> t.isOwner
+REF_55(address) -> destinations[i]
+REF_56(bool) -> REF_54[REF_55]
+CONDITION REF_56
+EXPRESSION:REF_56(bool) -> REF_54[REF_55]	NodeType.IF" -> "BlockID: 201
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 201
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 202
+Call context: 
+None
+REF_57(uint256) -> amounts[i]
+TMP_68(bool) = REF_57 > 0
+CONDITION TMP_68
+EXPRESSION:TMP_68(bool) = REF_57 > 0	NodeType.IF" [key=0];
+"BlockID: 202
+Call context: 
+None
+REF_57(uint256) -> amounts[i]
+TMP_68(bool) = REF_57 > 0
+CONDITION TMP_68
+EXPRESSION:TMP_68(bool) = REF_57 > 0	NodeType.IF" -> "BlockID: 203
+Call context: 
+True
+TMP_69(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 202
+Call context: 
+None
+REF_57(uint256) -> amounts[i]
+TMP_68(bool) = REF_57 > 0
+CONDITION TMP_68
+EXPRESSION:TMP_68(bool) = REF_57 > 0	NodeType.IF" -> "BlockID: 204
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 204
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 181
+Call context: 
+True
+REF_59(uint256) -> amounts[i]
+TMP_70(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['valueTransferred', 'REF_59'] 
+EXPRESSION:valueTransferred = valueTransferred.add(amounts[i])	NodeType.EXPRESSION" [key=0];
+}

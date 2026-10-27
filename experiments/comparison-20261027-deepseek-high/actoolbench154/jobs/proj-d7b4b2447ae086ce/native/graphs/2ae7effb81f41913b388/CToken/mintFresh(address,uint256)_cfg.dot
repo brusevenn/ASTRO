@@ -1,0 +1,621 @@
+digraph {
+"BlockID: 474
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 475
+Call context: 
+None
+TMP_249 = CONVERT this to address
+TMP_250(uint256) = HIGH_LEVEL_CALL, dest:comptroller(ComptrollerInterface), function:mintAllowed, arguments:['TMP_249', 'minter', 'mintAmount']  
+EXPRESSION:";
+"BlockID: 476
+Call context: 
+None
+allowed(uint256) := TMP_250(uint256)
+TMP_251(bool) = allowed != 0
+CONDITION TMP_251
+EXPRESSION:allowed = comptroller.mintAllowed(address(this),minter,mintAmount)	NodeType.VARIABLE
+allowed = comptroller.mintAllowed(address(this),minter,mintAmount)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" [shape=box];
+"BlockID: 477
+Call context: 
+True
+REF_153(TokenErrorReporter.Error) -> Error.COMPTROLLER_REJECTION
+REF_154(TokenErrorReporter.FailureInfo) -> FailureInfo.MINT_COMPTROLLER_REJECTION
+TMP_252(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_153,REF_154,allowed)
+EXPRESSION:(failOpaque(Error.COMPTROLLER_REJECTION,FailureInfo.MINT_COMPTROLLER_REJECTION,allowed),0)	NodeType.EXPRESSION";
+"BlockID: 479
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 480
+Call context: 
+None
+TMP_253(uint256) = INTERNAL_CALL, CToken.getBlockNumber()()
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.EXPRESSION";
+"BlockID: 481
+Call context: 
+None
+TMP_254(bool) = accrualBlockNumber != TMP_253
+CONDITION TMP_254
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.IF" [shape=box];
+"BlockID: 482
+Call context: 
+True
+REF_155(TokenErrorReporter.Error) -> Error.MARKET_NOT_FRESH
+REF_156(TokenErrorReporter.FailureInfo) -> FailureInfo.MINT_FRESHNESS_CHECK
+TMP_255(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_155,REF_156)
+EXPRESSION:(fail(Error.MARKET_NOT_FRESH,FailureInfo.MINT_FRESHNESS_CHECK),0)	NodeType.EXPRESSION";
+"BlockID: 484
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 485
+Call context: 
+None
+NEW VARIABLE vars
+REF_157(CarefulMath.MathError) -> vars.mathErr
+REF_158(uint256) -> vars.exchangeRateMantissa
+TUPLE_40(CarefulMath.MathError,uint256) = INTERNAL_CALL, CToken.exchangeRateStoredInternal()()
+EXPRESSION:None	NodeType.VARIABLE
+(vars.mathErr,vars.exchangeRateMantissa) = exchangeRateStoredInternal()	NodeType.EXPRESSION";
+"BlockID: 486
+Call context: 
+None
+REF_157(CarefulMath.MathError)= UNPACK TUPLE_40 index: 0 
+REF_158(uint256)= UNPACK TUPLE_40 index: 1 
+REF_159(CarefulMath.MathError) -> vars.mathErr
+REF_160(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_256(bool) = REF_159 != REF_160
+CONDITION TMP_256
+EXPRESSION:(vars.mathErr,vars.exchangeRateMantissa) = exchangeRateStoredInternal()	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 487
+Call context: 
+True
+REF_161(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_162(TokenErrorReporter.FailureInfo) -> FailureInfo.MINT_EXCHANGE_RATE_READ_FAILED
+REF_163(CarefulMath.MathError) -> vars.mathErr
+TMP_257 = CONVERT REF_163 to uint256
+TMP_258(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_161,REF_162,TMP_257)
+EXPRESSION:(failOpaque(Error.MATH_ERROR,FailureInfo.MINT_EXCHANGE_RATE_READ_FAILED,uint256(vars.mathErr)),0)	NodeType.EXPRESSION";
+"BlockID: 489
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 490
+Call context: 
+None
+REF_164(uint256) -> vars.actualMintAmount
+TMP_259(uint256) = INTERNAL_CALL, CToken.doTransferIn(address,uint256)(minter,mintAmount)
+EXPRESSION:vars.actualMintAmount = doTransferIn(minter,mintAmount)	NodeType.EXPRESSION";
+"BlockID: 491
+Call context: 
+None
+REF_164(uint256) (->vars) := TMP_259(uint256)
+REF_165(CarefulMath.MathError) -> vars.mathErr
+REF_166(uint256) -> vars.mintTokens
+REF_167(uint256) -> vars.actualMintAmount
+REF_168(uint256) -> vars.exchangeRateMantissa
+TMP_260(ExponentialNoError.Exp) = new Exp(REF_168)
+TUPLE_41(CarefulMath.MathError,uint256) = INTERNAL_CALL, Exponential.divScalarByExpTruncate(uint256,ExponentialNoError.Exp)(REF_167,TMP_260)
+EXPRESSION:vars.actualMintAmount = doTransferIn(minter,mintAmount)	NodeType.EXPRESSION
+(vars.mathErr,vars.mintTokens) = divScalarByExpTruncate(vars.actualMintAmount,Exp(vars.exchangeRateMantissa))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 493
+Call context: 
+True
+REF_171(CarefulMath.MathError) -> vars.mathErr
+REF_172(uint256) -> vars.totalSupplyNew
+REF_173(uint256) -> vars.mintTokens
+TUPLE_42(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.addUInt(uint256,uint256)(totalSupply,REF_173)
+EXPRESSION:(vars.mathErr,vars.totalSupplyNew) = addUInt(totalSupply,vars.mintTokens)	NodeType.EXPRESSION";
+"BlockID: 495
+Call context: 
+True
+REF_176(CarefulMath.MathError) -> vars.mathErr
+REF_177(uint256) -> vars.accountTokensNew
+REF_178(uint256) -> accountTokens[minter]
+REF_179(uint256) -> vars.mintTokens
+TUPLE_43(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.addUInt(uint256,uint256)(REF_178,REF_179)
+EXPRESSION:(vars.mathErr,vars.accountTokensNew) = addUInt(accountTokens[minter],vars.mintTokens)	NodeType.EXPRESSION";
+"BlockID: 497
+Call context: 
+True
+REF_182(uint256) -> vars.totalSupplyNew
+totalSupply(uint256) := REF_182(uint256)
+REF_183(uint256) -> accountTokens[minter]
+REF_184(uint256) -> vars.accountTokensNew
+REF_183(uint256) (->accountTokens) := REF_184(uint256)
+REF_188(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_270 = CONVERT REF_188 to uint256
+REF_189(uint256) -> vars.actualMintAmount
+RETURN TMP_270,REF_189
+EXPRESSION:totalSupply = vars.totalSupplyNew	NodeType.EXPRESSION
+accountTokens[minter] = vars.accountTokensNew	NodeType.EXPRESSION
+(uint256(Error.NO_ERROR),vars.actualMintAmount)	NodeType.RETURN";
+"BlockID: 488
+Call context: 
+None
+RETURN TMP_258,0
+EXPRESSION:(failOpaque(Error.MATH_ERROR,FailureInfo.MINT_EXCHANGE_RATE_READ_FAILED,uint256(vars.mathErr)),0)	NodeType.RETURN" [shape=box];
+"BlockID: 483
+Call context: 
+None
+RETURN TMP_255,0
+EXPRESSION:(fail(Error.MARKET_NOT_FRESH,FailureInfo.MINT_FRESHNESS_CHECK),0)	NodeType.RETURN" [shape=box];
+"BlockID: 478
+Call context: 
+None
+RETURN TMP_252,0
+EXPRESSION:(failOpaque(Error.COMPTROLLER_REJECTION,FailureInfo.MINT_COMPTROLLER_REJECTION,allowed),0)	NodeType.RETURN" [shape=box];
+"BlockID: 498
+Call context: 
+None
+REF_165(CarefulMath.MathError)= UNPACK TUPLE_41 index: 0 
+REF_166(uint256)= UNPACK TUPLE_41 index: 1 
+REF_169(CarefulMath.MathError) -> vars.mathErr
+REF_170(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_261(bool) = REF_169 == REF_170
+CONDITION TMP_261
+EXPRESSION:TMP_261(bool) = REF_169 == REF_170	NodeType.IF";
+"BlockID: 499
+Call context: 
+True
+TMP_262(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 500
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 501
+Call context: 
+None
+REF_171(CarefulMath.MathError)= UNPACK TUPLE_42 index: 0 
+REF_172(uint256)= UNPACK TUPLE_42 index: 1 
+REF_174(CarefulMath.MathError) -> vars.mathErr
+REF_175(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_263(bool) = REF_174 == REF_175
+CONDITION TMP_263
+EXPRESSION:TMP_263(bool) = REF_174 == REF_175	NodeType.IF";
+"BlockID: 502
+Call context: 
+True
+TMP_264(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 503
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 504
+Call context: 
+None
+REF_176(CarefulMath.MathError)= UNPACK TUPLE_43 index: 0 
+REF_177(uint256)= UNPACK TUPLE_43 index: 1 
+REF_180(CarefulMath.MathError) -> vars.mathErr
+REF_181(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_265(bool) = REF_180 == REF_181
+CONDITION TMP_265
+EXPRESSION:TMP_265(bool) = REF_180 == REF_181	NodeType.IF";
+"BlockID: 505
+Call context: 
+True
+TMP_266(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 506
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 474
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 475
+Call context: 
+None
+TMP_249 = CONVERT this to address
+TMP_250(uint256) = HIGH_LEVEL_CALL, dest:comptroller(ComptrollerInterface), function:mintAllowed, arguments:['TMP_249', 'minter', 'mintAmount']  
+EXPRESSION:" [key=0];
+"BlockID: 475
+Call context: 
+None
+TMP_249 = CONVERT this to address
+TMP_250(uint256) = HIGH_LEVEL_CALL, dest:comptroller(ComptrollerInterface), function:mintAllowed, arguments:['TMP_249', 'minter', 'mintAmount']  
+EXPRESSION:" -> "BlockID: 476
+Call context: 
+None
+allowed(uint256) := TMP_250(uint256)
+TMP_251(bool) = allowed != 0
+CONDITION TMP_251
+EXPRESSION:allowed = comptroller.mintAllowed(address(this),minter,mintAmount)	NodeType.VARIABLE
+allowed = comptroller.mintAllowed(address(this),minter,mintAmount)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" [key=0];
+"BlockID: 476
+Call context: 
+None
+allowed(uint256) := TMP_250(uint256)
+TMP_251(bool) = allowed != 0
+CONDITION TMP_251
+EXPRESSION:allowed = comptroller.mintAllowed(address(this),minter,mintAmount)	NodeType.VARIABLE
+allowed = comptroller.mintAllowed(address(this),minter,mintAmount)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" -> "BlockID: 477
+Call context: 
+True
+REF_153(TokenErrorReporter.Error) -> Error.COMPTROLLER_REJECTION
+REF_154(TokenErrorReporter.FailureInfo) -> FailureInfo.MINT_COMPTROLLER_REJECTION
+TMP_252(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_153,REF_154,allowed)
+EXPRESSION:(failOpaque(Error.COMPTROLLER_REJECTION,FailureInfo.MINT_COMPTROLLER_REJECTION,allowed),0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 476
+Call context: 
+None
+allowed(uint256) := TMP_250(uint256)
+TMP_251(bool) = allowed != 0
+CONDITION TMP_251
+EXPRESSION:allowed = comptroller.mintAllowed(address(this),minter,mintAmount)	NodeType.VARIABLE
+allowed = comptroller.mintAllowed(address(this),minter,mintAmount)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" -> "BlockID: 479
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 477
+Call context: 
+True
+REF_153(TokenErrorReporter.Error) -> Error.COMPTROLLER_REJECTION
+REF_154(TokenErrorReporter.FailureInfo) -> FailureInfo.MINT_COMPTROLLER_REJECTION
+TMP_252(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_153,REF_154,allowed)
+EXPRESSION:(failOpaque(Error.COMPTROLLER_REJECTION,FailureInfo.MINT_COMPTROLLER_REJECTION,allowed),0)	NodeType.EXPRESSION" -> "BlockID: 478
+Call context: 
+None
+RETURN TMP_252,0
+EXPRESSION:(failOpaque(Error.COMPTROLLER_REJECTION,FailureInfo.MINT_COMPTROLLER_REJECTION,allowed),0)	NodeType.RETURN" [key=0];
+"BlockID: 479
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 480
+Call context: 
+None
+TMP_253(uint256) = INTERNAL_CALL, CToken.getBlockNumber()()
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.EXPRESSION" [key=0];
+"BlockID: 480
+Call context: 
+None
+TMP_253(uint256) = INTERNAL_CALL, CToken.getBlockNumber()()
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.EXPRESSION" -> "BlockID: 481
+Call context: 
+None
+TMP_254(bool) = accrualBlockNumber != TMP_253
+CONDITION TMP_254
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.IF" [key=0];
+"BlockID: 481
+Call context: 
+None
+TMP_254(bool) = accrualBlockNumber != TMP_253
+CONDITION TMP_254
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.IF" -> "BlockID: 482
+Call context: 
+True
+REF_155(TokenErrorReporter.Error) -> Error.MARKET_NOT_FRESH
+REF_156(TokenErrorReporter.FailureInfo) -> FailureInfo.MINT_FRESHNESS_CHECK
+TMP_255(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_155,REF_156)
+EXPRESSION:(fail(Error.MARKET_NOT_FRESH,FailureInfo.MINT_FRESHNESS_CHECK),0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 481
+Call context: 
+None
+TMP_254(bool) = accrualBlockNumber != TMP_253
+CONDITION TMP_254
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.IF" -> "BlockID: 484
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 482
+Call context: 
+True
+REF_155(TokenErrorReporter.Error) -> Error.MARKET_NOT_FRESH
+REF_156(TokenErrorReporter.FailureInfo) -> FailureInfo.MINT_FRESHNESS_CHECK
+TMP_255(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_155,REF_156)
+EXPRESSION:(fail(Error.MARKET_NOT_FRESH,FailureInfo.MINT_FRESHNESS_CHECK),0)	NodeType.EXPRESSION" -> "BlockID: 483
+Call context: 
+None
+RETURN TMP_255,0
+EXPRESSION:(fail(Error.MARKET_NOT_FRESH,FailureInfo.MINT_FRESHNESS_CHECK),0)	NodeType.RETURN" [key=0];
+"BlockID: 484
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 485
+Call context: 
+None
+NEW VARIABLE vars
+REF_157(CarefulMath.MathError) -> vars.mathErr
+REF_158(uint256) -> vars.exchangeRateMantissa
+TUPLE_40(CarefulMath.MathError,uint256) = INTERNAL_CALL, CToken.exchangeRateStoredInternal()()
+EXPRESSION:None	NodeType.VARIABLE
+(vars.mathErr,vars.exchangeRateMantissa) = exchangeRateStoredInternal()	NodeType.EXPRESSION" [key=0];
+"BlockID: 485
+Call context: 
+None
+NEW VARIABLE vars
+REF_157(CarefulMath.MathError) -> vars.mathErr
+REF_158(uint256) -> vars.exchangeRateMantissa
+TUPLE_40(CarefulMath.MathError,uint256) = INTERNAL_CALL, CToken.exchangeRateStoredInternal()()
+EXPRESSION:None	NodeType.VARIABLE
+(vars.mathErr,vars.exchangeRateMantissa) = exchangeRateStoredInternal()	NodeType.EXPRESSION" -> "BlockID: 486
+Call context: 
+None
+REF_157(CarefulMath.MathError)= UNPACK TUPLE_40 index: 0 
+REF_158(uint256)= UNPACK TUPLE_40 index: 1 
+REF_159(CarefulMath.MathError) -> vars.mathErr
+REF_160(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_256(bool) = REF_159 != REF_160
+CONDITION TMP_256
+EXPRESSION:(vars.mathErr,vars.exchangeRateMantissa) = exchangeRateStoredInternal()	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" [key=0];
+"BlockID: 486
+Call context: 
+None
+REF_157(CarefulMath.MathError)= UNPACK TUPLE_40 index: 0 
+REF_158(uint256)= UNPACK TUPLE_40 index: 1 
+REF_159(CarefulMath.MathError) -> vars.mathErr
+REF_160(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_256(bool) = REF_159 != REF_160
+CONDITION TMP_256
+EXPRESSION:(vars.mathErr,vars.exchangeRateMantissa) = exchangeRateStoredInternal()	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 487
+Call context: 
+True
+REF_161(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_162(TokenErrorReporter.FailureInfo) -> FailureInfo.MINT_EXCHANGE_RATE_READ_FAILED
+REF_163(CarefulMath.MathError) -> vars.mathErr
+TMP_257 = CONVERT REF_163 to uint256
+TMP_258(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_161,REF_162,TMP_257)
+EXPRESSION:(failOpaque(Error.MATH_ERROR,FailureInfo.MINT_EXCHANGE_RATE_READ_FAILED,uint256(vars.mathErr)),0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 486
+Call context: 
+None
+REF_157(CarefulMath.MathError)= UNPACK TUPLE_40 index: 0 
+REF_158(uint256)= UNPACK TUPLE_40 index: 1 
+REF_159(CarefulMath.MathError) -> vars.mathErr
+REF_160(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_256(bool) = REF_159 != REF_160
+CONDITION TMP_256
+EXPRESSION:(vars.mathErr,vars.exchangeRateMantissa) = exchangeRateStoredInternal()	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 489
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 487
+Call context: 
+True
+REF_161(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_162(TokenErrorReporter.FailureInfo) -> FailureInfo.MINT_EXCHANGE_RATE_READ_FAILED
+REF_163(CarefulMath.MathError) -> vars.mathErr
+TMP_257 = CONVERT REF_163 to uint256
+TMP_258(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_161,REF_162,TMP_257)
+EXPRESSION:(failOpaque(Error.MATH_ERROR,FailureInfo.MINT_EXCHANGE_RATE_READ_FAILED,uint256(vars.mathErr)),0)	NodeType.EXPRESSION" -> "BlockID: 488
+Call context: 
+None
+RETURN TMP_258,0
+EXPRESSION:(failOpaque(Error.MATH_ERROR,FailureInfo.MINT_EXCHANGE_RATE_READ_FAILED,uint256(vars.mathErr)),0)	NodeType.RETURN" [key=0];
+"BlockID: 489
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 490
+Call context: 
+None
+REF_164(uint256) -> vars.actualMintAmount
+TMP_259(uint256) = INTERNAL_CALL, CToken.doTransferIn(address,uint256)(minter,mintAmount)
+EXPRESSION:vars.actualMintAmount = doTransferIn(minter,mintAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 490
+Call context: 
+None
+REF_164(uint256) -> vars.actualMintAmount
+TMP_259(uint256) = INTERNAL_CALL, CToken.doTransferIn(address,uint256)(minter,mintAmount)
+EXPRESSION:vars.actualMintAmount = doTransferIn(minter,mintAmount)	NodeType.EXPRESSION" -> "BlockID: 491
+Call context: 
+None
+REF_164(uint256) (->vars) := TMP_259(uint256)
+REF_165(CarefulMath.MathError) -> vars.mathErr
+REF_166(uint256) -> vars.mintTokens
+REF_167(uint256) -> vars.actualMintAmount
+REF_168(uint256) -> vars.exchangeRateMantissa
+TMP_260(ExponentialNoError.Exp) = new Exp(REF_168)
+TUPLE_41(CarefulMath.MathError,uint256) = INTERNAL_CALL, Exponential.divScalarByExpTruncate(uint256,ExponentialNoError.Exp)(REF_167,TMP_260)
+EXPRESSION:vars.actualMintAmount = doTransferIn(minter,mintAmount)	NodeType.EXPRESSION
+(vars.mathErr,vars.mintTokens) = divScalarByExpTruncate(vars.actualMintAmount,Exp(vars.exchangeRateMantissa))	NodeType.EXPRESSION" [key=0];
+"BlockID: 491
+Call context: 
+None
+REF_164(uint256) (->vars) := TMP_259(uint256)
+REF_165(CarefulMath.MathError) -> vars.mathErr
+REF_166(uint256) -> vars.mintTokens
+REF_167(uint256) -> vars.actualMintAmount
+REF_168(uint256) -> vars.exchangeRateMantissa
+TMP_260(ExponentialNoError.Exp) = new Exp(REF_168)
+TUPLE_41(CarefulMath.MathError,uint256) = INTERNAL_CALL, Exponential.divScalarByExpTruncate(uint256,ExponentialNoError.Exp)(REF_167,TMP_260)
+EXPRESSION:vars.actualMintAmount = doTransferIn(minter,mintAmount)	NodeType.EXPRESSION
+(vars.mathErr,vars.mintTokens) = divScalarByExpTruncate(vars.actualMintAmount,Exp(vars.exchangeRateMantissa))	NodeType.EXPRESSION" -> "BlockID: 498
+Call context: 
+None
+REF_165(CarefulMath.MathError)= UNPACK TUPLE_41 index: 0 
+REF_166(uint256)= UNPACK TUPLE_41 index: 1 
+REF_169(CarefulMath.MathError) -> vars.mathErr
+REF_170(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_261(bool) = REF_169 == REF_170
+CONDITION TMP_261
+EXPRESSION:TMP_261(bool) = REF_169 == REF_170	NodeType.IF" [key=0];
+"BlockID: 493
+Call context: 
+True
+REF_171(CarefulMath.MathError) -> vars.mathErr
+REF_172(uint256) -> vars.totalSupplyNew
+REF_173(uint256) -> vars.mintTokens
+TUPLE_42(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.addUInt(uint256,uint256)(totalSupply,REF_173)
+EXPRESSION:(vars.mathErr,vars.totalSupplyNew) = addUInt(totalSupply,vars.mintTokens)	NodeType.EXPRESSION" -> "BlockID: 501
+Call context: 
+None
+REF_171(CarefulMath.MathError)= UNPACK TUPLE_42 index: 0 
+REF_172(uint256)= UNPACK TUPLE_42 index: 1 
+REF_174(CarefulMath.MathError) -> vars.mathErr
+REF_175(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_263(bool) = REF_174 == REF_175
+CONDITION TMP_263
+EXPRESSION:TMP_263(bool) = REF_174 == REF_175	NodeType.IF" [key=0];
+"BlockID: 495
+Call context: 
+True
+REF_176(CarefulMath.MathError) -> vars.mathErr
+REF_177(uint256) -> vars.accountTokensNew
+REF_178(uint256) -> accountTokens[minter]
+REF_179(uint256) -> vars.mintTokens
+TUPLE_43(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.addUInt(uint256,uint256)(REF_178,REF_179)
+EXPRESSION:(vars.mathErr,vars.accountTokensNew) = addUInt(accountTokens[minter],vars.mintTokens)	NodeType.EXPRESSION" -> "BlockID: 504
+Call context: 
+None
+REF_176(CarefulMath.MathError)= UNPACK TUPLE_43 index: 0 
+REF_177(uint256)= UNPACK TUPLE_43 index: 1 
+REF_180(CarefulMath.MathError) -> vars.mathErr
+REF_181(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_265(bool) = REF_180 == REF_181
+CONDITION TMP_265
+EXPRESSION:TMP_265(bool) = REF_180 == REF_181	NodeType.IF" [key=0];
+"BlockID: 498
+Call context: 
+None
+REF_165(CarefulMath.MathError)= UNPACK TUPLE_41 index: 0 
+REF_166(uint256)= UNPACK TUPLE_41 index: 1 
+REF_169(CarefulMath.MathError) -> vars.mathErr
+REF_170(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_261(bool) = REF_169 == REF_170
+CONDITION TMP_261
+EXPRESSION:TMP_261(bool) = REF_169 == REF_170	NodeType.IF" -> "BlockID: 499
+Call context: 
+True
+TMP_262(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 498
+Call context: 
+None
+REF_165(CarefulMath.MathError)= UNPACK TUPLE_41 index: 0 
+REF_166(uint256)= UNPACK TUPLE_41 index: 1 
+REF_169(CarefulMath.MathError) -> vars.mathErr
+REF_170(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_261(bool) = REF_169 == REF_170
+CONDITION TMP_261
+EXPRESSION:TMP_261(bool) = REF_169 == REF_170	NodeType.IF" -> "BlockID: 500
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 500
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 493
+Call context: 
+True
+REF_171(CarefulMath.MathError) -> vars.mathErr
+REF_172(uint256) -> vars.totalSupplyNew
+REF_173(uint256) -> vars.mintTokens
+TUPLE_42(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.addUInt(uint256,uint256)(totalSupply,REF_173)
+EXPRESSION:(vars.mathErr,vars.totalSupplyNew) = addUInt(totalSupply,vars.mintTokens)	NodeType.EXPRESSION" [key=0];
+"BlockID: 501
+Call context: 
+None
+REF_171(CarefulMath.MathError)= UNPACK TUPLE_42 index: 0 
+REF_172(uint256)= UNPACK TUPLE_42 index: 1 
+REF_174(CarefulMath.MathError) -> vars.mathErr
+REF_175(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_263(bool) = REF_174 == REF_175
+CONDITION TMP_263
+EXPRESSION:TMP_263(bool) = REF_174 == REF_175	NodeType.IF" -> "BlockID: 502
+Call context: 
+True
+TMP_264(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 501
+Call context: 
+None
+REF_171(CarefulMath.MathError)= UNPACK TUPLE_42 index: 0 
+REF_172(uint256)= UNPACK TUPLE_42 index: 1 
+REF_174(CarefulMath.MathError) -> vars.mathErr
+REF_175(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_263(bool) = REF_174 == REF_175
+CONDITION TMP_263
+EXPRESSION:TMP_263(bool) = REF_174 == REF_175	NodeType.IF" -> "BlockID: 503
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 503
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 495
+Call context: 
+True
+REF_176(CarefulMath.MathError) -> vars.mathErr
+REF_177(uint256) -> vars.accountTokensNew
+REF_178(uint256) -> accountTokens[minter]
+REF_179(uint256) -> vars.mintTokens
+TUPLE_43(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.addUInt(uint256,uint256)(REF_178,REF_179)
+EXPRESSION:(vars.mathErr,vars.accountTokensNew) = addUInt(accountTokens[minter],vars.mintTokens)	NodeType.EXPRESSION" [key=0];
+"BlockID: 504
+Call context: 
+None
+REF_176(CarefulMath.MathError)= UNPACK TUPLE_43 index: 0 
+REF_177(uint256)= UNPACK TUPLE_43 index: 1 
+REF_180(CarefulMath.MathError) -> vars.mathErr
+REF_181(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_265(bool) = REF_180 == REF_181
+CONDITION TMP_265
+EXPRESSION:TMP_265(bool) = REF_180 == REF_181	NodeType.IF" -> "BlockID: 505
+Call context: 
+True
+TMP_266(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 504
+Call context: 
+None
+REF_176(CarefulMath.MathError)= UNPACK TUPLE_43 index: 0 
+REF_177(uint256)= UNPACK TUPLE_43 index: 1 
+REF_180(CarefulMath.MathError) -> vars.mathErr
+REF_181(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_265(bool) = REF_180 == REF_181
+CONDITION TMP_265
+EXPRESSION:TMP_265(bool) = REF_180 == REF_181	NodeType.IF" -> "BlockID: 506
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 506
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 497
+Call context: 
+True
+REF_182(uint256) -> vars.totalSupplyNew
+totalSupply(uint256) := REF_182(uint256)
+REF_183(uint256) -> accountTokens[minter]
+REF_184(uint256) -> vars.accountTokensNew
+REF_183(uint256) (->accountTokens) := REF_184(uint256)
+REF_188(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_270 = CONVERT REF_188 to uint256
+REF_189(uint256) -> vars.actualMintAmount
+RETURN TMP_270,REF_189
+EXPRESSION:totalSupply = vars.totalSupplyNew	NodeType.EXPRESSION
+accountTokens[minter] = vars.accountTokensNew	NodeType.EXPRESSION
+(uint256(Error.NO_ERROR),vars.actualMintAmount)	NodeType.RETURN" [key=0];
+}

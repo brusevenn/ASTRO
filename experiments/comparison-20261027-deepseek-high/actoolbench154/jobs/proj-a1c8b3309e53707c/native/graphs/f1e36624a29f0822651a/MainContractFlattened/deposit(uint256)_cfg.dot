@@ -1,0 +1,498 @@
+digraph {
+"BlockID: 1988
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1989
+Call context: 
+None
+MODIFIER_CALL, LaunchpadLockableStaking.notMigrated()()
+EXPRESSION:notMigrated()	NodeType.EXPRESSION";
+"BlockID: 1991
+Call context: 
+True
+account(address) := msg.sender(address)
+REF_143(IStaking.UserInfo) -> userInfo[account]
+user(IStaking.UserInfo) := REF_143(IStaking.UserInfo)
+NEW VARIABLE fee
+TMP_781 = CONVERT secondaryStaking to address
+TMP_782 = CONVERT 0 to address
+TMP_783(bool) = TMP_781 != TMP_782
+CONDITION TMP_783
+EXPRESSION:account = msg.sender	NodeType.VARIABLE
+account = msg.sender	NodeType.EXPRESSION
+user = userInfo[account]	NodeType.VARIABLE
+user = userInfo[account]	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+address(secondaryStaking) != address(0)	NodeType.IF";
+"BlockID: 1992
+Call context: 
+True
+HIGH_LEVEL_CALL, dest:secondaryStaking(IStaking), function:deposit, arguments:['amount']  
+EXPRESSION:secondaryStaking.deposit(amount)	NodeType.EXPRESSION";
+"BlockID: 1994
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1995
+Call context: 
+None
+TMP_785(bool) = INTERNAL_CALL, LaunchpadLockableStaking.isLocked(address)(account)
+EXPRESSION:! isLocked(account)	NodeType.EXPRESSION";
+"BlockID: 1996
+Call context: 
+None
+TMP_786 = ! TMP_785 
+CONDITION TMP_786
+EXPRESSION:! isLocked(account)	NodeType.IF" [shape=box];
+"BlockID: 1997
+Call context: 
+True
+REF_145(uint256) -> depositLockStart[account]
+REF_145(uint256) (->depositLockStart) := block.timestamp(uint256)
+REF_146(uint256) -> lastClaimedAt[account]
+REF_146(uint256) (->lastClaimedAt) := block.timestamp(uint256)
+REF_147(uint256) -> user.rewardDebt
+REF_147(uint256) (->user) := 0(uint256)
+EXPRESSION:depositLockStart[account] = block.timestamp	NodeType.EXPRESSION
+lastClaimedAt[account] = block.timestamp	NodeType.EXPRESSION
+user.rewardDebt = 0	NodeType.EXPRESSION";
+"BlockID: 1998
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1999
+Call context: 
+None
+INTERNAL_CALL, LaunchpadLockableStaking.updateUserPending(address)(account)
+EXPRESSION:updateUserPending(account)	NodeType.EXPRESSION";
+"BlockID: 2000
+Call context: 
+None
+TMP_789(bool) = amount > 0
+CONDITION TMP_789
+EXPRESSION:updateUserPending(account)	NodeType.EXPRESSION
+amount > 0	NodeType.IF";
+"BlockID: 2001
+Call context: 
+True
+REF_148(IERC20Upgradeable) -> liquidityMining.stakingToken
+TMP_790 = CONVERT account to address
+TMP_791 = CONVERT this to address
+LIBRARY_CALL, dest:SafeERC20Upgradeable, function:SafeERC20Upgradeable.safeTransferFrom(IERC20Upgradeable,address,address,uint256), arguments:['REF_148', 'TMP_790', 'TMP_791', 'amount'] 
+EXPRESSION:liquidityMining.stakingToken.safeTransferFrom(address(account),address(this),amount)	NodeType.EXPRESSION";
+"BlockID: 2003
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2004
+Call context: 
+None
+INTERNAL_CALL, LaunchpadLockableStaking.updateUserDebt(address)(account)
+EXPRESSION:updateUserDebt(account)	NodeType.EXPRESSION";
+"BlockID: 2002
+Call context: 
+None
+REF_150(uint256) -> fees.depositFee
+REF_151(address) -> fees.collectorAddress
+TUPLE_5(uint256,uint256) = INTERNAL_CALL, LaunchpadLockableStaking.takeFee(uint256,uint256,address)(amount,REF_150,REF_151)
+EXPRESSION:liquidityMining.stakingToken.safeTransferFrom(address(account),address(this),amount)	NodeType.EXPRESSION
+(amount,fee) = takeFee(amount,fees.depositFee,fees.collectorAddress)	NodeType.EXPRESSION";
+"BlockID: 2006
+Call context: 
+None
+amount(uint256)= UNPACK TUPLE_5 index: 0 
+fee(uint256)= UNPACK TUPLE_5 index: 1 
+REF_152(uint256) -> fees.collectedDepositFees
+REF_152(-> fees) = REF_152 (c)+ fee
+REF_155(uint256) -> user.amount
+TMP_796(bool) = REF_155 == 0
+CONDITION TMP_796
+EXPRESSION:(amount,fee) = takeFee(amount,fees.depositFee,fees.collectorAddress)	NodeType.EXPRESSION
+fees.collectedDepositFees += fee	NodeType.EXPRESSION
+user.amount == 0	NodeType.IF" [shape=box];
+"BlockID: 2007
+Call context: 
+True
+stakersCount(uint256) = stakersCount (c)+ 1
+EXPRESSION:stakersCount += 1	NodeType.EXPRESSION";
+"BlockID: 2008
+Call context: 
+False
+stakersCount(uint256) = stakersCount (c)+ 0
+EXPRESSION:stakersCount += 0	NodeType.EXPRESSION";
+"BlockID: 2009
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2010
+Call context: 
+None
+REF_153(uint256) -> user.amount
+REF_153(-> user) = REF_153 (c)+ amount
+REF_154(uint256) -> user.lastStakedAt
+REF_154(uint256) (->user) := block.timestamp(uint256)
+EXPRESSION:user.amount += amount	NodeType.EXPRESSION
+user.lastStakedAt = block.timestamp	NodeType.EXPRESSION";
+"BlockID: 2011
+Call context: 
+None
+TMP_779 = ! halted 
+CONDITION TMP_779
+EXPRESSION:TMP_779 = ! halted 	NodeType.IF";
+"BlockID: 2012
+Call context: 
+True
+TMP_780(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 2013
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1988
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1989
+Call context: 
+None
+MODIFIER_CALL, LaunchpadLockableStaking.notMigrated()()
+EXPRESSION:notMigrated()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1989
+Call context: 
+None
+MODIFIER_CALL, LaunchpadLockableStaking.notMigrated()()
+EXPRESSION:notMigrated()	NodeType.EXPRESSION" -> "BlockID: 2011
+Call context: 
+None
+TMP_779 = ! halted 
+CONDITION TMP_779
+EXPRESSION:TMP_779 = ! halted 	NodeType.IF" [key=0];
+"BlockID: 1991
+Call context: 
+True
+account(address) := msg.sender(address)
+REF_143(IStaking.UserInfo) -> userInfo[account]
+user(IStaking.UserInfo) := REF_143(IStaking.UserInfo)
+NEW VARIABLE fee
+TMP_781 = CONVERT secondaryStaking to address
+TMP_782 = CONVERT 0 to address
+TMP_783(bool) = TMP_781 != TMP_782
+CONDITION TMP_783
+EXPRESSION:account = msg.sender	NodeType.VARIABLE
+account = msg.sender	NodeType.EXPRESSION
+user = userInfo[account]	NodeType.VARIABLE
+user = userInfo[account]	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+address(secondaryStaking) != address(0)	NodeType.IF" -> "BlockID: 1992
+Call context: 
+True
+HIGH_LEVEL_CALL, dest:secondaryStaking(IStaking), function:deposit, arguments:['amount']  
+EXPRESSION:secondaryStaking.deposit(amount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1991
+Call context: 
+True
+account(address) := msg.sender(address)
+REF_143(IStaking.UserInfo) -> userInfo[account]
+user(IStaking.UserInfo) := REF_143(IStaking.UserInfo)
+NEW VARIABLE fee
+TMP_781 = CONVERT secondaryStaking to address
+TMP_782 = CONVERT 0 to address
+TMP_783(bool) = TMP_781 != TMP_782
+CONDITION TMP_783
+EXPRESSION:account = msg.sender	NodeType.VARIABLE
+account = msg.sender	NodeType.EXPRESSION
+user = userInfo[account]	NodeType.VARIABLE
+user = userInfo[account]	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+address(secondaryStaking) != address(0)	NodeType.IF" -> "BlockID: 1994
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1992
+Call context: 
+True
+HIGH_LEVEL_CALL, dest:secondaryStaking(IStaking), function:deposit, arguments:['amount']  
+EXPRESSION:secondaryStaking.deposit(amount)	NodeType.EXPRESSION" -> "BlockID: 1994
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1994
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1995
+Call context: 
+None
+TMP_785(bool) = INTERNAL_CALL, LaunchpadLockableStaking.isLocked(address)(account)
+EXPRESSION:! isLocked(account)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1995
+Call context: 
+None
+TMP_785(bool) = INTERNAL_CALL, LaunchpadLockableStaking.isLocked(address)(account)
+EXPRESSION:! isLocked(account)	NodeType.EXPRESSION" -> "BlockID: 1996
+Call context: 
+None
+TMP_786 = ! TMP_785 
+CONDITION TMP_786
+EXPRESSION:! isLocked(account)	NodeType.IF" [key=0];
+"BlockID: 1996
+Call context: 
+None
+TMP_786 = ! TMP_785 
+CONDITION TMP_786
+EXPRESSION:! isLocked(account)	NodeType.IF" -> "BlockID: 1997
+Call context: 
+True
+REF_145(uint256) -> depositLockStart[account]
+REF_145(uint256) (->depositLockStart) := block.timestamp(uint256)
+REF_146(uint256) -> lastClaimedAt[account]
+REF_146(uint256) (->lastClaimedAt) := block.timestamp(uint256)
+REF_147(uint256) -> user.rewardDebt
+REF_147(uint256) (->user) := 0(uint256)
+EXPRESSION:depositLockStart[account] = block.timestamp	NodeType.EXPRESSION
+lastClaimedAt[account] = block.timestamp	NodeType.EXPRESSION
+user.rewardDebt = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 1996
+Call context: 
+None
+TMP_786 = ! TMP_785 
+CONDITION TMP_786
+EXPRESSION:! isLocked(account)	NodeType.IF" -> "BlockID: 1998
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1997
+Call context: 
+True
+REF_145(uint256) -> depositLockStart[account]
+REF_145(uint256) (->depositLockStart) := block.timestamp(uint256)
+REF_146(uint256) -> lastClaimedAt[account]
+REF_146(uint256) (->lastClaimedAt) := block.timestamp(uint256)
+REF_147(uint256) -> user.rewardDebt
+REF_147(uint256) (->user) := 0(uint256)
+EXPRESSION:depositLockStart[account] = block.timestamp	NodeType.EXPRESSION
+lastClaimedAt[account] = block.timestamp	NodeType.EXPRESSION
+user.rewardDebt = 0	NodeType.EXPRESSION" -> "BlockID: 1998
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1998
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1999
+Call context: 
+None
+INTERNAL_CALL, LaunchpadLockableStaking.updateUserPending(address)(account)
+EXPRESSION:updateUserPending(account)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1999
+Call context: 
+None
+INTERNAL_CALL, LaunchpadLockableStaking.updateUserPending(address)(account)
+EXPRESSION:updateUserPending(account)	NodeType.EXPRESSION" -> "BlockID: 2000
+Call context: 
+None
+TMP_789(bool) = amount > 0
+CONDITION TMP_789
+EXPRESSION:updateUserPending(account)	NodeType.EXPRESSION
+amount > 0	NodeType.IF" [key=0];
+"BlockID: 2000
+Call context: 
+None
+TMP_789(bool) = amount > 0
+CONDITION TMP_789
+EXPRESSION:updateUserPending(account)	NodeType.EXPRESSION
+amount > 0	NodeType.IF" -> "BlockID: 2001
+Call context: 
+True
+REF_148(IERC20Upgradeable) -> liquidityMining.stakingToken
+TMP_790 = CONVERT account to address
+TMP_791 = CONVERT this to address
+LIBRARY_CALL, dest:SafeERC20Upgradeable, function:SafeERC20Upgradeable.safeTransferFrom(IERC20Upgradeable,address,address,uint256), arguments:['REF_148', 'TMP_790', 'TMP_791', 'amount'] 
+EXPRESSION:liquidityMining.stakingToken.safeTransferFrom(address(account),address(this),amount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2000
+Call context: 
+None
+TMP_789(bool) = amount > 0
+CONDITION TMP_789
+EXPRESSION:updateUserPending(account)	NodeType.EXPRESSION
+amount > 0	NodeType.IF" -> "BlockID: 2003
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2001
+Call context: 
+True
+REF_148(IERC20Upgradeable) -> liquidityMining.stakingToken
+TMP_790 = CONVERT account to address
+TMP_791 = CONVERT this to address
+LIBRARY_CALL, dest:SafeERC20Upgradeable, function:SafeERC20Upgradeable.safeTransferFrom(IERC20Upgradeable,address,address,uint256), arguments:['REF_148', 'TMP_790', 'TMP_791', 'amount'] 
+EXPRESSION:liquidityMining.stakingToken.safeTransferFrom(address(account),address(this),amount)	NodeType.EXPRESSION" -> "BlockID: 2002
+Call context: 
+None
+REF_150(uint256) -> fees.depositFee
+REF_151(address) -> fees.collectorAddress
+TUPLE_5(uint256,uint256) = INTERNAL_CALL, LaunchpadLockableStaking.takeFee(uint256,uint256,address)(amount,REF_150,REF_151)
+EXPRESSION:liquidityMining.stakingToken.safeTransferFrom(address(account),address(this),amount)	NodeType.EXPRESSION
+(amount,fee) = takeFee(amount,fees.depositFee,fees.collectorAddress)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2003
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2004
+Call context: 
+None
+INTERNAL_CALL, LaunchpadLockableStaking.updateUserDebt(address)(account)
+EXPRESSION:updateUserDebt(account)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2002
+Call context: 
+None
+REF_150(uint256) -> fees.depositFee
+REF_151(address) -> fees.collectorAddress
+TUPLE_5(uint256,uint256) = INTERNAL_CALL, LaunchpadLockableStaking.takeFee(uint256,uint256,address)(amount,REF_150,REF_151)
+EXPRESSION:liquidityMining.stakingToken.safeTransferFrom(address(account),address(this),amount)	NodeType.EXPRESSION
+(amount,fee) = takeFee(amount,fees.depositFee,fees.collectorAddress)	NodeType.EXPRESSION" -> "BlockID: 2006
+Call context: 
+None
+amount(uint256)= UNPACK TUPLE_5 index: 0 
+fee(uint256)= UNPACK TUPLE_5 index: 1 
+REF_152(uint256) -> fees.collectedDepositFees
+REF_152(-> fees) = REF_152 (c)+ fee
+REF_155(uint256) -> user.amount
+TMP_796(bool) = REF_155 == 0
+CONDITION TMP_796
+EXPRESSION:(amount,fee) = takeFee(amount,fees.depositFee,fees.collectorAddress)	NodeType.EXPRESSION
+fees.collectedDepositFees += fee	NodeType.EXPRESSION
+user.amount == 0	NodeType.IF" [key=0];
+"BlockID: 2006
+Call context: 
+None
+amount(uint256)= UNPACK TUPLE_5 index: 0 
+fee(uint256)= UNPACK TUPLE_5 index: 1 
+REF_152(uint256) -> fees.collectedDepositFees
+REF_152(-> fees) = REF_152 (c)+ fee
+REF_155(uint256) -> user.amount
+TMP_796(bool) = REF_155 == 0
+CONDITION TMP_796
+EXPRESSION:(amount,fee) = takeFee(amount,fees.depositFee,fees.collectorAddress)	NodeType.EXPRESSION
+fees.collectedDepositFees += fee	NodeType.EXPRESSION
+user.amount == 0	NodeType.IF" -> "BlockID: 2007
+Call context: 
+True
+stakersCount(uint256) = stakersCount (c)+ 1
+EXPRESSION:stakersCount += 1	NodeType.EXPRESSION" [key=0];
+"BlockID: 2006
+Call context: 
+None
+amount(uint256)= UNPACK TUPLE_5 index: 0 
+fee(uint256)= UNPACK TUPLE_5 index: 1 
+REF_152(uint256) -> fees.collectedDepositFees
+REF_152(-> fees) = REF_152 (c)+ fee
+REF_155(uint256) -> user.amount
+TMP_796(bool) = REF_155 == 0
+CONDITION TMP_796
+EXPRESSION:(amount,fee) = takeFee(amount,fees.depositFee,fees.collectorAddress)	NodeType.EXPRESSION
+fees.collectedDepositFees += fee	NodeType.EXPRESSION
+user.amount == 0	NodeType.IF" -> "BlockID: 2008
+Call context: 
+False
+stakersCount(uint256) = stakersCount (c)+ 0
+EXPRESSION:stakersCount += 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 2007
+Call context: 
+True
+stakersCount(uint256) = stakersCount (c)+ 1
+EXPRESSION:stakersCount += 1	NodeType.EXPRESSION" -> "BlockID: 2009
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2008
+Call context: 
+False
+stakersCount(uint256) = stakersCount (c)+ 0
+EXPRESSION:stakersCount += 0	NodeType.EXPRESSION" -> "BlockID: 2009
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2009
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2010
+Call context: 
+None
+REF_153(uint256) -> user.amount
+REF_153(-> user) = REF_153 (c)+ amount
+REF_154(uint256) -> user.lastStakedAt
+REF_154(uint256) (->user) := block.timestamp(uint256)
+EXPRESSION:user.amount += amount	NodeType.EXPRESSION
+user.lastStakedAt = block.timestamp	NodeType.EXPRESSION" [key=0];
+"BlockID: 2010
+Call context: 
+None
+REF_153(uint256) -> user.amount
+REF_153(-> user) = REF_153 (c)+ amount
+REF_154(uint256) -> user.lastStakedAt
+REF_154(uint256) (->user) := block.timestamp(uint256)
+EXPRESSION:user.amount += amount	NodeType.EXPRESSION
+user.lastStakedAt = block.timestamp	NodeType.EXPRESSION" -> "BlockID: 2003
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2011
+Call context: 
+None
+TMP_779 = ! halted 
+CONDITION TMP_779
+EXPRESSION:TMP_779 = ! halted 	NodeType.IF" -> "BlockID: 2012
+Call context: 
+True
+TMP_780(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2011
+Call context: 
+None
+TMP_779 = ! halted 
+CONDITION TMP_779
+EXPRESSION:TMP_779 = ! halted 	NodeType.IF" -> "BlockID: 2013
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2013
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1991
+Call context: 
+True
+account(address) := msg.sender(address)
+REF_143(IStaking.UserInfo) -> userInfo[account]
+user(IStaking.UserInfo) := REF_143(IStaking.UserInfo)
+NEW VARIABLE fee
+TMP_781 = CONVERT secondaryStaking to address
+TMP_782 = CONVERT 0 to address
+TMP_783(bool) = TMP_781 != TMP_782
+CONDITION TMP_783
+EXPRESSION:account = msg.sender	NodeType.VARIABLE
+account = msg.sender	NodeType.EXPRESSION
+user = userInfo[account]	NodeType.VARIABLE
+user = userInfo[account]	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+address(secondaryStaking) != address(0)	NodeType.IF" [key=0];
+}

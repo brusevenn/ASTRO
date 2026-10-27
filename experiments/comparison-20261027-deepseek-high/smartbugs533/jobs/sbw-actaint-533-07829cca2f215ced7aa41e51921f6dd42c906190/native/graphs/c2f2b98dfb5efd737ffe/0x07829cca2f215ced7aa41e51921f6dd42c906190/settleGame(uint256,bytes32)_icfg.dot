@@ -1,0 +1,929 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+TMP_114(bool) = msg.sender == croupier
+CONDITION TMP_114
+EXPRESSION:TMP_114(bool) = msg.sender == croupier	NodeType.IF";
+"BlockID: 13
+Call context: 
+True
+REF_25(uint256) -> bet.amount
+amount(uint256) := REF_25(uint256)
+REF_26(uint8) -> bet.rollUnder
+rollUnder(uint256) := REF_26(uint8)
+REF_27(address) -> bet.player
+player(address) := REF_27(address)
+TMP_81(bool) = amount != 0
+CONDITION TMP_81
+EXPRESSION:TMP_81(bool) = amount != 0	NodeType.IF";
+"BlockID: 4
+Call context: 
+None
+TMP_57(bytes) = SOLIDITY_CALL abi.encodePacked()(reveal)
+TMP_58(bytes32) = SOLIDITY_CALL keccak256()(TMP_57)
+TMP_59 = CONVERT TMP_58 to uint256
+commit(uint256) := TMP_59(uint256)
+REF_12(DiceGame.Game) -> bets[commit]
+bet(DiceGame.Game) := REF_12(DiceGame.Game)
+REF_13(uint40) -> bet.placeBlockNumber
+placeBlockNumber(uint256) := REF_13(uint40)
+TMP_60(bool) = block.number > placeBlockNumber
+CONDITION TMP_60
+EXPRESSION:TMP_60(bool) = block.number > placeBlockNumber	NodeType.IF";
+"BlockID: 5
+Call context: 
+True
+TMP_61(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 7
+Call context: 
+None
+TMP_62(uint256) = placeBlockNumber + BET_EXPIRATION_BLOCKS
+TMP_63(bool) = block.number <= TMP_62
+CONDITION TMP_63
+EXPRESSION:TMP_63(bool) = block.number <= TMP_62	NodeType.IF";
+"BlockID: 8
+Call context: 
+True
+TMP_64(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 10
+Call context: 
+None
+TMP_65(uint256) = SOLIDITY_CALL blockhash(uint256)(placeBlockNumber)
+TMP_66(bool) = TMP_65 == blockHash
+CONDITION TMP_66
+EXPRESSION:TMP_66(bool) = TMP_65 == blockHash	NodeType.IF";
+"BlockID: 11
+Call context: 
+True
+TMP_67(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 12
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2
+Call context: settleGame
+True
+TMP_115(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 3
+Call context: settleGame
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 16
+Call context: settleGame
+True
+REF_28(uint256) -> bet.amount
+REF_28(uint256) (->bet) := 0(uint256)
+TMP_83(bytes) = SOLIDITY_CALL abi.encodePacked()(reveal,entropyBlockHash)
+TMP_84(bytes32) = SOLIDITY_CALL keccak256()(TMP_83)
+seed(bytes32) := TMP_84(bytes32)
+TMP_85 = CONVERT seed to uint256
+TMP_86(uint256) = TMP_85 % 100
+TMP_87(uint256) = TMP_86 + 1
+dice(uint256) := TMP_87(uint256)
+NEW VARIABLE diceWinAmount
+NEW VARIABLE inviteProfit
+REF_30(address) -> bet.inviter
+TMP_96(bool) = MIN_ROLL_UNDER <= rollUnder
+TMP_97(bool) = rollUnder <= MAX_ROLL_UNDER
+TMP_98(bool) = TMP_96 && TMP_97
+CONDITION TMP_98
+EXPRESSION:bet.amount = 0	NodeType.EXPRESSION
+seed = keccak256()(abi.encodePacked(reveal,entropyBlockHash))	NodeType.VARIABLE
+seed = keccak256()(abi.encodePacked(reveal,entropyBlockHash))	NodeType.EXPRESSION
+dice = uint256(seed) % 100 + 1	NodeType.VARIABLE
+dice = uint256(seed) % 100 + 1	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+TMP_98(bool) = TMP_96 && TMP_97	NodeType.IF";
+"BlockID: 32
+Call context: settleGame
+True
+diceWin(uint256) := diceWinAmount(uint256)
+EXPRESSION:diceWin = diceWinAmount	NodeType.EXPRESSION";
+"BlockID: 33
+Call context: settleGame
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 34
+Call context: settleGame
+None
+TMP_90 = CONVERT diceWinAmount to uint128
+lockedInBets(uint128) = lockedInBets - TMP_90
+REF_31(address) -> bet.inviter
+REF_32(uint256) -> inviteProfits[REF_31]
+REF_32(-> inviteProfits) = REF_32 + inviteProfit
+REF_33(bool) -> bet.finished
+REF_33(bool) (->bet) := True(bool)
+TMP_92(bool) = amount > 0
+CONDITION TMP_92
+EXPRESSION:lockedInBets -= uint128(diceWinAmount)	NodeType.EXPRESSION
+inviteProfits[bet.inviter] += inviteProfit	NodeType.EXPRESSION
+bet.finished = true	NodeType.EXPRESSION
+amount > 0	NodeType.IF";
+"BlockID: 14
+Call context: settleGame
+True
+TMP_82(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 15
+Call context: settleGame
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 22
+Call context: settleGame,settleGameCommon
+True
+TMP_100(uint256) = amount / 50
+houseEdge(uint256) := TMP_100(uint256)
+inviteProfit(uint256) := 0(uint256)
+TMP_101(bool) = inviter > 0
+CONDITION TMP_101
+EXPRESSION:houseEdge = amount / 50	NodeType.VARIABLE
+houseEdge = amount / 50	NodeType.EXPRESSION
+inviteProfit = 0	NodeType.EXPRESSION
+inviter > 0	NodeType.IF";
+"BlockID: 23
+Call context: settleGame,settleGameCommon
+True
+TMP_102(uint256) = amount / 100
+inviteProfit(uint256) := TMP_102(uint256)
+TMP_103(uint256) = amount / 100
+houseEdge(uint256) := TMP_103(uint256)
+EXPRESSION:inviteProfit = amount / 100	NodeType.EXPRESSION
+houseEdge = amount / 100	NodeType.EXPRESSION";
+"BlockID: 24
+Call context: settleGame,settleGameCommon
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 25
+Call context: settleGame,settleGameCommon
+None
+TMP_104(bool) = houseEdge < HOUSE_EDGE_MINIMUM_AMOUNT
+CONDITION TMP_104
+EXPRESSION:houseEdge < HOUSE_EDGE_MINIMUM_AMOUNT	NodeType.IF";
+"BlockID: 26
+Call context: settleGame,settleGameCommon
+True
+houseEdge(uint256) := HOUSE_EDGE_MINIMUM_AMOUNT(uint256)
+EXPRESSION:houseEdge = HOUSE_EDGE_MINIMUM_AMOUNT	NodeType.EXPRESSION";
+"BlockID: 27
+Call context: settleGame,settleGameCommon
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 31
+Call context: settleGame,settleGameCommon
+True
+TMP_107(uint256) = amount - houseEdge
+TMP_108(uint256) = TMP_107 - inviteProfit
+TMP_109(uint256) = TMP_108 * 100
+TMP_110(uint256) = TMP_109 / rollUnder
+winAmount(uint256) := TMP_110(uint256)
+TMP_132(None) := winAmount(uint256)
+TMP_132(None) := inviteProfit(uint256)
+diceWinAmount(uint256)= UNPACK TUPLE_2 index: 0 
+inviteProfit(uint256)= UNPACK TUPLE_2 index: 1 
+diceWin(uint256) := 0(uint256)
+TMP_89(bool) = dice <= rollUnder
+CONDITION TMP_89
+EXPRESSION:winAmount = (amount - houseEdge - inviteProfit) * 100 / rollUnder	NodeType.EXPRESSION
+(diceWinAmount,inviteProfit) = getDiceWinAmount(amount,rollUnder,bet.inviter)	NodeType.EXPRESSION
+diceWin = 0	NodeType.VARIABLE
+diceWin = 0	NodeType.EXPRESSION
+dice <= rollUnder	NodeType.IF";
+"BlockID: 17
+Call context: settleGame,settleGameCommon
+True
+TMP_99(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 18
+Call context: settleGame,settleGameCommon
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 28
+Call context: settleGame,settleGameCommon
+None
+TMP_105(bool) = houseEdge <= amount
+CONDITION TMP_105
+EXPRESSION:TMP_105(bool) = houseEdge <= amount	NodeType.IF";
+"BlockID: 29
+Call context: settleGame,settleGameCommon
+True
+TMP_106(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 30
+Call context: settleGame,settleGameCommon
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 35
+Call context: settleGame,settleGameCommon
+True
+TMP_93 = SEND dest:beneficiary value:amount
+END_IF
+EXPRESSION:beneficiary.send(amount)	NodeType.EXPRESSION
+None	NodeType.ENDIF";
+"BlockID: 19
+Call context: 
+None
+REF_28(uint256) -> bet.amount
+REF_28(uint256) (->bet) := 0(uint256)
+TMP_83(bytes) = SOLIDITY_CALL abi.encodePacked()(reveal,entropyBlockHash)
+TMP_84(bytes32) = SOLIDITY_CALL keccak256()(TMP_83)
+seed(bytes32) := TMP_84(bytes32)
+TMP_85 = CONVERT seed to uint256
+TMP_86(uint256) = TMP_85 % 100
+TMP_87(uint256) = TMP_86 + 1
+dice(uint256) := TMP_87(uint256)
+NEW VARIABLE diceWinAmount
+NEW VARIABLE inviteProfit
+REF_30(address) -> bet.inviter
+TMP_96(bool) = MIN_ROLL_UNDER <= rollUnder
+TMP_97(bool) = rollUnder <= MAX_ROLL_UNDER
+TMP_98(bool) = TMP_96 && TMP_97
+CONDITION TMP_98
+EXPRESSION:bet.amount = 0	NodeType.EXPRESSION
+seed = keccak256()(abi.encodePacked(reveal,entropyBlockHash))	NodeType.VARIABLE
+seed = keccak256()(abi.encodePacked(reveal,entropyBlockHash))	NodeType.EXPRESSION
+dice = uint256(seed) % 100 + 1	NodeType.VARIABLE
+dice = uint256(seed) % 100 + 1	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+TMP_98(bool) = TMP_96 && TMP_97	NodeType.IF";
+"BlockID: 20
+Call context: 
+True
+TMP_98(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 21
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+TMP_114(bool) = msg.sender == croupier
+CONDITION TMP_114
+EXPRESSION:TMP_114(bool) = msg.sender == croupier	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_114(bool) = msg.sender == croupier
+CONDITION TMP_114
+EXPRESSION:TMP_114(bool) = msg.sender == croupier	NodeType.IF" -> "BlockID: 2
+Call context: settleGame
+True
+TMP_115(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+TMP_114(bool) = msg.sender == croupier
+CONDITION TMP_114
+EXPRESSION:TMP_114(bool) = msg.sender == croupier	NodeType.IF" -> "BlockID: 3
+Call context: settleGame
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 13
+Call context: 
+True
+REF_25(uint256) -> bet.amount
+amount(uint256) := REF_25(uint256)
+REF_26(uint8) -> bet.rollUnder
+rollUnder(uint256) := REF_26(uint8)
+REF_27(address) -> bet.player
+player(address) := REF_27(address)
+TMP_81(bool) = amount != 0
+CONDITION TMP_81
+EXPRESSION:TMP_81(bool) = amount != 0	NodeType.IF" -> "BlockID: 14
+Call context: settleGame
+True
+TMP_82(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 13
+Call context: 
+True
+REF_25(uint256) -> bet.amount
+amount(uint256) := REF_25(uint256)
+REF_26(uint8) -> bet.rollUnder
+rollUnder(uint256) := REF_26(uint8)
+REF_27(address) -> bet.player
+player(address) := REF_27(address)
+TMP_81(bool) = amount != 0
+CONDITION TMP_81
+EXPRESSION:TMP_81(bool) = amount != 0	NodeType.IF" -> "BlockID: 15
+Call context: settleGame
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 4
+Call context: 
+None
+TMP_57(bytes) = SOLIDITY_CALL abi.encodePacked()(reveal)
+TMP_58(bytes32) = SOLIDITY_CALL keccak256()(TMP_57)
+TMP_59 = CONVERT TMP_58 to uint256
+commit(uint256) := TMP_59(uint256)
+REF_12(DiceGame.Game) -> bets[commit]
+bet(DiceGame.Game) := REF_12(DiceGame.Game)
+REF_13(uint40) -> bet.placeBlockNumber
+placeBlockNumber(uint256) := REF_13(uint40)
+TMP_60(bool) = block.number > placeBlockNumber
+CONDITION TMP_60
+EXPRESSION:TMP_60(bool) = block.number > placeBlockNumber	NodeType.IF" -> "BlockID: 5
+Call context: 
+True
+TMP_61(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 4
+Call context: 
+None
+TMP_57(bytes) = SOLIDITY_CALL abi.encodePacked()(reveal)
+TMP_58(bytes32) = SOLIDITY_CALL keccak256()(TMP_57)
+TMP_59 = CONVERT TMP_58 to uint256
+commit(uint256) := TMP_59(uint256)
+REF_12(DiceGame.Game) -> bets[commit]
+bet(DiceGame.Game) := REF_12(DiceGame.Game)
+REF_13(uint40) -> bet.placeBlockNumber
+placeBlockNumber(uint256) := REF_13(uint40)
+TMP_60(bool) = block.number > placeBlockNumber
+CONDITION TMP_60
+EXPRESSION:TMP_60(bool) = block.number > placeBlockNumber	NodeType.IF" -> "BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 7
+Call context: 
+None
+TMP_62(uint256) = placeBlockNumber + BET_EXPIRATION_BLOCKS
+TMP_63(bool) = block.number <= TMP_62
+CONDITION TMP_63
+EXPRESSION:TMP_63(bool) = block.number <= TMP_62	NodeType.IF" [key=0];
+"BlockID: 7
+Call context: 
+None
+TMP_62(uint256) = placeBlockNumber + BET_EXPIRATION_BLOCKS
+TMP_63(bool) = block.number <= TMP_62
+CONDITION TMP_63
+EXPRESSION:TMP_63(bool) = block.number <= TMP_62	NodeType.IF" -> "BlockID: 8
+Call context: 
+True
+TMP_64(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 7
+Call context: 
+None
+TMP_62(uint256) = placeBlockNumber + BET_EXPIRATION_BLOCKS
+TMP_63(bool) = block.number <= TMP_62
+CONDITION TMP_63
+EXPRESSION:TMP_63(bool) = block.number <= TMP_62	NodeType.IF" -> "BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 10
+Call context: 
+None
+TMP_65(uint256) = SOLIDITY_CALL blockhash(uint256)(placeBlockNumber)
+TMP_66(bool) = TMP_65 == blockHash
+CONDITION TMP_66
+EXPRESSION:TMP_66(bool) = TMP_65 == blockHash	NodeType.IF" [key=0];
+"BlockID: 10
+Call context: 
+None
+TMP_65(uint256) = SOLIDITY_CALL blockhash(uint256)(placeBlockNumber)
+TMP_66(bool) = TMP_65 == blockHash
+CONDITION TMP_66
+EXPRESSION:TMP_66(bool) = TMP_65 == blockHash	NodeType.IF" -> "BlockID: 11
+Call context: 
+True
+TMP_67(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 10
+Call context: 
+None
+TMP_65(uint256) = SOLIDITY_CALL blockhash(uint256)(placeBlockNumber)
+TMP_66(bool) = TMP_65 == blockHash
+CONDITION TMP_66
+EXPRESSION:TMP_66(bool) = TMP_65 == blockHash	NodeType.IF" -> "BlockID: 12
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 12
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 13
+Call context: 
+True
+REF_25(uint256) -> bet.amount
+amount(uint256) := REF_25(uint256)
+REF_26(uint8) -> bet.rollUnder
+rollUnder(uint256) := REF_26(uint8)
+REF_27(address) -> bet.player
+player(address) := REF_27(address)
+TMP_81(bool) = amount != 0
+CONDITION TMP_81
+EXPRESSION:TMP_81(bool) = amount != 0	NodeType.IF" [key=0];
+"BlockID: 3
+Call context: settleGame
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: 
+None
+TMP_57(bytes) = SOLIDITY_CALL abi.encodePacked()(reveal)
+TMP_58(bytes32) = SOLIDITY_CALL keccak256()(TMP_57)
+TMP_59 = CONVERT TMP_58 to uint256
+commit(uint256) := TMP_59(uint256)
+REF_12(DiceGame.Game) -> bets[commit]
+bet(DiceGame.Game) := REF_12(DiceGame.Game)
+REF_13(uint40) -> bet.placeBlockNumber
+placeBlockNumber(uint256) := REF_13(uint40)
+TMP_60(bool) = block.number > placeBlockNumber
+CONDITION TMP_60
+EXPRESSION:TMP_60(bool) = block.number > placeBlockNumber	NodeType.IF" [key="Exit: onlyCroupier", ref="DiceGame.onlyCroupier"];
+"BlockID: 16
+Call context: settleGame
+True
+REF_28(uint256) -> bet.amount
+REF_28(uint256) (->bet) := 0(uint256)
+TMP_83(bytes) = SOLIDITY_CALL abi.encodePacked()(reveal,entropyBlockHash)
+TMP_84(bytes32) = SOLIDITY_CALL keccak256()(TMP_83)
+seed(bytes32) := TMP_84(bytes32)
+TMP_85 = CONVERT seed to uint256
+TMP_86(uint256) = TMP_85 % 100
+TMP_87(uint256) = TMP_86 + 1
+dice(uint256) := TMP_87(uint256)
+NEW VARIABLE diceWinAmount
+NEW VARIABLE inviteProfit
+REF_30(address) -> bet.inviter
+TMP_96(bool) = MIN_ROLL_UNDER <= rollUnder
+TMP_97(bool) = rollUnder <= MAX_ROLL_UNDER
+TMP_98(bool) = TMP_96 && TMP_97
+CONDITION TMP_98
+EXPRESSION:bet.amount = 0	NodeType.EXPRESSION
+seed = keccak256()(abi.encodePacked(reveal,entropyBlockHash))	NodeType.VARIABLE
+seed = keccak256()(abi.encodePacked(reveal,entropyBlockHash))	NodeType.EXPRESSION
+dice = uint256(seed) % 100 + 1	NodeType.VARIABLE
+dice = uint256(seed) % 100 + 1	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+TMP_98(bool) = TMP_96 && TMP_97	NodeType.IF" -> "BlockID: 17
+Call context: settleGame,settleGameCommon
+True
+TMP_99(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 16
+Call context: settleGame
+True
+REF_28(uint256) -> bet.amount
+REF_28(uint256) (->bet) := 0(uint256)
+TMP_83(bytes) = SOLIDITY_CALL abi.encodePacked()(reveal,entropyBlockHash)
+TMP_84(bytes32) = SOLIDITY_CALL keccak256()(TMP_83)
+seed(bytes32) := TMP_84(bytes32)
+TMP_85 = CONVERT seed to uint256
+TMP_86(uint256) = TMP_85 % 100
+TMP_87(uint256) = TMP_86 + 1
+dice(uint256) := TMP_87(uint256)
+NEW VARIABLE diceWinAmount
+NEW VARIABLE inviteProfit
+REF_30(address) -> bet.inviter
+TMP_96(bool) = MIN_ROLL_UNDER <= rollUnder
+TMP_97(bool) = rollUnder <= MAX_ROLL_UNDER
+TMP_98(bool) = TMP_96 && TMP_97
+CONDITION TMP_98
+EXPRESSION:bet.amount = 0	NodeType.EXPRESSION
+seed = keccak256()(abi.encodePacked(reveal,entropyBlockHash))	NodeType.VARIABLE
+seed = keccak256()(abi.encodePacked(reveal,entropyBlockHash))	NodeType.EXPRESSION
+dice = uint256(seed) % 100 + 1	NodeType.VARIABLE
+dice = uint256(seed) % 100 + 1	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+TMP_98(bool) = TMP_96 && TMP_97	NodeType.IF" -> "BlockID: 18
+Call context: settleGame,settleGameCommon
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 32
+Call context: settleGame
+True
+diceWin(uint256) := diceWinAmount(uint256)
+EXPRESSION:diceWin = diceWinAmount	NodeType.EXPRESSION" -> "BlockID: 33
+Call context: settleGame
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 33
+Call context: settleGame
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 34
+Call context: settleGame
+None
+TMP_90 = CONVERT diceWinAmount to uint128
+lockedInBets(uint128) = lockedInBets - TMP_90
+REF_31(address) -> bet.inviter
+REF_32(uint256) -> inviteProfits[REF_31]
+REF_32(-> inviteProfits) = REF_32 + inviteProfit
+REF_33(bool) -> bet.finished
+REF_33(bool) (->bet) := True(bool)
+TMP_92(bool) = amount > 0
+CONDITION TMP_92
+EXPRESSION:lockedInBets -= uint128(diceWinAmount)	NodeType.EXPRESSION
+inviteProfits[bet.inviter] += inviteProfit	NodeType.EXPRESSION
+bet.finished = true	NodeType.EXPRESSION
+amount > 0	NodeType.IF" [key=0];
+"BlockID: 34
+Call context: settleGame
+None
+TMP_90 = CONVERT diceWinAmount to uint128
+lockedInBets(uint128) = lockedInBets - TMP_90
+REF_31(address) -> bet.inviter
+REF_32(uint256) -> inviteProfits[REF_31]
+REF_32(-> inviteProfits) = REF_32 + inviteProfit
+REF_33(bool) -> bet.finished
+REF_33(bool) (->bet) := True(bool)
+TMP_92(bool) = amount > 0
+CONDITION TMP_92
+EXPRESSION:lockedInBets -= uint128(diceWinAmount)	NodeType.EXPRESSION
+inviteProfits[bet.inviter] += inviteProfit	NodeType.EXPRESSION
+bet.finished = true	NodeType.EXPRESSION
+amount > 0	NodeType.IF" -> "BlockID: 35
+Call context: settleGame,settleGameCommon
+True
+TMP_93 = SEND dest:beneficiary value:amount
+END_IF
+EXPRESSION:beneficiary.send(amount)	NodeType.EXPRESSION
+None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 15
+Call context: settleGame
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 16
+Call context: settleGame
+True
+REF_28(uint256) -> bet.amount
+REF_28(uint256) (->bet) := 0(uint256)
+TMP_83(bytes) = SOLIDITY_CALL abi.encodePacked()(reveal,entropyBlockHash)
+TMP_84(bytes32) = SOLIDITY_CALL keccak256()(TMP_83)
+seed(bytes32) := TMP_84(bytes32)
+TMP_85 = CONVERT seed to uint256
+TMP_86(uint256) = TMP_85 % 100
+TMP_87(uint256) = TMP_86 + 1
+dice(uint256) := TMP_87(uint256)
+NEW VARIABLE diceWinAmount
+NEW VARIABLE inviteProfit
+REF_30(address) -> bet.inviter
+TMP_96(bool) = MIN_ROLL_UNDER <= rollUnder
+TMP_97(bool) = rollUnder <= MAX_ROLL_UNDER
+TMP_98(bool) = TMP_96 && TMP_97
+CONDITION TMP_98
+EXPRESSION:bet.amount = 0	NodeType.EXPRESSION
+seed = keccak256()(abi.encodePacked(reveal,entropyBlockHash))	NodeType.VARIABLE
+seed = keccak256()(abi.encodePacked(reveal,entropyBlockHash))	NodeType.EXPRESSION
+dice = uint256(seed) % 100 + 1	NodeType.VARIABLE
+dice = uint256(seed) % 100 + 1	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+TMP_98(bool) = TMP_96 && TMP_97	NodeType.IF" [key=0];
+"BlockID: 22
+Call context: settleGame,settleGameCommon
+True
+TMP_100(uint256) = amount / 50
+houseEdge(uint256) := TMP_100(uint256)
+inviteProfit(uint256) := 0(uint256)
+TMP_101(bool) = inviter > 0
+CONDITION TMP_101
+EXPRESSION:houseEdge = amount / 50	NodeType.VARIABLE
+houseEdge = amount / 50	NodeType.EXPRESSION
+inviteProfit = 0	NodeType.EXPRESSION
+inviter > 0	NodeType.IF" -> "BlockID: 23
+Call context: settleGame,settleGameCommon
+True
+TMP_102(uint256) = amount / 100
+inviteProfit(uint256) := TMP_102(uint256)
+TMP_103(uint256) = amount / 100
+houseEdge(uint256) := TMP_103(uint256)
+EXPRESSION:inviteProfit = amount / 100	NodeType.EXPRESSION
+houseEdge = amount / 100	NodeType.EXPRESSION" [key=0];
+"BlockID: 22
+Call context: settleGame,settleGameCommon
+True
+TMP_100(uint256) = amount / 50
+houseEdge(uint256) := TMP_100(uint256)
+inviteProfit(uint256) := 0(uint256)
+TMP_101(bool) = inviter > 0
+CONDITION TMP_101
+EXPRESSION:houseEdge = amount / 50	NodeType.VARIABLE
+houseEdge = amount / 50	NodeType.EXPRESSION
+inviteProfit = 0	NodeType.EXPRESSION
+inviter > 0	NodeType.IF" -> "BlockID: 24
+Call context: settleGame,settleGameCommon
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 23
+Call context: settleGame,settleGameCommon
+True
+TMP_102(uint256) = amount / 100
+inviteProfit(uint256) := TMP_102(uint256)
+TMP_103(uint256) = amount / 100
+houseEdge(uint256) := TMP_103(uint256)
+EXPRESSION:inviteProfit = amount / 100	NodeType.EXPRESSION
+houseEdge = amount / 100	NodeType.EXPRESSION" -> "BlockID: 24
+Call context: settleGame,settleGameCommon
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 24
+Call context: settleGame,settleGameCommon
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 25
+Call context: settleGame,settleGameCommon
+None
+TMP_104(bool) = houseEdge < HOUSE_EDGE_MINIMUM_AMOUNT
+CONDITION TMP_104
+EXPRESSION:houseEdge < HOUSE_EDGE_MINIMUM_AMOUNT	NodeType.IF" [key=0];
+"BlockID: 25
+Call context: settleGame,settleGameCommon
+None
+TMP_104(bool) = houseEdge < HOUSE_EDGE_MINIMUM_AMOUNT
+CONDITION TMP_104
+EXPRESSION:houseEdge < HOUSE_EDGE_MINIMUM_AMOUNT	NodeType.IF" -> "BlockID: 26
+Call context: settleGame,settleGameCommon
+True
+houseEdge(uint256) := HOUSE_EDGE_MINIMUM_AMOUNT(uint256)
+EXPRESSION:houseEdge = HOUSE_EDGE_MINIMUM_AMOUNT	NodeType.EXPRESSION" [key=0];
+"BlockID: 25
+Call context: settleGame,settleGameCommon
+None
+TMP_104(bool) = houseEdge < HOUSE_EDGE_MINIMUM_AMOUNT
+CONDITION TMP_104
+EXPRESSION:houseEdge < HOUSE_EDGE_MINIMUM_AMOUNT	NodeType.IF" -> "BlockID: 27
+Call context: settleGame,settleGameCommon
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 26
+Call context: settleGame,settleGameCommon
+True
+houseEdge(uint256) := HOUSE_EDGE_MINIMUM_AMOUNT(uint256)
+EXPRESSION:houseEdge = HOUSE_EDGE_MINIMUM_AMOUNT	NodeType.EXPRESSION" -> "BlockID: 27
+Call context: settleGame,settleGameCommon
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 27
+Call context: settleGame,settleGameCommon
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 28
+Call context: settleGame,settleGameCommon
+None
+TMP_105(bool) = houseEdge <= amount
+CONDITION TMP_105
+EXPRESSION:TMP_105(bool) = houseEdge <= amount	NodeType.IF" [key=0];
+"BlockID: 31
+Call context: settleGame,settleGameCommon
+True
+TMP_107(uint256) = amount - houseEdge
+TMP_108(uint256) = TMP_107 - inviteProfit
+TMP_109(uint256) = TMP_108 * 100
+TMP_110(uint256) = TMP_109 / rollUnder
+winAmount(uint256) := TMP_110(uint256)
+TMP_132(None) := winAmount(uint256)
+TMP_132(None) := inviteProfit(uint256)
+diceWinAmount(uint256)= UNPACK TUPLE_2 index: 0 
+inviteProfit(uint256)= UNPACK TUPLE_2 index: 1 
+diceWin(uint256) := 0(uint256)
+TMP_89(bool) = dice <= rollUnder
+CONDITION TMP_89
+EXPRESSION:winAmount = (amount - houseEdge - inviteProfit) * 100 / rollUnder	NodeType.EXPRESSION
+(diceWinAmount,inviteProfit) = getDiceWinAmount(amount,rollUnder,bet.inviter)	NodeType.EXPRESSION
+diceWin = 0	NodeType.VARIABLE
+diceWin = 0	NodeType.EXPRESSION
+dice <= rollUnder	NodeType.IF" -> "BlockID: 32
+Call context: settleGame
+True
+diceWin(uint256) := diceWinAmount(uint256)
+EXPRESSION:diceWin = diceWinAmount	NodeType.EXPRESSION" [key="successor_2"];
+"BlockID: 31
+Call context: settleGame,settleGameCommon
+True
+TMP_107(uint256) = amount - houseEdge
+TMP_108(uint256) = TMP_107 - inviteProfit
+TMP_109(uint256) = TMP_108 * 100
+TMP_110(uint256) = TMP_109 / rollUnder
+winAmount(uint256) := TMP_110(uint256)
+TMP_132(None) := winAmount(uint256)
+TMP_132(None) := inviteProfit(uint256)
+diceWinAmount(uint256)= UNPACK TUPLE_2 index: 0 
+inviteProfit(uint256)= UNPACK TUPLE_2 index: 1 
+diceWin(uint256) := 0(uint256)
+TMP_89(bool) = dice <= rollUnder
+CONDITION TMP_89
+EXPRESSION:winAmount = (amount - houseEdge - inviteProfit) * 100 / rollUnder	NodeType.EXPRESSION
+(diceWinAmount,inviteProfit) = getDiceWinAmount(amount,rollUnder,bet.inviter)	NodeType.EXPRESSION
+diceWin = 0	NodeType.VARIABLE
+diceWin = 0	NodeType.EXPRESSION
+dice <= rollUnder	NodeType.IF" -> "BlockID: 33
+Call context: settleGame
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+"BlockID: 18
+Call context: settleGame,settleGameCommon
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 19
+Call context: 
+None
+REF_28(uint256) -> bet.amount
+REF_28(uint256) (->bet) := 0(uint256)
+TMP_83(bytes) = SOLIDITY_CALL abi.encodePacked()(reveal,entropyBlockHash)
+TMP_84(bytes32) = SOLIDITY_CALL keccak256()(TMP_83)
+seed(bytes32) := TMP_84(bytes32)
+TMP_85 = CONVERT seed to uint256
+TMP_86(uint256) = TMP_85 % 100
+TMP_87(uint256) = TMP_86 + 1
+dice(uint256) := TMP_87(uint256)
+NEW VARIABLE diceWinAmount
+NEW VARIABLE inviteProfit
+REF_30(address) -> bet.inviter
+TMP_96(bool) = MIN_ROLL_UNDER <= rollUnder
+TMP_97(bool) = rollUnder <= MAX_ROLL_UNDER
+TMP_98(bool) = TMP_96 && TMP_97
+CONDITION TMP_98
+EXPRESSION:bet.amount = 0	NodeType.EXPRESSION
+seed = keccak256()(abi.encodePacked(reveal,entropyBlockHash))	NodeType.VARIABLE
+seed = keccak256()(abi.encodePacked(reveal,entropyBlockHash))	NodeType.EXPRESSION
+dice = uint256(seed) % 100 + 1	NodeType.VARIABLE
+dice = uint256(seed) % 100 + 1	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+TMP_98(bool) = TMP_96 && TMP_97	NodeType.IF" [key=0];
+"BlockID: 28
+Call context: settleGame,settleGameCommon
+None
+TMP_105(bool) = houseEdge <= amount
+CONDITION TMP_105
+EXPRESSION:TMP_105(bool) = houseEdge <= amount	NodeType.IF" -> "BlockID: 29
+Call context: settleGame,settleGameCommon
+True
+TMP_106(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 28
+Call context: settleGame,settleGameCommon
+None
+TMP_105(bool) = houseEdge <= amount
+CONDITION TMP_105
+EXPRESSION:TMP_105(bool) = houseEdge <= amount	NodeType.IF" -> "BlockID: 30
+Call context: settleGame,settleGameCommon
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 30
+Call context: settleGame,settleGameCommon
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 31
+Call context: settleGame,settleGameCommon
+True
+TMP_107(uint256) = amount - houseEdge
+TMP_108(uint256) = TMP_107 - inviteProfit
+TMP_109(uint256) = TMP_108 * 100
+TMP_110(uint256) = TMP_109 / rollUnder
+winAmount(uint256) := TMP_110(uint256)
+TMP_132(None) := winAmount(uint256)
+TMP_132(None) := inviteProfit(uint256)
+diceWinAmount(uint256)= UNPACK TUPLE_2 index: 0 
+inviteProfit(uint256)= UNPACK TUPLE_2 index: 1 
+diceWin(uint256) := 0(uint256)
+TMP_89(bool) = dice <= rollUnder
+CONDITION TMP_89
+EXPRESSION:winAmount = (amount - houseEdge - inviteProfit) * 100 / rollUnder	NodeType.EXPRESSION
+(diceWinAmount,inviteProfit) = getDiceWinAmount(amount,rollUnder,bet.inviter)	NodeType.EXPRESSION
+diceWin = 0	NodeType.VARIABLE
+diceWin = 0	NodeType.EXPRESSION
+dice <= rollUnder	NodeType.IF" [key=0];
+"BlockID: 19
+Call context: 
+None
+REF_28(uint256) -> bet.amount
+REF_28(uint256) (->bet) := 0(uint256)
+TMP_83(bytes) = SOLIDITY_CALL abi.encodePacked()(reveal,entropyBlockHash)
+TMP_84(bytes32) = SOLIDITY_CALL keccak256()(TMP_83)
+seed(bytes32) := TMP_84(bytes32)
+TMP_85 = CONVERT seed to uint256
+TMP_86(uint256) = TMP_85 % 100
+TMP_87(uint256) = TMP_86 + 1
+dice(uint256) := TMP_87(uint256)
+NEW VARIABLE diceWinAmount
+NEW VARIABLE inviteProfit
+REF_30(address) -> bet.inviter
+TMP_96(bool) = MIN_ROLL_UNDER <= rollUnder
+TMP_97(bool) = rollUnder <= MAX_ROLL_UNDER
+TMP_98(bool) = TMP_96 && TMP_97
+CONDITION TMP_98
+EXPRESSION:bet.amount = 0	NodeType.EXPRESSION
+seed = keccak256()(abi.encodePacked(reveal,entropyBlockHash))	NodeType.VARIABLE
+seed = keccak256()(abi.encodePacked(reveal,entropyBlockHash))	NodeType.EXPRESSION
+dice = uint256(seed) % 100 + 1	NodeType.VARIABLE
+dice = uint256(seed) % 100 + 1	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+TMP_98(bool) = TMP_96 && TMP_97	NodeType.IF" -> "BlockID: 20
+Call context: 
+True
+TMP_98(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 19
+Call context: 
+None
+REF_28(uint256) -> bet.amount
+REF_28(uint256) (->bet) := 0(uint256)
+TMP_83(bytes) = SOLIDITY_CALL abi.encodePacked()(reveal,entropyBlockHash)
+TMP_84(bytes32) = SOLIDITY_CALL keccak256()(TMP_83)
+seed(bytes32) := TMP_84(bytes32)
+TMP_85 = CONVERT seed to uint256
+TMP_86(uint256) = TMP_85 % 100
+TMP_87(uint256) = TMP_86 + 1
+dice(uint256) := TMP_87(uint256)
+NEW VARIABLE diceWinAmount
+NEW VARIABLE inviteProfit
+REF_30(address) -> bet.inviter
+TMP_96(bool) = MIN_ROLL_UNDER <= rollUnder
+TMP_97(bool) = rollUnder <= MAX_ROLL_UNDER
+TMP_98(bool) = TMP_96 && TMP_97
+CONDITION TMP_98
+EXPRESSION:bet.amount = 0	NodeType.EXPRESSION
+seed = keccak256()(abi.encodePacked(reveal,entropyBlockHash))	NodeType.VARIABLE
+seed = keccak256()(abi.encodePacked(reveal,entropyBlockHash))	NodeType.EXPRESSION
+dice = uint256(seed) % 100 + 1	NodeType.VARIABLE
+dice = uint256(seed) % 100 + 1	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+TMP_98(bool) = TMP_96 && TMP_97	NodeType.IF" -> "BlockID: 21
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 21
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 22
+Call context: settleGame,settleGameCommon
+True
+TMP_100(uint256) = amount / 50
+houseEdge(uint256) := TMP_100(uint256)
+inviteProfit(uint256) := 0(uint256)
+TMP_101(bool) = inviter > 0
+CONDITION TMP_101
+EXPRESSION:houseEdge = amount / 50	NodeType.VARIABLE
+houseEdge = amount / 50	NodeType.EXPRESSION
+inviteProfit = 0	NodeType.EXPRESSION
+inviter > 0	NodeType.IF" [key=0];
+}

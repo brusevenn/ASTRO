@@ -1,0 +1,1411 @@
+digraph {
+"BlockID: 1596
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1597
+Call context: 
+None
+MODIFIER_CALL, ReentrancyGuard.nonReentrant()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION";
+"BlockID: 1598
+Call context: 
+None
+MODIFIER_CALL, Ownable.onlyOwner()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION
+onlyOwner()	NodeType.EXPRESSION";
+"BlockID: 1599
+Call context: 
+None
+TMP_1654(bool) = weight == 0
+CONDITION TMP_1654
+EXPRESSION:onlyOwner()	NodeType.EXPRESSION
+weight == 0	NodeType.IF";
+"BlockID: 1600
+Call context: 
+True
+TMP_1655(None) = SOLIDITY_CALL revert InvalidWeight()()
+EXPRESSION:revert InvalidWeight()()	NodeType.EXPRESSION";
+"BlockID: 1601
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1602
+Call context: 
+None
+REF_301(uint256) -> destinations[poolId]
+poolIndex(uint256) := REF_301(uint256)
+TMP_1656(bool) = poolIndex == 0
+CONDITION TMP_1656
+EXPRESSION:poolIndex = destinations[poolId]	NodeType.VARIABLE
+poolIndex = destinations[poolId]	NodeType.EXPRESSION
+poolIndex == 0	NodeType.IF";
+"BlockID: 1603
+Call context: 
+True
+TMP_1657(None) = SOLIDITY_CALL revert NotUlyssesLP()()
+EXPRESSION:revert NotUlyssesLP()()	NodeType.EXPRESSION";
+"BlockID: 1604
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1605
+Call context: 
+None
+NEW VARIABLE oldRebalancingFee
+i(uint256) := 1(uint256)
+EXPRESSION:None	NodeType.VARIABLE
+i = 1	NodeType.VARIABLE
+i = 1	NodeType.EXPRESSION";
+"BlockID: 1606
+Call context: 
+None
+BEGIN_LOOP
+REF_302 -> LENGTH bandwidthStateList
+TMP_1658(bool) = i < REF_302
+CONDITION TMP_1658
+EXPRESSION:None	NodeType.STARTLOOP
+i < bandwidthStateList.length	NodeType.IFLOOP";
+"BlockID: 1607
+Call context: 
+True
+REF_304(IUlyssesPool.BandwidthState) -> bandwidthStateList[i]
+REF_305(uint8) -> REF_304.weight
+TMP_1659(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDiv(uint256,uint256,uint256), arguments:['totalSupply', 'REF_305', 'totalWeights'] 
+EXPRESSION:";
+"BlockID: 1609
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 1610
+Call context: 
+None
+oldTotalWeights(uint256) := totalWeights(uint256)
+REF_308(IUlyssesPool.BandwidthState) -> bandwidthStateList[poolIndex]
+REF_309(uint8) -> REF_308.weight
+TMP_1662(uint256) = oldTotalWeights (c)- REF_309
+weightsWithoutPool(uint256) := TMP_1662(uint256)
+TMP_1663(uint256) = weightsWithoutPool (c)+ weight
+newTotalWeights(uint256) := TMP_1663(uint256)
+totalWeights(uint256) := newTotalWeights(uint256)
+TMP_1664(bool) = totalWeights > MAX_TOTAL_WEIGHT
+TMP_1665(bool) = oldTotalWeights == newTotalWeights
+TMP_1666(bool) = TMP_1664 || TMP_1665
+CONDITION TMP_1666
+EXPRESSION:oldTotalWeights = totalWeights	NodeType.VARIABLE
+oldTotalWeights = totalWeights	NodeType.EXPRESSION
+weightsWithoutPool = oldTotalWeights - bandwidthStateList[poolIndex].weight	NodeType.VARIABLE
+weightsWithoutPool = oldTotalWeights - bandwidthStateList[poolIndex].weight	NodeType.EXPRESSION
+newTotalWeights = weightsWithoutPool + weight	NodeType.VARIABLE
+newTotalWeights = weightsWithoutPool + weight	NodeType.EXPRESSION
+totalWeights = newTotalWeights	NodeType.EXPRESSION
+totalWeights > MAX_TOTAL_WEIGHT || oldTotalWeights == newTotalWeights	NodeType.IF";
+"BlockID: 1611
+Call context: 
+True
+TMP_1667(None) = SOLIDITY_CALL revert InvalidWeight()()
+EXPRESSION:revert InvalidWeight()()	NodeType.EXPRESSION";
+"BlockID: 1612
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1613
+Call context: 
+None
+NEW VARIABLE leftOverBandwidth
+REF_310(IUlyssesPool.BandwidthState) -> bandwidthStateList[poolIndex]
+poolState(IUlyssesPool.BandwidthState) := REF_310(IUlyssesPool.BandwidthState)
+REF_311(uint8) -> poolState.weight
+REF_311(uint8) (->poolState) := weight(uint8)
+TMP_1668(bool) = oldTotalWeights > newTotalWeights
+CONDITION TMP_1668
+EXPRESSION:None	NodeType.VARIABLE
+poolState = bandwidthStateList[poolIndex]	NodeType.VARIABLE
+poolState = bandwidthStateList[poolIndex]	NodeType.EXPRESSION
+poolState.weight = weight	NodeType.EXPRESSION
+oldTotalWeights > newTotalWeights	NodeType.IF";
+"BlockID: 1614
+Call context: 
+True
+i_scope_0(uint256) := 1(uint256)
+EXPRESSION:i_scope_0 = 1	NodeType.VARIABLE
+i_scope_0 = 1	NodeType.EXPRESSION";
+"BlockID: 1615
+Call context: 
+False
+REF_323(uint248) -> poolState.bandwidth
+oldBandwidth_scope_1(uint256) := REF_323(uint248)
+TMP_1676(bool) = oldBandwidth_scope_1 > 0
+CONDITION TMP_1676
+EXPRESSION:oldBandwidth_scope_1 = poolState.bandwidth	NodeType.VARIABLE
+oldBandwidth_scope_1 = poolState.bandwidth	NodeType.EXPRESSION
+oldBandwidth_scope_1 > 0	NodeType.IF";
+"BlockID: 1616
+Call context: 
+True
+REF_324(uint248) -> poolState.bandwidth
+TMP_1677(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivUp(uint256,uint256,uint256), arguments:['oldBandwidth_scope_1', 'oldTotalWeights', 'newTotalWeights'] 
+EXPRESSION:poolState.bandwidth = oldBandwidth_scope_1.mulDivUp(oldTotalWeights,newTotalWeights).toUint248()	NodeType.EXPRESSION";
+"BlockID: 1619
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1620
+Call context: 
+None
+i_scope_2(uint256) := 1(uint256)
+EXPRESSION:i_scope_2 = 1	NodeType.VARIABLE
+i_scope_2 = 1	NodeType.EXPRESSION";
+"BlockID: 1621
+Call context: 
+None
+BEGIN_LOOP
+REF_328 -> LENGTH bandwidthStateList
+TMP_1680(bool) = i_scope_2 < REF_328
+CONDITION TMP_1680
+EXPRESSION:None	NodeType.STARTLOOP
+i_scope_2 < bandwidthStateList.length	NodeType.IFLOOP";
+"BlockID: 1622
+Call context: 
+True
+TMP_1681(bool) = i_scope_2 != poolIndex
+CONDITION TMP_1681
+EXPRESSION:i_scope_2 != poolIndex	NodeType.IF";
+"BlockID: 1623
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 1625
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1626
+Call context: 
+None
+NEW VARIABLE newRebalancingFee
+i_scope_3(uint256) := 1(uint256)
+EXPRESSION:None	NodeType.VARIABLE
+i_scope_3 = 1	NodeType.VARIABLE
+i_scope_3 = 1	NodeType.EXPRESSION";
+"BlockID: 1627
+Call context: 
+None
+BEGIN_LOOP
+REF_339 -> LENGTH bandwidthStateList
+TMP_1688(bool) = i_scope_3 < REF_339
+CONDITION TMP_1688
+EXPRESSION:None	NodeType.STARTLOOP
+i_scope_3 < bandwidthStateList.length	NodeType.IFLOOP";
+"BlockID: 1628
+Call context: 
+True
+REF_341(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_3]
+REF_342(uint8) -> REF_341.weight
+TMP_1689(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDiv(uint256,uint256,uint256), arguments:['totalSupply', 'REF_342', 'totalWeights'] 
+EXPRESSION:";
+"BlockID: 1630
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 1631
+Call context: 
+None
+TMP_1692(bool) = oldRebalancingFee < newRebalancingFee
+CONDITION TMP_1692
+EXPRESSION:oldRebalancingFee < newRebalancingFee	NodeType.IF";
+"BlockID: 1632
+Call context: 
+True
+TMP_1693 = CONVERT this to address
+TMP_1694(uint256) = newRebalancingFee (c)- oldRebalancingFee
+LIBRARY_CALL, dest:SafeTransferLib, function:SafeTransferLib.safeTransferFrom(address,address,address,uint256), arguments:['asset', 'msg.sender', 'TMP_1693', 'TMP_1694'] 
+EXPRESSION:asset.safeTransferFrom(msg.sender,address(this),newRebalancingFee - oldRebalancingFee)	NodeType.EXPRESSION";
+"BlockID: 1634
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1629
+Call context: 
+None
+targetBandwidth_scope_4(uint256) := TMP_1689(uint256)
+REF_343(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_3]
+REF_344(uint248) -> REF_343.bandwidth
+TMP_1690(uint256) = INTERNAL_CALL, UlyssesPool._calculateRebalancingFee(uint256,uint256,bool)(REF_344,targetBandwidth_scope_4,False)
+EXPRESSION:targetBandwidth_scope_4 = totalSupply.mulDiv(bandwidthStateList[i_scope_3].weight,totalWeights)	NodeType.VARIABLE
+targetBandwidth_scope_4 = totalSupply.mulDiv(bandwidthStateList[i_scope_3].weight,totalWeights)	NodeType.EXPRESSION
+newRebalancingFee += _calculateRebalancingFee(bandwidthStateList[i_scope_3].bandwidth,targetBandwidth_scope_4,false)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1636
+Call context: 
+None
+newRebalancingFee(uint256) = newRebalancingFee (c)+ TMP_1690
+TMP_1691(uint256) := i_scope_3(uint256)
+i_scope_3(uint256) = i_scope_3 (c)+ 1
+EXPRESSION:newRebalancingFee += _calculateRebalancingFee(bandwidthStateList[i_scope_3].bandwidth,targetBandwidth_scope_4,false)	NodeType.EXPRESSION
+i_scope_3 ++	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1637
+Call context: 
+True
+REF_329 -> LENGTH bandwidthStateList
+TMP_1682(uint256) = REF_329 (c)- 1
+TMP_1683(bool) = i_scope_2 == TMP_1682
+CONDITION TMP_1683
+EXPRESSION:i_scope_2 == bandwidthStateList.length - 1	NodeType.IF";
+"BlockID: 1638
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1639
+Call context: 
+None
+i_scope_2(uint256) = i_scope_2 + 1
+EXPRESSION:++ i_scope_2	NodeType.EXPRESSION";
+"BlockID: 1640
+Call context: 
+True
+REF_330(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_2]
+REF_331(uint248) -> REF_330.bandwidth
+TMP_1684(uint248) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.toUint248(uint256), arguments:['leftOverBandwidth'] 
+EXPRESSION:bandwidthStateList[i_scope_2].bandwidth += leftOverBandwidth.toUint248()	NodeType.EXPRESSION";
+"BlockID: 1642
+Call context: 
+False
+TMP_1685(bool) = leftOverBandwidth > 0
+CONDITION TMP_1685
+EXPRESSION:leftOverBandwidth > 0	NodeType.IF";
+"BlockID: 1643
+Call context: 
+True
+REF_333(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_2]
+REF_334(uint248) -> REF_333.bandwidth
+REF_336(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_2]
+REF_337(uint8) -> REF_336.weight
+TMP_1686(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDiv(uint256,uint256,uint256), arguments:['leftOverBandwidth', 'REF_337', 'weightsWithoutPool'] 
+EXPRESSION:bandwidthStateList[i_scope_2].bandwidth += leftOverBandwidth.mulDiv(bandwidthStateList[i_scope_2].weight,weightsWithoutPool).toUint248()	NodeType.EXPRESSION";
+"BlockID: 1646
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1648
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1644
+Call context: 
+None
+TMP_1687(uint248) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.toUint248(uint256), arguments:['TMP_1686'] 
+EXPRESSION:bandwidthStateList[i_scope_2].bandwidth += leftOverBandwidth.mulDiv(bandwidthStateList[i_scope_2].weight,weightsWithoutPool).toUint248()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1645
+Call context: 
+None
+REF_334(-> bandwidthStateList) = REF_334 (c)+ TMP_1687
+EXPRESSION:bandwidthStateList[i_scope_2].bandwidth += leftOverBandwidth.mulDiv(bandwidthStateList[i_scope_2].weight,weightsWithoutPool).toUint248()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1641
+Call context: 
+None
+REF_331(-> bandwidthStateList) = REF_331 (c)+ TMP_1684
+EXPRESSION:bandwidthStateList[i_scope_2].bandwidth += leftOverBandwidth.toUint248()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1617
+Call context: 
+None
+TMP_1678(uint248) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.toUint248(uint256), arguments:['TMP_1677'] 
+EXPRESSION:poolState.bandwidth = oldBandwidth_scope_1.mulDivUp(oldTotalWeights,newTotalWeights).toUint248()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1618
+Call context: 
+None
+REF_324(uint248) (->poolState) := TMP_1678(uint248)
+REF_327(uint248) -> poolState.bandwidth
+TMP_1679(uint256) = oldBandwidth_scope_1 (c)- REF_327
+leftOverBandwidth(uint256) = leftOverBandwidth (c)+ TMP_1679
+EXPRESSION:poolState.bandwidth = oldBandwidth_scope_1.mulDivUp(oldTotalWeights,newTotalWeights).toUint248()	NodeType.EXPRESSION
+leftOverBandwidth += oldBandwidth_scope_1 - poolState.bandwidth	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1650
+Call context: 
+None
+BEGIN_LOOP
+REF_312 -> LENGTH bandwidthStateList
+TMP_1669(bool) = i_scope_0 < REF_312
+CONDITION TMP_1669
+EXPRESSION:None	NodeType.STARTLOOP
+i_scope_0 < bandwidthStateList.length	NodeType.IFLOOP";
+"BlockID: 1651
+Call context: 
+True
+TMP_1670(bool) = i_scope_0 != poolIndex
+CONDITION TMP_1670
+EXPRESSION:i_scope_0 != poolIndex	NodeType.IF";
+"BlockID: 1652
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 1653
+Call context: 
+None
+REF_321(uint248) -> poolState.bandwidth
+TMP_1675(uint248) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.toUint248(uint256), arguments:['leftOverBandwidth'] 
+EXPRESSION:poolState.bandwidth += leftOverBandwidth.toUint248()	NodeType.EXPRESSION";
+"BlockID: 1654
+Call context: 
+None
+REF_321(-> poolState) = REF_321 (c)+ TMP_1675
+EXPRESSION:poolState.bandwidth += leftOverBandwidth.toUint248()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1655
+Call context: 
+True
+REF_313(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_0]
+REF_314(uint248) -> REF_313.bandwidth
+oldBandwidth(uint256) := REF_314(uint248)
+TMP_1671(bool) = oldBandwidth > 0
+CONDITION TMP_1671
+EXPRESSION:oldBandwidth = bandwidthStateList[i_scope_0].bandwidth	NodeType.VARIABLE
+oldBandwidth = bandwidthStateList[i_scope_0].bandwidth	NodeType.EXPRESSION
+oldBandwidth > 0	NodeType.IF";
+"BlockID: 1656
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1657
+Call context: 
+None
+i_scope_0(uint256) = i_scope_0 + 1
+EXPRESSION:++ i_scope_0	NodeType.EXPRESSION";
+"BlockID: 1658
+Call context: 
+True
+REF_315(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_0]
+REF_316(uint248) -> REF_315.bandwidth
+TMP_1672(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivUp(uint256,uint256,uint256), arguments:['oldBandwidth', 'oldTotalWeights', 'newTotalWeights'] 
+EXPRESSION:bandwidthStateList[i_scope_0].bandwidth = oldBandwidth.mulDivUp(oldTotalWeights,newTotalWeights).toUint248()	NodeType.EXPRESSION";
+"BlockID: 1661
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1659
+Call context: 
+None
+TMP_1673(uint248) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.toUint248(uint256), arguments:['TMP_1672'] 
+EXPRESSION:bandwidthStateList[i_scope_0].bandwidth = oldBandwidth.mulDivUp(oldTotalWeights,newTotalWeights).toUint248()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1660
+Call context: 
+None
+REF_316(uint248) (->bandwidthStateList) := TMP_1673(uint248)
+REF_319(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_0]
+REF_320(uint248) -> REF_319.bandwidth
+TMP_1674(uint256) = oldBandwidth (c)- REF_320
+leftOverBandwidth(uint256) = leftOverBandwidth (c)+ TMP_1674
+EXPRESSION:bandwidthStateList[i_scope_0].bandwidth = oldBandwidth.mulDivUp(oldTotalWeights,newTotalWeights).toUint248()	NodeType.EXPRESSION
+leftOverBandwidth += oldBandwidth - bandwidthStateList[i_scope_0].bandwidth	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1608
+Call context: 
+None
+targetBandwidth(uint256) := TMP_1659(uint256)
+REF_306(IUlyssesPool.BandwidthState) -> bandwidthStateList[i]
+REF_307(uint248) -> REF_306.bandwidth
+TMP_1660(uint256) = INTERNAL_CALL, UlyssesPool._calculateRebalancingFee(uint256,uint256,bool)(REF_307,targetBandwidth,False)
+EXPRESSION:targetBandwidth = totalSupply.mulDiv(bandwidthStateList[i].weight,totalWeights)	NodeType.VARIABLE
+targetBandwidth = totalSupply.mulDiv(bandwidthStateList[i].weight,totalWeights)	NodeType.EXPRESSION
+oldRebalancingFee += _calculateRebalancingFee(bandwidthStateList[i].bandwidth,targetBandwidth,false)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1663
+Call context: 
+None
+oldRebalancingFee(uint256) = oldRebalancingFee (c)+ TMP_1660
+TMP_1661(uint256) := i(uint256)
+i(uint256) = i (c)+ 1
+EXPRESSION:oldRebalancingFee += _calculateRebalancingFee(bandwidthStateList[i].bandwidth,targetBandwidth,false)	NodeType.EXPRESSION
+i ++	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1596
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1597
+Call context: 
+None
+MODIFIER_CALL, ReentrancyGuard.nonReentrant()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1597
+Call context: 
+None
+MODIFIER_CALL, ReentrancyGuard.nonReentrant()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION" -> "BlockID: 1598
+Call context: 
+None
+MODIFIER_CALL, Ownable.onlyOwner()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION
+onlyOwner()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1598
+Call context: 
+None
+MODIFIER_CALL, Ownable.onlyOwner()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION
+onlyOwner()	NodeType.EXPRESSION" -> "BlockID: 1599
+Call context: 
+None
+TMP_1654(bool) = weight == 0
+CONDITION TMP_1654
+EXPRESSION:onlyOwner()	NodeType.EXPRESSION
+weight == 0	NodeType.IF" [key=0];
+"BlockID: 1599
+Call context: 
+None
+TMP_1654(bool) = weight == 0
+CONDITION TMP_1654
+EXPRESSION:onlyOwner()	NodeType.EXPRESSION
+weight == 0	NodeType.IF" -> "BlockID: 1600
+Call context: 
+True
+TMP_1655(None) = SOLIDITY_CALL revert InvalidWeight()()
+EXPRESSION:revert InvalidWeight()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1599
+Call context: 
+None
+TMP_1654(bool) = weight == 0
+CONDITION TMP_1654
+EXPRESSION:onlyOwner()	NodeType.EXPRESSION
+weight == 0	NodeType.IF" -> "BlockID: 1601
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1601
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1602
+Call context: 
+None
+REF_301(uint256) -> destinations[poolId]
+poolIndex(uint256) := REF_301(uint256)
+TMP_1656(bool) = poolIndex == 0
+CONDITION TMP_1656
+EXPRESSION:poolIndex = destinations[poolId]	NodeType.VARIABLE
+poolIndex = destinations[poolId]	NodeType.EXPRESSION
+poolIndex == 0	NodeType.IF" [key=0];
+"BlockID: 1602
+Call context: 
+None
+REF_301(uint256) -> destinations[poolId]
+poolIndex(uint256) := REF_301(uint256)
+TMP_1656(bool) = poolIndex == 0
+CONDITION TMP_1656
+EXPRESSION:poolIndex = destinations[poolId]	NodeType.VARIABLE
+poolIndex = destinations[poolId]	NodeType.EXPRESSION
+poolIndex == 0	NodeType.IF" -> "BlockID: 1603
+Call context: 
+True
+TMP_1657(None) = SOLIDITY_CALL revert NotUlyssesLP()()
+EXPRESSION:revert NotUlyssesLP()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1602
+Call context: 
+None
+REF_301(uint256) -> destinations[poolId]
+poolIndex(uint256) := REF_301(uint256)
+TMP_1656(bool) = poolIndex == 0
+CONDITION TMP_1656
+EXPRESSION:poolIndex = destinations[poolId]	NodeType.VARIABLE
+poolIndex = destinations[poolId]	NodeType.EXPRESSION
+poolIndex == 0	NodeType.IF" -> "BlockID: 1604
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1604
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1605
+Call context: 
+None
+NEW VARIABLE oldRebalancingFee
+i(uint256) := 1(uint256)
+EXPRESSION:None	NodeType.VARIABLE
+i = 1	NodeType.VARIABLE
+i = 1	NodeType.EXPRESSION" [key=0];
+"BlockID: 1605
+Call context: 
+None
+NEW VARIABLE oldRebalancingFee
+i(uint256) := 1(uint256)
+EXPRESSION:None	NodeType.VARIABLE
+i = 1	NodeType.VARIABLE
+i = 1	NodeType.EXPRESSION" -> "BlockID: 1606
+Call context: 
+None
+BEGIN_LOOP
+REF_302 -> LENGTH bandwidthStateList
+TMP_1658(bool) = i < REF_302
+CONDITION TMP_1658
+EXPRESSION:None	NodeType.STARTLOOP
+i < bandwidthStateList.length	NodeType.IFLOOP" [key=0];
+"BlockID: 1606
+Call context: 
+None
+BEGIN_LOOP
+REF_302 -> LENGTH bandwidthStateList
+TMP_1658(bool) = i < REF_302
+CONDITION TMP_1658
+EXPRESSION:None	NodeType.STARTLOOP
+i < bandwidthStateList.length	NodeType.IFLOOP" -> "BlockID: 1607
+Call context: 
+True
+REF_304(IUlyssesPool.BandwidthState) -> bandwidthStateList[i]
+REF_305(uint8) -> REF_304.weight
+TMP_1659(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDiv(uint256,uint256,uint256), arguments:['totalSupply', 'REF_305', 'totalWeights'] 
+EXPRESSION:" [key=0];
+"BlockID: 1606
+Call context: 
+None
+BEGIN_LOOP
+REF_302 -> LENGTH bandwidthStateList
+TMP_1658(bool) = i < REF_302
+CONDITION TMP_1658
+EXPRESSION:None	NodeType.STARTLOOP
+i < bandwidthStateList.length	NodeType.IFLOOP" -> "BlockID: 1609
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 1607
+Call context: 
+True
+REF_304(IUlyssesPool.BandwidthState) -> bandwidthStateList[i]
+REF_305(uint8) -> REF_304.weight
+TMP_1659(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDiv(uint256,uint256,uint256), arguments:['totalSupply', 'REF_305', 'totalWeights'] 
+EXPRESSION:" -> "BlockID: 1608
+Call context: 
+None
+targetBandwidth(uint256) := TMP_1659(uint256)
+REF_306(IUlyssesPool.BandwidthState) -> bandwidthStateList[i]
+REF_307(uint248) -> REF_306.bandwidth
+TMP_1660(uint256) = INTERNAL_CALL, UlyssesPool._calculateRebalancingFee(uint256,uint256,bool)(REF_307,targetBandwidth,False)
+EXPRESSION:targetBandwidth = totalSupply.mulDiv(bandwidthStateList[i].weight,totalWeights)	NodeType.VARIABLE
+targetBandwidth = totalSupply.mulDiv(bandwidthStateList[i].weight,totalWeights)	NodeType.EXPRESSION
+oldRebalancingFee += _calculateRebalancingFee(bandwidthStateList[i].bandwidth,targetBandwidth,false)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1609
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 1610
+Call context: 
+None
+oldTotalWeights(uint256) := totalWeights(uint256)
+REF_308(IUlyssesPool.BandwidthState) -> bandwidthStateList[poolIndex]
+REF_309(uint8) -> REF_308.weight
+TMP_1662(uint256) = oldTotalWeights (c)- REF_309
+weightsWithoutPool(uint256) := TMP_1662(uint256)
+TMP_1663(uint256) = weightsWithoutPool (c)+ weight
+newTotalWeights(uint256) := TMP_1663(uint256)
+totalWeights(uint256) := newTotalWeights(uint256)
+TMP_1664(bool) = totalWeights > MAX_TOTAL_WEIGHT
+TMP_1665(bool) = oldTotalWeights == newTotalWeights
+TMP_1666(bool) = TMP_1664 || TMP_1665
+CONDITION TMP_1666
+EXPRESSION:oldTotalWeights = totalWeights	NodeType.VARIABLE
+oldTotalWeights = totalWeights	NodeType.EXPRESSION
+weightsWithoutPool = oldTotalWeights - bandwidthStateList[poolIndex].weight	NodeType.VARIABLE
+weightsWithoutPool = oldTotalWeights - bandwidthStateList[poolIndex].weight	NodeType.EXPRESSION
+newTotalWeights = weightsWithoutPool + weight	NodeType.VARIABLE
+newTotalWeights = weightsWithoutPool + weight	NodeType.EXPRESSION
+totalWeights = newTotalWeights	NodeType.EXPRESSION
+totalWeights > MAX_TOTAL_WEIGHT || oldTotalWeights == newTotalWeights	NodeType.IF" [key=0];
+"BlockID: 1610
+Call context: 
+None
+oldTotalWeights(uint256) := totalWeights(uint256)
+REF_308(IUlyssesPool.BandwidthState) -> bandwidthStateList[poolIndex]
+REF_309(uint8) -> REF_308.weight
+TMP_1662(uint256) = oldTotalWeights (c)- REF_309
+weightsWithoutPool(uint256) := TMP_1662(uint256)
+TMP_1663(uint256) = weightsWithoutPool (c)+ weight
+newTotalWeights(uint256) := TMP_1663(uint256)
+totalWeights(uint256) := newTotalWeights(uint256)
+TMP_1664(bool) = totalWeights > MAX_TOTAL_WEIGHT
+TMP_1665(bool) = oldTotalWeights == newTotalWeights
+TMP_1666(bool) = TMP_1664 || TMP_1665
+CONDITION TMP_1666
+EXPRESSION:oldTotalWeights = totalWeights	NodeType.VARIABLE
+oldTotalWeights = totalWeights	NodeType.EXPRESSION
+weightsWithoutPool = oldTotalWeights - bandwidthStateList[poolIndex].weight	NodeType.VARIABLE
+weightsWithoutPool = oldTotalWeights - bandwidthStateList[poolIndex].weight	NodeType.EXPRESSION
+newTotalWeights = weightsWithoutPool + weight	NodeType.VARIABLE
+newTotalWeights = weightsWithoutPool + weight	NodeType.EXPRESSION
+totalWeights = newTotalWeights	NodeType.EXPRESSION
+totalWeights > MAX_TOTAL_WEIGHT || oldTotalWeights == newTotalWeights	NodeType.IF" -> "BlockID: 1611
+Call context: 
+True
+TMP_1667(None) = SOLIDITY_CALL revert InvalidWeight()()
+EXPRESSION:revert InvalidWeight()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1610
+Call context: 
+None
+oldTotalWeights(uint256) := totalWeights(uint256)
+REF_308(IUlyssesPool.BandwidthState) -> bandwidthStateList[poolIndex]
+REF_309(uint8) -> REF_308.weight
+TMP_1662(uint256) = oldTotalWeights (c)- REF_309
+weightsWithoutPool(uint256) := TMP_1662(uint256)
+TMP_1663(uint256) = weightsWithoutPool (c)+ weight
+newTotalWeights(uint256) := TMP_1663(uint256)
+totalWeights(uint256) := newTotalWeights(uint256)
+TMP_1664(bool) = totalWeights > MAX_TOTAL_WEIGHT
+TMP_1665(bool) = oldTotalWeights == newTotalWeights
+TMP_1666(bool) = TMP_1664 || TMP_1665
+CONDITION TMP_1666
+EXPRESSION:oldTotalWeights = totalWeights	NodeType.VARIABLE
+oldTotalWeights = totalWeights	NodeType.EXPRESSION
+weightsWithoutPool = oldTotalWeights - bandwidthStateList[poolIndex].weight	NodeType.VARIABLE
+weightsWithoutPool = oldTotalWeights - bandwidthStateList[poolIndex].weight	NodeType.EXPRESSION
+newTotalWeights = weightsWithoutPool + weight	NodeType.VARIABLE
+newTotalWeights = weightsWithoutPool + weight	NodeType.EXPRESSION
+totalWeights = newTotalWeights	NodeType.EXPRESSION
+totalWeights > MAX_TOTAL_WEIGHT || oldTotalWeights == newTotalWeights	NodeType.IF" -> "BlockID: 1612
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1612
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1613
+Call context: 
+None
+NEW VARIABLE leftOverBandwidth
+REF_310(IUlyssesPool.BandwidthState) -> bandwidthStateList[poolIndex]
+poolState(IUlyssesPool.BandwidthState) := REF_310(IUlyssesPool.BandwidthState)
+REF_311(uint8) -> poolState.weight
+REF_311(uint8) (->poolState) := weight(uint8)
+TMP_1668(bool) = oldTotalWeights > newTotalWeights
+CONDITION TMP_1668
+EXPRESSION:None	NodeType.VARIABLE
+poolState = bandwidthStateList[poolIndex]	NodeType.VARIABLE
+poolState = bandwidthStateList[poolIndex]	NodeType.EXPRESSION
+poolState.weight = weight	NodeType.EXPRESSION
+oldTotalWeights > newTotalWeights	NodeType.IF" [key=0];
+"BlockID: 1613
+Call context: 
+None
+NEW VARIABLE leftOverBandwidth
+REF_310(IUlyssesPool.BandwidthState) -> bandwidthStateList[poolIndex]
+poolState(IUlyssesPool.BandwidthState) := REF_310(IUlyssesPool.BandwidthState)
+REF_311(uint8) -> poolState.weight
+REF_311(uint8) (->poolState) := weight(uint8)
+TMP_1668(bool) = oldTotalWeights > newTotalWeights
+CONDITION TMP_1668
+EXPRESSION:None	NodeType.VARIABLE
+poolState = bandwidthStateList[poolIndex]	NodeType.VARIABLE
+poolState = bandwidthStateList[poolIndex]	NodeType.EXPRESSION
+poolState.weight = weight	NodeType.EXPRESSION
+oldTotalWeights > newTotalWeights	NodeType.IF" -> "BlockID: 1614
+Call context: 
+True
+i_scope_0(uint256) := 1(uint256)
+EXPRESSION:i_scope_0 = 1	NodeType.VARIABLE
+i_scope_0 = 1	NodeType.EXPRESSION" [key=0];
+"BlockID: 1613
+Call context: 
+None
+NEW VARIABLE leftOverBandwidth
+REF_310(IUlyssesPool.BandwidthState) -> bandwidthStateList[poolIndex]
+poolState(IUlyssesPool.BandwidthState) := REF_310(IUlyssesPool.BandwidthState)
+REF_311(uint8) -> poolState.weight
+REF_311(uint8) (->poolState) := weight(uint8)
+TMP_1668(bool) = oldTotalWeights > newTotalWeights
+CONDITION TMP_1668
+EXPRESSION:None	NodeType.VARIABLE
+poolState = bandwidthStateList[poolIndex]	NodeType.VARIABLE
+poolState = bandwidthStateList[poolIndex]	NodeType.EXPRESSION
+poolState.weight = weight	NodeType.EXPRESSION
+oldTotalWeights > newTotalWeights	NodeType.IF" -> "BlockID: 1615
+Call context: 
+False
+REF_323(uint248) -> poolState.bandwidth
+oldBandwidth_scope_1(uint256) := REF_323(uint248)
+TMP_1676(bool) = oldBandwidth_scope_1 > 0
+CONDITION TMP_1676
+EXPRESSION:oldBandwidth_scope_1 = poolState.bandwidth	NodeType.VARIABLE
+oldBandwidth_scope_1 = poolState.bandwidth	NodeType.EXPRESSION
+oldBandwidth_scope_1 > 0	NodeType.IF" [key=0];
+"BlockID: 1614
+Call context: 
+True
+i_scope_0(uint256) := 1(uint256)
+EXPRESSION:i_scope_0 = 1	NodeType.VARIABLE
+i_scope_0 = 1	NodeType.EXPRESSION" -> "BlockID: 1650
+Call context: 
+None
+BEGIN_LOOP
+REF_312 -> LENGTH bandwidthStateList
+TMP_1669(bool) = i_scope_0 < REF_312
+CONDITION TMP_1669
+EXPRESSION:None	NodeType.STARTLOOP
+i_scope_0 < bandwidthStateList.length	NodeType.IFLOOP" [key=0];
+"BlockID: 1615
+Call context: 
+False
+REF_323(uint248) -> poolState.bandwidth
+oldBandwidth_scope_1(uint256) := REF_323(uint248)
+TMP_1676(bool) = oldBandwidth_scope_1 > 0
+CONDITION TMP_1676
+EXPRESSION:oldBandwidth_scope_1 = poolState.bandwidth	NodeType.VARIABLE
+oldBandwidth_scope_1 = poolState.bandwidth	NodeType.EXPRESSION
+oldBandwidth_scope_1 > 0	NodeType.IF" -> "BlockID: 1616
+Call context: 
+True
+REF_324(uint248) -> poolState.bandwidth
+TMP_1677(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivUp(uint256,uint256,uint256), arguments:['oldBandwidth_scope_1', 'oldTotalWeights', 'newTotalWeights'] 
+EXPRESSION:poolState.bandwidth = oldBandwidth_scope_1.mulDivUp(oldTotalWeights,newTotalWeights).toUint248()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1615
+Call context: 
+False
+REF_323(uint248) -> poolState.bandwidth
+oldBandwidth_scope_1(uint256) := REF_323(uint248)
+TMP_1676(bool) = oldBandwidth_scope_1 > 0
+CONDITION TMP_1676
+EXPRESSION:oldBandwidth_scope_1 = poolState.bandwidth	NodeType.VARIABLE
+oldBandwidth_scope_1 = poolState.bandwidth	NodeType.EXPRESSION
+oldBandwidth_scope_1 > 0	NodeType.IF" -> "BlockID: 1619
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1616
+Call context: 
+True
+REF_324(uint248) -> poolState.bandwidth
+TMP_1677(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivUp(uint256,uint256,uint256), arguments:['oldBandwidth_scope_1', 'oldTotalWeights', 'newTotalWeights'] 
+EXPRESSION:poolState.bandwidth = oldBandwidth_scope_1.mulDivUp(oldTotalWeights,newTotalWeights).toUint248()	NodeType.EXPRESSION" -> "BlockID: 1617
+Call context: 
+None
+TMP_1678(uint248) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.toUint248(uint256), arguments:['TMP_1677'] 
+EXPRESSION:poolState.bandwidth = oldBandwidth_scope_1.mulDivUp(oldTotalWeights,newTotalWeights).toUint248()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1619
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1620
+Call context: 
+None
+i_scope_2(uint256) := 1(uint256)
+EXPRESSION:i_scope_2 = 1	NodeType.VARIABLE
+i_scope_2 = 1	NodeType.EXPRESSION" [key=0];
+"BlockID: 1620
+Call context: 
+None
+i_scope_2(uint256) := 1(uint256)
+EXPRESSION:i_scope_2 = 1	NodeType.VARIABLE
+i_scope_2 = 1	NodeType.EXPRESSION" -> "BlockID: 1621
+Call context: 
+None
+BEGIN_LOOP
+REF_328 -> LENGTH bandwidthStateList
+TMP_1680(bool) = i_scope_2 < REF_328
+CONDITION TMP_1680
+EXPRESSION:None	NodeType.STARTLOOP
+i_scope_2 < bandwidthStateList.length	NodeType.IFLOOP" [key=0];
+"BlockID: 1621
+Call context: 
+None
+BEGIN_LOOP
+REF_328 -> LENGTH bandwidthStateList
+TMP_1680(bool) = i_scope_2 < REF_328
+CONDITION TMP_1680
+EXPRESSION:None	NodeType.STARTLOOP
+i_scope_2 < bandwidthStateList.length	NodeType.IFLOOP" -> "BlockID: 1622
+Call context: 
+True
+TMP_1681(bool) = i_scope_2 != poolIndex
+CONDITION TMP_1681
+EXPRESSION:i_scope_2 != poolIndex	NodeType.IF" [key=0];
+"BlockID: 1621
+Call context: 
+None
+BEGIN_LOOP
+REF_328 -> LENGTH bandwidthStateList
+TMP_1680(bool) = i_scope_2 < REF_328
+CONDITION TMP_1680
+EXPRESSION:None	NodeType.STARTLOOP
+i_scope_2 < bandwidthStateList.length	NodeType.IFLOOP" -> "BlockID: 1623
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 1622
+Call context: 
+True
+TMP_1681(bool) = i_scope_2 != poolIndex
+CONDITION TMP_1681
+EXPRESSION:i_scope_2 != poolIndex	NodeType.IF" -> "BlockID: 1637
+Call context: 
+True
+REF_329 -> LENGTH bandwidthStateList
+TMP_1682(uint256) = REF_329 (c)- 1
+TMP_1683(bool) = i_scope_2 == TMP_1682
+CONDITION TMP_1683
+EXPRESSION:i_scope_2 == bandwidthStateList.length - 1	NodeType.IF" [key=0];
+"BlockID: 1622
+Call context: 
+True
+TMP_1681(bool) = i_scope_2 != poolIndex
+CONDITION TMP_1681
+EXPRESSION:i_scope_2 != poolIndex	NodeType.IF" -> "BlockID: 1638
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1623
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 1625
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1625
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1626
+Call context: 
+None
+NEW VARIABLE newRebalancingFee
+i_scope_3(uint256) := 1(uint256)
+EXPRESSION:None	NodeType.VARIABLE
+i_scope_3 = 1	NodeType.VARIABLE
+i_scope_3 = 1	NodeType.EXPRESSION" [key=0];
+"BlockID: 1626
+Call context: 
+None
+NEW VARIABLE newRebalancingFee
+i_scope_3(uint256) := 1(uint256)
+EXPRESSION:None	NodeType.VARIABLE
+i_scope_3 = 1	NodeType.VARIABLE
+i_scope_3 = 1	NodeType.EXPRESSION" -> "BlockID: 1627
+Call context: 
+None
+BEGIN_LOOP
+REF_339 -> LENGTH bandwidthStateList
+TMP_1688(bool) = i_scope_3 < REF_339
+CONDITION TMP_1688
+EXPRESSION:None	NodeType.STARTLOOP
+i_scope_3 < bandwidthStateList.length	NodeType.IFLOOP" [key=0];
+"BlockID: 1627
+Call context: 
+None
+BEGIN_LOOP
+REF_339 -> LENGTH bandwidthStateList
+TMP_1688(bool) = i_scope_3 < REF_339
+CONDITION TMP_1688
+EXPRESSION:None	NodeType.STARTLOOP
+i_scope_3 < bandwidthStateList.length	NodeType.IFLOOP" -> "BlockID: 1628
+Call context: 
+True
+REF_341(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_3]
+REF_342(uint8) -> REF_341.weight
+TMP_1689(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDiv(uint256,uint256,uint256), arguments:['totalSupply', 'REF_342', 'totalWeights'] 
+EXPRESSION:" [key=0];
+"BlockID: 1627
+Call context: 
+None
+BEGIN_LOOP
+REF_339 -> LENGTH bandwidthStateList
+TMP_1688(bool) = i_scope_3 < REF_339
+CONDITION TMP_1688
+EXPRESSION:None	NodeType.STARTLOOP
+i_scope_3 < bandwidthStateList.length	NodeType.IFLOOP" -> "BlockID: 1630
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 1628
+Call context: 
+True
+REF_341(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_3]
+REF_342(uint8) -> REF_341.weight
+TMP_1689(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDiv(uint256,uint256,uint256), arguments:['totalSupply', 'REF_342', 'totalWeights'] 
+EXPRESSION:" -> "BlockID: 1629
+Call context: 
+None
+targetBandwidth_scope_4(uint256) := TMP_1689(uint256)
+REF_343(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_3]
+REF_344(uint248) -> REF_343.bandwidth
+TMP_1690(uint256) = INTERNAL_CALL, UlyssesPool._calculateRebalancingFee(uint256,uint256,bool)(REF_344,targetBandwidth_scope_4,False)
+EXPRESSION:targetBandwidth_scope_4 = totalSupply.mulDiv(bandwidthStateList[i_scope_3].weight,totalWeights)	NodeType.VARIABLE
+targetBandwidth_scope_4 = totalSupply.mulDiv(bandwidthStateList[i_scope_3].weight,totalWeights)	NodeType.EXPRESSION
+newRebalancingFee += _calculateRebalancingFee(bandwidthStateList[i_scope_3].bandwidth,targetBandwidth_scope_4,false)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1630
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 1631
+Call context: 
+None
+TMP_1692(bool) = oldRebalancingFee < newRebalancingFee
+CONDITION TMP_1692
+EXPRESSION:oldRebalancingFee < newRebalancingFee	NodeType.IF" [key=0];
+"BlockID: 1631
+Call context: 
+None
+TMP_1692(bool) = oldRebalancingFee < newRebalancingFee
+CONDITION TMP_1692
+EXPRESSION:oldRebalancingFee < newRebalancingFee	NodeType.IF" -> "BlockID: 1632
+Call context: 
+True
+TMP_1693 = CONVERT this to address
+TMP_1694(uint256) = newRebalancingFee (c)- oldRebalancingFee
+LIBRARY_CALL, dest:SafeTransferLib, function:SafeTransferLib.safeTransferFrom(address,address,address,uint256), arguments:['asset', 'msg.sender', 'TMP_1693', 'TMP_1694'] 
+EXPRESSION:asset.safeTransferFrom(msg.sender,address(this),newRebalancingFee - oldRebalancingFee)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1631
+Call context: 
+None
+TMP_1692(bool) = oldRebalancingFee < newRebalancingFee
+CONDITION TMP_1692
+EXPRESSION:oldRebalancingFee < newRebalancingFee	NodeType.IF" -> "BlockID: 1634
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1632
+Call context: 
+True
+TMP_1693 = CONVERT this to address
+TMP_1694(uint256) = newRebalancingFee (c)- oldRebalancingFee
+LIBRARY_CALL, dest:SafeTransferLib, function:SafeTransferLib.safeTransferFrom(address,address,address,uint256), arguments:['asset', 'msg.sender', 'TMP_1693', 'TMP_1694'] 
+EXPRESSION:asset.safeTransferFrom(msg.sender,address(this),newRebalancingFee - oldRebalancingFee)	NodeType.EXPRESSION" -> "BlockID: 1634
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1629
+Call context: 
+None
+targetBandwidth_scope_4(uint256) := TMP_1689(uint256)
+REF_343(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_3]
+REF_344(uint248) -> REF_343.bandwidth
+TMP_1690(uint256) = INTERNAL_CALL, UlyssesPool._calculateRebalancingFee(uint256,uint256,bool)(REF_344,targetBandwidth_scope_4,False)
+EXPRESSION:targetBandwidth_scope_4 = totalSupply.mulDiv(bandwidthStateList[i_scope_3].weight,totalWeights)	NodeType.VARIABLE
+targetBandwidth_scope_4 = totalSupply.mulDiv(bandwidthStateList[i_scope_3].weight,totalWeights)	NodeType.EXPRESSION
+newRebalancingFee += _calculateRebalancingFee(bandwidthStateList[i_scope_3].bandwidth,targetBandwidth_scope_4,false)	NodeType.EXPRESSION" -> "BlockID: 1636
+Call context: 
+None
+newRebalancingFee(uint256) = newRebalancingFee (c)+ TMP_1690
+TMP_1691(uint256) := i_scope_3(uint256)
+i_scope_3(uint256) = i_scope_3 (c)+ 1
+EXPRESSION:newRebalancingFee += _calculateRebalancingFee(bandwidthStateList[i_scope_3].bandwidth,targetBandwidth_scope_4,false)	NodeType.EXPRESSION
+i_scope_3 ++	NodeType.EXPRESSION" [key=0];
+"BlockID: 1636
+Call context: 
+None
+newRebalancingFee(uint256) = newRebalancingFee (c)+ TMP_1690
+TMP_1691(uint256) := i_scope_3(uint256)
+i_scope_3(uint256) = i_scope_3 (c)+ 1
+EXPRESSION:newRebalancingFee += _calculateRebalancingFee(bandwidthStateList[i_scope_3].bandwidth,targetBandwidth_scope_4,false)	NodeType.EXPRESSION
+i_scope_3 ++	NodeType.EXPRESSION" -> "BlockID: 1627
+Call context: 
+None
+BEGIN_LOOP
+REF_339 -> LENGTH bandwidthStateList
+TMP_1688(bool) = i_scope_3 < REF_339
+CONDITION TMP_1688
+EXPRESSION:None	NodeType.STARTLOOP
+i_scope_3 < bandwidthStateList.length	NodeType.IFLOOP" [key=0];
+"BlockID: 1637
+Call context: 
+True
+REF_329 -> LENGTH bandwidthStateList
+TMP_1682(uint256) = REF_329 (c)- 1
+TMP_1683(bool) = i_scope_2 == TMP_1682
+CONDITION TMP_1683
+EXPRESSION:i_scope_2 == bandwidthStateList.length - 1	NodeType.IF" -> "BlockID: 1640
+Call context: 
+True
+REF_330(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_2]
+REF_331(uint248) -> REF_330.bandwidth
+TMP_1684(uint248) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.toUint248(uint256), arguments:['leftOverBandwidth'] 
+EXPRESSION:bandwidthStateList[i_scope_2].bandwidth += leftOverBandwidth.toUint248()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1637
+Call context: 
+True
+REF_329 -> LENGTH bandwidthStateList
+TMP_1682(uint256) = REF_329 (c)- 1
+TMP_1683(bool) = i_scope_2 == TMP_1682
+CONDITION TMP_1683
+EXPRESSION:i_scope_2 == bandwidthStateList.length - 1	NodeType.IF" -> "BlockID: 1642
+Call context: 
+False
+TMP_1685(bool) = leftOverBandwidth > 0
+CONDITION TMP_1685
+EXPRESSION:leftOverBandwidth > 0	NodeType.IF" [key=0];
+"BlockID: 1638
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1639
+Call context: 
+None
+i_scope_2(uint256) = i_scope_2 + 1
+EXPRESSION:++ i_scope_2	NodeType.EXPRESSION" [key=0];
+"BlockID: 1639
+Call context: 
+None
+i_scope_2(uint256) = i_scope_2 + 1
+EXPRESSION:++ i_scope_2	NodeType.EXPRESSION" -> "BlockID: 1621
+Call context: 
+None
+BEGIN_LOOP
+REF_328 -> LENGTH bandwidthStateList
+TMP_1680(bool) = i_scope_2 < REF_328
+CONDITION TMP_1680
+EXPRESSION:None	NodeType.STARTLOOP
+i_scope_2 < bandwidthStateList.length	NodeType.IFLOOP" [key=0];
+"BlockID: 1640
+Call context: 
+True
+REF_330(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_2]
+REF_331(uint248) -> REF_330.bandwidth
+TMP_1684(uint248) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.toUint248(uint256), arguments:['leftOverBandwidth'] 
+EXPRESSION:bandwidthStateList[i_scope_2].bandwidth += leftOverBandwidth.toUint248()	NodeType.EXPRESSION" -> "BlockID: 1641
+Call context: 
+None
+REF_331(-> bandwidthStateList) = REF_331 (c)+ TMP_1684
+EXPRESSION:bandwidthStateList[i_scope_2].bandwidth += leftOverBandwidth.toUint248()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1642
+Call context: 
+False
+TMP_1685(bool) = leftOverBandwidth > 0
+CONDITION TMP_1685
+EXPRESSION:leftOverBandwidth > 0	NodeType.IF" -> "BlockID: 1643
+Call context: 
+True
+REF_333(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_2]
+REF_334(uint248) -> REF_333.bandwidth
+REF_336(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_2]
+REF_337(uint8) -> REF_336.weight
+TMP_1686(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDiv(uint256,uint256,uint256), arguments:['leftOverBandwidth', 'REF_337', 'weightsWithoutPool'] 
+EXPRESSION:bandwidthStateList[i_scope_2].bandwidth += leftOverBandwidth.mulDiv(bandwidthStateList[i_scope_2].weight,weightsWithoutPool).toUint248()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1642
+Call context: 
+False
+TMP_1685(bool) = leftOverBandwidth > 0
+CONDITION TMP_1685
+EXPRESSION:leftOverBandwidth > 0	NodeType.IF" -> "BlockID: 1646
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1643
+Call context: 
+True
+REF_333(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_2]
+REF_334(uint248) -> REF_333.bandwidth
+REF_336(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_2]
+REF_337(uint8) -> REF_336.weight
+TMP_1686(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDiv(uint256,uint256,uint256), arguments:['leftOverBandwidth', 'REF_337', 'weightsWithoutPool'] 
+EXPRESSION:bandwidthStateList[i_scope_2].bandwidth += leftOverBandwidth.mulDiv(bandwidthStateList[i_scope_2].weight,weightsWithoutPool).toUint248()	NodeType.EXPRESSION" -> "BlockID: 1644
+Call context: 
+None
+TMP_1687(uint248) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.toUint248(uint256), arguments:['TMP_1686'] 
+EXPRESSION:bandwidthStateList[i_scope_2].bandwidth += leftOverBandwidth.mulDiv(bandwidthStateList[i_scope_2].weight,weightsWithoutPool).toUint248()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1646
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1648
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1648
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1638
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1644
+Call context: 
+None
+TMP_1687(uint248) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.toUint248(uint256), arguments:['TMP_1686'] 
+EXPRESSION:bandwidthStateList[i_scope_2].bandwidth += leftOverBandwidth.mulDiv(bandwidthStateList[i_scope_2].weight,weightsWithoutPool).toUint248()	NodeType.EXPRESSION" -> "BlockID: 1645
+Call context: 
+None
+REF_334(-> bandwidthStateList) = REF_334 (c)+ TMP_1687
+EXPRESSION:bandwidthStateList[i_scope_2].bandwidth += leftOverBandwidth.mulDiv(bandwidthStateList[i_scope_2].weight,weightsWithoutPool).toUint248()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1645
+Call context: 
+None
+REF_334(-> bandwidthStateList) = REF_334 (c)+ TMP_1687
+EXPRESSION:bandwidthStateList[i_scope_2].bandwidth += leftOverBandwidth.mulDiv(bandwidthStateList[i_scope_2].weight,weightsWithoutPool).toUint248()	NodeType.EXPRESSION" -> "BlockID: 1646
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1641
+Call context: 
+None
+REF_331(-> bandwidthStateList) = REF_331 (c)+ TMP_1684
+EXPRESSION:bandwidthStateList[i_scope_2].bandwidth += leftOverBandwidth.toUint248()	NodeType.EXPRESSION" -> "BlockID: 1648
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1617
+Call context: 
+None
+TMP_1678(uint248) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.toUint248(uint256), arguments:['TMP_1677'] 
+EXPRESSION:poolState.bandwidth = oldBandwidth_scope_1.mulDivUp(oldTotalWeights,newTotalWeights).toUint248()	NodeType.EXPRESSION" -> "BlockID: 1618
+Call context: 
+None
+REF_324(uint248) (->poolState) := TMP_1678(uint248)
+REF_327(uint248) -> poolState.bandwidth
+TMP_1679(uint256) = oldBandwidth_scope_1 (c)- REF_327
+leftOverBandwidth(uint256) = leftOverBandwidth (c)+ TMP_1679
+EXPRESSION:poolState.bandwidth = oldBandwidth_scope_1.mulDivUp(oldTotalWeights,newTotalWeights).toUint248()	NodeType.EXPRESSION
+leftOverBandwidth += oldBandwidth_scope_1 - poolState.bandwidth	NodeType.EXPRESSION" [key=0];
+"BlockID: 1618
+Call context: 
+None
+REF_324(uint248) (->poolState) := TMP_1678(uint248)
+REF_327(uint248) -> poolState.bandwidth
+TMP_1679(uint256) = oldBandwidth_scope_1 (c)- REF_327
+leftOverBandwidth(uint256) = leftOverBandwidth (c)+ TMP_1679
+EXPRESSION:poolState.bandwidth = oldBandwidth_scope_1.mulDivUp(oldTotalWeights,newTotalWeights).toUint248()	NodeType.EXPRESSION
+leftOverBandwidth += oldBandwidth_scope_1 - poolState.bandwidth	NodeType.EXPRESSION" -> "BlockID: 1619
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1650
+Call context: 
+None
+BEGIN_LOOP
+REF_312 -> LENGTH bandwidthStateList
+TMP_1669(bool) = i_scope_0 < REF_312
+CONDITION TMP_1669
+EXPRESSION:None	NodeType.STARTLOOP
+i_scope_0 < bandwidthStateList.length	NodeType.IFLOOP" -> "BlockID: 1651
+Call context: 
+True
+TMP_1670(bool) = i_scope_0 != poolIndex
+CONDITION TMP_1670
+EXPRESSION:i_scope_0 != poolIndex	NodeType.IF" [key=0];
+"BlockID: 1650
+Call context: 
+None
+BEGIN_LOOP
+REF_312 -> LENGTH bandwidthStateList
+TMP_1669(bool) = i_scope_0 < REF_312
+CONDITION TMP_1669
+EXPRESSION:None	NodeType.STARTLOOP
+i_scope_0 < bandwidthStateList.length	NodeType.IFLOOP" -> "BlockID: 1652
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 1651
+Call context: 
+True
+TMP_1670(bool) = i_scope_0 != poolIndex
+CONDITION TMP_1670
+EXPRESSION:i_scope_0 != poolIndex	NodeType.IF" -> "BlockID: 1655
+Call context: 
+True
+REF_313(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_0]
+REF_314(uint248) -> REF_313.bandwidth
+oldBandwidth(uint256) := REF_314(uint248)
+TMP_1671(bool) = oldBandwidth > 0
+CONDITION TMP_1671
+EXPRESSION:oldBandwidth = bandwidthStateList[i_scope_0].bandwidth	NodeType.VARIABLE
+oldBandwidth = bandwidthStateList[i_scope_0].bandwidth	NodeType.EXPRESSION
+oldBandwidth > 0	NodeType.IF" [key=0];
+"BlockID: 1651
+Call context: 
+True
+TMP_1670(bool) = i_scope_0 != poolIndex
+CONDITION TMP_1670
+EXPRESSION:i_scope_0 != poolIndex	NodeType.IF" -> "BlockID: 1656
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1652
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 1653
+Call context: 
+None
+REF_321(uint248) -> poolState.bandwidth
+TMP_1675(uint248) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.toUint248(uint256), arguments:['leftOverBandwidth'] 
+EXPRESSION:poolState.bandwidth += leftOverBandwidth.toUint248()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1653
+Call context: 
+None
+REF_321(uint248) -> poolState.bandwidth
+TMP_1675(uint248) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.toUint248(uint256), arguments:['leftOverBandwidth'] 
+EXPRESSION:poolState.bandwidth += leftOverBandwidth.toUint248()	NodeType.EXPRESSION" -> "BlockID: 1654
+Call context: 
+None
+REF_321(-> poolState) = REF_321 (c)+ TMP_1675
+EXPRESSION:poolState.bandwidth += leftOverBandwidth.toUint248()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1654
+Call context: 
+None
+REF_321(-> poolState) = REF_321 (c)+ TMP_1675
+EXPRESSION:poolState.bandwidth += leftOverBandwidth.toUint248()	NodeType.EXPRESSION" -> "BlockID: 1625
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1655
+Call context: 
+True
+REF_313(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_0]
+REF_314(uint248) -> REF_313.bandwidth
+oldBandwidth(uint256) := REF_314(uint248)
+TMP_1671(bool) = oldBandwidth > 0
+CONDITION TMP_1671
+EXPRESSION:oldBandwidth = bandwidthStateList[i_scope_0].bandwidth	NodeType.VARIABLE
+oldBandwidth = bandwidthStateList[i_scope_0].bandwidth	NodeType.EXPRESSION
+oldBandwidth > 0	NodeType.IF" -> "BlockID: 1658
+Call context: 
+True
+REF_315(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_0]
+REF_316(uint248) -> REF_315.bandwidth
+TMP_1672(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivUp(uint256,uint256,uint256), arguments:['oldBandwidth', 'oldTotalWeights', 'newTotalWeights'] 
+EXPRESSION:bandwidthStateList[i_scope_0].bandwidth = oldBandwidth.mulDivUp(oldTotalWeights,newTotalWeights).toUint248()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1655
+Call context: 
+True
+REF_313(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_0]
+REF_314(uint248) -> REF_313.bandwidth
+oldBandwidth(uint256) := REF_314(uint248)
+TMP_1671(bool) = oldBandwidth > 0
+CONDITION TMP_1671
+EXPRESSION:oldBandwidth = bandwidthStateList[i_scope_0].bandwidth	NodeType.VARIABLE
+oldBandwidth = bandwidthStateList[i_scope_0].bandwidth	NodeType.EXPRESSION
+oldBandwidth > 0	NodeType.IF" -> "BlockID: 1661
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1656
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1657
+Call context: 
+None
+i_scope_0(uint256) = i_scope_0 + 1
+EXPRESSION:++ i_scope_0	NodeType.EXPRESSION" [key=0];
+"BlockID: 1657
+Call context: 
+None
+i_scope_0(uint256) = i_scope_0 + 1
+EXPRESSION:++ i_scope_0	NodeType.EXPRESSION" -> "BlockID: 1650
+Call context: 
+None
+BEGIN_LOOP
+REF_312 -> LENGTH bandwidthStateList
+TMP_1669(bool) = i_scope_0 < REF_312
+CONDITION TMP_1669
+EXPRESSION:None	NodeType.STARTLOOP
+i_scope_0 < bandwidthStateList.length	NodeType.IFLOOP" [key=0];
+"BlockID: 1658
+Call context: 
+True
+REF_315(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_0]
+REF_316(uint248) -> REF_315.bandwidth
+TMP_1672(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivUp(uint256,uint256,uint256), arguments:['oldBandwidth', 'oldTotalWeights', 'newTotalWeights'] 
+EXPRESSION:bandwidthStateList[i_scope_0].bandwidth = oldBandwidth.mulDivUp(oldTotalWeights,newTotalWeights).toUint248()	NodeType.EXPRESSION" -> "BlockID: 1659
+Call context: 
+None
+TMP_1673(uint248) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.toUint248(uint256), arguments:['TMP_1672'] 
+EXPRESSION:bandwidthStateList[i_scope_0].bandwidth = oldBandwidth.mulDivUp(oldTotalWeights,newTotalWeights).toUint248()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1661
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1656
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1659
+Call context: 
+None
+TMP_1673(uint248) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.toUint248(uint256), arguments:['TMP_1672'] 
+EXPRESSION:bandwidthStateList[i_scope_0].bandwidth = oldBandwidth.mulDivUp(oldTotalWeights,newTotalWeights).toUint248()	NodeType.EXPRESSION" -> "BlockID: 1660
+Call context: 
+None
+REF_316(uint248) (->bandwidthStateList) := TMP_1673(uint248)
+REF_319(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_0]
+REF_320(uint248) -> REF_319.bandwidth
+TMP_1674(uint256) = oldBandwidth (c)- REF_320
+leftOverBandwidth(uint256) = leftOverBandwidth (c)+ TMP_1674
+EXPRESSION:bandwidthStateList[i_scope_0].bandwidth = oldBandwidth.mulDivUp(oldTotalWeights,newTotalWeights).toUint248()	NodeType.EXPRESSION
+leftOverBandwidth += oldBandwidth - bandwidthStateList[i_scope_0].bandwidth	NodeType.EXPRESSION" [key=0];
+"BlockID: 1660
+Call context: 
+None
+REF_316(uint248) (->bandwidthStateList) := TMP_1673(uint248)
+REF_319(IUlyssesPool.BandwidthState) -> bandwidthStateList[i_scope_0]
+REF_320(uint248) -> REF_319.bandwidth
+TMP_1674(uint256) = oldBandwidth (c)- REF_320
+leftOverBandwidth(uint256) = leftOverBandwidth (c)+ TMP_1674
+EXPRESSION:bandwidthStateList[i_scope_0].bandwidth = oldBandwidth.mulDivUp(oldTotalWeights,newTotalWeights).toUint248()	NodeType.EXPRESSION
+leftOverBandwidth += oldBandwidth - bandwidthStateList[i_scope_0].bandwidth	NodeType.EXPRESSION" -> "BlockID: 1661
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1608
+Call context: 
+None
+targetBandwidth(uint256) := TMP_1659(uint256)
+REF_306(IUlyssesPool.BandwidthState) -> bandwidthStateList[i]
+REF_307(uint248) -> REF_306.bandwidth
+TMP_1660(uint256) = INTERNAL_CALL, UlyssesPool._calculateRebalancingFee(uint256,uint256,bool)(REF_307,targetBandwidth,False)
+EXPRESSION:targetBandwidth = totalSupply.mulDiv(bandwidthStateList[i].weight,totalWeights)	NodeType.VARIABLE
+targetBandwidth = totalSupply.mulDiv(bandwidthStateList[i].weight,totalWeights)	NodeType.EXPRESSION
+oldRebalancingFee += _calculateRebalancingFee(bandwidthStateList[i].bandwidth,targetBandwidth,false)	NodeType.EXPRESSION" -> "BlockID: 1663
+Call context: 
+None
+oldRebalancingFee(uint256) = oldRebalancingFee (c)+ TMP_1660
+TMP_1661(uint256) := i(uint256)
+i(uint256) = i (c)+ 1
+EXPRESSION:oldRebalancingFee += _calculateRebalancingFee(bandwidthStateList[i].bandwidth,targetBandwidth,false)	NodeType.EXPRESSION
+i ++	NodeType.EXPRESSION" [key=0];
+"BlockID: 1663
+Call context: 
+None
+oldRebalancingFee(uint256) = oldRebalancingFee (c)+ TMP_1660
+TMP_1661(uint256) := i(uint256)
+i(uint256) = i (c)+ 1
+EXPRESSION:oldRebalancingFee += _calculateRebalancingFee(bandwidthStateList[i].bandwidth,targetBandwidth,false)	NodeType.EXPRESSION
+i ++	NodeType.EXPRESSION" -> "BlockID: 1606
+Call context: 
+None
+BEGIN_LOOP
+REF_302 -> LENGTH bandwidthStateList
+TMP_1658(bool) = i < REF_302
+CONDITION TMP_1658
+EXPRESSION:None	NodeType.STARTLOOP
+i < bandwidthStateList.length	NodeType.IFLOOP" [key=0];
+}

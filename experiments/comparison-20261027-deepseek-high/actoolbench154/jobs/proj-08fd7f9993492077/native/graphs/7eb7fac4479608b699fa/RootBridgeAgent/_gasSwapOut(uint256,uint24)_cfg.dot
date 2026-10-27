@@ -1,0 +1,433 @@
+digraph {
+"BlockID: 1093
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1094
+Call context: 
+None
+NEW VARIABLE zeroForOneOnInflow
+NEW VARIABLE priceImpactPercentage
+NEW VARIABLE gasTokenGlobalAddress
+NEW VARIABLE poolAddress
+TMP_955 = CONVERT localPortAddress to IRootPort
+TUPLE_11(bool,uint24,address,address) = HIGH_LEVEL_CALL, dest:TMP_955(IRootPort), function:getGasPoolInfo, arguments:['_toChain']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(zeroForOneOnInflow,priceImpactPercentage,gasTokenGlobalAddress,poolAddress) = IRootPort(localPortAddress).getGasPoolInfo(_toChain)	NodeType.EXPRESSION";
+"BlockID: 1095
+Call context: 
+None
+zeroForOneOnInflow(bool)= UNPACK TUPLE_11 index: 0 
+priceImpactPercentage(uint24)= UNPACK TUPLE_11 index: 1 
+gasTokenGlobalAddress(address)= UNPACK TUPLE_11 index: 2 
+poolAddress(address)= UNPACK TUPLE_11 index: 3 
+TMP_956 = CONVERT 0 to address
+TMP_957(bool) = gasTokenGlobalAddress == TMP_956
+TMP_958 = CONVERT 0 to address
+TMP_959(bool) = poolAddress == TMP_958
+TMP_960(bool) = TMP_957 || TMP_959
+CONDITION TMP_960
+EXPRESSION:(zeroForOneOnInflow,priceImpactPercentage,gasTokenGlobalAddress,poolAddress) = IRootPort(localPortAddress).getGasPoolInfo(_toChain)	NodeType.EXPRESSION
+gasTokenGlobalAddress == address(0) || poolAddress == address(0)	NodeType.IF" [shape=box];
+"BlockID: 1096
+Call context: 
+True
+TMP_961(None) = SOLIDITY_CALL revert InvalidGasPool()()
+EXPRESSION:revert InvalidGasPool()()	NodeType.EXPRESSION";
+"BlockID: 1097
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1098
+Call context: 
+None
+REF_224(bool) -> approvedGasPool[poolAddress]
+TMP_962 = ! REF_224 
+CONDITION TMP_962
+EXPRESSION:! approvedGasPool[poolAddress]	NodeType.IF";
+"BlockID: 1099
+Call context: 
+True
+REF_225(bool) -> approvedGasPool[poolAddress]
+REF_225(bool) (->approvedGasPool) := True(bool)
+EXPRESSION:approvedGasPool[poolAddress] = true	NodeType.EXPRESSION";
+"BlockID: 1100
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1101
+Call context: 
+None
+NEW VARIABLE sqrtPriceLimitX96
+NEW VARIABLE sqrtPriceX96
+TMP_963 = CONVERT poolAddress to IUniswapV3Pool
+TUPLE_12(uint160,int24,uint16,uint16,uint16,uint8,bool) = HIGH_LEVEL_CALL, dest:TMP_963(IUniswapV3Pool), function:slot0, arguments:[]  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(sqrtPriceX96) = IUniswapV3Pool(poolAddress).slot0()	NodeType.EXPRESSION";
+"BlockID: 1102
+Call context: 
+None
+sqrtPriceX96(uint160)= UNPACK TUPLE_12 index: 0 
+TMP_964(uint24) = priceImpactPercentage (c)/ 2
+TMP_965(uint160) = sqrtPriceX96 (c)* TMP_964
+TMP_966(uint160) = TMP_965 (c)/ GLOBAL_DIVISIONER
+exactSqrtPriceImpact(uint160) := TMP_966(uint160)
+CONDITION zeroForOneOnInflow
+EXPRESSION:(sqrtPriceX96) = IUniswapV3Pool(poolAddress).slot0()	NodeType.EXPRESSION
+exactSqrtPriceImpact = (sqrtPriceX96 * (priceImpactPercentage / 2)) / GLOBAL_DIVISIONER	NodeType.VARIABLE
+exactSqrtPriceImpact = (sqrtPriceX96 * (priceImpactPercentage / 2)) / GLOBAL_DIVISIONER	NodeType.EXPRESSION
+zeroForOneOnInflow	NodeType.IF" [shape=box];
+"BlockID: 1103
+Call context: 
+True
+TMP_974(uint160) = sqrtPriceX96 (c)+ exactSqrtPriceImpact
+sqrtPriceLimitX96(uint160) := TMP_974(uint160)
+EXPRESSION:sqrtPriceLimitX96 = sqrtPriceX96 + exactSqrtPriceImpact	NodeType.EXPRESSION";
+"BlockID: 1104
+Call context: 
+False
+TMP_975(uint160) = sqrtPriceX96 (c)- exactSqrtPriceImpact
+sqrtPriceLimitX96(uint160) := TMP_975(uint160)
+EXPRESSION:sqrtPriceLimitX96 = sqrtPriceX96 - exactSqrtPriceImpact	NodeType.EXPRESSION";
+"BlockID: 1105
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1106
+Call context: 
+None
+NEW VARIABLE amount0
+NEW VARIABLE amount1
+TMP_967 = CONVERT poolAddress to IUniswapV3Pool
+TMP_968 = CONVERT this to address
+TMP_969 = ! zeroForOneOnInflow 
+TMP_970 = CONVERT _amount to int256
+TMP_971 = CONVERT wrappedNativeToken to address
+TMP_972(SwapCallbackData) = new SwapCallbackData(TMP_971)
+TMP_973(bytes) = SOLIDITY_CALL abi.encode()(TMP_972)
+TUPLE_13(int256,int256) = HIGH_LEVEL_CALL, dest:TMP_967(IUniswapV3Pool), function:swap, arguments:['TMP_968', 'TMP_969', 'TMP_970', 'sqrtPriceLimitX96', 'TMP_973']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0,amount1) = IUniswapV3Pool(poolAddress).swap(address(this),! zeroForOneOnInflow,int256(_amount),sqrtPriceLimitX96,abi.encode(SwapCallbackData(address(wrappedNativeToken))))	NodeType.EXPRESSION";
+"BlockID: 1107
+Call context: 
+None
+amount0(int256)= UNPACK TUPLE_13 index: 0 
+amount1(int256)= UNPACK TUPLE_13 index: 1 
+TMP_976 = ! zeroForOneOnInflow 
+CONDITION TMP_976
+EXPRESSION:(amount0,amount1) = IUniswapV3Pool(poolAddress).swap(address(this),! zeroForOneOnInflow,int256(_amount),sqrtPriceLimitX96,abi.encode(SwapCallbackData(address(wrappedNativeToken))))	NodeType.EXPRESSION
+! zeroForOneOnInflow	NodeType.IF" [shape=box];
+"BlockID: 1108
+Call context: 
+True
+TMP_977 = CONVERT amount1 to uint256
+RETURN TMP_977,gasTokenGlobalAddress
+EXPRESSION:(uint256(amount1),gasTokenGlobalAddress)	NodeType.RETURN";
+"BlockID: 1109
+Call context: 
+False
+TMP_978 = CONVERT amount0 to uint256
+RETURN TMP_978,gasTokenGlobalAddress
+EXPRESSION:(uint256(amount0),gasTokenGlobalAddress)	NodeType.RETURN";
+"BlockID: 1093
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1094
+Call context: 
+None
+NEW VARIABLE zeroForOneOnInflow
+NEW VARIABLE priceImpactPercentage
+NEW VARIABLE gasTokenGlobalAddress
+NEW VARIABLE poolAddress
+TMP_955 = CONVERT localPortAddress to IRootPort
+TUPLE_11(bool,uint24,address,address) = HIGH_LEVEL_CALL, dest:TMP_955(IRootPort), function:getGasPoolInfo, arguments:['_toChain']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(zeroForOneOnInflow,priceImpactPercentage,gasTokenGlobalAddress,poolAddress) = IRootPort(localPortAddress).getGasPoolInfo(_toChain)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1094
+Call context: 
+None
+NEW VARIABLE zeroForOneOnInflow
+NEW VARIABLE priceImpactPercentage
+NEW VARIABLE gasTokenGlobalAddress
+NEW VARIABLE poolAddress
+TMP_955 = CONVERT localPortAddress to IRootPort
+TUPLE_11(bool,uint24,address,address) = HIGH_LEVEL_CALL, dest:TMP_955(IRootPort), function:getGasPoolInfo, arguments:['_toChain']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(zeroForOneOnInflow,priceImpactPercentage,gasTokenGlobalAddress,poolAddress) = IRootPort(localPortAddress).getGasPoolInfo(_toChain)	NodeType.EXPRESSION" -> "BlockID: 1095
+Call context: 
+None
+zeroForOneOnInflow(bool)= UNPACK TUPLE_11 index: 0 
+priceImpactPercentage(uint24)= UNPACK TUPLE_11 index: 1 
+gasTokenGlobalAddress(address)= UNPACK TUPLE_11 index: 2 
+poolAddress(address)= UNPACK TUPLE_11 index: 3 
+TMP_956 = CONVERT 0 to address
+TMP_957(bool) = gasTokenGlobalAddress == TMP_956
+TMP_958 = CONVERT 0 to address
+TMP_959(bool) = poolAddress == TMP_958
+TMP_960(bool) = TMP_957 || TMP_959
+CONDITION TMP_960
+EXPRESSION:(zeroForOneOnInflow,priceImpactPercentage,gasTokenGlobalAddress,poolAddress) = IRootPort(localPortAddress).getGasPoolInfo(_toChain)	NodeType.EXPRESSION
+gasTokenGlobalAddress == address(0) || poolAddress == address(0)	NodeType.IF" [key=0];
+"BlockID: 1095
+Call context: 
+None
+zeroForOneOnInflow(bool)= UNPACK TUPLE_11 index: 0 
+priceImpactPercentage(uint24)= UNPACK TUPLE_11 index: 1 
+gasTokenGlobalAddress(address)= UNPACK TUPLE_11 index: 2 
+poolAddress(address)= UNPACK TUPLE_11 index: 3 
+TMP_956 = CONVERT 0 to address
+TMP_957(bool) = gasTokenGlobalAddress == TMP_956
+TMP_958 = CONVERT 0 to address
+TMP_959(bool) = poolAddress == TMP_958
+TMP_960(bool) = TMP_957 || TMP_959
+CONDITION TMP_960
+EXPRESSION:(zeroForOneOnInflow,priceImpactPercentage,gasTokenGlobalAddress,poolAddress) = IRootPort(localPortAddress).getGasPoolInfo(_toChain)	NodeType.EXPRESSION
+gasTokenGlobalAddress == address(0) || poolAddress == address(0)	NodeType.IF" -> "BlockID: 1096
+Call context: 
+True
+TMP_961(None) = SOLIDITY_CALL revert InvalidGasPool()()
+EXPRESSION:revert InvalidGasPool()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1095
+Call context: 
+None
+zeroForOneOnInflow(bool)= UNPACK TUPLE_11 index: 0 
+priceImpactPercentage(uint24)= UNPACK TUPLE_11 index: 1 
+gasTokenGlobalAddress(address)= UNPACK TUPLE_11 index: 2 
+poolAddress(address)= UNPACK TUPLE_11 index: 3 
+TMP_956 = CONVERT 0 to address
+TMP_957(bool) = gasTokenGlobalAddress == TMP_956
+TMP_958 = CONVERT 0 to address
+TMP_959(bool) = poolAddress == TMP_958
+TMP_960(bool) = TMP_957 || TMP_959
+CONDITION TMP_960
+EXPRESSION:(zeroForOneOnInflow,priceImpactPercentage,gasTokenGlobalAddress,poolAddress) = IRootPort(localPortAddress).getGasPoolInfo(_toChain)	NodeType.EXPRESSION
+gasTokenGlobalAddress == address(0) || poolAddress == address(0)	NodeType.IF" -> "BlockID: 1097
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1097
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1098
+Call context: 
+None
+REF_224(bool) -> approvedGasPool[poolAddress]
+TMP_962 = ! REF_224 
+CONDITION TMP_962
+EXPRESSION:! approvedGasPool[poolAddress]	NodeType.IF" [key=0];
+"BlockID: 1098
+Call context: 
+None
+REF_224(bool) -> approvedGasPool[poolAddress]
+TMP_962 = ! REF_224 
+CONDITION TMP_962
+EXPRESSION:! approvedGasPool[poolAddress]	NodeType.IF" -> "BlockID: 1099
+Call context: 
+True
+REF_225(bool) -> approvedGasPool[poolAddress]
+REF_225(bool) (->approvedGasPool) := True(bool)
+EXPRESSION:approvedGasPool[poolAddress] = true	NodeType.EXPRESSION" [key=0];
+"BlockID: 1098
+Call context: 
+None
+REF_224(bool) -> approvedGasPool[poolAddress]
+TMP_962 = ! REF_224 
+CONDITION TMP_962
+EXPRESSION:! approvedGasPool[poolAddress]	NodeType.IF" -> "BlockID: 1100
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1099
+Call context: 
+True
+REF_225(bool) -> approvedGasPool[poolAddress]
+REF_225(bool) (->approvedGasPool) := True(bool)
+EXPRESSION:approvedGasPool[poolAddress] = true	NodeType.EXPRESSION" -> "BlockID: 1100
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1100
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1101
+Call context: 
+None
+NEW VARIABLE sqrtPriceLimitX96
+NEW VARIABLE sqrtPriceX96
+TMP_963 = CONVERT poolAddress to IUniswapV3Pool
+TUPLE_12(uint160,int24,uint16,uint16,uint16,uint8,bool) = HIGH_LEVEL_CALL, dest:TMP_963(IUniswapV3Pool), function:slot0, arguments:[]  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(sqrtPriceX96) = IUniswapV3Pool(poolAddress).slot0()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1101
+Call context: 
+None
+NEW VARIABLE sqrtPriceLimitX96
+NEW VARIABLE sqrtPriceX96
+TMP_963 = CONVERT poolAddress to IUniswapV3Pool
+TUPLE_12(uint160,int24,uint16,uint16,uint16,uint8,bool) = HIGH_LEVEL_CALL, dest:TMP_963(IUniswapV3Pool), function:slot0, arguments:[]  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(sqrtPriceX96) = IUniswapV3Pool(poolAddress).slot0()	NodeType.EXPRESSION" -> "BlockID: 1102
+Call context: 
+None
+sqrtPriceX96(uint160)= UNPACK TUPLE_12 index: 0 
+TMP_964(uint24) = priceImpactPercentage (c)/ 2
+TMP_965(uint160) = sqrtPriceX96 (c)* TMP_964
+TMP_966(uint160) = TMP_965 (c)/ GLOBAL_DIVISIONER
+exactSqrtPriceImpact(uint160) := TMP_966(uint160)
+CONDITION zeroForOneOnInflow
+EXPRESSION:(sqrtPriceX96) = IUniswapV3Pool(poolAddress).slot0()	NodeType.EXPRESSION
+exactSqrtPriceImpact = (sqrtPriceX96 * (priceImpactPercentage / 2)) / GLOBAL_DIVISIONER	NodeType.VARIABLE
+exactSqrtPriceImpact = (sqrtPriceX96 * (priceImpactPercentage / 2)) / GLOBAL_DIVISIONER	NodeType.EXPRESSION
+zeroForOneOnInflow	NodeType.IF" [key=0];
+"BlockID: 1102
+Call context: 
+None
+sqrtPriceX96(uint160)= UNPACK TUPLE_12 index: 0 
+TMP_964(uint24) = priceImpactPercentage (c)/ 2
+TMP_965(uint160) = sqrtPriceX96 (c)* TMP_964
+TMP_966(uint160) = TMP_965 (c)/ GLOBAL_DIVISIONER
+exactSqrtPriceImpact(uint160) := TMP_966(uint160)
+CONDITION zeroForOneOnInflow
+EXPRESSION:(sqrtPriceX96) = IUniswapV3Pool(poolAddress).slot0()	NodeType.EXPRESSION
+exactSqrtPriceImpact = (sqrtPriceX96 * (priceImpactPercentage / 2)) / GLOBAL_DIVISIONER	NodeType.VARIABLE
+exactSqrtPriceImpact = (sqrtPriceX96 * (priceImpactPercentage / 2)) / GLOBAL_DIVISIONER	NodeType.EXPRESSION
+zeroForOneOnInflow	NodeType.IF" -> "BlockID: 1103
+Call context: 
+True
+TMP_974(uint160) = sqrtPriceX96 (c)+ exactSqrtPriceImpact
+sqrtPriceLimitX96(uint160) := TMP_974(uint160)
+EXPRESSION:sqrtPriceLimitX96 = sqrtPriceX96 + exactSqrtPriceImpact	NodeType.EXPRESSION" [key=0];
+"BlockID: 1102
+Call context: 
+None
+sqrtPriceX96(uint160)= UNPACK TUPLE_12 index: 0 
+TMP_964(uint24) = priceImpactPercentage (c)/ 2
+TMP_965(uint160) = sqrtPriceX96 (c)* TMP_964
+TMP_966(uint160) = TMP_965 (c)/ GLOBAL_DIVISIONER
+exactSqrtPriceImpact(uint160) := TMP_966(uint160)
+CONDITION zeroForOneOnInflow
+EXPRESSION:(sqrtPriceX96) = IUniswapV3Pool(poolAddress).slot0()	NodeType.EXPRESSION
+exactSqrtPriceImpact = (sqrtPriceX96 * (priceImpactPercentage / 2)) / GLOBAL_DIVISIONER	NodeType.VARIABLE
+exactSqrtPriceImpact = (sqrtPriceX96 * (priceImpactPercentage / 2)) / GLOBAL_DIVISIONER	NodeType.EXPRESSION
+zeroForOneOnInflow	NodeType.IF" -> "BlockID: 1104
+Call context: 
+False
+TMP_975(uint160) = sqrtPriceX96 (c)- exactSqrtPriceImpact
+sqrtPriceLimitX96(uint160) := TMP_975(uint160)
+EXPRESSION:sqrtPriceLimitX96 = sqrtPriceX96 - exactSqrtPriceImpact	NodeType.EXPRESSION" [key=0];
+"BlockID: 1103
+Call context: 
+True
+TMP_974(uint160) = sqrtPriceX96 (c)+ exactSqrtPriceImpact
+sqrtPriceLimitX96(uint160) := TMP_974(uint160)
+EXPRESSION:sqrtPriceLimitX96 = sqrtPriceX96 + exactSqrtPriceImpact	NodeType.EXPRESSION" -> "BlockID: 1105
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1104
+Call context: 
+False
+TMP_975(uint160) = sqrtPriceX96 (c)- exactSqrtPriceImpact
+sqrtPriceLimitX96(uint160) := TMP_975(uint160)
+EXPRESSION:sqrtPriceLimitX96 = sqrtPriceX96 - exactSqrtPriceImpact	NodeType.EXPRESSION" -> "BlockID: 1105
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1105
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1106
+Call context: 
+None
+NEW VARIABLE amount0
+NEW VARIABLE amount1
+TMP_967 = CONVERT poolAddress to IUniswapV3Pool
+TMP_968 = CONVERT this to address
+TMP_969 = ! zeroForOneOnInflow 
+TMP_970 = CONVERT _amount to int256
+TMP_971 = CONVERT wrappedNativeToken to address
+TMP_972(SwapCallbackData) = new SwapCallbackData(TMP_971)
+TMP_973(bytes) = SOLIDITY_CALL abi.encode()(TMP_972)
+TUPLE_13(int256,int256) = HIGH_LEVEL_CALL, dest:TMP_967(IUniswapV3Pool), function:swap, arguments:['TMP_968', 'TMP_969', 'TMP_970', 'sqrtPriceLimitX96', 'TMP_973']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0,amount1) = IUniswapV3Pool(poolAddress).swap(address(this),! zeroForOneOnInflow,int256(_amount),sqrtPriceLimitX96,abi.encode(SwapCallbackData(address(wrappedNativeToken))))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1106
+Call context: 
+None
+NEW VARIABLE amount0
+NEW VARIABLE amount1
+TMP_967 = CONVERT poolAddress to IUniswapV3Pool
+TMP_968 = CONVERT this to address
+TMP_969 = ! zeroForOneOnInflow 
+TMP_970 = CONVERT _amount to int256
+TMP_971 = CONVERT wrappedNativeToken to address
+TMP_972(SwapCallbackData) = new SwapCallbackData(TMP_971)
+TMP_973(bytes) = SOLIDITY_CALL abi.encode()(TMP_972)
+TUPLE_13(int256,int256) = HIGH_LEVEL_CALL, dest:TMP_967(IUniswapV3Pool), function:swap, arguments:['TMP_968', 'TMP_969', 'TMP_970', 'sqrtPriceLimitX96', 'TMP_973']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0,amount1) = IUniswapV3Pool(poolAddress).swap(address(this),! zeroForOneOnInflow,int256(_amount),sqrtPriceLimitX96,abi.encode(SwapCallbackData(address(wrappedNativeToken))))	NodeType.EXPRESSION" -> "BlockID: 1107
+Call context: 
+None
+amount0(int256)= UNPACK TUPLE_13 index: 0 
+amount1(int256)= UNPACK TUPLE_13 index: 1 
+TMP_976 = ! zeroForOneOnInflow 
+CONDITION TMP_976
+EXPRESSION:(amount0,amount1) = IUniswapV3Pool(poolAddress).swap(address(this),! zeroForOneOnInflow,int256(_amount),sqrtPriceLimitX96,abi.encode(SwapCallbackData(address(wrappedNativeToken))))	NodeType.EXPRESSION
+! zeroForOneOnInflow	NodeType.IF" [key=0];
+"BlockID: 1107
+Call context: 
+None
+amount0(int256)= UNPACK TUPLE_13 index: 0 
+amount1(int256)= UNPACK TUPLE_13 index: 1 
+TMP_976 = ! zeroForOneOnInflow 
+CONDITION TMP_976
+EXPRESSION:(amount0,amount1) = IUniswapV3Pool(poolAddress).swap(address(this),! zeroForOneOnInflow,int256(_amount),sqrtPriceLimitX96,abi.encode(SwapCallbackData(address(wrappedNativeToken))))	NodeType.EXPRESSION
+! zeroForOneOnInflow	NodeType.IF" -> "BlockID: 1108
+Call context: 
+True
+TMP_977 = CONVERT amount1 to uint256
+RETURN TMP_977,gasTokenGlobalAddress
+EXPRESSION:(uint256(amount1),gasTokenGlobalAddress)	NodeType.RETURN" [key=0];
+"BlockID: 1107
+Call context: 
+None
+amount0(int256)= UNPACK TUPLE_13 index: 0 
+amount1(int256)= UNPACK TUPLE_13 index: 1 
+TMP_976 = ! zeroForOneOnInflow 
+CONDITION TMP_976
+EXPRESSION:(amount0,amount1) = IUniswapV3Pool(poolAddress).swap(address(this),! zeroForOneOnInflow,int256(_amount),sqrtPriceLimitX96,abi.encode(SwapCallbackData(address(wrappedNativeToken))))	NodeType.EXPRESSION
+! zeroForOneOnInflow	NodeType.IF" -> "BlockID: 1109
+Call context: 
+False
+TMP_978 = CONVERT amount0 to uint256
+RETURN TMP_978,gasTokenGlobalAddress
+EXPRESSION:(uint256(amount0),gasTokenGlobalAddress)	NodeType.RETURN" [key=0];
+}

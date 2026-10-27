@@ -1,0 +1,1139 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+TMP_44(bool) = startTime > now
+CONDITION TMP_44
+EXPRESSION:startTime > now	NodeType.IF";
+"BlockID: 8
+Call context: 
+None
+TMP_83 = ! TMP_82 
+REF_38(PosRewards.Account[]) -> accountsUsed[_cycle]
+REF_39 -> LENGTH REF_38
+TMP_84(bool) = _position >= REF_39
+TMP_85(bool) = TMP_83 || TMP_84
+CONDITION TMP_85
+EXPRESSION:! _isCycleValid(_cycle) || _position >= accountsUsed[_cycle].length	NodeType.IF" [shape=box];
+"BlockID: 10
+Call context: 
+True
+RETURN False
+EXPRESSION:false	NodeType.RETURN";
+"BlockID: 11
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 13
+Call context: 
+None
+REF_40(PosRewards.Account[]) -> accountsUsed[_cycle]
+REF_41(PosRewards.Account) -> REF_40[_position]
+claimant(PosRewards.Account) := REF_41(PosRewards.Account)
+REF_42(PosRewards.RewardStatuses) -> claimant.status
+REF_43(PosRewards.RewardStatuses) -> RewardStatuses.Unsent
+TMP_86(bool) = REF_42 != REF_43
+CONDITION TMP_86
+EXPRESSION:claimant = accountsUsed[_cycle][_position]	NodeType.VARIABLE
+claimant = accountsUsed[_cycle][_position]	NodeType.EXPRESSION
+claimant.status != RewardStatuses.Unsent	NodeType.IF";
+"BlockID: 16
+Call context: 
+True
+RETURN False
+EXPRESSION:false	NodeType.RETURN";
+"BlockID: 17
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 21
+Call context: 
+None
+REF_44(mapping(address => int256)) -> accountsBalances[_cycle]
+REF_45(address) -> claimant.recipient
+REF_46(int256) -> REF_44[REF_45]
+minimalAccountBalance(int256) := REF_46(int256)
+TMP_87 = CONVERT minimalRewardedBalance to int256
+TMP_88(bool) = minimalAccountBalance < TMP_87
+CONDITION TMP_88
+EXPRESSION:minimalAccountBalance = accountsBalances[_cycle][claimant.recipient]	NodeType.VARIABLE
+minimalAccountBalance = accountsBalances[_cycle][claimant.recipient]	NodeType.EXPRESSION
+minimalAccountBalance < int256(minimalRewardedBalance)	NodeType.IF";
+"BlockID: 23
+Call context: 
+True
+REF_47(PosRewards.RewardStatuses) -> claimant.status
+REF_48(PosRewards.RewardStatuses) -> RewardStatuses.TooSmallToSend
+REF_47(PosRewards.RewardStatuses) (->claimant) := REF_48(PosRewards.RewardStatuses)
+RETURN False
+EXPRESSION:claimant.status = RewardStatuses.TooSmallToSend	NodeType.EXPRESSION
+false	NodeType.RETURN";
+"BlockID: 24
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 25
+Call context: 
+None
+TMP_89 = CONVERT minimalAccountBalance to uint256
+TMP_36(bool) = cycle <= 9
+CONDITION TMP_36
+EXPRESSION:cycle <= 9	NodeType.IF";
+"BlockID: 33
+Call context: 
+None
+TMP_92 = CONVERT TMP_91 to ElcoinInterface
+elcoin(ElcoinInterface) := TMP_92(ElcoinInterface)
+REF_50(address) -> claimant.recipient
+TMP_93(bool) = HIGH_LEVEL_CALL, dest:elcoin(ElcoinInterface), function:rewardTo, arguments:['REF_50', 'rewardAmount']  
+EXPRESSION:elcoin = ElcoinInterface(getAddress(elcoin))	NodeType.VARIABLE
+elcoin = ElcoinInterface(getAddress(elcoin))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 35
+Call context: 
+None
+result(bool) := TMP_93(bool)
+CONDITION result
+EXPRESSION:result = elcoin.rewardTo(claimant.recipient,rewardAmount)	NodeType.VARIABLE
+result = elcoin.rewardTo(claimant.recipient,rewardAmount)	NodeType.EXPRESSION
+result	NodeType.IF" [shape=box];
+"BlockID: 38
+Call context: 
+None
+RETURN True
+REF_52(PosRewards.RewardStatuses) -> claimant.status
+REF_53(PosRewards.RewardStatuses) -> RewardStatuses.Sent
+REF_52(PosRewards.RewardStatuses) (->claimant) := REF_53(PosRewards.RewardStatuses)
+EXPRESSION:true	NodeType.RETURN
+claimant.status = RewardStatuses.Sent	NodeType.EXPRESSION";
+"BlockID: 39
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 4
+Call context: sendReward
+None
+TMP_49(bool) = _cycle >= TMP_48
+TMP_50(bool) = _cycle == 0
+TMP_51(bool) = TMP_49 || TMP_50
+CONDITION TMP_51
+EXPRESSION:_cycle >= currentCycle() || _cycle == 0	NodeType.IF" [shape=box];
+"BlockID: 6
+Call context: sendReward
+True
+TMP_115(None) := False(bool)
+EXPRESSION:";
+"BlockID: 7
+Call context: sendReward
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 9
+Call context: sendReward
+None
+NEW VARIABLE i
+EXPRESSION:None	NodeType.VARIABLE";
+"BlockID: 12
+Call context: sendReward
+None
+BEGIN_LOOP
+REF_7 -> LENGTH bannedCycles
+TMP_52(bool) = i < REF_7
+CONDITION TMP_52
+EXPRESSION:None	NodeType.STARTLOOP
+i < bannedCycles.length	NodeType.IFLOOP";
+"BlockID: 14
+Call context: sendReward
+True
+REF_8(uint256) -> bannedCycles[i]
+TMP_53(bool) = REF_8 == _cycle
+CONDITION TMP_53
+EXPRESSION:bannedCycles[i] == _cycle	NodeType.IF";
+"BlockID: 15
+Call context: sendReward
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 20
+Call context: sendReward
+None
+TMP_115(None) := True(bool)
+EXPRESSION:";
+"BlockID: 18
+Call context: sendReward
+True
+TMP_115(None) := False(bool)
+EXPRESSION:";
+"BlockID: 19
+Call context: sendReward
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 22
+Call context: sendReward
+None
+TMP_54(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:i ++	NodeType.EXPRESSION";
+"BlockID: 2
+Call context: sendReward,_isCycleValid
+True
+TMP_114(None) := 0(uint256)
+EXPRESSION:";
+"BlockID: 3
+Call context: sendReward,_isCycleValid
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 5
+Call context: sendReward,_isCycleValid
+None
+TMP_45(uint256) = now - startTime
+TMP_46(uint256) = TMP_45 / cycleLength
+TMP_47(uint256) = 1 + TMP_46
+TMP_114(None) := TMP_47(uint256)
+EXPRESSION:";
+"BlockID: 28
+Call context: sendReward
+None
+TMP_56(uint256) = amount * TMP_55
+TMP_57(uint256) = TMP_56 / 3650
+TMP_116(None) := TMP_57(uint256)
+rewardAmount(uint256) := TMP_90(uint256)
+TMP_17(address) = HIGH_LEVEL_CALL, dest:ambiC(Ambi), function:getNodeAddress, arguments:['_name']  
+EXPRESSION:rewardAmount = getInterest(uint256(minimalAccountBalance),_cycle)	NodeType.VARIABLE
+ambiC.getNodeAddress(_name)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 26
+Call context: sendReward,getInterest
+True
+TMP_113(None) := 50(uint256)
+EXPRESSION:";
+"BlockID: 27
+Call context: sendReward,getInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 29
+Call context: sendReward,getInterest
+None
+TMP_37(bool) = cycle <= 18
+CONDITION TMP_37
+EXPRESSION:cycle <= 18	NodeType.IF";
+"BlockID: 31
+Call context: sendReward,getInterest
+True
+TMP_113(None) := 40(uint256)
+EXPRESSION:";
+"BlockID: 32
+Call context: sendReward,getInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 34
+Call context: sendReward,getInterest
+None
+TMP_38(bool) = cycle <= 27
+CONDITION TMP_38
+EXPRESSION:cycle <= 27	NodeType.IF";
+"BlockID: 36
+Call context: sendReward,getInterest
+True
+TMP_113(None) := 30(uint256)
+EXPRESSION:";
+"BlockID: 37
+Call context: sendReward,getInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 40
+Call context: sendReward,getInterest
+None
+TMP_39(bool) = cycle <= 35
+CONDITION TMP_39
+EXPRESSION:cycle <= 35	NodeType.IF";
+"BlockID: 41
+Call context: sendReward,getInterest
+True
+TMP_113(None) := 20(uint256)
+EXPRESSION:";
+"BlockID: 42
+Call context: sendReward,getInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 43
+Call context: sendReward,getInterest
+None
+TMP_40(bool) = cycle == 36
+CONDITION TMP_40
+EXPRESSION:cycle == 36	NodeType.IF";
+"BlockID: 44
+Call context: sendReward,getInterest
+True
+TMP_113(None) := 40(uint256)
+EXPRESSION:";
+"BlockID: 45
+Call context: sendReward,getInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 46
+Call context: sendReward,getInterest
+None
+TMP_41(bool) = cycle <= cycleLimit
+CONDITION TMP_41
+EXPRESSION:cycle <= cycleLimit	NodeType.IF";
+"BlockID: 47
+Call context: sendReward,getInterest
+True
+TMP_42(uint256) = cycle % 36
+TMP_43(bool) = TMP_42 == 0
+CONDITION TMP_43
+EXPRESSION:cycle % 36 == 0	NodeType.IF";
+"BlockID: 48
+Call context: sendReward,getInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 51
+Call context: sendReward,getInterest
+None
+TMP_113(None) := 0(uint256)
+EXPRESSION:";
+"BlockID: 49
+Call context: sendReward,getInterest
+True
+TMP_113(None) := 20(uint256)
+EXPRESSION:";
+"BlockID: 50
+Call context: sendReward,getInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 52
+Call context: sendReward,getInterest
+None
+TMP_113(None) := 10(uint256)
+EXPRESSION:";
+"BlockID: 30
+Call context: sendReward
+None
+TMP_104(None) := TMP_17(address)
+EXPRESSION:" [shape=box];
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+TMP_44(bool) = startTime > now
+CONDITION TMP_44
+EXPRESSION:startTime > now	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_44(bool) = startTime > now
+CONDITION TMP_44
+EXPRESSION:startTime > now	NodeType.IF" -> "BlockID: 2
+Call context: sendReward,_isCycleValid
+True
+TMP_114(None) := 0(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+TMP_44(bool) = startTime > now
+CONDITION TMP_44
+EXPRESSION:startTime > now	NodeType.IF" -> "BlockID: 3
+Call context: sendReward,_isCycleValid
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 8
+Call context: 
+None
+TMP_83 = ! TMP_82 
+REF_38(PosRewards.Account[]) -> accountsUsed[_cycle]
+REF_39 -> LENGTH REF_38
+TMP_84(bool) = _position >= REF_39
+TMP_85(bool) = TMP_83 || TMP_84
+CONDITION TMP_85
+EXPRESSION:! _isCycleValid(_cycle) || _position >= accountsUsed[_cycle].length	NodeType.IF" -> "BlockID: 10
+Call context: 
+True
+RETURN False
+EXPRESSION:false	NodeType.RETURN" [key=0];
+"BlockID: 8
+Call context: 
+None
+TMP_83 = ! TMP_82 
+REF_38(PosRewards.Account[]) -> accountsUsed[_cycle]
+REF_39 -> LENGTH REF_38
+TMP_84(bool) = _position >= REF_39
+TMP_85(bool) = TMP_83 || TMP_84
+CONDITION TMP_85
+EXPRESSION:! _isCycleValid(_cycle) || _position >= accountsUsed[_cycle].length	NodeType.IF" -> "BlockID: 11
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 11
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 13
+Call context: 
+None
+REF_40(PosRewards.Account[]) -> accountsUsed[_cycle]
+REF_41(PosRewards.Account) -> REF_40[_position]
+claimant(PosRewards.Account) := REF_41(PosRewards.Account)
+REF_42(PosRewards.RewardStatuses) -> claimant.status
+REF_43(PosRewards.RewardStatuses) -> RewardStatuses.Unsent
+TMP_86(bool) = REF_42 != REF_43
+CONDITION TMP_86
+EXPRESSION:claimant = accountsUsed[_cycle][_position]	NodeType.VARIABLE
+claimant = accountsUsed[_cycle][_position]	NodeType.EXPRESSION
+claimant.status != RewardStatuses.Unsent	NodeType.IF" [key=0];
+"BlockID: 13
+Call context: 
+None
+REF_40(PosRewards.Account[]) -> accountsUsed[_cycle]
+REF_41(PosRewards.Account) -> REF_40[_position]
+claimant(PosRewards.Account) := REF_41(PosRewards.Account)
+REF_42(PosRewards.RewardStatuses) -> claimant.status
+REF_43(PosRewards.RewardStatuses) -> RewardStatuses.Unsent
+TMP_86(bool) = REF_42 != REF_43
+CONDITION TMP_86
+EXPRESSION:claimant = accountsUsed[_cycle][_position]	NodeType.VARIABLE
+claimant = accountsUsed[_cycle][_position]	NodeType.EXPRESSION
+claimant.status != RewardStatuses.Unsent	NodeType.IF" -> "BlockID: 16
+Call context: 
+True
+RETURN False
+EXPRESSION:false	NodeType.RETURN" [key=0];
+"BlockID: 13
+Call context: 
+None
+REF_40(PosRewards.Account[]) -> accountsUsed[_cycle]
+REF_41(PosRewards.Account) -> REF_40[_position]
+claimant(PosRewards.Account) := REF_41(PosRewards.Account)
+REF_42(PosRewards.RewardStatuses) -> claimant.status
+REF_43(PosRewards.RewardStatuses) -> RewardStatuses.Unsent
+TMP_86(bool) = REF_42 != REF_43
+CONDITION TMP_86
+EXPRESSION:claimant = accountsUsed[_cycle][_position]	NodeType.VARIABLE
+claimant = accountsUsed[_cycle][_position]	NodeType.EXPRESSION
+claimant.status != RewardStatuses.Unsent	NodeType.IF" -> "BlockID: 17
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 17
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 21
+Call context: 
+None
+REF_44(mapping(address => int256)) -> accountsBalances[_cycle]
+REF_45(address) -> claimant.recipient
+REF_46(int256) -> REF_44[REF_45]
+minimalAccountBalance(int256) := REF_46(int256)
+TMP_87 = CONVERT minimalRewardedBalance to int256
+TMP_88(bool) = minimalAccountBalance < TMP_87
+CONDITION TMP_88
+EXPRESSION:minimalAccountBalance = accountsBalances[_cycle][claimant.recipient]	NodeType.VARIABLE
+minimalAccountBalance = accountsBalances[_cycle][claimant.recipient]	NodeType.EXPRESSION
+minimalAccountBalance < int256(minimalRewardedBalance)	NodeType.IF" [key=0];
+"BlockID: 21
+Call context: 
+None
+REF_44(mapping(address => int256)) -> accountsBalances[_cycle]
+REF_45(address) -> claimant.recipient
+REF_46(int256) -> REF_44[REF_45]
+minimalAccountBalance(int256) := REF_46(int256)
+TMP_87 = CONVERT minimalRewardedBalance to int256
+TMP_88(bool) = minimalAccountBalance < TMP_87
+CONDITION TMP_88
+EXPRESSION:minimalAccountBalance = accountsBalances[_cycle][claimant.recipient]	NodeType.VARIABLE
+minimalAccountBalance = accountsBalances[_cycle][claimant.recipient]	NodeType.EXPRESSION
+minimalAccountBalance < int256(minimalRewardedBalance)	NodeType.IF" -> "BlockID: 23
+Call context: 
+True
+REF_47(PosRewards.RewardStatuses) -> claimant.status
+REF_48(PosRewards.RewardStatuses) -> RewardStatuses.TooSmallToSend
+REF_47(PosRewards.RewardStatuses) (->claimant) := REF_48(PosRewards.RewardStatuses)
+RETURN False
+EXPRESSION:claimant.status = RewardStatuses.TooSmallToSend	NodeType.EXPRESSION
+false	NodeType.RETURN" [key=0];
+"BlockID: 21
+Call context: 
+None
+REF_44(mapping(address => int256)) -> accountsBalances[_cycle]
+REF_45(address) -> claimant.recipient
+REF_46(int256) -> REF_44[REF_45]
+minimalAccountBalance(int256) := REF_46(int256)
+TMP_87 = CONVERT minimalRewardedBalance to int256
+TMP_88(bool) = minimalAccountBalance < TMP_87
+CONDITION TMP_88
+EXPRESSION:minimalAccountBalance = accountsBalances[_cycle][claimant.recipient]	NodeType.VARIABLE
+minimalAccountBalance = accountsBalances[_cycle][claimant.recipient]	NodeType.EXPRESSION
+minimalAccountBalance < int256(minimalRewardedBalance)	NodeType.IF" -> "BlockID: 24
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 24
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 25
+Call context: 
+None
+TMP_89 = CONVERT minimalAccountBalance to uint256
+TMP_36(bool) = cycle <= 9
+CONDITION TMP_36
+EXPRESSION:cycle <= 9	NodeType.IF" [key=0];
+"BlockID: 25
+Call context: 
+None
+TMP_89 = CONVERT minimalAccountBalance to uint256
+TMP_36(bool) = cycle <= 9
+CONDITION TMP_36
+EXPRESSION:cycle <= 9	NodeType.IF" -> "BlockID: 26
+Call context: sendReward,getInterest
+True
+TMP_113(None) := 50(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 25
+Call context: 
+None
+TMP_89 = CONVERT minimalAccountBalance to uint256
+TMP_36(bool) = cycle <= 9
+CONDITION TMP_36
+EXPRESSION:cycle <= 9	NodeType.IF" -> "BlockID: 27
+Call context: sendReward,getInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 33
+Call context: 
+None
+TMP_92 = CONVERT TMP_91 to ElcoinInterface
+elcoin(ElcoinInterface) := TMP_92(ElcoinInterface)
+REF_50(address) -> claimant.recipient
+TMP_93(bool) = HIGH_LEVEL_CALL, dest:elcoin(ElcoinInterface), function:rewardTo, arguments:['REF_50', 'rewardAmount']  
+EXPRESSION:elcoin = ElcoinInterface(getAddress(elcoin))	NodeType.VARIABLE
+elcoin = ElcoinInterface(getAddress(elcoin))	NodeType.EXPRESSION" -> "BlockID: 35
+Call context: 
+None
+result(bool) := TMP_93(bool)
+CONDITION result
+EXPRESSION:result = elcoin.rewardTo(claimant.recipient,rewardAmount)	NodeType.VARIABLE
+result = elcoin.rewardTo(claimant.recipient,rewardAmount)	NodeType.EXPRESSION
+result	NodeType.IF" [key=0];
+"BlockID: 35
+Call context: 
+None
+result(bool) := TMP_93(bool)
+CONDITION result
+EXPRESSION:result = elcoin.rewardTo(claimant.recipient,rewardAmount)	NodeType.VARIABLE
+result = elcoin.rewardTo(claimant.recipient,rewardAmount)	NodeType.EXPRESSION
+result	NodeType.IF" -> "BlockID: 38
+Call context: 
+None
+RETURN True
+REF_52(PosRewards.RewardStatuses) -> claimant.status
+REF_53(PosRewards.RewardStatuses) -> RewardStatuses.Sent
+REF_52(PosRewards.RewardStatuses) (->claimant) := REF_53(PosRewards.RewardStatuses)
+EXPRESSION:true	NodeType.RETURN
+claimant.status = RewardStatuses.Sent	NodeType.EXPRESSION" [key=0];
+"BlockID: 35
+Call context: 
+None
+result(bool) := TMP_93(bool)
+CONDITION result
+EXPRESSION:result = elcoin.rewardTo(claimant.recipient,rewardAmount)	NodeType.VARIABLE
+result = elcoin.rewardTo(claimant.recipient,rewardAmount)	NodeType.EXPRESSION
+result	NodeType.IF" -> "BlockID: 39
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 38
+Call context: 
+None
+RETURN True
+REF_52(PosRewards.RewardStatuses) -> claimant.status
+REF_53(PosRewards.RewardStatuses) -> RewardStatuses.Sent
+REF_52(PosRewards.RewardStatuses) (->claimant) := REF_53(PosRewards.RewardStatuses)
+EXPRESSION:true	NodeType.RETURN
+claimant.status = RewardStatuses.Sent	NodeType.EXPRESSION" -> "BlockID: 39
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 39
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 38
+Call context: 
+None
+RETURN True
+REF_52(PosRewards.RewardStatuses) -> claimant.status
+REF_53(PosRewards.RewardStatuses) -> RewardStatuses.Sent
+REF_52(PosRewards.RewardStatuses) (->claimant) := REF_53(PosRewards.RewardStatuses)
+EXPRESSION:true	NodeType.RETURN
+claimant.status = RewardStatuses.Sent	NodeType.EXPRESSION" [key=0];
+"BlockID: 4
+Call context: sendReward
+None
+TMP_49(bool) = _cycle >= TMP_48
+TMP_50(bool) = _cycle == 0
+TMP_51(bool) = TMP_49 || TMP_50
+CONDITION TMP_51
+EXPRESSION:_cycle >= currentCycle() || _cycle == 0	NodeType.IF" -> "BlockID: 6
+Call context: sendReward
+True
+TMP_115(None) := False(bool)
+EXPRESSION:" [key=0];
+"BlockID: 4
+Call context: sendReward
+None
+TMP_49(bool) = _cycle >= TMP_48
+TMP_50(bool) = _cycle == 0
+TMP_51(bool) = TMP_49 || TMP_50
+CONDITION TMP_51
+EXPRESSION:_cycle >= currentCycle() || _cycle == 0	NodeType.IF" -> "BlockID: 7
+Call context: sendReward
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 6
+Call context: sendReward
+True
+TMP_115(None) := False(bool)
+EXPRESSION:" -> "BlockID: 8
+Call context: 
+None
+TMP_83 = ! TMP_82 
+REF_38(PosRewards.Account[]) -> accountsUsed[_cycle]
+REF_39 -> LENGTH REF_38
+TMP_84(bool) = _position >= REF_39
+TMP_85(bool) = TMP_83 || TMP_84
+CONDITION TMP_85
+EXPRESSION:! _isCycleValid(_cycle) || _position >= accountsUsed[_cycle].length	NodeType.IF" [key="successor_5", ref="PosRewards._isCycleValid"];
+"BlockID: 7
+Call context: sendReward
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 9
+Call context: sendReward
+None
+NEW VARIABLE i
+EXPRESSION:None	NodeType.VARIABLE" [key=0];
+"BlockID: 9
+Call context: sendReward
+None
+NEW VARIABLE i
+EXPRESSION:None	NodeType.VARIABLE" -> "BlockID: 12
+Call context: sendReward
+None
+BEGIN_LOOP
+REF_7 -> LENGTH bannedCycles
+TMP_52(bool) = i < REF_7
+CONDITION TMP_52
+EXPRESSION:None	NodeType.STARTLOOP
+i < bannedCycles.length	NodeType.IFLOOP" [key=0];
+"BlockID: 12
+Call context: sendReward
+None
+BEGIN_LOOP
+REF_7 -> LENGTH bannedCycles
+TMP_52(bool) = i < REF_7
+CONDITION TMP_52
+EXPRESSION:None	NodeType.STARTLOOP
+i < bannedCycles.length	NodeType.IFLOOP" -> "BlockID: 14
+Call context: sendReward
+True
+REF_8(uint256) -> bannedCycles[i]
+TMP_53(bool) = REF_8 == _cycle
+CONDITION TMP_53
+EXPRESSION:bannedCycles[i] == _cycle	NodeType.IF" [key=0];
+"BlockID: 12
+Call context: sendReward
+None
+BEGIN_LOOP
+REF_7 -> LENGTH bannedCycles
+TMP_52(bool) = i < REF_7
+CONDITION TMP_52
+EXPRESSION:None	NodeType.STARTLOOP
+i < bannedCycles.length	NodeType.IFLOOP" -> "BlockID: 15
+Call context: sendReward
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 14
+Call context: sendReward
+True
+REF_8(uint256) -> bannedCycles[i]
+TMP_53(bool) = REF_8 == _cycle
+CONDITION TMP_53
+EXPRESSION:bannedCycles[i] == _cycle	NodeType.IF" -> "BlockID: 18
+Call context: sendReward
+True
+TMP_115(None) := False(bool)
+EXPRESSION:" [key=0];
+"BlockID: 14
+Call context: sendReward
+True
+REF_8(uint256) -> bannedCycles[i]
+TMP_53(bool) = REF_8 == _cycle
+CONDITION TMP_53
+EXPRESSION:bannedCycles[i] == _cycle	NodeType.IF" -> "BlockID: 19
+Call context: sendReward
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 15
+Call context: sendReward
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 20
+Call context: sendReward
+None
+TMP_115(None) := True(bool)
+EXPRESSION:" [key=0];
+"BlockID: 20
+Call context: sendReward
+None
+TMP_115(None) := True(bool)
+EXPRESSION:" -> "BlockID: 8
+Call context: 
+None
+TMP_83 = ! TMP_82 
+REF_38(PosRewards.Account[]) -> accountsUsed[_cycle]
+REF_39 -> LENGTH REF_38
+TMP_84(bool) = _position >= REF_39
+TMP_85(bool) = TMP_83 || TMP_84
+CONDITION TMP_85
+EXPRESSION:! _isCycleValid(_cycle) || _position >= accountsUsed[_cycle].length	NodeType.IF" [key="successor_5", ref="PosRewards._isCycleValid"];
+"BlockID: 18
+Call context: sendReward
+True
+TMP_115(None) := False(bool)
+EXPRESSION:" -> "BlockID: 8
+Call context: 
+None
+TMP_83 = ! TMP_82 
+REF_38(PosRewards.Account[]) -> accountsUsed[_cycle]
+REF_39 -> LENGTH REF_38
+TMP_84(bool) = _position >= REF_39
+TMP_85(bool) = TMP_83 || TMP_84
+CONDITION TMP_85
+EXPRESSION:! _isCycleValid(_cycle) || _position >= accountsUsed[_cycle].length	NodeType.IF" [key="successor_5", ref="PosRewards._isCycleValid"];
+"BlockID: 19
+Call context: sendReward
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 22
+Call context: sendReward
+None
+TMP_54(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:i ++	NodeType.EXPRESSION" [key=0];
+"BlockID: 22
+Call context: sendReward
+None
+TMP_54(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:i ++	NodeType.EXPRESSION" -> "BlockID: 12
+Call context: sendReward
+None
+BEGIN_LOOP
+REF_7 -> LENGTH bannedCycles
+TMP_52(bool) = i < REF_7
+CONDITION TMP_52
+EXPRESSION:None	NodeType.STARTLOOP
+i < bannedCycles.length	NodeType.IFLOOP" [key=0];
+"BlockID: 2
+Call context: sendReward,_isCycleValid
+True
+TMP_114(None) := 0(uint256)
+EXPRESSION:" -> "BlockID: 4
+Call context: sendReward
+None
+TMP_49(bool) = _cycle >= TMP_48
+TMP_50(bool) = _cycle == 0
+TMP_51(bool) = TMP_49 || TMP_50
+CONDITION TMP_51
+EXPRESSION:_cycle >= currentCycle() || _cycle == 0	NodeType.IF" [key="successor_5", ref="PosRewards.currentCycle"];
+"BlockID: 3
+Call context: sendReward,_isCycleValid
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 5
+Call context: sendReward,_isCycleValid
+None
+TMP_45(uint256) = now - startTime
+TMP_46(uint256) = TMP_45 / cycleLength
+TMP_47(uint256) = 1 + TMP_46
+TMP_114(None) := TMP_47(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 5
+Call context: sendReward,_isCycleValid
+None
+TMP_45(uint256) = now - startTime
+TMP_46(uint256) = TMP_45 / cycleLength
+TMP_47(uint256) = 1 + TMP_46
+TMP_114(None) := TMP_47(uint256)
+EXPRESSION:" -> "BlockID: 4
+Call context: sendReward
+None
+TMP_49(bool) = _cycle >= TMP_48
+TMP_50(bool) = _cycle == 0
+TMP_51(bool) = TMP_49 || TMP_50
+CONDITION TMP_51
+EXPRESSION:_cycle >= currentCycle() || _cycle == 0	NodeType.IF" [key="successor_5", ref="PosRewards.currentCycle"];
+"BlockID: 28
+Call context: sendReward
+None
+TMP_56(uint256) = amount * TMP_55
+TMP_57(uint256) = TMP_56 / 3650
+TMP_116(None) := TMP_57(uint256)
+rewardAmount(uint256) := TMP_90(uint256)
+TMP_17(address) = HIGH_LEVEL_CALL, dest:ambiC(Ambi), function:getNodeAddress, arguments:['_name']  
+EXPRESSION:rewardAmount = getInterest(uint256(minimalAccountBalance),_cycle)	NodeType.VARIABLE
+ambiC.getNodeAddress(_name)	NodeType.EXPRESSION" -> "BlockID: 30
+Call context: sendReward
+None
+TMP_104(None) := TMP_17(address)
+EXPRESSION:" [key="successor_1"];
+"BlockID: 26
+Call context: sendReward,getInterest
+True
+TMP_113(None) := 50(uint256)
+EXPRESSION:" -> "BlockID: 28
+Call context: sendReward
+None
+TMP_56(uint256) = amount * TMP_55
+TMP_57(uint256) = TMP_56 / 3650
+TMP_116(None) := TMP_57(uint256)
+rewardAmount(uint256) := TMP_90(uint256)
+TMP_17(address) = HIGH_LEVEL_CALL, dest:ambiC(Ambi), function:getNodeAddress, arguments:['_name']  
+EXPRESSION:rewardAmount = getInterest(uint256(minimalAccountBalance),_cycle)	NodeType.VARIABLE
+ambiC.getNodeAddress(_name)	NodeType.EXPRESSION" [key="successor_5", ref="PosRewards.getRate"];
+"BlockID: 27
+Call context: sendReward,getInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 29
+Call context: sendReward,getInterest
+None
+TMP_37(bool) = cycle <= 18
+CONDITION TMP_37
+EXPRESSION:cycle <= 18	NodeType.IF" [key=0];
+"BlockID: 29
+Call context: sendReward,getInterest
+None
+TMP_37(bool) = cycle <= 18
+CONDITION TMP_37
+EXPRESSION:cycle <= 18	NodeType.IF" -> "BlockID: 31
+Call context: sendReward,getInterest
+True
+TMP_113(None) := 40(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 29
+Call context: sendReward,getInterest
+None
+TMP_37(bool) = cycle <= 18
+CONDITION TMP_37
+EXPRESSION:cycle <= 18	NodeType.IF" -> "BlockID: 32
+Call context: sendReward,getInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 31
+Call context: sendReward,getInterest
+True
+TMP_113(None) := 40(uint256)
+EXPRESSION:" -> "BlockID: 28
+Call context: sendReward
+None
+TMP_56(uint256) = amount * TMP_55
+TMP_57(uint256) = TMP_56 / 3650
+TMP_116(None) := TMP_57(uint256)
+rewardAmount(uint256) := TMP_90(uint256)
+TMP_17(address) = HIGH_LEVEL_CALL, dest:ambiC(Ambi), function:getNodeAddress, arguments:['_name']  
+EXPRESSION:rewardAmount = getInterest(uint256(minimalAccountBalance),_cycle)	NodeType.VARIABLE
+ambiC.getNodeAddress(_name)	NodeType.EXPRESSION" [key="successor_5", ref="PosRewards.getRate"];
+"BlockID: 32
+Call context: sendReward,getInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 34
+Call context: sendReward,getInterest
+None
+TMP_38(bool) = cycle <= 27
+CONDITION TMP_38
+EXPRESSION:cycle <= 27	NodeType.IF" [key=0];
+"BlockID: 34
+Call context: sendReward,getInterest
+None
+TMP_38(bool) = cycle <= 27
+CONDITION TMP_38
+EXPRESSION:cycle <= 27	NodeType.IF" -> "BlockID: 36
+Call context: sendReward,getInterest
+True
+TMP_113(None) := 30(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 34
+Call context: sendReward,getInterest
+None
+TMP_38(bool) = cycle <= 27
+CONDITION TMP_38
+EXPRESSION:cycle <= 27	NodeType.IF" -> "BlockID: 37
+Call context: sendReward,getInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 36
+Call context: sendReward,getInterest
+True
+TMP_113(None) := 30(uint256)
+EXPRESSION:" -> "BlockID: 28
+Call context: sendReward
+None
+TMP_56(uint256) = amount * TMP_55
+TMP_57(uint256) = TMP_56 / 3650
+TMP_116(None) := TMP_57(uint256)
+rewardAmount(uint256) := TMP_90(uint256)
+TMP_17(address) = HIGH_LEVEL_CALL, dest:ambiC(Ambi), function:getNodeAddress, arguments:['_name']  
+EXPRESSION:rewardAmount = getInterest(uint256(minimalAccountBalance),_cycle)	NodeType.VARIABLE
+ambiC.getNodeAddress(_name)	NodeType.EXPRESSION" [key="successor_5", ref="PosRewards.getRate"];
+"BlockID: 37
+Call context: sendReward,getInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 40
+Call context: sendReward,getInterest
+None
+TMP_39(bool) = cycle <= 35
+CONDITION TMP_39
+EXPRESSION:cycle <= 35	NodeType.IF" [key=0];
+"BlockID: 40
+Call context: sendReward,getInterest
+None
+TMP_39(bool) = cycle <= 35
+CONDITION TMP_39
+EXPRESSION:cycle <= 35	NodeType.IF" -> "BlockID: 41
+Call context: sendReward,getInterest
+True
+TMP_113(None) := 20(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 40
+Call context: sendReward,getInterest
+None
+TMP_39(bool) = cycle <= 35
+CONDITION TMP_39
+EXPRESSION:cycle <= 35	NodeType.IF" -> "BlockID: 42
+Call context: sendReward,getInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 41
+Call context: sendReward,getInterest
+True
+TMP_113(None) := 20(uint256)
+EXPRESSION:" -> "BlockID: 28
+Call context: sendReward
+None
+TMP_56(uint256) = amount * TMP_55
+TMP_57(uint256) = TMP_56 / 3650
+TMP_116(None) := TMP_57(uint256)
+rewardAmount(uint256) := TMP_90(uint256)
+TMP_17(address) = HIGH_LEVEL_CALL, dest:ambiC(Ambi), function:getNodeAddress, arguments:['_name']  
+EXPRESSION:rewardAmount = getInterest(uint256(minimalAccountBalance),_cycle)	NodeType.VARIABLE
+ambiC.getNodeAddress(_name)	NodeType.EXPRESSION" [key="successor_5", ref="PosRewards.getRate"];
+"BlockID: 42
+Call context: sendReward,getInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 43
+Call context: sendReward,getInterest
+None
+TMP_40(bool) = cycle == 36
+CONDITION TMP_40
+EXPRESSION:cycle == 36	NodeType.IF" [key=0];
+"BlockID: 43
+Call context: sendReward,getInterest
+None
+TMP_40(bool) = cycle == 36
+CONDITION TMP_40
+EXPRESSION:cycle == 36	NodeType.IF" -> "BlockID: 44
+Call context: sendReward,getInterest
+True
+TMP_113(None) := 40(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 43
+Call context: sendReward,getInterest
+None
+TMP_40(bool) = cycle == 36
+CONDITION TMP_40
+EXPRESSION:cycle == 36	NodeType.IF" -> "BlockID: 45
+Call context: sendReward,getInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 44
+Call context: sendReward,getInterest
+True
+TMP_113(None) := 40(uint256)
+EXPRESSION:" -> "BlockID: 28
+Call context: sendReward
+None
+TMP_56(uint256) = amount * TMP_55
+TMP_57(uint256) = TMP_56 / 3650
+TMP_116(None) := TMP_57(uint256)
+rewardAmount(uint256) := TMP_90(uint256)
+TMP_17(address) = HIGH_LEVEL_CALL, dest:ambiC(Ambi), function:getNodeAddress, arguments:['_name']  
+EXPRESSION:rewardAmount = getInterest(uint256(minimalAccountBalance),_cycle)	NodeType.VARIABLE
+ambiC.getNodeAddress(_name)	NodeType.EXPRESSION" [key="successor_5", ref="PosRewards.getRate"];
+"BlockID: 45
+Call context: sendReward,getInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 46
+Call context: sendReward,getInterest
+None
+TMP_41(bool) = cycle <= cycleLimit
+CONDITION TMP_41
+EXPRESSION:cycle <= cycleLimit	NodeType.IF" [key=0];
+"BlockID: 46
+Call context: sendReward,getInterest
+None
+TMP_41(bool) = cycle <= cycleLimit
+CONDITION TMP_41
+EXPRESSION:cycle <= cycleLimit	NodeType.IF" -> "BlockID: 47
+Call context: sendReward,getInterest
+True
+TMP_42(uint256) = cycle % 36
+TMP_43(bool) = TMP_42 == 0
+CONDITION TMP_43
+EXPRESSION:cycle % 36 == 0	NodeType.IF" [key=0];
+"BlockID: 46
+Call context: sendReward,getInterest
+None
+TMP_41(bool) = cycle <= cycleLimit
+CONDITION TMP_41
+EXPRESSION:cycle <= cycleLimit	NodeType.IF" -> "BlockID: 48
+Call context: sendReward,getInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 47
+Call context: sendReward,getInterest
+True
+TMP_42(uint256) = cycle % 36
+TMP_43(bool) = TMP_42 == 0
+CONDITION TMP_43
+EXPRESSION:cycle % 36 == 0	NodeType.IF" -> "BlockID: 49
+Call context: sendReward,getInterest
+True
+TMP_113(None) := 20(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 47
+Call context: sendReward,getInterest
+True
+TMP_42(uint256) = cycle % 36
+TMP_43(bool) = TMP_42 == 0
+CONDITION TMP_43
+EXPRESSION:cycle % 36 == 0	NodeType.IF" -> "BlockID: 50
+Call context: sendReward,getInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 48
+Call context: sendReward,getInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 51
+Call context: sendReward,getInterest
+None
+TMP_113(None) := 0(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 51
+Call context: sendReward,getInterest
+None
+TMP_113(None) := 0(uint256)
+EXPRESSION:" -> "BlockID: 28
+Call context: sendReward
+None
+TMP_56(uint256) = amount * TMP_55
+TMP_57(uint256) = TMP_56 / 3650
+TMP_116(None) := TMP_57(uint256)
+rewardAmount(uint256) := TMP_90(uint256)
+TMP_17(address) = HIGH_LEVEL_CALL, dest:ambiC(Ambi), function:getNodeAddress, arguments:['_name']  
+EXPRESSION:rewardAmount = getInterest(uint256(minimalAccountBalance),_cycle)	NodeType.VARIABLE
+ambiC.getNodeAddress(_name)	NodeType.EXPRESSION" [key="successor_5", ref="PosRewards.getRate"];
+"BlockID: 49
+Call context: sendReward,getInterest
+True
+TMP_113(None) := 20(uint256)
+EXPRESSION:" -> "BlockID: 28
+Call context: sendReward
+None
+TMP_56(uint256) = amount * TMP_55
+TMP_57(uint256) = TMP_56 / 3650
+TMP_116(None) := TMP_57(uint256)
+rewardAmount(uint256) := TMP_90(uint256)
+TMP_17(address) = HIGH_LEVEL_CALL, dest:ambiC(Ambi), function:getNodeAddress, arguments:['_name']  
+EXPRESSION:rewardAmount = getInterest(uint256(minimalAccountBalance),_cycle)	NodeType.VARIABLE
+ambiC.getNodeAddress(_name)	NodeType.EXPRESSION" [key="successor_5", ref="PosRewards.getRate"];
+"BlockID: 50
+Call context: sendReward,getInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 52
+Call context: sendReward,getInterest
+None
+TMP_113(None) := 10(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 52
+Call context: sendReward,getInterest
+None
+TMP_113(None) := 10(uint256)
+EXPRESSION:" -> "BlockID: 28
+Call context: sendReward
+None
+TMP_56(uint256) = amount * TMP_55
+TMP_57(uint256) = TMP_56 / 3650
+TMP_116(None) := TMP_57(uint256)
+rewardAmount(uint256) := TMP_90(uint256)
+TMP_17(address) = HIGH_LEVEL_CALL, dest:ambiC(Ambi), function:getNodeAddress, arguments:['_name']  
+EXPRESSION:rewardAmount = getInterest(uint256(minimalAccountBalance),_cycle)	NodeType.VARIABLE
+ambiC.getNodeAddress(_name)	NodeType.EXPRESSION" [key="successor_5", ref="PosRewards.getRate"];
+"BlockID: 30
+Call context: sendReward
+None
+TMP_104(None) := TMP_17(address)
+EXPRESSION:" -> "BlockID: 33
+Call context: 
+None
+TMP_92 = CONVERT TMP_91 to ElcoinInterface
+elcoin(ElcoinInterface) := TMP_92(ElcoinInterface)
+REF_50(address) -> claimant.recipient
+TMP_93(bool) = HIGH_LEVEL_CALL, dest:elcoin(ElcoinInterface), function:rewardTo, arguments:['REF_50', 'rewardAmount']  
+EXPRESSION:elcoin = ElcoinInterface(getAddress(elcoin))	NodeType.VARIABLE
+elcoin = ElcoinInterface(getAddress(elcoin))	NodeType.EXPRESSION" [key="Exit: getAddress", ref="PosRewards.getAddress"];
+}

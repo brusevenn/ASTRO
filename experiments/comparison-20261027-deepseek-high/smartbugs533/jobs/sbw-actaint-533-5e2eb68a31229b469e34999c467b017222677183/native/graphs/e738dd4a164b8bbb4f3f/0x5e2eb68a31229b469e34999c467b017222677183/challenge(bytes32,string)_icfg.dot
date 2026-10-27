@@ -1,0 +1,603 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+REF_247(Registry.Listing) -> listings[_listingHash]
+listing(Registry.Listing) := REF_247(Registry.Listing)
+TMP_346(uint256) = HIGH_LEVEL_CALL, dest:parameterizer(Parameterizer), function:get, arguments:['minDeposit']  
+EXPRESSION:listing = listings[_listingHash]	NodeType.VARIABLE
+listing = listings[_listingHash]	NodeType.EXPRESSION";
+"BlockID: 2
+Call context: 
+None
+deposit(uint256) := TMP_346(uint256)
+REF_292(Registry.Listing) -> listings[_listingHash]
+REF_293(uint256) -> REF_292.applicationExpiry
+TMP_395(bool) = REF_293 > 0
+TMP_493(None) := TMP_395(bool)
+REF_249(bool) -> listing.whitelisted
+TMP_348(bool) = TMP_347 || REF_249
+CONDITION TMP_348
+EXPRESSION:deposit = parameterizer.get(minDeposit)	NodeType.VARIABLE
+deposit = parameterizer.get(minDeposit)	NodeType.EXPRESSION
+TMP_348(bool) = TMP_347 || REF_249	NodeType.IF" [shape=box];
+"BlockID: 8
+Call context: 
+True
+REF_254(uint256) -> listing.unstakedDeposit
+TMP_353(bool) = REF_254 < deposit
+CONDITION TMP_353
+EXPRESSION:listing.unstakedDeposit < deposit	NodeType.IF";
+"BlockID: 9
+Call context: 
+True
+REF_341(Registry.Listing) -> listings[_listingHash]
+listing(Registry.Listing) := REF_341(Registry.Listing)
+REF_343(address) -> listing.owner
+owner(address) := REF_343(address)
+REF_344(uint256) -> listing.unstakedDeposit
+unstakedDeposit(uint256) := REF_344(uint256)
+REF_345(Registry.Listing) -> listings[_listingHash]
+listings = delete REF_345 
+TMP_424(bool) = unstakedDeposit > 0
+CONDITION TMP_424
+EXPRESSION:listing = listings[_listingHash]	NodeType.VARIABLE
+listing = listings[_listingHash]	NodeType.EXPRESSION
+owner = listing.owner	NodeType.VARIABLE
+owner = listing.owner	NodeType.EXPRESSION
+unstakedDeposit = listing.unstakedDeposit	NodeType.VARIABLE
+unstakedDeposit = listing.unstakedDeposit	NodeType.EXPRESSION
+delete listings[_listingHash]	NodeType.EXPRESSION
+unstakedDeposit > 0	NodeType.IF";
+"BlockID: 10
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 13
+Call context: 
+None
+TMP_356(uint256) = HIGH_LEVEL_CALL, dest:parameterizer(Parameterizer), function:get, arguments:['voteQuorum']  
+EXPRESSION:";
+"BlockID: 16
+Call context: 
+None
+TMP_357(uint256) = HIGH_LEVEL_CALL, dest:parameterizer(Parameterizer), function:get, arguments:['commitStageLen']  
+EXPRESSION:" [shape=box];
+"BlockID: 19
+Call context: 
+None
+TMP_358(uint256) = HIGH_LEVEL_CALL, dest:parameterizer(Parameterizer), function:get, arguments:['revealStageLen']  
+EXPRESSION:" [shape=box];
+"BlockID: 20
+Call context: 
+None
+TMP_359(uint256) = HIGH_LEVEL_CALL, dest:voting(PLCRVoting), function:startPoll, arguments:['TMP_356', 'TMP_357', 'TMP_358']  
+EXPRESSION:" [shape=box];
+"BlockID: 21
+Call context: 
+None
+pollID(uint256) := TMP_359(uint256)
+REF_259(Registry.Challenge) -> challenges[pollID]
+TMP_360(uint256) = HIGH_LEVEL_CALL, dest:parameterizer(Parameterizer), function:get, arguments:['dispensationPct']  
+EXPRESSION:pollID = voting.startPoll(parameterizer.get(voteQuorum),parameterizer.get(commitStageLen),parameterizer.get(revealStageLen))	NodeType.VARIABLE
+pollID = voting.startPoll(parameterizer.get(voteQuorum),parameterizer.get(commitStageLen),parameterizer.get(revealStageLen))	NodeType.EXPRESSION
+challenges[pollID] = Challenge(msg.sender,((100 - parameterizer.get(dispensationPct)) * deposit) / 100,deposit,false,0)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 22
+Call context: 
+None
+TMP_361(uint256) = 100 - TMP_360
+TMP_362(uint256) = TMP_361 * deposit
+TMP_363(uint256) = TMP_362 / 100
+TMP_364(Registry.Challenge) = new Challenge(msg.sender,TMP_363,deposit,False,0)
+REF_259(Registry.Challenge) (->challenges) := TMP_364(Registry.Challenge)
+REF_261(uint256) -> listing.challengeID
+REF_261(uint256) (->listing) := pollID(uint256)
+REF_262(uint256) -> listing.unstakedDeposit
+REF_262(-> listing) = REF_262 - deposit
+TMP_365(bool) = HIGH_LEVEL_CALL, dest:token(EIP20Interface), function:transferFrom, arguments:['msg.sender', 'this', 'deposit']  
+EXPRESSION:challenges[pollID] = Challenge(msg.sender,((100 - parameterizer.get(dispensationPct)) * deposit) / 100,deposit,false,0)	NodeType.EXPRESSION
+listing.challengeID = pollID	NodeType.EXPRESSION
+listing.unstakedDeposit -= deposit	NodeType.EXPRESSION
+require(bool)(token.transferFrom(msg.sender,this,deposit))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 26
+Call context: 
+True
+NEW VARIABLE commitEndDate
+NEW VARIABLE revealEndDate
+TUPLE_1(uint256,uint256,uint256,uint256,uint256) = HIGH_LEVEL_CALL, dest:voting(PLCRVoting), function:pollMap, arguments:['pollID']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(commitEndDate,revealEndDate) = voting.pollMap(pollID)	NodeType.EXPRESSION";
+"BlockID: 27
+Call context: 
+None
+commitEndDate(uint256)= UNPACK TUPLE_1 index: 0 
+revealEndDate(uint256)= UNPACK TUPLE_1 index: 1 
+RETURN pollID
+EXPRESSION:(commitEndDate,revealEndDate) = voting.pollMap(pollID)	NodeType.EXPRESSION
+pollID	NodeType.RETURN" [shape=box];
+"BlockID: 15
+Call context: 
+None
+RETURN 0
+EXPRESSION:resetListing(_listingHash)	NodeType.EXPRESSION
+0	NodeType.RETURN";
+"BlockID: 3
+Call context: 
+True
+TMP_349(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 4
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 5
+Call context: 
+None
+REF_250(uint256) -> listing.challengeID
+TMP_350(bool) = REF_250 == 0
+REF_251(uint256) -> listing.challengeID
+REF_252(Registry.Challenge) -> challenges[REF_251]
+REF_253(bool) -> REF_252.resolved
+TMP_351(bool) = TMP_350 || REF_253
+CONDITION TMP_351
+EXPRESSION:TMP_351(bool) = TMP_350 || REF_253	NodeType.IF";
+"BlockID: 6
+Call context: 
+True
+TMP_352(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 7
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 23
+Call context: 
+None
+CONDITION TMP_365
+EXPRESSION:TMP_366(None) = SOLIDITY_CALL require(bool)(TMP_365)	NodeType.IF";
+"BlockID: 24
+Call context: 
+True
+TMP_366(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 25
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 11
+Call context: challenge
+True
+TMP_425(bool) = HIGH_LEVEL_CALL, dest:token(EIP20Interface), function:transfer, arguments:['owner', 'unstakedDeposit']  
+EXPRESSION:require(bool)(token.transfer(owner,unstakedDeposit))	NodeType.EXPRESSION";
+"BlockID: 12
+Call context: challenge
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 14
+Call context: challenge
+None
+CONDITION TMP_425
+EXPRESSION:TMP_426(None) = SOLIDITY_CALL require(bool)(TMP_425)	NodeType.IF";
+"BlockID: 17
+Call context: challenge
+True
+TMP_426(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 18
+Call context: challenge
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+REF_247(Registry.Listing) -> listings[_listingHash]
+listing(Registry.Listing) := REF_247(Registry.Listing)
+TMP_346(uint256) = HIGH_LEVEL_CALL, dest:parameterizer(Parameterizer), function:get, arguments:['minDeposit']  
+EXPRESSION:listing = listings[_listingHash]	NodeType.VARIABLE
+listing = listings[_listingHash]	NodeType.EXPRESSION" [key=0];
+"BlockID: 1
+Call context: 
+None
+REF_247(Registry.Listing) -> listings[_listingHash]
+listing(Registry.Listing) := REF_247(Registry.Listing)
+TMP_346(uint256) = HIGH_LEVEL_CALL, dest:parameterizer(Parameterizer), function:get, arguments:['minDeposit']  
+EXPRESSION:listing = listings[_listingHash]	NodeType.VARIABLE
+listing = listings[_listingHash]	NodeType.EXPRESSION" -> "BlockID: 2
+Call context: 
+None
+deposit(uint256) := TMP_346(uint256)
+REF_292(Registry.Listing) -> listings[_listingHash]
+REF_293(uint256) -> REF_292.applicationExpiry
+TMP_395(bool) = REF_293 > 0
+TMP_493(None) := TMP_395(bool)
+REF_249(bool) -> listing.whitelisted
+TMP_348(bool) = TMP_347 || REF_249
+CONDITION TMP_348
+EXPRESSION:deposit = parameterizer.get(minDeposit)	NodeType.VARIABLE
+deposit = parameterizer.get(minDeposit)	NodeType.EXPRESSION
+TMP_348(bool) = TMP_347 || REF_249	NodeType.IF" [key=0];
+"BlockID: 2
+Call context: 
+None
+deposit(uint256) := TMP_346(uint256)
+REF_292(Registry.Listing) -> listings[_listingHash]
+REF_293(uint256) -> REF_292.applicationExpiry
+TMP_395(bool) = REF_293 > 0
+TMP_493(None) := TMP_395(bool)
+REF_249(bool) -> listing.whitelisted
+TMP_348(bool) = TMP_347 || REF_249
+CONDITION TMP_348
+EXPRESSION:deposit = parameterizer.get(minDeposit)	NodeType.VARIABLE
+deposit = parameterizer.get(minDeposit)	NodeType.EXPRESSION
+TMP_348(bool) = TMP_347 || REF_249	NodeType.IF" -> "BlockID: 3
+Call context: 
+True
+TMP_349(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_3"];
+"BlockID: 2
+Call context: 
+None
+deposit(uint256) := TMP_346(uint256)
+REF_292(Registry.Listing) -> listings[_listingHash]
+REF_293(uint256) -> REF_292.applicationExpiry
+TMP_395(bool) = REF_293 > 0
+TMP_493(None) := TMP_395(bool)
+REF_249(bool) -> listing.whitelisted
+TMP_348(bool) = TMP_347 || REF_249
+CONDITION TMP_348
+EXPRESSION:deposit = parameterizer.get(minDeposit)	NodeType.VARIABLE
+deposit = parameterizer.get(minDeposit)	NodeType.EXPRESSION
+TMP_348(bool) = TMP_347 || REF_249	NodeType.IF" -> "BlockID: 4
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_3"];
+"BlockID: 8
+Call context: 
+True
+REF_254(uint256) -> listing.unstakedDeposit
+TMP_353(bool) = REF_254 < deposit
+CONDITION TMP_353
+EXPRESSION:listing.unstakedDeposit < deposit	NodeType.IF" -> "BlockID: 9
+Call context: 
+True
+REF_341(Registry.Listing) -> listings[_listingHash]
+listing(Registry.Listing) := REF_341(Registry.Listing)
+REF_343(address) -> listing.owner
+owner(address) := REF_343(address)
+REF_344(uint256) -> listing.unstakedDeposit
+unstakedDeposit(uint256) := REF_344(uint256)
+REF_345(Registry.Listing) -> listings[_listingHash]
+listings = delete REF_345 
+TMP_424(bool) = unstakedDeposit > 0
+CONDITION TMP_424
+EXPRESSION:listing = listings[_listingHash]	NodeType.VARIABLE
+listing = listings[_listingHash]	NodeType.EXPRESSION
+owner = listing.owner	NodeType.VARIABLE
+owner = listing.owner	NodeType.EXPRESSION
+unstakedDeposit = listing.unstakedDeposit	NodeType.VARIABLE
+unstakedDeposit = listing.unstakedDeposit	NodeType.EXPRESSION
+delete listings[_listingHash]	NodeType.EXPRESSION
+unstakedDeposit > 0	NodeType.IF" [key=0];
+"BlockID: 8
+Call context: 
+True
+REF_254(uint256) -> listing.unstakedDeposit
+TMP_353(bool) = REF_254 < deposit
+CONDITION TMP_353
+EXPRESSION:listing.unstakedDeposit < deposit	NodeType.IF" -> "BlockID: 10
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 9
+Call context: 
+True
+REF_341(Registry.Listing) -> listings[_listingHash]
+listing(Registry.Listing) := REF_341(Registry.Listing)
+REF_343(address) -> listing.owner
+owner(address) := REF_343(address)
+REF_344(uint256) -> listing.unstakedDeposit
+unstakedDeposit(uint256) := REF_344(uint256)
+REF_345(Registry.Listing) -> listings[_listingHash]
+listings = delete REF_345 
+TMP_424(bool) = unstakedDeposit > 0
+CONDITION TMP_424
+EXPRESSION:listing = listings[_listingHash]	NodeType.VARIABLE
+listing = listings[_listingHash]	NodeType.EXPRESSION
+owner = listing.owner	NodeType.VARIABLE
+owner = listing.owner	NodeType.EXPRESSION
+unstakedDeposit = listing.unstakedDeposit	NodeType.VARIABLE
+unstakedDeposit = listing.unstakedDeposit	NodeType.EXPRESSION
+delete listings[_listingHash]	NodeType.EXPRESSION
+unstakedDeposit > 0	NodeType.IF" -> "BlockID: 11
+Call context: challenge
+True
+TMP_425(bool) = HIGH_LEVEL_CALL, dest:token(EIP20Interface), function:transfer, arguments:['owner', 'unstakedDeposit']  
+EXPRESSION:require(bool)(token.transfer(owner,unstakedDeposit))	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 9
+Call context: 
+True
+REF_341(Registry.Listing) -> listings[_listingHash]
+listing(Registry.Listing) := REF_341(Registry.Listing)
+REF_343(address) -> listing.owner
+owner(address) := REF_343(address)
+REF_344(uint256) -> listing.unstakedDeposit
+unstakedDeposit(uint256) := REF_344(uint256)
+REF_345(Registry.Listing) -> listings[_listingHash]
+listings = delete REF_345 
+TMP_424(bool) = unstakedDeposit > 0
+CONDITION TMP_424
+EXPRESSION:listing = listings[_listingHash]	NodeType.VARIABLE
+listing = listings[_listingHash]	NodeType.EXPRESSION
+owner = listing.owner	NodeType.VARIABLE
+owner = listing.owner	NodeType.EXPRESSION
+unstakedDeposit = listing.unstakedDeposit	NodeType.VARIABLE
+unstakedDeposit = listing.unstakedDeposit	NodeType.EXPRESSION
+delete listings[_listingHash]	NodeType.EXPRESSION
+unstakedDeposit > 0	NodeType.IF" -> "BlockID: 12
+Call context: challenge
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 10
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 13
+Call context: 
+None
+TMP_356(uint256) = HIGH_LEVEL_CALL, dest:parameterizer(Parameterizer), function:get, arguments:['voteQuorum']  
+EXPRESSION:" [key=0];
+"BlockID: 13
+Call context: 
+None
+TMP_356(uint256) = HIGH_LEVEL_CALL, dest:parameterizer(Parameterizer), function:get, arguments:['voteQuorum']  
+EXPRESSION:" -> "BlockID: 16
+Call context: 
+None
+TMP_357(uint256) = HIGH_LEVEL_CALL, dest:parameterizer(Parameterizer), function:get, arguments:['commitStageLen']  
+EXPRESSION:" [key=0];
+"BlockID: 16
+Call context: 
+None
+TMP_357(uint256) = HIGH_LEVEL_CALL, dest:parameterizer(Parameterizer), function:get, arguments:['commitStageLen']  
+EXPRESSION:" -> "BlockID: 19
+Call context: 
+None
+TMP_358(uint256) = HIGH_LEVEL_CALL, dest:parameterizer(Parameterizer), function:get, arguments:['revealStageLen']  
+EXPRESSION:" [key=0];
+"BlockID: 19
+Call context: 
+None
+TMP_358(uint256) = HIGH_LEVEL_CALL, dest:parameterizer(Parameterizer), function:get, arguments:['revealStageLen']  
+EXPRESSION:" -> "BlockID: 20
+Call context: 
+None
+TMP_359(uint256) = HIGH_LEVEL_CALL, dest:voting(PLCRVoting), function:startPoll, arguments:['TMP_356', 'TMP_357', 'TMP_358']  
+EXPRESSION:" [key=0];
+"BlockID: 20
+Call context: 
+None
+TMP_359(uint256) = HIGH_LEVEL_CALL, dest:voting(PLCRVoting), function:startPoll, arguments:['TMP_356', 'TMP_357', 'TMP_358']  
+EXPRESSION:" -> "BlockID: 21
+Call context: 
+None
+pollID(uint256) := TMP_359(uint256)
+REF_259(Registry.Challenge) -> challenges[pollID]
+TMP_360(uint256) = HIGH_LEVEL_CALL, dest:parameterizer(Parameterizer), function:get, arguments:['dispensationPct']  
+EXPRESSION:pollID = voting.startPoll(parameterizer.get(voteQuorum),parameterizer.get(commitStageLen),parameterizer.get(revealStageLen))	NodeType.VARIABLE
+pollID = voting.startPoll(parameterizer.get(voteQuorum),parameterizer.get(commitStageLen),parameterizer.get(revealStageLen))	NodeType.EXPRESSION
+challenges[pollID] = Challenge(msg.sender,((100 - parameterizer.get(dispensationPct)) * deposit) / 100,deposit,false,0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 21
+Call context: 
+None
+pollID(uint256) := TMP_359(uint256)
+REF_259(Registry.Challenge) -> challenges[pollID]
+TMP_360(uint256) = HIGH_LEVEL_CALL, dest:parameterizer(Parameterizer), function:get, arguments:['dispensationPct']  
+EXPRESSION:pollID = voting.startPoll(parameterizer.get(voteQuorum),parameterizer.get(commitStageLen),parameterizer.get(revealStageLen))	NodeType.VARIABLE
+pollID = voting.startPoll(parameterizer.get(voteQuorum),parameterizer.get(commitStageLen),parameterizer.get(revealStageLen))	NodeType.EXPRESSION
+challenges[pollID] = Challenge(msg.sender,((100 - parameterizer.get(dispensationPct)) * deposit) / 100,deposit,false,0)	NodeType.EXPRESSION" -> "BlockID: 22
+Call context: 
+None
+TMP_361(uint256) = 100 - TMP_360
+TMP_362(uint256) = TMP_361 * deposit
+TMP_363(uint256) = TMP_362 / 100
+TMP_364(Registry.Challenge) = new Challenge(msg.sender,TMP_363,deposit,False,0)
+REF_259(Registry.Challenge) (->challenges) := TMP_364(Registry.Challenge)
+REF_261(uint256) -> listing.challengeID
+REF_261(uint256) (->listing) := pollID(uint256)
+REF_262(uint256) -> listing.unstakedDeposit
+REF_262(-> listing) = REF_262 - deposit
+TMP_365(bool) = HIGH_LEVEL_CALL, dest:token(EIP20Interface), function:transferFrom, arguments:['msg.sender', 'this', 'deposit']  
+EXPRESSION:challenges[pollID] = Challenge(msg.sender,((100 - parameterizer.get(dispensationPct)) * deposit) / 100,deposit,false,0)	NodeType.EXPRESSION
+listing.challengeID = pollID	NodeType.EXPRESSION
+listing.unstakedDeposit -= deposit	NodeType.EXPRESSION
+require(bool)(token.transferFrom(msg.sender,this,deposit))	NodeType.EXPRESSION" [key=0];
+"BlockID: 22
+Call context: 
+None
+TMP_361(uint256) = 100 - TMP_360
+TMP_362(uint256) = TMP_361 * deposit
+TMP_363(uint256) = TMP_362 / 100
+TMP_364(Registry.Challenge) = new Challenge(msg.sender,TMP_363,deposit,False,0)
+REF_259(Registry.Challenge) (->challenges) := TMP_364(Registry.Challenge)
+REF_261(uint256) -> listing.challengeID
+REF_261(uint256) (->listing) := pollID(uint256)
+REF_262(uint256) -> listing.unstakedDeposit
+REF_262(-> listing) = REF_262 - deposit
+TMP_365(bool) = HIGH_LEVEL_CALL, dest:token(EIP20Interface), function:transferFrom, arguments:['msg.sender', 'this', 'deposit']  
+EXPRESSION:challenges[pollID] = Challenge(msg.sender,((100 - parameterizer.get(dispensationPct)) * deposit) / 100,deposit,false,0)	NodeType.EXPRESSION
+listing.challengeID = pollID	NodeType.EXPRESSION
+listing.unstakedDeposit -= deposit	NodeType.EXPRESSION
+require(bool)(token.transferFrom(msg.sender,this,deposit))	NodeType.EXPRESSION" -> "BlockID: 23
+Call context: 
+None
+CONDITION TMP_365
+EXPRESSION:TMP_366(None) = SOLIDITY_CALL require(bool)(TMP_365)	NodeType.IF" [key=0];
+"BlockID: 26
+Call context: 
+True
+NEW VARIABLE commitEndDate
+NEW VARIABLE revealEndDate
+TUPLE_1(uint256,uint256,uint256,uint256,uint256) = HIGH_LEVEL_CALL, dest:voting(PLCRVoting), function:pollMap, arguments:['pollID']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(commitEndDate,revealEndDate) = voting.pollMap(pollID)	NodeType.EXPRESSION" -> "BlockID: 27
+Call context: 
+None
+commitEndDate(uint256)= UNPACK TUPLE_1 index: 0 
+revealEndDate(uint256)= UNPACK TUPLE_1 index: 1 
+RETURN pollID
+EXPRESSION:(commitEndDate,revealEndDate) = voting.pollMap(pollID)	NodeType.EXPRESSION
+pollID	NodeType.RETURN" [key=0];
+"BlockID: 4
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 5
+Call context: 
+None
+REF_250(uint256) -> listing.challengeID
+TMP_350(bool) = REF_250 == 0
+REF_251(uint256) -> listing.challengeID
+REF_252(Registry.Challenge) -> challenges[REF_251]
+REF_253(bool) -> REF_252.resolved
+TMP_351(bool) = TMP_350 || REF_253
+CONDITION TMP_351
+EXPRESSION:TMP_351(bool) = TMP_350 || REF_253	NodeType.IF" [key=0];
+"BlockID: 5
+Call context: 
+None
+REF_250(uint256) -> listing.challengeID
+TMP_350(bool) = REF_250 == 0
+REF_251(uint256) -> listing.challengeID
+REF_252(Registry.Challenge) -> challenges[REF_251]
+REF_253(bool) -> REF_252.resolved
+TMP_351(bool) = TMP_350 || REF_253
+CONDITION TMP_351
+EXPRESSION:TMP_351(bool) = TMP_350 || REF_253	NodeType.IF" -> "BlockID: 6
+Call context: 
+True
+TMP_352(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 5
+Call context: 
+None
+REF_250(uint256) -> listing.challengeID
+TMP_350(bool) = REF_250 == 0
+REF_251(uint256) -> listing.challengeID
+REF_252(Registry.Challenge) -> challenges[REF_251]
+REF_253(bool) -> REF_252.resolved
+TMP_351(bool) = TMP_350 || REF_253
+CONDITION TMP_351
+EXPRESSION:TMP_351(bool) = TMP_350 || REF_253	NodeType.IF" -> "BlockID: 7
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 7
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 8
+Call context: 
+True
+REF_254(uint256) -> listing.unstakedDeposit
+TMP_353(bool) = REF_254 < deposit
+CONDITION TMP_353
+EXPRESSION:listing.unstakedDeposit < deposit	NodeType.IF" [key=0];
+"BlockID: 23
+Call context: 
+None
+CONDITION TMP_365
+EXPRESSION:TMP_366(None) = SOLIDITY_CALL require(bool)(TMP_365)	NodeType.IF" -> "BlockID: 24
+Call context: 
+True
+TMP_366(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 23
+Call context: 
+None
+CONDITION TMP_365
+EXPRESSION:TMP_366(None) = SOLIDITY_CALL require(bool)(TMP_365)	NodeType.IF" -> "BlockID: 25
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 25
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 26
+Call context: 
+True
+NEW VARIABLE commitEndDate
+NEW VARIABLE revealEndDate
+TUPLE_1(uint256,uint256,uint256,uint256,uint256) = HIGH_LEVEL_CALL, dest:voting(PLCRVoting), function:pollMap, arguments:['pollID']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(commitEndDate,revealEndDate) = voting.pollMap(pollID)	NodeType.EXPRESSION" [key=0];
+"BlockID: 11
+Call context: challenge
+True
+TMP_425(bool) = HIGH_LEVEL_CALL, dest:token(EIP20Interface), function:transfer, arguments:['owner', 'unstakedDeposit']  
+EXPRESSION:require(bool)(token.transfer(owner,unstakedDeposit))	NodeType.EXPRESSION" -> "BlockID: 14
+Call context: challenge
+None
+CONDITION TMP_425
+EXPRESSION:TMP_426(None) = SOLIDITY_CALL require(bool)(TMP_425)	NodeType.IF" [key=0];
+"BlockID: 12
+Call context: challenge
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 15
+Call context: 
+None
+RETURN 0
+EXPRESSION:resetListing(_listingHash)	NodeType.EXPRESSION
+0	NodeType.RETURN" [key="Exit: resetListing", ref="Registry.resetListing"];
+"BlockID: 14
+Call context: challenge
+None
+CONDITION TMP_425
+EXPRESSION:TMP_426(None) = SOLIDITY_CALL require(bool)(TMP_425)	NodeType.IF" -> "BlockID: 17
+Call context: challenge
+True
+TMP_426(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 14
+Call context: challenge
+None
+CONDITION TMP_425
+EXPRESSION:TMP_426(None) = SOLIDITY_CALL require(bool)(TMP_425)	NodeType.IF" -> "BlockID: 18
+Call context: challenge
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 18
+Call context: challenge
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 12
+Call context: challenge
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

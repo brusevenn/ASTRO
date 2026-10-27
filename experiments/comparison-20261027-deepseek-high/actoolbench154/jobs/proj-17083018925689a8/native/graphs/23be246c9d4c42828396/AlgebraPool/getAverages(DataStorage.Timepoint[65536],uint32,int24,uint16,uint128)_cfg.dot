@@ -1,0 +1,325 @@
+digraph {
+"BlockID: 391
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 392
+Call context: 
+None
+NEW VARIABLE oldestIndex
+REF_84(DataStorage.Timepoint) -> self[0]
+oldest(DataStorage.Timepoint) := REF_84(DataStorage.Timepoint)
+TMP_228(uint16) = index + 1
+nextIndex(uint16) := TMP_228(uint16)
+REF_85(DataStorage.Timepoint) -> self[nextIndex]
+REF_86(bool) -> REF_85.initialized
+CONDITION REF_86
+EXPRESSION:None	NodeType.VARIABLE
+oldest = self[0]	NodeType.VARIABLE
+oldest = self[0]	NodeType.EXPRESSION
+nextIndex = index + 1	NodeType.VARIABLE
+nextIndex = index + 1	NodeType.EXPRESSION
+self[nextIndex].initialized	NodeType.IF";
+"BlockID: 393
+Call context: 
+True
+REF_87(DataStorage.Timepoint) -> self[nextIndex]
+oldest(DataStorage.Timepoint) := REF_87(DataStorage.Timepoint)
+oldestIndex(uint16) := nextIndex(uint16)
+EXPRESSION:oldest = self[nextIndex]	NodeType.EXPRESSION
+oldestIndex = nextIndex	NodeType.EXPRESSION";
+"BlockID: 394
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 395
+Call context: 
+None
+TMP_229(DataStorage.Timepoint) = INTERNAL_CALL, DataStorage.getSingleTimepoint(DataStorage.Timepoint[65536],uint32,uint32,int24,uint16,uint16,uint128)(self,time,0,tick,index,oldestIndex,liquidity)
+EXPRESSION:";
+"BlockID: 396
+Call context: 
+None
+endOfWindow(DataStorage.Timepoint) := TMP_229(DataStorage.Timepoint)
+REF_88(uint32) -> oldest.blockTimestamp
+oldestTimestamp(int56) := REF_88(uint32)
+TMP_230(int56) = time - WINDOW
+TMP_231(bool) = INTERNAL_CALL, DataStorage.lteConsideringOverflow(uint32,uint32,uint32)(oldestTimestamp,TMP_230,time)
+EXPRESSION:endOfWindow = getSingleTimepoint(self,time,0,tick,index,oldestIndex,liquidity)	NodeType.VARIABLE
+endOfWindow = getSingleTimepoint(self,time,0,tick,index,oldestIndex,liquidity)	NodeType.EXPRESSION
+oldestTimestamp = oldest.blockTimestamp	NodeType.VARIABLE
+oldestTimestamp = oldest.blockTimestamp	NodeType.EXPRESSION
+lteConsideringOverflow(oldestTimestamp,time - WINDOW,time)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 397
+Call context: 
+None
+CONDITION TMP_231
+EXPRESSION:lteConsideringOverflow(oldestTimestamp,time - WINDOW,time)	NodeType.IF" [shape=box];
+"BlockID: 398
+Call context: 
+True
+TMP_232(DataStorage.Timepoint) = INTERNAL_CALL, DataStorage.getSingleTimepoint(DataStorage.Timepoint[65536],uint32,uint32,int24,uint16,uint16,uint128)(self,time,WINDOW,tick,index,oldestIndex,liquidity)
+EXPRESSION:";
+"BlockID: 400
+Call context: 
+False
+TMP_238(bool) = time != oldestTimestamp
+CONDITION TMP_238
+EXPRESSION:time != oldestTimestamp	NodeType.IF";
+"BlockID: 401
+Call context: 
+True
+REF_93(uint88) -> oldest.volatilityCumulative
+_oldestVolatilityCumulative(uint88) := REF_93(uint88)
+REF_94(uint144) -> oldest.volumePerLiquidityCumulative
+_oldestVolumePerLiquidityCumulative(uint144) := REF_94(uint144)
+REF_95(uint88) -> endOfWindow.volatilityCumulative
+TMP_239(uint88) = REF_95 - _oldestVolatilityCumulative
+TMP_240(int56) = time - oldestTimestamp
+TMP_241(uint88) = TMP_239 / TMP_240
+REF_96(uint144) -> endOfWindow.volumePerLiquidityCumulative
+TMP_242(uint144) = REF_96 - _oldestVolumePerLiquidityCumulative
+TMP_243 = CONVERT TMP_242 to uint256
+TMP_244(uint256) = TMP_243 >> 57
+RETURN TMP_241,TMP_244
+EXPRESSION:_oldestVolatilityCumulative = oldest.volatilityCumulative	NodeType.VARIABLE
+_oldestVolatilityCumulative = oldest.volatilityCumulative	NodeType.EXPRESSION
+_oldestVolumePerLiquidityCumulative = oldest.volumePerLiquidityCumulative	NodeType.VARIABLE
+_oldestVolumePerLiquidityCumulative = oldest.volumePerLiquidityCumulative	NodeType.EXPRESSION
+((endOfWindow.volatilityCumulative - _oldestVolatilityCumulative) / (time - oldestTimestamp),uint256(endOfWindow.volumePerLiquidityCumulative - _oldestVolumePerLiquidityCumulative) >> 57)	NodeType.RETURN";
+"BlockID: 402
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 404
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 399
+Call context: 
+None
+startOfWindow(DataStorage.Timepoint) := TMP_232(DataStorage.Timepoint)
+REF_89(uint88) -> endOfWindow.volatilityCumulative
+REF_90(uint88) -> startOfWindow.volatilityCumulative
+TMP_233(uint88) = REF_89 - REF_90
+TMP_234(uint88) = TMP_233 / WINDOW
+REF_91(uint144) -> endOfWindow.volumePerLiquidityCumulative
+REF_92(uint144) -> startOfWindow.volumePerLiquidityCumulative
+TMP_235(uint144) = REF_91 - REF_92
+TMP_236 = CONVERT TMP_235 to uint256
+TMP_237(uint256) = TMP_236 >> 57
+RETURN TMP_234,TMP_237
+EXPRESSION:startOfWindow = getSingleTimepoint(self,time,WINDOW,tick,index,oldestIndex,liquidity)	NodeType.VARIABLE
+startOfWindow = getSingleTimepoint(self,time,WINDOW,tick,index,oldestIndex,liquidity)	NodeType.EXPRESSION
+((endOfWindow.volatilityCumulative - startOfWindow.volatilityCumulative) / WINDOW,uint256(endOfWindow.volumePerLiquidityCumulative - startOfWindow.volumePerLiquidityCumulative) >> 57)	NodeType.RETURN" [shape=box];
+"BlockID: 391
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 392
+Call context: 
+None
+NEW VARIABLE oldestIndex
+REF_84(DataStorage.Timepoint) -> self[0]
+oldest(DataStorage.Timepoint) := REF_84(DataStorage.Timepoint)
+TMP_228(uint16) = index + 1
+nextIndex(uint16) := TMP_228(uint16)
+REF_85(DataStorage.Timepoint) -> self[nextIndex]
+REF_86(bool) -> REF_85.initialized
+CONDITION REF_86
+EXPRESSION:None	NodeType.VARIABLE
+oldest = self[0]	NodeType.VARIABLE
+oldest = self[0]	NodeType.EXPRESSION
+nextIndex = index + 1	NodeType.VARIABLE
+nextIndex = index + 1	NodeType.EXPRESSION
+self[nextIndex].initialized	NodeType.IF" [key=0];
+"BlockID: 392
+Call context: 
+None
+NEW VARIABLE oldestIndex
+REF_84(DataStorage.Timepoint) -> self[0]
+oldest(DataStorage.Timepoint) := REF_84(DataStorage.Timepoint)
+TMP_228(uint16) = index + 1
+nextIndex(uint16) := TMP_228(uint16)
+REF_85(DataStorage.Timepoint) -> self[nextIndex]
+REF_86(bool) -> REF_85.initialized
+CONDITION REF_86
+EXPRESSION:None	NodeType.VARIABLE
+oldest = self[0]	NodeType.VARIABLE
+oldest = self[0]	NodeType.EXPRESSION
+nextIndex = index + 1	NodeType.VARIABLE
+nextIndex = index + 1	NodeType.EXPRESSION
+self[nextIndex].initialized	NodeType.IF" -> "BlockID: 393
+Call context: 
+True
+REF_87(DataStorage.Timepoint) -> self[nextIndex]
+oldest(DataStorage.Timepoint) := REF_87(DataStorage.Timepoint)
+oldestIndex(uint16) := nextIndex(uint16)
+EXPRESSION:oldest = self[nextIndex]	NodeType.EXPRESSION
+oldestIndex = nextIndex	NodeType.EXPRESSION" [key=0];
+"BlockID: 392
+Call context: 
+None
+NEW VARIABLE oldestIndex
+REF_84(DataStorage.Timepoint) -> self[0]
+oldest(DataStorage.Timepoint) := REF_84(DataStorage.Timepoint)
+TMP_228(uint16) = index + 1
+nextIndex(uint16) := TMP_228(uint16)
+REF_85(DataStorage.Timepoint) -> self[nextIndex]
+REF_86(bool) -> REF_85.initialized
+CONDITION REF_86
+EXPRESSION:None	NodeType.VARIABLE
+oldest = self[0]	NodeType.VARIABLE
+oldest = self[0]	NodeType.EXPRESSION
+nextIndex = index + 1	NodeType.VARIABLE
+nextIndex = index + 1	NodeType.EXPRESSION
+self[nextIndex].initialized	NodeType.IF" -> "BlockID: 394
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 393
+Call context: 
+True
+REF_87(DataStorage.Timepoint) -> self[nextIndex]
+oldest(DataStorage.Timepoint) := REF_87(DataStorage.Timepoint)
+oldestIndex(uint16) := nextIndex(uint16)
+EXPRESSION:oldest = self[nextIndex]	NodeType.EXPRESSION
+oldestIndex = nextIndex	NodeType.EXPRESSION" -> "BlockID: 394
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 394
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 395
+Call context: 
+None
+TMP_229(DataStorage.Timepoint) = INTERNAL_CALL, DataStorage.getSingleTimepoint(DataStorage.Timepoint[65536],uint32,uint32,int24,uint16,uint16,uint128)(self,time,0,tick,index,oldestIndex,liquidity)
+EXPRESSION:" [key=0];
+"BlockID: 395
+Call context: 
+None
+TMP_229(DataStorage.Timepoint) = INTERNAL_CALL, DataStorage.getSingleTimepoint(DataStorage.Timepoint[65536],uint32,uint32,int24,uint16,uint16,uint128)(self,time,0,tick,index,oldestIndex,liquidity)
+EXPRESSION:" -> "BlockID: 396
+Call context: 
+None
+endOfWindow(DataStorage.Timepoint) := TMP_229(DataStorage.Timepoint)
+REF_88(uint32) -> oldest.blockTimestamp
+oldestTimestamp(int56) := REF_88(uint32)
+TMP_230(int56) = time - WINDOW
+TMP_231(bool) = INTERNAL_CALL, DataStorage.lteConsideringOverflow(uint32,uint32,uint32)(oldestTimestamp,TMP_230,time)
+EXPRESSION:endOfWindow = getSingleTimepoint(self,time,0,tick,index,oldestIndex,liquidity)	NodeType.VARIABLE
+endOfWindow = getSingleTimepoint(self,time,0,tick,index,oldestIndex,liquidity)	NodeType.EXPRESSION
+oldestTimestamp = oldest.blockTimestamp	NodeType.VARIABLE
+oldestTimestamp = oldest.blockTimestamp	NodeType.EXPRESSION
+lteConsideringOverflow(oldestTimestamp,time - WINDOW,time)	NodeType.EXPRESSION" [key=0];
+"BlockID: 396
+Call context: 
+None
+endOfWindow(DataStorage.Timepoint) := TMP_229(DataStorage.Timepoint)
+REF_88(uint32) -> oldest.blockTimestamp
+oldestTimestamp(int56) := REF_88(uint32)
+TMP_230(int56) = time - WINDOW
+TMP_231(bool) = INTERNAL_CALL, DataStorage.lteConsideringOverflow(uint32,uint32,uint32)(oldestTimestamp,TMP_230,time)
+EXPRESSION:endOfWindow = getSingleTimepoint(self,time,0,tick,index,oldestIndex,liquidity)	NodeType.VARIABLE
+endOfWindow = getSingleTimepoint(self,time,0,tick,index,oldestIndex,liquidity)	NodeType.EXPRESSION
+oldestTimestamp = oldest.blockTimestamp	NodeType.VARIABLE
+oldestTimestamp = oldest.blockTimestamp	NodeType.EXPRESSION
+lteConsideringOverflow(oldestTimestamp,time - WINDOW,time)	NodeType.EXPRESSION" -> "BlockID: 397
+Call context: 
+None
+CONDITION TMP_231
+EXPRESSION:lteConsideringOverflow(oldestTimestamp,time - WINDOW,time)	NodeType.IF" [key=0];
+"BlockID: 397
+Call context: 
+None
+CONDITION TMP_231
+EXPRESSION:lteConsideringOverflow(oldestTimestamp,time - WINDOW,time)	NodeType.IF" -> "BlockID: 398
+Call context: 
+True
+TMP_232(DataStorage.Timepoint) = INTERNAL_CALL, DataStorage.getSingleTimepoint(DataStorage.Timepoint[65536],uint32,uint32,int24,uint16,uint16,uint128)(self,time,WINDOW,tick,index,oldestIndex,liquidity)
+EXPRESSION:" [key=0];
+"BlockID: 397
+Call context: 
+None
+CONDITION TMP_231
+EXPRESSION:lteConsideringOverflow(oldestTimestamp,time - WINDOW,time)	NodeType.IF" -> "BlockID: 400
+Call context: 
+False
+TMP_238(bool) = time != oldestTimestamp
+CONDITION TMP_238
+EXPRESSION:time != oldestTimestamp	NodeType.IF" [key=0];
+"BlockID: 398
+Call context: 
+True
+TMP_232(DataStorage.Timepoint) = INTERNAL_CALL, DataStorage.getSingleTimepoint(DataStorage.Timepoint[65536],uint32,uint32,int24,uint16,uint16,uint128)(self,time,WINDOW,tick,index,oldestIndex,liquidity)
+EXPRESSION:" -> "BlockID: 399
+Call context: 
+None
+startOfWindow(DataStorage.Timepoint) := TMP_232(DataStorage.Timepoint)
+REF_89(uint88) -> endOfWindow.volatilityCumulative
+REF_90(uint88) -> startOfWindow.volatilityCumulative
+TMP_233(uint88) = REF_89 - REF_90
+TMP_234(uint88) = TMP_233 / WINDOW
+REF_91(uint144) -> endOfWindow.volumePerLiquidityCumulative
+REF_92(uint144) -> startOfWindow.volumePerLiquidityCumulative
+TMP_235(uint144) = REF_91 - REF_92
+TMP_236 = CONVERT TMP_235 to uint256
+TMP_237(uint256) = TMP_236 >> 57
+RETURN TMP_234,TMP_237
+EXPRESSION:startOfWindow = getSingleTimepoint(self,time,WINDOW,tick,index,oldestIndex,liquidity)	NodeType.VARIABLE
+startOfWindow = getSingleTimepoint(self,time,WINDOW,tick,index,oldestIndex,liquidity)	NodeType.EXPRESSION
+((endOfWindow.volatilityCumulative - startOfWindow.volatilityCumulative) / WINDOW,uint256(endOfWindow.volumePerLiquidityCumulative - startOfWindow.volumePerLiquidityCumulative) >> 57)	NodeType.RETURN" [key=0];
+"BlockID: 400
+Call context: 
+False
+TMP_238(bool) = time != oldestTimestamp
+CONDITION TMP_238
+EXPRESSION:time != oldestTimestamp	NodeType.IF" -> "BlockID: 401
+Call context: 
+True
+REF_93(uint88) -> oldest.volatilityCumulative
+_oldestVolatilityCumulative(uint88) := REF_93(uint88)
+REF_94(uint144) -> oldest.volumePerLiquidityCumulative
+_oldestVolumePerLiquidityCumulative(uint144) := REF_94(uint144)
+REF_95(uint88) -> endOfWindow.volatilityCumulative
+TMP_239(uint88) = REF_95 - _oldestVolatilityCumulative
+TMP_240(int56) = time - oldestTimestamp
+TMP_241(uint88) = TMP_239 / TMP_240
+REF_96(uint144) -> endOfWindow.volumePerLiquidityCumulative
+TMP_242(uint144) = REF_96 - _oldestVolumePerLiquidityCumulative
+TMP_243 = CONVERT TMP_242 to uint256
+TMP_244(uint256) = TMP_243 >> 57
+RETURN TMP_241,TMP_244
+EXPRESSION:_oldestVolatilityCumulative = oldest.volatilityCumulative	NodeType.VARIABLE
+_oldestVolatilityCumulative = oldest.volatilityCumulative	NodeType.EXPRESSION
+_oldestVolumePerLiquidityCumulative = oldest.volumePerLiquidityCumulative	NodeType.VARIABLE
+_oldestVolumePerLiquidityCumulative = oldest.volumePerLiquidityCumulative	NodeType.EXPRESSION
+((endOfWindow.volatilityCumulative - _oldestVolatilityCumulative) / (time - oldestTimestamp),uint256(endOfWindow.volumePerLiquidityCumulative - _oldestVolumePerLiquidityCumulative) >> 57)	NodeType.RETURN" [key=0];
+"BlockID: 400
+Call context: 
+False
+TMP_238(bool) = time != oldestTimestamp
+CONDITION TMP_238
+EXPRESSION:time != oldestTimestamp	NodeType.IF" -> "BlockID: 402
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 402
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 404
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

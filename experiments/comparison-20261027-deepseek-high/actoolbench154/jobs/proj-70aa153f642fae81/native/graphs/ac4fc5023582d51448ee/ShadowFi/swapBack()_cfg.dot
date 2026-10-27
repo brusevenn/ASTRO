@@ -1,0 +1,606 @@
+digraph {
+"BlockID: 550
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 551
+Call context: 
+None
+MODIFIER_CALL, ShadowFi.swapping()()
+EXPRESSION:swapping()	NodeType.EXPRESSION";
+"BlockID: 552
+Call context: 
+None
+TMP_358(bool) = INTERNAL_CALL, ShadowFi.isOverLiquified(uint256,uint256)(targetLiquidity,targetLiquidityDenominator)
+EXPRESSION:swapping()	NodeType.EXPRESSION
+isOverLiquified(targetLiquidity,targetLiquidityDenominator)	NodeType.EXPRESSION";
+"BlockID: 553
+Call context: 
+None
+CONDITION TMP_358
+EXPRESSION:isOverLiquified(targetLiquidity,targetLiquidityDenominator)	NodeType.IF" [shape=box];
+"BlockID: 554
+Call context: 
+True
+dynamicLiquidityFee(uint256) := 0(uint256)
+EXPRESSION:dynamicLiquidityFee = 0	NodeType.EXPRESSION";
+"BlockID: 555
+Call context: 
+False
+dynamicLiquidityFee(uint256) := liquidityFee(uint256)
+EXPRESSION:dynamicLiquidityFee = liquidityFee	NodeType.EXPRESSION";
+"BlockID: 556
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 557
+Call context: 
+None
+TMP_323(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['swapThreshold', 'dynamicLiquidityFee'] 
+EXPRESSION:";
+"BlockID: 558
+Call context: 
+None
+TMP_324(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_323', 'totalBuyFee'] 
+EXPRESSION:" [shape=box];
+"BlockID: 559
+Call context: 
+None
+TMP_325(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_324', '2'] 
+EXPRESSION:" [shape=box];
+"BlockID: 560
+Call context: 
+None
+amountToLiquify(uint256) := TMP_325(uint256)
+TMP_326(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['swapThreshold', 'amountToLiquify'] 
+EXPRESSION:amountToLiquify = swapThreshold.mul(dynamicLiquidityFee).div(totalBuyFee).div(2)	NodeType.VARIABLE
+amountToLiquify = swapThreshold.mul(dynamicLiquidityFee).div(totalBuyFee).div(2)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 561
+Call context: 
+None
+amountToSwap(uint256) := TMP_326(uint256)
+TMP_328address[])  = new address[](2)
+path(address[]) =  ['TMP_328(address[])']
+REF_309(address) -> path[0]
+TMP_329 = CONVERT this to address
+REF_309(address) (->path) := TMP_329(address)
+REF_310(address) -> path[1]
+REF_310(address) (->path) := WBNB(address)
+TMP_330 = CONVERT this to address
+TMP_331(uint256) = SOLIDITY_CALL balance(address)(TMP_330)
+balanceBefore(uint256) := TMP_331(uint256)
+TMP_332 = CONVERT this to address
+HIGH_LEVEL_CALL, dest:router(IDEXRouter), function:swapExactTokensForETHSupportingFeeOnTransferTokens, arguments:['amountToSwap', '0', 'path', 'TMP_332', 'block.timestamp']  
+EXPRESSION:amountToSwap = swapThreshold.sub(amountToLiquify)	NodeType.VARIABLE
+amountToSwap = swapThreshold.sub(amountToLiquify)	NodeType.EXPRESSION
+path = new address[](2)	NodeType.VARIABLE
+path = new address[](2)	NodeType.EXPRESSION
+path[0] = address(this)	NodeType.EXPRESSION
+path[1] = WBNB	NodeType.EXPRESSION
+balanceBefore = address(this).balance	NodeType.VARIABLE
+balanceBefore = address(this).balance	NodeType.EXPRESSION
+router.swapExactTokensForETHSupportingFeeOnTransferTokens(amountToSwap,0,path,address(this),block.timestamp)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 562
+Call context: 
+None
+CATCH
+CATCH
+CATCH
+TMP_334 = CONVERT this to address
+TMP_335(uint256) = SOLIDITY_CALL balance(address)(TMP_334)
+TMP_336(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['TMP_335', 'balanceBefore'] 
+EXPRESSION:router.swapExactTokensForETHSupportingFeeOnTransferTokens(amountToSwap,0,path,address(this),block.timestamp)	NodeType.TRY
+None	NodeType.CATCH
+None	NodeType.CATCH
+None	NodeType.CATCH";
+"BlockID: 563
+Call context: 
+None
+amountBNB(uint256) := TMP_336(uint256)
+TMP_337(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['dynamicLiquidityFee', '2'] 
+EXPRESSION:amountBNB = address(this).balance.sub(balanceBefore)	NodeType.VARIABLE
+amountBNB = address(this).balance.sub(balanceBefore)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 564
+Call context: 
+None
+TMP_338(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['totalBuyFee', 'TMP_337'] 
+EXPRESSION:" [shape=box];
+"BlockID: 565
+Call context: 
+None
+totalBNBFee(uint256) := TMP_338(uint256)
+TMP_339(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['amountBNB', 'dynamicLiquidityFee'] 
+EXPRESSION:totalBNBFee = totalBuyFee.sub(dynamicLiquidityFee.div(2))	NodeType.VARIABLE
+totalBNBFee = totalBuyFee.sub(dynamicLiquidityFee.div(2))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 566
+Call context: 
+None
+TMP_340(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_339', 'totalBNBFee'] 
+EXPRESSION:" [shape=box];
+"BlockID: 567
+Call context: 
+None
+TMP_341(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_340', '2'] 
+EXPRESSION:" [shape=box];
+"BlockID: 568
+Call context: 
+None
+amountBNBLiquidity(uint256) := TMP_341(uint256)
+TMP_342(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['amountBNB', 'reflectionFee'] 
+EXPRESSION:amountBNBLiquidity = amountBNB.mul(dynamicLiquidityFee).div(totalBNBFee).div(2)	NodeType.VARIABLE
+amountBNBLiquidity = amountBNB.mul(dynamicLiquidityFee).div(totalBNBFee).div(2)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 569
+Call context: 
+None
+TMP_343(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_342', 'totalBNBFee'] 
+EXPRESSION:" [shape=box];
+"BlockID: 570
+Call context: 
+None
+amountBNBReflection(uint256) := TMP_343(uint256)
+TMP_344(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['amountBNB', 'marketingFee'] 
+EXPRESSION:amountBNBReflection = amountBNB.mul(reflectionFee).div(totalBNBFee)	NodeType.VARIABLE
+amountBNBReflection = amountBNB.mul(reflectionFee).div(totalBNBFee)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 571
+Call context: 
+None
+TMP_345(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_344', 'totalBNBFee'] 
+EXPRESSION:" [shape=box];
+"BlockID: 572
+Call context: 
+None
+amountBNBMarketing(uint256) := TMP_345(uint256)
+HIGH_LEVEL_CALL, dest:distributor(DividendDistributor), function:deposit, arguments:[] value:amountBNBReflection 
+EXPRESSION:amountBNBMarketing = amountBNB.mul(marketingFee).div(totalBNBFee)	NodeType.VARIABLE
+amountBNBMarketing = amountBNB.mul(marketingFee).div(totalBNBFee)	NodeType.EXPRESSION
+distributor.deposit{value: amountBNBReflection}()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 578
+Call context: 
+None
+CATCH
+CATCH
+CATCH
+CATCH
+EXPRESSION:router.addLiquidityETH{value: amountBNBLiquidity}(address(this),amountToLiquify,0,0,autoLiquidityReceiver,block.timestamp)	NodeType.TRY
+None	NodeType.CATCH
+None	NodeType.CATCH
+None	NodeType.CATCH
+None	NodeType.CATCH";
+"BlockID: 574
+Call context: 
+None
+TMP_347 = CONVERT marketingFeeReceiver to address
+TUPLE_0(bool,bytes) = LOW_LEVEL_CALL, dest:TMP_347, function:call, arguments:[''] value:amountBNBMarketing gas:30000
+EXPRESSION:address(marketingFeeReceiver).call{gas: 30000,value: amountBNBMarketing}()	NodeType.EXPRESSION";
+"BlockID: 576
+Call context: 
+None
+TMP_348(bool) = amountToLiquify > 0
+CONDITION TMP_348
+EXPRESSION:amountToLiquify > 0	NodeType.IF";
+"BlockID: 577
+Call context: 
+True
+TMP_349 = CONVERT this to address
+TUPLE_1(uint256,uint256,uint256) = HIGH_LEVEL_CALL, dest:router(IDEXRouter), function:addLiquidityETH, arguments:['TMP_349', 'amountToLiquify', '0', '0', 'autoLiquidityReceiver', 'block.timestamp'] value:amountBNBLiquidity 
+EXPRESSION:router.addLiquidityETH{value: amountBNBLiquidity}(address(this),amountToLiquify,0,0,autoLiquidityReceiver,block.timestamp)	NodeType.EXPRESSION";
+"BlockID: 579
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 550
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 551
+Call context: 
+None
+MODIFIER_CALL, ShadowFi.swapping()()
+EXPRESSION:swapping()	NodeType.EXPRESSION" [key=0];
+"BlockID: 551
+Call context: 
+None
+MODIFIER_CALL, ShadowFi.swapping()()
+EXPRESSION:swapping()	NodeType.EXPRESSION" -> "BlockID: 552
+Call context: 
+None
+TMP_358(bool) = INTERNAL_CALL, ShadowFi.isOverLiquified(uint256,uint256)(targetLiquidity,targetLiquidityDenominator)
+EXPRESSION:swapping()	NodeType.EXPRESSION
+isOverLiquified(targetLiquidity,targetLiquidityDenominator)	NodeType.EXPRESSION" [key=0];
+"BlockID: 552
+Call context: 
+None
+TMP_358(bool) = INTERNAL_CALL, ShadowFi.isOverLiquified(uint256,uint256)(targetLiquidity,targetLiquidityDenominator)
+EXPRESSION:swapping()	NodeType.EXPRESSION
+isOverLiquified(targetLiquidity,targetLiquidityDenominator)	NodeType.EXPRESSION" -> "BlockID: 553
+Call context: 
+None
+CONDITION TMP_358
+EXPRESSION:isOverLiquified(targetLiquidity,targetLiquidityDenominator)	NodeType.IF" [key=0];
+"BlockID: 553
+Call context: 
+None
+CONDITION TMP_358
+EXPRESSION:isOverLiquified(targetLiquidity,targetLiquidityDenominator)	NodeType.IF" -> "BlockID: 554
+Call context: 
+True
+dynamicLiquidityFee(uint256) := 0(uint256)
+EXPRESSION:dynamicLiquidityFee = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 553
+Call context: 
+None
+CONDITION TMP_358
+EXPRESSION:isOverLiquified(targetLiquidity,targetLiquidityDenominator)	NodeType.IF" -> "BlockID: 555
+Call context: 
+False
+dynamicLiquidityFee(uint256) := liquidityFee(uint256)
+EXPRESSION:dynamicLiquidityFee = liquidityFee	NodeType.EXPRESSION" [key=0];
+"BlockID: 554
+Call context: 
+True
+dynamicLiquidityFee(uint256) := 0(uint256)
+EXPRESSION:dynamicLiquidityFee = 0	NodeType.EXPRESSION" -> "BlockID: 556
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 555
+Call context: 
+False
+dynamicLiquidityFee(uint256) := liquidityFee(uint256)
+EXPRESSION:dynamicLiquidityFee = liquidityFee	NodeType.EXPRESSION" -> "BlockID: 556
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 556
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 557
+Call context: 
+None
+TMP_323(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['swapThreshold', 'dynamicLiquidityFee'] 
+EXPRESSION:" [key=0];
+"BlockID: 557
+Call context: 
+None
+TMP_323(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['swapThreshold', 'dynamicLiquidityFee'] 
+EXPRESSION:" -> "BlockID: 558
+Call context: 
+None
+TMP_324(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_323', 'totalBuyFee'] 
+EXPRESSION:" [key=0];
+"BlockID: 558
+Call context: 
+None
+TMP_324(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_323', 'totalBuyFee'] 
+EXPRESSION:" -> "BlockID: 559
+Call context: 
+None
+TMP_325(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_324', '2'] 
+EXPRESSION:" [key=0];
+"BlockID: 559
+Call context: 
+None
+TMP_325(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_324', '2'] 
+EXPRESSION:" -> "BlockID: 560
+Call context: 
+None
+amountToLiquify(uint256) := TMP_325(uint256)
+TMP_326(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['swapThreshold', 'amountToLiquify'] 
+EXPRESSION:amountToLiquify = swapThreshold.mul(dynamicLiquidityFee).div(totalBuyFee).div(2)	NodeType.VARIABLE
+amountToLiquify = swapThreshold.mul(dynamicLiquidityFee).div(totalBuyFee).div(2)	NodeType.EXPRESSION" [key=0];
+"BlockID: 560
+Call context: 
+None
+amountToLiquify(uint256) := TMP_325(uint256)
+TMP_326(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['swapThreshold', 'amountToLiquify'] 
+EXPRESSION:amountToLiquify = swapThreshold.mul(dynamicLiquidityFee).div(totalBuyFee).div(2)	NodeType.VARIABLE
+amountToLiquify = swapThreshold.mul(dynamicLiquidityFee).div(totalBuyFee).div(2)	NodeType.EXPRESSION" -> "BlockID: 561
+Call context: 
+None
+amountToSwap(uint256) := TMP_326(uint256)
+TMP_328address[])  = new address[](2)
+path(address[]) =  ['TMP_328(address[])']
+REF_309(address) -> path[0]
+TMP_329 = CONVERT this to address
+REF_309(address) (->path) := TMP_329(address)
+REF_310(address) -> path[1]
+REF_310(address) (->path) := WBNB(address)
+TMP_330 = CONVERT this to address
+TMP_331(uint256) = SOLIDITY_CALL balance(address)(TMP_330)
+balanceBefore(uint256) := TMP_331(uint256)
+TMP_332 = CONVERT this to address
+HIGH_LEVEL_CALL, dest:router(IDEXRouter), function:swapExactTokensForETHSupportingFeeOnTransferTokens, arguments:['amountToSwap', '0', 'path', 'TMP_332', 'block.timestamp']  
+EXPRESSION:amountToSwap = swapThreshold.sub(amountToLiquify)	NodeType.VARIABLE
+amountToSwap = swapThreshold.sub(amountToLiquify)	NodeType.EXPRESSION
+path = new address[](2)	NodeType.VARIABLE
+path = new address[](2)	NodeType.EXPRESSION
+path[0] = address(this)	NodeType.EXPRESSION
+path[1] = WBNB	NodeType.EXPRESSION
+balanceBefore = address(this).balance	NodeType.VARIABLE
+balanceBefore = address(this).balance	NodeType.EXPRESSION
+router.swapExactTokensForETHSupportingFeeOnTransferTokens(amountToSwap,0,path,address(this),block.timestamp)	NodeType.EXPRESSION" [key=0];
+"BlockID: 561
+Call context: 
+None
+amountToSwap(uint256) := TMP_326(uint256)
+TMP_328address[])  = new address[](2)
+path(address[]) =  ['TMP_328(address[])']
+REF_309(address) -> path[0]
+TMP_329 = CONVERT this to address
+REF_309(address) (->path) := TMP_329(address)
+REF_310(address) -> path[1]
+REF_310(address) (->path) := WBNB(address)
+TMP_330 = CONVERT this to address
+TMP_331(uint256) = SOLIDITY_CALL balance(address)(TMP_330)
+balanceBefore(uint256) := TMP_331(uint256)
+TMP_332 = CONVERT this to address
+HIGH_LEVEL_CALL, dest:router(IDEXRouter), function:swapExactTokensForETHSupportingFeeOnTransferTokens, arguments:['amountToSwap', '0', 'path', 'TMP_332', 'block.timestamp']  
+EXPRESSION:amountToSwap = swapThreshold.sub(amountToLiquify)	NodeType.VARIABLE
+amountToSwap = swapThreshold.sub(amountToLiquify)	NodeType.EXPRESSION
+path = new address[](2)	NodeType.VARIABLE
+path = new address[](2)	NodeType.EXPRESSION
+path[0] = address(this)	NodeType.EXPRESSION
+path[1] = WBNB	NodeType.EXPRESSION
+balanceBefore = address(this).balance	NodeType.VARIABLE
+balanceBefore = address(this).balance	NodeType.EXPRESSION
+router.swapExactTokensForETHSupportingFeeOnTransferTokens(amountToSwap,0,path,address(this),block.timestamp)	NodeType.EXPRESSION" -> "BlockID: 562
+Call context: 
+None
+CATCH
+CATCH
+CATCH
+TMP_334 = CONVERT this to address
+TMP_335(uint256) = SOLIDITY_CALL balance(address)(TMP_334)
+TMP_336(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['TMP_335', 'balanceBefore'] 
+EXPRESSION:router.swapExactTokensForETHSupportingFeeOnTransferTokens(amountToSwap,0,path,address(this),block.timestamp)	NodeType.TRY
+None	NodeType.CATCH
+None	NodeType.CATCH
+None	NodeType.CATCH" [key=0];
+"BlockID: 562
+Call context: 
+None
+CATCH
+CATCH
+CATCH
+TMP_334 = CONVERT this to address
+TMP_335(uint256) = SOLIDITY_CALL balance(address)(TMP_334)
+TMP_336(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['TMP_335', 'balanceBefore'] 
+EXPRESSION:router.swapExactTokensForETHSupportingFeeOnTransferTokens(amountToSwap,0,path,address(this),block.timestamp)	NodeType.TRY
+None	NodeType.CATCH
+None	NodeType.CATCH
+None	NodeType.CATCH" -> "BlockID: 563
+Call context: 
+None
+amountBNB(uint256) := TMP_336(uint256)
+TMP_337(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['dynamicLiquidityFee', '2'] 
+EXPRESSION:amountBNB = address(this).balance.sub(balanceBefore)	NodeType.VARIABLE
+amountBNB = address(this).balance.sub(balanceBefore)	NodeType.EXPRESSION" [key=0];
+"BlockID: 563
+Call context: 
+None
+amountBNB(uint256) := TMP_336(uint256)
+TMP_337(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['dynamicLiquidityFee', '2'] 
+EXPRESSION:amountBNB = address(this).balance.sub(balanceBefore)	NodeType.VARIABLE
+amountBNB = address(this).balance.sub(balanceBefore)	NodeType.EXPRESSION" -> "BlockID: 564
+Call context: 
+None
+TMP_338(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['totalBuyFee', 'TMP_337'] 
+EXPRESSION:" [key=0];
+"BlockID: 564
+Call context: 
+None
+TMP_338(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['totalBuyFee', 'TMP_337'] 
+EXPRESSION:" -> "BlockID: 565
+Call context: 
+None
+totalBNBFee(uint256) := TMP_338(uint256)
+TMP_339(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['amountBNB', 'dynamicLiquidityFee'] 
+EXPRESSION:totalBNBFee = totalBuyFee.sub(dynamicLiquidityFee.div(2))	NodeType.VARIABLE
+totalBNBFee = totalBuyFee.sub(dynamicLiquidityFee.div(2))	NodeType.EXPRESSION" [key=0];
+"BlockID: 565
+Call context: 
+None
+totalBNBFee(uint256) := TMP_338(uint256)
+TMP_339(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['amountBNB', 'dynamicLiquidityFee'] 
+EXPRESSION:totalBNBFee = totalBuyFee.sub(dynamicLiquidityFee.div(2))	NodeType.VARIABLE
+totalBNBFee = totalBuyFee.sub(dynamicLiquidityFee.div(2))	NodeType.EXPRESSION" -> "BlockID: 566
+Call context: 
+None
+TMP_340(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_339', 'totalBNBFee'] 
+EXPRESSION:" [key=0];
+"BlockID: 566
+Call context: 
+None
+TMP_340(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_339', 'totalBNBFee'] 
+EXPRESSION:" -> "BlockID: 567
+Call context: 
+None
+TMP_341(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_340', '2'] 
+EXPRESSION:" [key=0];
+"BlockID: 567
+Call context: 
+None
+TMP_341(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_340', '2'] 
+EXPRESSION:" -> "BlockID: 568
+Call context: 
+None
+amountBNBLiquidity(uint256) := TMP_341(uint256)
+TMP_342(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['amountBNB', 'reflectionFee'] 
+EXPRESSION:amountBNBLiquidity = amountBNB.mul(dynamicLiquidityFee).div(totalBNBFee).div(2)	NodeType.VARIABLE
+amountBNBLiquidity = amountBNB.mul(dynamicLiquidityFee).div(totalBNBFee).div(2)	NodeType.EXPRESSION" [key=0];
+"BlockID: 568
+Call context: 
+None
+amountBNBLiquidity(uint256) := TMP_341(uint256)
+TMP_342(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['amountBNB', 'reflectionFee'] 
+EXPRESSION:amountBNBLiquidity = amountBNB.mul(dynamicLiquidityFee).div(totalBNBFee).div(2)	NodeType.VARIABLE
+amountBNBLiquidity = amountBNB.mul(dynamicLiquidityFee).div(totalBNBFee).div(2)	NodeType.EXPRESSION" -> "BlockID: 569
+Call context: 
+None
+TMP_343(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_342', 'totalBNBFee'] 
+EXPRESSION:" [key=0];
+"BlockID: 569
+Call context: 
+None
+TMP_343(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_342', 'totalBNBFee'] 
+EXPRESSION:" -> "BlockID: 570
+Call context: 
+None
+amountBNBReflection(uint256) := TMP_343(uint256)
+TMP_344(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['amountBNB', 'marketingFee'] 
+EXPRESSION:amountBNBReflection = amountBNB.mul(reflectionFee).div(totalBNBFee)	NodeType.VARIABLE
+amountBNBReflection = amountBNB.mul(reflectionFee).div(totalBNBFee)	NodeType.EXPRESSION" [key=0];
+"BlockID: 570
+Call context: 
+None
+amountBNBReflection(uint256) := TMP_343(uint256)
+TMP_344(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['amountBNB', 'marketingFee'] 
+EXPRESSION:amountBNBReflection = amountBNB.mul(reflectionFee).div(totalBNBFee)	NodeType.VARIABLE
+amountBNBReflection = amountBNB.mul(reflectionFee).div(totalBNBFee)	NodeType.EXPRESSION" -> "BlockID: 571
+Call context: 
+None
+TMP_345(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_344', 'totalBNBFee'] 
+EXPRESSION:" [key=0];
+"BlockID: 571
+Call context: 
+None
+TMP_345(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_344', 'totalBNBFee'] 
+EXPRESSION:" -> "BlockID: 572
+Call context: 
+None
+amountBNBMarketing(uint256) := TMP_345(uint256)
+HIGH_LEVEL_CALL, dest:distributor(DividendDistributor), function:deposit, arguments:[] value:amountBNBReflection 
+EXPRESSION:amountBNBMarketing = amountBNB.mul(marketingFee).div(totalBNBFee)	NodeType.VARIABLE
+amountBNBMarketing = amountBNB.mul(marketingFee).div(totalBNBFee)	NodeType.EXPRESSION
+distributor.deposit{value: amountBNBReflection}()	NodeType.EXPRESSION" [key=0];
+"BlockID: 572
+Call context: 
+None
+amountBNBMarketing(uint256) := TMP_345(uint256)
+HIGH_LEVEL_CALL, dest:distributor(DividendDistributor), function:deposit, arguments:[] value:amountBNBReflection 
+EXPRESSION:amountBNBMarketing = amountBNB.mul(marketingFee).div(totalBNBFee)	NodeType.VARIABLE
+amountBNBMarketing = amountBNB.mul(marketingFee).div(totalBNBFee)	NodeType.EXPRESSION
+distributor.deposit{value: amountBNBReflection}()	NodeType.EXPRESSION" -> "BlockID: 578
+Call context: 
+None
+CATCH
+CATCH
+CATCH
+CATCH
+EXPRESSION:router.addLiquidityETH{value: amountBNBLiquidity}(address(this),amountToLiquify,0,0,autoLiquidityReceiver,block.timestamp)	NodeType.TRY
+None	NodeType.CATCH
+None	NodeType.CATCH
+None	NodeType.CATCH
+None	NodeType.CATCH" [key=0];
+"BlockID: 572
+Call context: 
+None
+amountBNBMarketing(uint256) := TMP_345(uint256)
+HIGH_LEVEL_CALL, dest:distributor(DividendDistributor), function:deposit, arguments:[] value:amountBNBReflection 
+EXPRESSION:amountBNBMarketing = amountBNB.mul(marketingFee).div(totalBNBFee)	NodeType.VARIABLE
+amountBNBMarketing = amountBNB.mul(marketingFee).div(totalBNBFee)	NodeType.EXPRESSION
+distributor.deposit{value: amountBNBReflection}()	NodeType.EXPRESSION" -> "BlockID: 574
+Call context: 
+None
+TMP_347 = CONVERT marketingFeeReceiver to address
+TUPLE_0(bool,bytes) = LOW_LEVEL_CALL, dest:TMP_347, function:call, arguments:[''] value:amountBNBMarketing gas:30000
+EXPRESSION:address(marketingFeeReceiver).call{gas: 30000,value: amountBNBMarketing}()	NodeType.EXPRESSION" [key=0];
+"BlockID: 578
+Call context: 
+None
+CATCH
+CATCH
+CATCH
+CATCH
+EXPRESSION:router.addLiquidityETH{value: amountBNBLiquidity}(address(this),amountToLiquify,0,0,autoLiquidityReceiver,block.timestamp)	NodeType.TRY
+None	NodeType.CATCH
+None	NodeType.CATCH
+None	NodeType.CATCH
+None	NodeType.CATCH" -> "BlockID: 579
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 578
+Call context: 
+None
+CATCH
+CATCH
+CATCH
+CATCH
+EXPRESSION:router.addLiquidityETH{value: amountBNBLiquidity}(address(this),amountToLiquify,0,0,autoLiquidityReceiver,block.timestamp)	NodeType.TRY
+None	NodeType.CATCH
+None	NodeType.CATCH
+None	NodeType.CATCH
+None	NodeType.CATCH" -> "BlockID: 574
+Call context: 
+None
+TMP_347 = CONVERT marketingFeeReceiver to address
+TUPLE_0(bool,bytes) = LOW_LEVEL_CALL, dest:TMP_347, function:call, arguments:[''] value:amountBNBMarketing gas:30000
+EXPRESSION:address(marketingFeeReceiver).call{gas: 30000,value: amountBNBMarketing}()	NodeType.EXPRESSION" [key=0];
+"BlockID: 574
+Call context: 
+None
+TMP_347 = CONVERT marketingFeeReceiver to address
+TUPLE_0(bool,bytes) = LOW_LEVEL_CALL, dest:TMP_347, function:call, arguments:[''] value:amountBNBMarketing gas:30000
+EXPRESSION:address(marketingFeeReceiver).call{gas: 30000,value: amountBNBMarketing}()	NodeType.EXPRESSION" -> "BlockID: 576
+Call context: 
+None
+TMP_348(bool) = amountToLiquify > 0
+CONDITION TMP_348
+EXPRESSION:amountToLiquify > 0	NodeType.IF" [key=0];
+"BlockID: 576
+Call context: 
+None
+TMP_348(bool) = amountToLiquify > 0
+CONDITION TMP_348
+EXPRESSION:amountToLiquify > 0	NodeType.IF" -> "BlockID: 577
+Call context: 
+True
+TMP_349 = CONVERT this to address
+TUPLE_1(uint256,uint256,uint256) = HIGH_LEVEL_CALL, dest:router(IDEXRouter), function:addLiquidityETH, arguments:['TMP_349', 'amountToLiquify', '0', '0', 'autoLiquidityReceiver', 'block.timestamp'] value:amountBNBLiquidity 
+EXPRESSION:router.addLiquidityETH{value: amountBNBLiquidity}(address(this),amountToLiquify,0,0,autoLiquidityReceiver,block.timestamp)	NodeType.EXPRESSION" [key=0];
+"BlockID: 576
+Call context: 
+None
+TMP_348(bool) = amountToLiquify > 0
+CONDITION TMP_348
+EXPRESSION:amountToLiquify > 0	NodeType.IF" -> "BlockID: 579
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 577
+Call context: 
+True
+TMP_349 = CONVERT this to address
+TUPLE_1(uint256,uint256,uint256) = HIGH_LEVEL_CALL, dest:router(IDEXRouter), function:addLiquidityETH, arguments:['TMP_349', 'amountToLiquify', '0', '0', 'autoLiquidityReceiver', 'block.timestamp'] value:amountBNBLiquidity 
+EXPRESSION:router.addLiquidityETH{value: amountBNBLiquidity}(address(this),amountToLiquify,0,0,autoLiquidityReceiver,block.timestamp)	NodeType.EXPRESSION" -> "BlockID: 578
+Call context: 
+None
+CATCH
+CATCH
+CATCH
+CATCH
+EXPRESSION:router.addLiquidityETH{value: amountBNBLiquidity}(address(this),amountToLiquify,0,0,autoLiquidityReceiver,block.timestamp)	NodeType.TRY
+None	NodeType.CATCH
+None	NodeType.CATCH
+None	NodeType.CATCH
+None	NodeType.CATCH" [key=0];
+"BlockID: 577
+Call context: 
+True
+TMP_349 = CONVERT this to address
+TUPLE_1(uint256,uint256,uint256) = HIGH_LEVEL_CALL, dest:router(IDEXRouter), function:addLiquidityETH, arguments:['TMP_349', 'amountToLiquify', '0', '0', 'autoLiquidityReceiver', 'block.timestamp'] value:amountBNBLiquidity 
+EXPRESSION:router.addLiquidityETH{value: amountBNBLiquidity}(address(this),amountToLiquify,0,0,autoLiquidityReceiver,block.timestamp)	NodeType.EXPRESSION" -> "BlockID: 579
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

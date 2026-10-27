@@ -1,0 +1,997 @@
+digraph {
+"BlockID: 629
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 632
+Call context: 
+True
+ve(VotingEscrow) := votingEscrow(VotingEscrow)
+NEW VARIABLE slope_
+TUPLE_1(int128,int128,uint256) = HIGH_LEVEL_CALL, dest:ve(VotingEscrow), function:getLastUserPoint, arguments:['msg.sender']  
+EXPRESSION:ve = votingEscrow	NodeType.VARIABLE
+ve = votingEscrow	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+(slope_) = ve.getLastUserPoint(msg.sender)	NodeType.EXPRESSION";
+"BlockID: 634
+Call context: 
+True
+TMP_469 = CONVERT slope_ to uint128
+TMP_470 = CONVERT TMP_469 to uint256
+slope(uint256) := TMP_470(uint256)
+TMP_471(uint256) = HIGH_LEVEL_CALL, dest:ve(VotingEscrow), function:lockEnd, arguments:['msg.sender']  
+EXPRESSION:slope = uint256(uint128(slope_))	NodeType.VARIABLE
+slope = uint256(uint128(slope_))	NodeType.EXPRESSION";
+"BlockID: 636
+Call context: 
+True
+REF_264(mapping(address => GaugeController.VotedSlope)) -> vote_user_slopes[msg.sender]
+REF_265(GaugeController.VotedSlope) -> REF_264[_gauge_addr]
+old_slope(GaugeController.VotedSlope) := REF_265(GaugeController.VotedSlope)
+old_dt(uint256) := 0(uint256)
+REF_266(uint256) -> old_slope.end
+TMP_477(bool) = REF_266 > next_time
+CONDITION TMP_477
+EXPRESSION:old_slope = vote_user_slopes[msg.sender][_gauge_addr]	NodeType.VARIABLE
+old_slope = vote_user_slopes[msg.sender][_gauge_addr]	NodeType.EXPRESSION
+old_dt = 0	NodeType.VARIABLE
+old_dt = 0	NodeType.EXPRESSION
+old_slope.end > next_time	NodeType.IF";
+"BlockID: 637
+Call context: 
+True
+REF_267(uint256) -> old_slope.end
+TMP_478(uint256) = REF_267 (c)- next_time
+old_dt(uint256) := TMP_478(uint256)
+EXPRESSION:old_dt = old_slope.end - next_time	NodeType.EXPRESSION";
+"BlockID: 638
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 640
+Call context: 
+True
+REF_273(uint256) -> vote_user_power[msg.sender]
+REF_273(uint256) (->vote_user_power) := power_used(uint256)
+TMP_491(uint256) = INTERNAL_CALL, GaugeController._get_weight(address)(_gauge_addr)
+EXPRESSION:vote_user_power[msg.sender] = power_used	NodeType.EXPRESSION";
+"BlockID: 641
+Call context: 
+None
+old_weight_bias(uint256) := TMP_491(uint256)
+REF_274(mapping(uint256 => GaugeController.Point)) -> points_weight[_gauge_addr]
+REF_275(GaugeController.Point) -> REF_274[next_time]
+REF_276(uint256) -> REF_275.slope
+old_weight_slope(uint256) := REF_276(uint256)
+TMP_492(uint256) = INTERNAL_CALL, GaugeController._get_sum()()
+EXPRESSION:old_weight_bias = _get_weight(_gauge_addr)	NodeType.VARIABLE
+old_weight_bias = _get_weight(_gauge_addr)	NodeType.EXPRESSION
+old_weight_slope = points_weight[_gauge_addr][next_time].slope	NodeType.VARIABLE
+old_weight_slope = points_weight[_gauge_addr][next_time].slope	NodeType.EXPRESSION" [shape=box];
+"BlockID: 642
+Call context: 
+None
+old_sum_bias(uint256) := TMP_492(uint256)
+REF_277(GaugeController.Point) -> points_sum[next_time]
+REF_278(uint256) -> REF_277.slope
+old_sum_slope(uint256) := REF_278(uint256)
+REF_279(mapping(uint256 => GaugeController.Point)) -> points_weight[_gauge_addr]
+REF_280(GaugeController.Point) -> REF_279[next_time]
+REF_281(uint256) -> REF_280.bias
+TMP_493(uint256) = old_weight_bias (c)+ new_bias
+TMP_494(uint256) = LIBRARY_CALL, dest:Math, function:Math.max(uint256,uint256), arguments:['TMP_493', 'old_bias'] 
+EXPRESSION:old_sum_bias = _get_sum()	NodeType.VARIABLE
+old_sum_bias = _get_sum()	NodeType.EXPRESSION
+old_sum_slope = points_sum[next_time].slope	NodeType.VARIABLE
+old_sum_slope = points_sum[next_time].slope	NodeType.EXPRESSION
+points_weight[_gauge_addr][next_time].bias = Math.max(old_weight_bias + new_bias,old_bias) - old_bias	NodeType.EXPRESSION" [shape=box];
+"BlockID: 643
+Call context: 
+None
+TMP_495(uint256) = TMP_494 (c)- old_bias
+REF_281(uint256) (->points_weight) := TMP_495(uint256)
+REF_283(GaugeController.Point) -> points_sum[next_time]
+REF_284(uint256) -> REF_283.bias
+TMP_496(uint256) = old_sum_bias (c)+ new_bias
+TMP_497(uint256) = LIBRARY_CALL, dest:Math, function:Math.max(uint256,uint256), arguments:['TMP_496', 'old_bias'] 
+EXPRESSION:points_weight[_gauge_addr][next_time].bias = Math.max(old_weight_bias + new_bias,old_bias) - old_bias	NodeType.EXPRESSION
+points_sum[next_time].bias = Math.max(old_sum_bias + new_bias,old_bias) - old_bias	NodeType.EXPRESSION" [shape=box];
+"BlockID: 644
+Call context: 
+None
+TMP_498(uint256) = TMP_497 (c)- old_bias
+REF_284(uint256) (->points_sum) := TMP_498(uint256)
+REF_286(uint256) -> old_slope.end
+TMP_499(bool) = REF_286 > next_time
+CONDITION TMP_499
+EXPRESSION:points_sum[next_time].bias = Math.max(old_sum_bias + new_bias,old_bias) - old_bias	NodeType.EXPRESSION
+old_slope.end > next_time	NodeType.IF" [shape=box];
+"BlockID: 645
+Call context: 
+True
+REF_287(mapping(uint256 => GaugeController.Point)) -> points_weight[_gauge_addr]
+REF_288(GaugeController.Point) -> REF_287[next_time]
+REF_289(uint256) -> REF_288.slope
+REF_291(uint256) -> new_slope.slope
+TMP_500(uint256) = old_weight_slope (c)+ REF_291
+REF_292(uint256) -> old_slope.slope
+TMP_501(uint256) = LIBRARY_CALL, dest:Math, function:Math.max(uint256,uint256), arguments:['TMP_500', 'REF_292'] 
+EXPRESSION:points_weight[_gauge_addr][next_time].slope = Math.max(old_weight_slope + new_slope.slope,old_slope.slope) - old_slope.slope	NodeType.EXPRESSION";
+"BlockID: 647
+Call context: 
+False
+REF_300(mapping(uint256 => GaugeController.Point)) -> points_weight[_gauge_addr]
+REF_301(GaugeController.Point) -> REF_300[next_time]
+REF_302(uint256) -> REF_301.slope
+REF_303(uint256) -> new_slope.slope
+REF_302(-> points_weight) = REF_302 (c)+ REF_303
+REF_304(GaugeController.Point) -> points_sum[next_time]
+REF_305(uint256) -> REF_304.slope
+REF_306(uint256) -> new_slope.slope
+REF_305(-> points_sum) = REF_305 (c)+ REF_306
+EXPRESSION:points_weight[_gauge_addr][next_time].slope += new_slope.slope	NodeType.EXPRESSION
+points_sum[next_time].slope += new_slope.slope	NodeType.EXPRESSION";
+"BlockID: 648
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 649
+Call context: 
+None
+REF_307(uint256) -> old_slope.end
+TMP_506(bool) = REF_307 > block.timestamp
+CONDITION TMP_506
+EXPRESSION:old_slope.end > block.timestamp	NodeType.IF";
+"BlockID: 650
+Call context: 
+True
+REF_308(mapping(uint256 => uint256)) -> changes_weight[_gauge_addr]
+REF_309(uint256) -> old_slope.end
+REF_310(uint256) -> REF_308[REF_309]
+REF_311(uint256) -> old_slope.slope
+REF_310(-> changes_weight) = REF_310 (c)- REF_311
+REF_312(uint256) -> old_slope.end
+REF_313(uint256) -> changes_sum[REF_312]
+REF_314(uint256) -> old_slope.slope
+REF_313(-> changes_sum) = REF_313 (c)- REF_314
+EXPRESSION:changes_weight[_gauge_addr][old_slope.end] -= old_slope.slope	NodeType.EXPRESSION
+changes_sum[old_slope.end] -= old_slope.slope	NodeType.EXPRESSION";
+"BlockID: 651
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 652
+Call context: 
+None
+REF_315(mapping(uint256 => uint256)) -> changes_weight[_gauge_addr]
+REF_316(uint256) -> new_slope.end
+REF_317(uint256) -> REF_315[REF_316]
+REF_318(uint256) -> new_slope.slope
+REF_317(-> changes_weight) = REF_317 (c)+ REF_318
+REF_319(uint256) -> new_slope.end
+REF_320(uint256) -> changes_sum[REF_319]
+REF_321(uint256) -> new_slope.slope
+REF_320(-> changes_sum) = REF_320 (c)+ REF_321
+TMP_507(uint256) = INTERNAL_CALL, GaugeController._get_sum()()
+EXPRESSION:changes_weight[_gauge_addr][new_slope.end] += new_slope.slope	NodeType.EXPRESSION
+changes_sum[new_slope.end] += new_slope.slope	NodeType.EXPRESSION
+_get_sum()	NodeType.EXPRESSION";
+"BlockID: 653
+Call context: 
+None
+REF_322(mapping(address => GaugeController.VotedSlope)) -> vote_user_slopes[msg.sender]
+REF_323(GaugeController.VotedSlope) -> REF_322[_gauge_addr]
+REF_323(GaugeController.VotedSlope) (->vote_user_slopes) := new_slope(GaugeController.VotedSlope)
+REF_324(mapping(address => uint256)) -> last_user_vote[msg.sender]
+REF_325(uint256) -> REF_324[_gauge_addr]
+REF_325(uint256) (->last_user_vote) := block.timestamp(uint256)
+EXPRESSION:_get_sum()	NodeType.EXPRESSION
+vote_user_slopes[msg.sender][_gauge_addr] = new_slope	NodeType.EXPRESSION
+last_user_vote[msg.sender][_gauge_addr] = block.timestamp	NodeType.EXPRESSION";
+"BlockID: 646
+Call context: 
+None
+REF_293(uint256) -> old_slope.slope
+TMP_502(uint256) = TMP_501 (c)- REF_293
+REF_289(uint256) (->points_weight) := TMP_502(uint256)
+REF_294(GaugeController.Point) -> points_sum[next_time]
+REF_295(uint256) -> REF_294.slope
+REF_297(uint256) -> new_slope.slope
+TMP_503(uint256) = old_sum_slope (c)+ REF_297
+REF_298(uint256) -> old_slope.slope
+TMP_504(uint256) = LIBRARY_CALL, dest:Math, function:Math.max(uint256,uint256), arguments:['TMP_503', 'REF_298'] 
+EXPRESSION:points_weight[_gauge_addr][next_time].slope = Math.max(old_weight_slope + new_slope.slope,old_slope.slope) - old_slope.slope	NodeType.EXPRESSION
+points_sum[next_time].slope = Math.max(old_sum_slope + new_slope.slope,old_slope.slope) - old_slope.slope	NodeType.EXPRESSION" [shape=box];
+"BlockID: 654
+Call context: 
+None
+REF_299(uint256) -> old_slope.slope
+TMP_505(uint256) = TMP_504 (c)- REF_299
+REF_295(uint256) (->points_sum) := TMP_505(uint256)
+EXPRESSION:points_sum[next_time].slope = Math.max(old_sum_slope + new_slope.slope,old_slope.slope) - old_slope.slope	NodeType.EXPRESSION" [shape=box];
+"BlockID: 655
+Call context: 
+None
+TMP_462(bool) = _user_weight >= 0
+TMP_463(bool) = _user_weight <= 10000
+TMP_464(bool) = TMP_462 && TMP_463
+CONDITION TMP_464
+EXPRESSION:TMP_464(bool) = TMP_462 && TMP_463	NodeType.IF";
+"BlockID: 656
+Call context: 
+True
+TMP_465(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 657
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 658
+Call context: 
+None
+REF_261(bool) -> isValidGauge[_gauge_addr]
+CONDITION REF_261
+EXPRESSION:REF_261(bool) -> isValidGauge[_gauge_addr]	NodeType.IF";
+"BlockID: 659
+Call context: 
+True
+TMP_466(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 660
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 661
+Call context: 
+None
+slope_(int128)= UNPACK TUPLE_1 index: 1 
+TMP_467(bool) = slope_ >= 0
+CONDITION TMP_467
+EXPRESSION:TMP_467(bool) = slope_ >= 0	NodeType.IF";
+"BlockID: 662
+Call context: 
+True
+TMP_468(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 663
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 664
+Call context: 
+None
+lock_end(uint256) := TMP_471(uint256)
+TMP_472(uint256) = block.timestamp (c)+ WEEK
+TMP_473(uint256) = TMP_472 (c)/ WEEK
+TMP_474(uint256) = TMP_473 (c)* WEEK
+next_time(uint256) := TMP_474(uint256)
+TMP_475(bool) = lock_end > next_time
+CONDITION TMP_475
+EXPRESSION:TMP_475(bool) = lock_end > next_time	NodeType.IF";
+"BlockID: 665
+Call context: 
+True
+TMP_476(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 666
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 667
+Call context: 
+None
+REF_268(uint256) -> old_slope.slope
+TMP_479(uint256) = REF_268 (c)* old_dt
+old_bias(uint256) := TMP_479(uint256)
+TMP_480(uint256) = slope (c)* _user_weight
+TMP_481(uint256) = TMP_480 (c)/ 10000
+TMP_482(GaugeController.VotedSlope) = new VotedSlope(TMP_481,lock_end,_user_weight)
+new_slope(GaugeController.VotedSlope) := TMP_482(GaugeController.VotedSlope)
+TMP_483(uint256) = lock_end (c)- next_time
+new_dt(uint256) := TMP_483(uint256)
+REF_269(uint256) -> new_slope.slope
+TMP_484(uint256) = REF_269 (c)* new_dt
+new_bias(uint256) := TMP_484(uint256)
+REF_270(uint256) -> vote_user_power[msg.sender]
+power_used(uint256) := REF_270(uint256)
+REF_271(uint256) -> new_slope.power
+TMP_485(uint256) = power_used (c)+ REF_271
+REF_272(uint256) -> old_slope.power
+TMP_486(uint256) = TMP_485 (c)- REF_272
+power_used(uint256) := TMP_486(uint256)
+TMP_487(bool) = power_used >= 0
+TMP_488(bool) = power_used <= 10000
+TMP_489(bool) = TMP_487 && TMP_488
+CONDITION TMP_489
+EXPRESSION:TMP_489(bool) = TMP_487 && TMP_488	NodeType.IF";
+"BlockID: 668
+Call context: 
+True
+TMP_490(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 669
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 629
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 655
+Call context: 
+None
+TMP_462(bool) = _user_weight >= 0
+TMP_463(bool) = _user_weight <= 10000
+TMP_464(bool) = TMP_462 && TMP_463
+CONDITION TMP_464
+EXPRESSION:TMP_464(bool) = TMP_462 && TMP_463	NodeType.IF" [key=0];
+"BlockID: 632
+Call context: 
+True
+ve(VotingEscrow) := votingEscrow(VotingEscrow)
+NEW VARIABLE slope_
+TUPLE_1(int128,int128,uint256) = HIGH_LEVEL_CALL, dest:ve(VotingEscrow), function:getLastUserPoint, arguments:['msg.sender']  
+EXPRESSION:ve = votingEscrow	NodeType.VARIABLE
+ve = votingEscrow	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+(slope_) = ve.getLastUserPoint(msg.sender)	NodeType.EXPRESSION" -> "BlockID: 661
+Call context: 
+None
+slope_(int128)= UNPACK TUPLE_1 index: 1 
+TMP_467(bool) = slope_ >= 0
+CONDITION TMP_467
+EXPRESSION:TMP_467(bool) = slope_ >= 0	NodeType.IF" [key=0];
+"BlockID: 634
+Call context: 
+True
+TMP_469 = CONVERT slope_ to uint128
+TMP_470 = CONVERT TMP_469 to uint256
+slope(uint256) := TMP_470(uint256)
+TMP_471(uint256) = HIGH_LEVEL_CALL, dest:ve(VotingEscrow), function:lockEnd, arguments:['msg.sender']  
+EXPRESSION:slope = uint256(uint128(slope_))	NodeType.VARIABLE
+slope = uint256(uint128(slope_))	NodeType.EXPRESSION" -> "BlockID: 664
+Call context: 
+None
+lock_end(uint256) := TMP_471(uint256)
+TMP_472(uint256) = block.timestamp (c)+ WEEK
+TMP_473(uint256) = TMP_472 (c)/ WEEK
+TMP_474(uint256) = TMP_473 (c)* WEEK
+next_time(uint256) := TMP_474(uint256)
+TMP_475(bool) = lock_end > next_time
+CONDITION TMP_475
+EXPRESSION:TMP_475(bool) = lock_end > next_time	NodeType.IF" [key=0];
+"BlockID: 636
+Call context: 
+True
+REF_264(mapping(address => GaugeController.VotedSlope)) -> vote_user_slopes[msg.sender]
+REF_265(GaugeController.VotedSlope) -> REF_264[_gauge_addr]
+old_slope(GaugeController.VotedSlope) := REF_265(GaugeController.VotedSlope)
+old_dt(uint256) := 0(uint256)
+REF_266(uint256) -> old_slope.end
+TMP_477(bool) = REF_266 > next_time
+CONDITION TMP_477
+EXPRESSION:old_slope = vote_user_slopes[msg.sender][_gauge_addr]	NodeType.VARIABLE
+old_slope = vote_user_slopes[msg.sender][_gauge_addr]	NodeType.EXPRESSION
+old_dt = 0	NodeType.VARIABLE
+old_dt = 0	NodeType.EXPRESSION
+old_slope.end > next_time	NodeType.IF" -> "BlockID: 637
+Call context: 
+True
+REF_267(uint256) -> old_slope.end
+TMP_478(uint256) = REF_267 (c)- next_time
+old_dt(uint256) := TMP_478(uint256)
+EXPRESSION:old_dt = old_slope.end - next_time	NodeType.EXPRESSION" [key=0];
+"BlockID: 636
+Call context: 
+True
+REF_264(mapping(address => GaugeController.VotedSlope)) -> vote_user_slopes[msg.sender]
+REF_265(GaugeController.VotedSlope) -> REF_264[_gauge_addr]
+old_slope(GaugeController.VotedSlope) := REF_265(GaugeController.VotedSlope)
+old_dt(uint256) := 0(uint256)
+REF_266(uint256) -> old_slope.end
+TMP_477(bool) = REF_266 > next_time
+CONDITION TMP_477
+EXPRESSION:old_slope = vote_user_slopes[msg.sender][_gauge_addr]	NodeType.VARIABLE
+old_slope = vote_user_slopes[msg.sender][_gauge_addr]	NodeType.EXPRESSION
+old_dt = 0	NodeType.VARIABLE
+old_dt = 0	NodeType.EXPRESSION
+old_slope.end > next_time	NodeType.IF" -> "BlockID: 638
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 637
+Call context: 
+True
+REF_267(uint256) -> old_slope.end
+TMP_478(uint256) = REF_267 (c)- next_time
+old_dt(uint256) := TMP_478(uint256)
+EXPRESSION:old_dt = old_slope.end - next_time	NodeType.EXPRESSION" -> "BlockID: 638
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 638
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 667
+Call context: 
+None
+REF_268(uint256) -> old_slope.slope
+TMP_479(uint256) = REF_268 (c)* old_dt
+old_bias(uint256) := TMP_479(uint256)
+TMP_480(uint256) = slope (c)* _user_weight
+TMP_481(uint256) = TMP_480 (c)/ 10000
+TMP_482(GaugeController.VotedSlope) = new VotedSlope(TMP_481,lock_end,_user_weight)
+new_slope(GaugeController.VotedSlope) := TMP_482(GaugeController.VotedSlope)
+TMP_483(uint256) = lock_end (c)- next_time
+new_dt(uint256) := TMP_483(uint256)
+REF_269(uint256) -> new_slope.slope
+TMP_484(uint256) = REF_269 (c)* new_dt
+new_bias(uint256) := TMP_484(uint256)
+REF_270(uint256) -> vote_user_power[msg.sender]
+power_used(uint256) := REF_270(uint256)
+REF_271(uint256) -> new_slope.power
+TMP_485(uint256) = power_used (c)+ REF_271
+REF_272(uint256) -> old_slope.power
+TMP_486(uint256) = TMP_485 (c)- REF_272
+power_used(uint256) := TMP_486(uint256)
+TMP_487(bool) = power_used >= 0
+TMP_488(bool) = power_used <= 10000
+TMP_489(bool) = TMP_487 && TMP_488
+CONDITION TMP_489
+EXPRESSION:TMP_489(bool) = TMP_487 && TMP_488	NodeType.IF" [key=0];
+"BlockID: 640
+Call context: 
+True
+REF_273(uint256) -> vote_user_power[msg.sender]
+REF_273(uint256) (->vote_user_power) := power_used(uint256)
+TMP_491(uint256) = INTERNAL_CALL, GaugeController._get_weight(address)(_gauge_addr)
+EXPRESSION:vote_user_power[msg.sender] = power_used	NodeType.EXPRESSION" -> "BlockID: 641
+Call context: 
+None
+old_weight_bias(uint256) := TMP_491(uint256)
+REF_274(mapping(uint256 => GaugeController.Point)) -> points_weight[_gauge_addr]
+REF_275(GaugeController.Point) -> REF_274[next_time]
+REF_276(uint256) -> REF_275.slope
+old_weight_slope(uint256) := REF_276(uint256)
+TMP_492(uint256) = INTERNAL_CALL, GaugeController._get_sum()()
+EXPRESSION:old_weight_bias = _get_weight(_gauge_addr)	NodeType.VARIABLE
+old_weight_bias = _get_weight(_gauge_addr)	NodeType.EXPRESSION
+old_weight_slope = points_weight[_gauge_addr][next_time].slope	NodeType.VARIABLE
+old_weight_slope = points_weight[_gauge_addr][next_time].slope	NodeType.EXPRESSION" [key=0];
+"BlockID: 641
+Call context: 
+None
+old_weight_bias(uint256) := TMP_491(uint256)
+REF_274(mapping(uint256 => GaugeController.Point)) -> points_weight[_gauge_addr]
+REF_275(GaugeController.Point) -> REF_274[next_time]
+REF_276(uint256) -> REF_275.slope
+old_weight_slope(uint256) := REF_276(uint256)
+TMP_492(uint256) = INTERNAL_CALL, GaugeController._get_sum()()
+EXPRESSION:old_weight_bias = _get_weight(_gauge_addr)	NodeType.VARIABLE
+old_weight_bias = _get_weight(_gauge_addr)	NodeType.EXPRESSION
+old_weight_slope = points_weight[_gauge_addr][next_time].slope	NodeType.VARIABLE
+old_weight_slope = points_weight[_gauge_addr][next_time].slope	NodeType.EXPRESSION" -> "BlockID: 642
+Call context: 
+None
+old_sum_bias(uint256) := TMP_492(uint256)
+REF_277(GaugeController.Point) -> points_sum[next_time]
+REF_278(uint256) -> REF_277.slope
+old_sum_slope(uint256) := REF_278(uint256)
+REF_279(mapping(uint256 => GaugeController.Point)) -> points_weight[_gauge_addr]
+REF_280(GaugeController.Point) -> REF_279[next_time]
+REF_281(uint256) -> REF_280.bias
+TMP_493(uint256) = old_weight_bias (c)+ new_bias
+TMP_494(uint256) = LIBRARY_CALL, dest:Math, function:Math.max(uint256,uint256), arguments:['TMP_493', 'old_bias'] 
+EXPRESSION:old_sum_bias = _get_sum()	NodeType.VARIABLE
+old_sum_bias = _get_sum()	NodeType.EXPRESSION
+old_sum_slope = points_sum[next_time].slope	NodeType.VARIABLE
+old_sum_slope = points_sum[next_time].slope	NodeType.EXPRESSION
+points_weight[_gauge_addr][next_time].bias = Math.max(old_weight_bias + new_bias,old_bias) - old_bias	NodeType.EXPRESSION" [key=0];
+"BlockID: 642
+Call context: 
+None
+old_sum_bias(uint256) := TMP_492(uint256)
+REF_277(GaugeController.Point) -> points_sum[next_time]
+REF_278(uint256) -> REF_277.slope
+old_sum_slope(uint256) := REF_278(uint256)
+REF_279(mapping(uint256 => GaugeController.Point)) -> points_weight[_gauge_addr]
+REF_280(GaugeController.Point) -> REF_279[next_time]
+REF_281(uint256) -> REF_280.bias
+TMP_493(uint256) = old_weight_bias (c)+ new_bias
+TMP_494(uint256) = LIBRARY_CALL, dest:Math, function:Math.max(uint256,uint256), arguments:['TMP_493', 'old_bias'] 
+EXPRESSION:old_sum_bias = _get_sum()	NodeType.VARIABLE
+old_sum_bias = _get_sum()	NodeType.EXPRESSION
+old_sum_slope = points_sum[next_time].slope	NodeType.VARIABLE
+old_sum_slope = points_sum[next_time].slope	NodeType.EXPRESSION
+points_weight[_gauge_addr][next_time].bias = Math.max(old_weight_bias + new_bias,old_bias) - old_bias	NodeType.EXPRESSION" -> "BlockID: 643
+Call context: 
+None
+TMP_495(uint256) = TMP_494 (c)- old_bias
+REF_281(uint256) (->points_weight) := TMP_495(uint256)
+REF_283(GaugeController.Point) -> points_sum[next_time]
+REF_284(uint256) -> REF_283.bias
+TMP_496(uint256) = old_sum_bias (c)+ new_bias
+TMP_497(uint256) = LIBRARY_CALL, dest:Math, function:Math.max(uint256,uint256), arguments:['TMP_496', 'old_bias'] 
+EXPRESSION:points_weight[_gauge_addr][next_time].bias = Math.max(old_weight_bias + new_bias,old_bias) - old_bias	NodeType.EXPRESSION
+points_sum[next_time].bias = Math.max(old_sum_bias + new_bias,old_bias) - old_bias	NodeType.EXPRESSION" [key=0];
+"BlockID: 643
+Call context: 
+None
+TMP_495(uint256) = TMP_494 (c)- old_bias
+REF_281(uint256) (->points_weight) := TMP_495(uint256)
+REF_283(GaugeController.Point) -> points_sum[next_time]
+REF_284(uint256) -> REF_283.bias
+TMP_496(uint256) = old_sum_bias (c)+ new_bias
+TMP_497(uint256) = LIBRARY_CALL, dest:Math, function:Math.max(uint256,uint256), arguments:['TMP_496', 'old_bias'] 
+EXPRESSION:points_weight[_gauge_addr][next_time].bias = Math.max(old_weight_bias + new_bias,old_bias) - old_bias	NodeType.EXPRESSION
+points_sum[next_time].bias = Math.max(old_sum_bias + new_bias,old_bias) - old_bias	NodeType.EXPRESSION" -> "BlockID: 644
+Call context: 
+None
+TMP_498(uint256) = TMP_497 (c)- old_bias
+REF_284(uint256) (->points_sum) := TMP_498(uint256)
+REF_286(uint256) -> old_slope.end
+TMP_499(bool) = REF_286 > next_time
+CONDITION TMP_499
+EXPRESSION:points_sum[next_time].bias = Math.max(old_sum_bias + new_bias,old_bias) - old_bias	NodeType.EXPRESSION
+old_slope.end > next_time	NodeType.IF" [key=0];
+"BlockID: 644
+Call context: 
+None
+TMP_498(uint256) = TMP_497 (c)- old_bias
+REF_284(uint256) (->points_sum) := TMP_498(uint256)
+REF_286(uint256) -> old_slope.end
+TMP_499(bool) = REF_286 > next_time
+CONDITION TMP_499
+EXPRESSION:points_sum[next_time].bias = Math.max(old_sum_bias + new_bias,old_bias) - old_bias	NodeType.EXPRESSION
+old_slope.end > next_time	NodeType.IF" -> "BlockID: 645
+Call context: 
+True
+REF_287(mapping(uint256 => GaugeController.Point)) -> points_weight[_gauge_addr]
+REF_288(GaugeController.Point) -> REF_287[next_time]
+REF_289(uint256) -> REF_288.slope
+REF_291(uint256) -> new_slope.slope
+TMP_500(uint256) = old_weight_slope (c)+ REF_291
+REF_292(uint256) -> old_slope.slope
+TMP_501(uint256) = LIBRARY_CALL, dest:Math, function:Math.max(uint256,uint256), arguments:['TMP_500', 'REF_292'] 
+EXPRESSION:points_weight[_gauge_addr][next_time].slope = Math.max(old_weight_slope + new_slope.slope,old_slope.slope) - old_slope.slope	NodeType.EXPRESSION" [key=0];
+"BlockID: 644
+Call context: 
+None
+TMP_498(uint256) = TMP_497 (c)- old_bias
+REF_284(uint256) (->points_sum) := TMP_498(uint256)
+REF_286(uint256) -> old_slope.end
+TMP_499(bool) = REF_286 > next_time
+CONDITION TMP_499
+EXPRESSION:points_sum[next_time].bias = Math.max(old_sum_bias + new_bias,old_bias) - old_bias	NodeType.EXPRESSION
+old_slope.end > next_time	NodeType.IF" -> "BlockID: 647
+Call context: 
+False
+REF_300(mapping(uint256 => GaugeController.Point)) -> points_weight[_gauge_addr]
+REF_301(GaugeController.Point) -> REF_300[next_time]
+REF_302(uint256) -> REF_301.slope
+REF_303(uint256) -> new_slope.slope
+REF_302(-> points_weight) = REF_302 (c)+ REF_303
+REF_304(GaugeController.Point) -> points_sum[next_time]
+REF_305(uint256) -> REF_304.slope
+REF_306(uint256) -> new_slope.slope
+REF_305(-> points_sum) = REF_305 (c)+ REF_306
+EXPRESSION:points_weight[_gauge_addr][next_time].slope += new_slope.slope	NodeType.EXPRESSION
+points_sum[next_time].slope += new_slope.slope	NodeType.EXPRESSION" [key=0];
+"BlockID: 645
+Call context: 
+True
+REF_287(mapping(uint256 => GaugeController.Point)) -> points_weight[_gauge_addr]
+REF_288(GaugeController.Point) -> REF_287[next_time]
+REF_289(uint256) -> REF_288.slope
+REF_291(uint256) -> new_slope.slope
+TMP_500(uint256) = old_weight_slope (c)+ REF_291
+REF_292(uint256) -> old_slope.slope
+TMP_501(uint256) = LIBRARY_CALL, dest:Math, function:Math.max(uint256,uint256), arguments:['TMP_500', 'REF_292'] 
+EXPRESSION:points_weight[_gauge_addr][next_time].slope = Math.max(old_weight_slope + new_slope.slope,old_slope.slope) - old_slope.slope	NodeType.EXPRESSION" -> "BlockID: 646
+Call context: 
+None
+REF_293(uint256) -> old_slope.slope
+TMP_502(uint256) = TMP_501 (c)- REF_293
+REF_289(uint256) (->points_weight) := TMP_502(uint256)
+REF_294(GaugeController.Point) -> points_sum[next_time]
+REF_295(uint256) -> REF_294.slope
+REF_297(uint256) -> new_slope.slope
+TMP_503(uint256) = old_sum_slope (c)+ REF_297
+REF_298(uint256) -> old_slope.slope
+TMP_504(uint256) = LIBRARY_CALL, dest:Math, function:Math.max(uint256,uint256), arguments:['TMP_503', 'REF_298'] 
+EXPRESSION:points_weight[_gauge_addr][next_time].slope = Math.max(old_weight_slope + new_slope.slope,old_slope.slope) - old_slope.slope	NodeType.EXPRESSION
+points_sum[next_time].slope = Math.max(old_sum_slope + new_slope.slope,old_slope.slope) - old_slope.slope	NodeType.EXPRESSION" [key=0];
+"BlockID: 647
+Call context: 
+False
+REF_300(mapping(uint256 => GaugeController.Point)) -> points_weight[_gauge_addr]
+REF_301(GaugeController.Point) -> REF_300[next_time]
+REF_302(uint256) -> REF_301.slope
+REF_303(uint256) -> new_slope.slope
+REF_302(-> points_weight) = REF_302 (c)+ REF_303
+REF_304(GaugeController.Point) -> points_sum[next_time]
+REF_305(uint256) -> REF_304.slope
+REF_306(uint256) -> new_slope.slope
+REF_305(-> points_sum) = REF_305 (c)+ REF_306
+EXPRESSION:points_weight[_gauge_addr][next_time].slope += new_slope.slope	NodeType.EXPRESSION
+points_sum[next_time].slope += new_slope.slope	NodeType.EXPRESSION" -> "BlockID: 648
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 648
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 649
+Call context: 
+None
+REF_307(uint256) -> old_slope.end
+TMP_506(bool) = REF_307 > block.timestamp
+CONDITION TMP_506
+EXPRESSION:old_slope.end > block.timestamp	NodeType.IF" [key=0];
+"BlockID: 649
+Call context: 
+None
+REF_307(uint256) -> old_slope.end
+TMP_506(bool) = REF_307 > block.timestamp
+CONDITION TMP_506
+EXPRESSION:old_slope.end > block.timestamp	NodeType.IF" -> "BlockID: 650
+Call context: 
+True
+REF_308(mapping(uint256 => uint256)) -> changes_weight[_gauge_addr]
+REF_309(uint256) -> old_slope.end
+REF_310(uint256) -> REF_308[REF_309]
+REF_311(uint256) -> old_slope.slope
+REF_310(-> changes_weight) = REF_310 (c)- REF_311
+REF_312(uint256) -> old_slope.end
+REF_313(uint256) -> changes_sum[REF_312]
+REF_314(uint256) -> old_slope.slope
+REF_313(-> changes_sum) = REF_313 (c)- REF_314
+EXPRESSION:changes_weight[_gauge_addr][old_slope.end] -= old_slope.slope	NodeType.EXPRESSION
+changes_sum[old_slope.end] -= old_slope.slope	NodeType.EXPRESSION" [key=0];
+"BlockID: 649
+Call context: 
+None
+REF_307(uint256) -> old_slope.end
+TMP_506(bool) = REF_307 > block.timestamp
+CONDITION TMP_506
+EXPRESSION:old_slope.end > block.timestamp	NodeType.IF" -> "BlockID: 651
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 650
+Call context: 
+True
+REF_308(mapping(uint256 => uint256)) -> changes_weight[_gauge_addr]
+REF_309(uint256) -> old_slope.end
+REF_310(uint256) -> REF_308[REF_309]
+REF_311(uint256) -> old_slope.slope
+REF_310(-> changes_weight) = REF_310 (c)- REF_311
+REF_312(uint256) -> old_slope.end
+REF_313(uint256) -> changes_sum[REF_312]
+REF_314(uint256) -> old_slope.slope
+REF_313(-> changes_sum) = REF_313 (c)- REF_314
+EXPRESSION:changes_weight[_gauge_addr][old_slope.end] -= old_slope.slope	NodeType.EXPRESSION
+changes_sum[old_slope.end] -= old_slope.slope	NodeType.EXPRESSION" -> "BlockID: 651
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 651
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 652
+Call context: 
+None
+REF_315(mapping(uint256 => uint256)) -> changes_weight[_gauge_addr]
+REF_316(uint256) -> new_slope.end
+REF_317(uint256) -> REF_315[REF_316]
+REF_318(uint256) -> new_slope.slope
+REF_317(-> changes_weight) = REF_317 (c)+ REF_318
+REF_319(uint256) -> new_slope.end
+REF_320(uint256) -> changes_sum[REF_319]
+REF_321(uint256) -> new_slope.slope
+REF_320(-> changes_sum) = REF_320 (c)+ REF_321
+TMP_507(uint256) = INTERNAL_CALL, GaugeController._get_sum()()
+EXPRESSION:changes_weight[_gauge_addr][new_slope.end] += new_slope.slope	NodeType.EXPRESSION
+changes_sum[new_slope.end] += new_slope.slope	NodeType.EXPRESSION
+_get_sum()	NodeType.EXPRESSION" [key=0];
+"BlockID: 652
+Call context: 
+None
+REF_315(mapping(uint256 => uint256)) -> changes_weight[_gauge_addr]
+REF_316(uint256) -> new_slope.end
+REF_317(uint256) -> REF_315[REF_316]
+REF_318(uint256) -> new_slope.slope
+REF_317(-> changes_weight) = REF_317 (c)+ REF_318
+REF_319(uint256) -> new_slope.end
+REF_320(uint256) -> changes_sum[REF_319]
+REF_321(uint256) -> new_slope.slope
+REF_320(-> changes_sum) = REF_320 (c)+ REF_321
+TMP_507(uint256) = INTERNAL_CALL, GaugeController._get_sum()()
+EXPRESSION:changes_weight[_gauge_addr][new_slope.end] += new_slope.slope	NodeType.EXPRESSION
+changes_sum[new_slope.end] += new_slope.slope	NodeType.EXPRESSION
+_get_sum()	NodeType.EXPRESSION" -> "BlockID: 653
+Call context: 
+None
+REF_322(mapping(address => GaugeController.VotedSlope)) -> vote_user_slopes[msg.sender]
+REF_323(GaugeController.VotedSlope) -> REF_322[_gauge_addr]
+REF_323(GaugeController.VotedSlope) (->vote_user_slopes) := new_slope(GaugeController.VotedSlope)
+REF_324(mapping(address => uint256)) -> last_user_vote[msg.sender]
+REF_325(uint256) -> REF_324[_gauge_addr]
+REF_325(uint256) (->last_user_vote) := block.timestamp(uint256)
+EXPRESSION:_get_sum()	NodeType.EXPRESSION
+vote_user_slopes[msg.sender][_gauge_addr] = new_slope	NodeType.EXPRESSION
+last_user_vote[msg.sender][_gauge_addr] = block.timestamp	NodeType.EXPRESSION" [key=0];
+"BlockID: 646
+Call context: 
+None
+REF_293(uint256) -> old_slope.slope
+TMP_502(uint256) = TMP_501 (c)- REF_293
+REF_289(uint256) (->points_weight) := TMP_502(uint256)
+REF_294(GaugeController.Point) -> points_sum[next_time]
+REF_295(uint256) -> REF_294.slope
+REF_297(uint256) -> new_slope.slope
+TMP_503(uint256) = old_sum_slope (c)+ REF_297
+REF_298(uint256) -> old_slope.slope
+TMP_504(uint256) = LIBRARY_CALL, dest:Math, function:Math.max(uint256,uint256), arguments:['TMP_503', 'REF_298'] 
+EXPRESSION:points_weight[_gauge_addr][next_time].slope = Math.max(old_weight_slope + new_slope.slope,old_slope.slope) - old_slope.slope	NodeType.EXPRESSION
+points_sum[next_time].slope = Math.max(old_sum_slope + new_slope.slope,old_slope.slope) - old_slope.slope	NodeType.EXPRESSION" -> "BlockID: 654
+Call context: 
+None
+REF_299(uint256) -> old_slope.slope
+TMP_505(uint256) = TMP_504 (c)- REF_299
+REF_295(uint256) (->points_sum) := TMP_505(uint256)
+EXPRESSION:points_sum[next_time].slope = Math.max(old_sum_slope + new_slope.slope,old_slope.slope) - old_slope.slope	NodeType.EXPRESSION" [key=0];
+"BlockID: 654
+Call context: 
+None
+REF_299(uint256) -> old_slope.slope
+TMP_505(uint256) = TMP_504 (c)- REF_299
+REF_295(uint256) (->points_sum) := TMP_505(uint256)
+EXPRESSION:points_sum[next_time].slope = Math.max(old_sum_slope + new_slope.slope,old_slope.slope) - old_slope.slope	NodeType.EXPRESSION" -> "BlockID: 648
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 655
+Call context: 
+None
+TMP_462(bool) = _user_weight >= 0
+TMP_463(bool) = _user_weight <= 10000
+TMP_464(bool) = TMP_462 && TMP_463
+CONDITION TMP_464
+EXPRESSION:TMP_464(bool) = TMP_462 && TMP_463	NodeType.IF" -> "BlockID: 656
+Call context: 
+True
+TMP_465(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 655
+Call context: 
+None
+TMP_462(bool) = _user_weight >= 0
+TMP_463(bool) = _user_weight <= 10000
+TMP_464(bool) = TMP_462 && TMP_463
+CONDITION TMP_464
+EXPRESSION:TMP_464(bool) = TMP_462 && TMP_463	NodeType.IF" -> "BlockID: 657
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 657
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 658
+Call context: 
+None
+REF_261(bool) -> isValidGauge[_gauge_addr]
+CONDITION REF_261
+EXPRESSION:REF_261(bool) -> isValidGauge[_gauge_addr]	NodeType.IF" [key=0];
+"BlockID: 658
+Call context: 
+None
+REF_261(bool) -> isValidGauge[_gauge_addr]
+CONDITION REF_261
+EXPRESSION:REF_261(bool) -> isValidGauge[_gauge_addr]	NodeType.IF" -> "BlockID: 659
+Call context: 
+True
+TMP_466(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 658
+Call context: 
+None
+REF_261(bool) -> isValidGauge[_gauge_addr]
+CONDITION REF_261
+EXPRESSION:REF_261(bool) -> isValidGauge[_gauge_addr]	NodeType.IF" -> "BlockID: 660
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 660
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 632
+Call context: 
+True
+ve(VotingEscrow) := votingEscrow(VotingEscrow)
+NEW VARIABLE slope_
+TUPLE_1(int128,int128,uint256) = HIGH_LEVEL_CALL, dest:ve(VotingEscrow), function:getLastUserPoint, arguments:['msg.sender']  
+EXPRESSION:ve = votingEscrow	NodeType.VARIABLE
+ve = votingEscrow	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+(slope_) = ve.getLastUserPoint(msg.sender)	NodeType.EXPRESSION" [key=0];
+"BlockID: 661
+Call context: 
+None
+slope_(int128)= UNPACK TUPLE_1 index: 1 
+TMP_467(bool) = slope_ >= 0
+CONDITION TMP_467
+EXPRESSION:TMP_467(bool) = slope_ >= 0	NodeType.IF" -> "BlockID: 662
+Call context: 
+True
+TMP_468(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 661
+Call context: 
+None
+slope_(int128)= UNPACK TUPLE_1 index: 1 
+TMP_467(bool) = slope_ >= 0
+CONDITION TMP_467
+EXPRESSION:TMP_467(bool) = slope_ >= 0	NodeType.IF" -> "BlockID: 663
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 663
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 634
+Call context: 
+True
+TMP_469 = CONVERT slope_ to uint128
+TMP_470 = CONVERT TMP_469 to uint256
+slope(uint256) := TMP_470(uint256)
+TMP_471(uint256) = HIGH_LEVEL_CALL, dest:ve(VotingEscrow), function:lockEnd, arguments:['msg.sender']  
+EXPRESSION:slope = uint256(uint128(slope_))	NodeType.VARIABLE
+slope = uint256(uint128(slope_))	NodeType.EXPRESSION" [key=0];
+"BlockID: 664
+Call context: 
+None
+lock_end(uint256) := TMP_471(uint256)
+TMP_472(uint256) = block.timestamp (c)+ WEEK
+TMP_473(uint256) = TMP_472 (c)/ WEEK
+TMP_474(uint256) = TMP_473 (c)* WEEK
+next_time(uint256) := TMP_474(uint256)
+TMP_475(bool) = lock_end > next_time
+CONDITION TMP_475
+EXPRESSION:TMP_475(bool) = lock_end > next_time	NodeType.IF" -> "BlockID: 665
+Call context: 
+True
+TMP_476(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 664
+Call context: 
+None
+lock_end(uint256) := TMP_471(uint256)
+TMP_472(uint256) = block.timestamp (c)+ WEEK
+TMP_473(uint256) = TMP_472 (c)/ WEEK
+TMP_474(uint256) = TMP_473 (c)* WEEK
+next_time(uint256) := TMP_474(uint256)
+TMP_475(bool) = lock_end > next_time
+CONDITION TMP_475
+EXPRESSION:TMP_475(bool) = lock_end > next_time	NodeType.IF" -> "BlockID: 666
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 666
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 636
+Call context: 
+True
+REF_264(mapping(address => GaugeController.VotedSlope)) -> vote_user_slopes[msg.sender]
+REF_265(GaugeController.VotedSlope) -> REF_264[_gauge_addr]
+old_slope(GaugeController.VotedSlope) := REF_265(GaugeController.VotedSlope)
+old_dt(uint256) := 0(uint256)
+REF_266(uint256) -> old_slope.end
+TMP_477(bool) = REF_266 > next_time
+CONDITION TMP_477
+EXPRESSION:old_slope = vote_user_slopes[msg.sender][_gauge_addr]	NodeType.VARIABLE
+old_slope = vote_user_slopes[msg.sender][_gauge_addr]	NodeType.EXPRESSION
+old_dt = 0	NodeType.VARIABLE
+old_dt = 0	NodeType.EXPRESSION
+old_slope.end > next_time	NodeType.IF" [key=0];
+"BlockID: 667
+Call context: 
+None
+REF_268(uint256) -> old_slope.slope
+TMP_479(uint256) = REF_268 (c)* old_dt
+old_bias(uint256) := TMP_479(uint256)
+TMP_480(uint256) = slope (c)* _user_weight
+TMP_481(uint256) = TMP_480 (c)/ 10000
+TMP_482(GaugeController.VotedSlope) = new VotedSlope(TMP_481,lock_end,_user_weight)
+new_slope(GaugeController.VotedSlope) := TMP_482(GaugeController.VotedSlope)
+TMP_483(uint256) = lock_end (c)- next_time
+new_dt(uint256) := TMP_483(uint256)
+REF_269(uint256) -> new_slope.slope
+TMP_484(uint256) = REF_269 (c)* new_dt
+new_bias(uint256) := TMP_484(uint256)
+REF_270(uint256) -> vote_user_power[msg.sender]
+power_used(uint256) := REF_270(uint256)
+REF_271(uint256) -> new_slope.power
+TMP_485(uint256) = power_used (c)+ REF_271
+REF_272(uint256) -> old_slope.power
+TMP_486(uint256) = TMP_485 (c)- REF_272
+power_used(uint256) := TMP_486(uint256)
+TMP_487(bool) = power_used >= 0
+TMP_488(bool) = power_used <= 10000
+TMP_489(bool) = TMP_487 && TMP_488
+CONDITION TMP_489
+EXPRESSION:TMP_489(bool) = TMP_487 && TMP_488	NodeType.IF" -> "BlockID: 668
+Call context: 
+True
+TMP_490(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 667
+Call context: 
+None
+REF_268(uint256) -> old_slope.slope
+TMP_479(uint256) = REF_268 (c)* old_dt
+old_bias(uint256) := TMP_479(uint256)
+TMP_480(uint256) = slope (c)* _user_weight
+TMP_481(uint256) = TMP_480 (c)/ 10000
+TMP_482(GaugeController.VotedSlope) = new VotedSlope(TMP_481,lock_end,_user_weight)
+new_slope(GaugeController.VotedSlope) := TMP_482(GaugeController.VotedSlope)
+TMP_483(uint256) = lock_end (c)- next_time
+new_dt(uint256) := TMP_483(uint256)
+REF_269(uint256) -> new_slope.slope
+TMP_484(uint256) = REF_269 (c)* new_dt
+new_bias(uint256) := TMP_484(uint256)
+REF_270(uint256) -> vote_user_power[msg.sender]
+power_used(uint256) := REF_270(uint256)
+REF_271(uint256) -> new_slope.power
+TMP_485(uint256) = power_used (c)+ REF_271
+REF_272(uint256) -> old_slope.power
+TMP_486(uint256) = TMP_485 (c)- REF_272
+power_used(uint256) := TMP_486(uint256)
+TMP_487(bool) = power_used >= 0
+TMP_488(bool) = power_used <= 10000
+TMP_489(bool) = TMP_487 && TMP_488
+CONDITION TMP_489
+EXPRESSION:TMP_489(bool) = TMP_487 && TMP_488	NodeType.IF" -> "BlockID: 669
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 669
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 640
+Call context: 
+True
+REF_273(uint256) -> vote_user_power[msg.sender]
+REF_273(uint256) (->vote_user_power) := power_used(uint256)
+TMP_491(uint256) = INTERNAL_CALL, GaugeController._get_weight(address)(_gauge_addr)
+EXPRESSION:vote_user_power[msg.sender] = power_used	NodeType.EXPRESSION" [key=0];
+}

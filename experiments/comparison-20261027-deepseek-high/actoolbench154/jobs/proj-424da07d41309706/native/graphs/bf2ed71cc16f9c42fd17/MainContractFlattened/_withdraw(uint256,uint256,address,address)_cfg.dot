@@ -1,0 +1,730 @@
+digraph {
+"BlockID: 1261
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1262
+Call context: 
+None
+INTERNAL_CALL, ERC20._burn(address,uint256)(owner,shares)
+EXPRESSION:_burn(owner,shares)	NodeType.EXPRESSION";
+"BlockID: 1263
+Call context: 
+None
+TMP_626 = CONVERT asset to IERC20Metadata
+TMP_627 = CONVERT this to address
+TMP_628(uint256) = HIGH_LEVEL_CALL, dest:TMP_626(IERC20Metadata), function:balanceOf, arguments:['TMP_627']  
+EXPRESSION:_burn(owner,shares)	NodeType.EXPRESSION
+assets > IERC20Metadata(asset).balanceOf(address(this))	NodeType.EXPRESSION";
+"BlockID: 1264
+Call context: 
+None
+TMP_629(bool) = assets > TMP_628
+CONDITION TMP_629
+EXPRESSION:assets > IERC20Metadata(asset).balanceOf(address(this))	NodeType.IF" [shape=box];
+"BlockID: 1265
+Call context: 
+True
+totalLoss(uint256) := 0(uint256)
+REF_191 -> LENGTH withdrawalQueue
+queueLength(uint256) := REF_191(uint256)
+vaultBalance(uint256) := 0(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:totalLoss = 0	NodeType.VARIABLE
+totalLoss = 0	NodeType.EXPRESSION
+queueLength = withdrawalQueue.length	NodeType.VARIABLE
+queueLength = withdrawalQueue.length	NodeType.EXPRESSION
+vaultBalance = 0	NodeType.VARIABLE
+vaultBalance = 0	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION";
+"BlockID: 1266
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1267
+Call context: 
+None
+TMP_656 = CONVERT asset to IERC20Metadata
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['TMP_656', 'receiver', 'assets'] 
+EXPRESSION:IERC20Metadata(asset).safeTransfer(receiver,assets)	NodeType.EXPRESSION";
+"BlockID: 1268
+Call context: 
+None
+RETURN assets
+EXPRESSION:IERC20Metadata(asset).safeTransfer(receiver,assets)	NodeType.EXPRESSION
+assets	NodeType.RETURN";
+"BlockID: 1269
+Call context: 
+None
+BEGIN_LOOP
+TMP_630(bool) = i < queueLength
+CONDITION TMP_630
+EXPRESSION:None	NodeType.STARTLOOP
+i < queueLength	NodeType.IFLOOP";
+"BlockID: 1270
+Call context: 
+True
+TMP_631 = CONVERT asset to IERC20Metadata
+TMP_632 = CONVERT this to address
+TMP_633(uint256) = HIGH_LEVEL_CALL, dest:TMP_631(IERC20Metadata), function:balanceOf, arguments:['TMP_632']  
+EXPRESSION:vaultBalance = IERC20Metadata(asset).balanceOf(address(this))	NodeType.EXPRESSION";
+"BlockID: 1272
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 1273
+Call context: 
+None
+TMP_647 = CONVERT asset to IERC20Metadata
+TMP_648 = CONVERT this to address
+TMP_649(uint256) = HIGH_LEVEL_CALL, dest:TMP_647(IERC20Metadata), function:balanceOf, arguments:['TMP_648']  
+EXPRESSION:vaultBalance = IERC20Metadata(asset).balanceOf(address(this))	NodeType.EXPRESSION";
+"BlockID: 1274
+Call context: 
+None
+vaultBalance(uint256) := TMP_649(uint256)
+TMP_650(bool) = assets > vaultBalance
+CONDITION TMP_650
+EXPRESSION:vaultBalance = IERC20Metadata(asset).balanceOf(address(this))	NodeType.EXPRESSION
+assets > vaultBalance	NodeType.IF" [shape=box];
+"BlockID: 1275
+Call context: 
+True
+assets(uint256) := vaultBalance(uint256)
+EXPRESSION:assets = vaultBalance	NodeType.EXPRESSION";
+"BlockID: 1276
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1271
+Call context: 
+None
+vaultBalance(uint256) := TMP_633(uint256)
+TMP_634(bool) = assets <= vaultBalance
+CONDITION TMP_634
+EXPRESSION:vaultBalance = IERC20Metadata(asset).balanceOf(address(this))	NodeType.EXPRESSION
+assets <= vaultBalance	NodeType.IF" [shape=box];
+"BlockID: 1278
+Call context: 
+True
+BREAK
+EXPRESSION:None	NodeType.BREAK";
+"BlockID: 1279
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1280
+Call context: 
+None
+REF_193(address) -> withdrawalQueue[i]
+stratAddr(address) := REF_193(address)
+REF_194(ReaperVaultV2.StrategyParams) -> strategies[stratAddr]
+REF_195(uint256) -> REF_194.allocated
+strategyBal(uint256) := REF_195(uint256)
+TMP_635(bool) = strategyBal == 0
+CONDITION TMP_635
+EXPRESSION:stratAddr = withdrawalQueue[i]	NodeType.VARIABLE
+stratAddr = withdrawalQueue[i]	NodeType.EXPRESSION
+strategyBal = strategies[stratAddr].allocated	NodeType.VARIABLE
+strategyBal = strategies[stratAddr].allocated	NodeType.EXPRESSION
+strategyBal == 0	NodeType.IF";
+"BlockID: 1281
+Call context: 
+True
+CONTINUE
+EXPRESSION:None	NodeType.CONTINUE";
+"BlockID: 1282
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1283
+Call context: 
+None
+TMP_636(uint256) = assets (c)- vaultBalance
+remaining(uint256) := TMP_636(uint256)
+TMP_637 = CONVERT stratAddr to IStrategy
+TMP_638(uint256) = LIBRARY_CALL, dest:Math, function:Math.min(uint256,uint256), arguments:['remaining', 'strategyBal'] 
+EXPRESSION:remaining = assets - vaultBalance	NodeType.VARIABLE
+remaining = assets - vaultBalance	NodeType.EXPRESSION";
+"BlockID: 1284
+Call context: 
+None
+TMP_639(uint256) = HIGH_LEVEL_CALL, dest:TMP_637(IStrategy), function:withdraw, arguments:['TMP_638']  
+EXPRESSION:" [shape=box];
+"BlockID: 1285
+Call context: 
+None
+loss(uint256) := TMP_639(uint256)
+TMP_640 = CONVERT asset to IERC20Metadata
+TMP_641 = CONVERT this to address
+TMP_642(uint256) = HIGH_LEVEL_CALL, dest:TMP_640(IERC20Metadata), function:balanceOf, arguments:['TMP_641']  
+EXPRESSION:loss = IStrategy(stratAddr).withdraw(Math.min(remaining,strategyBal))	NodeType.VARIABLE
+loss = IStrategy(stratAddr).withdraw(Math.min(remaining,strategyBal))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1286
+Call context: 
+None
+TMP_643(uint256) = TMP_642 (c)- vaultBalance
+actualWithdrawn(uint256) := TMP_643(uint256)
+TMP_644(bool) = loss != 0
+CONDITION TMP_644
+EXPRESSION:actualWithdrawn = IERC20Metadata(asset).balanceOf(address(this)) - vaultBalance	NodeType.VARIABLE
+actualWithdrawn = IERC20Metadata(asset).balanceOf(address(this)) - vaultBalance	NodeType.EXPRESSION
+loss != 0	NodeType.IF" [shape=box];
+"BlockID: 1287
+Call context: 
+True
+assets(uint256) = assets (c)- loss
+totalLoss(uint256) = totalLoss (c)+ loss
+INTERNAL_CALL, ReaperVaultV2._reportLoss(address,uint256)(stratAddr,loss)
+EXPRESSION:assets -= loss	NodeType.EXPRESSION
+totalLoss += loss	NodeType.EXPRESSION
+_reportLoss(stratAddr,loss)	NodeType.EXPRESSION";
+"BlockID: 1288
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1289
+Call context: 
+None
+REF_199(ReaperVaultV2.StrategyParams) -> strategies[stratAddr]
+REF_200(uint256) -> REF_199.allocated
+REF_200(-> strategies) = REF_200 (c)- actualWithdrawn
+totalAllocated(uint256) = totalAllocated (c)- actualWithdrawn
+TMP_646(uint256) = INTERNAL_CALL, ReaperVaultV2._uncheckedInc(uint256)(i)
+EXPRESSION:strategies[stratAddr].allocated -= actualWithdrawn	NodeType.EXPRESSION
+totalAllocated -= actualWithdrawn	NodeType.EXPRESSION
+i = _uncheckedInc(i)	NodeType.EXPRESSION";
+"BlockID: 1290
+Call context: 
+None
+i(uint256) := TMP_646(uint256)
+EXPRESSION:i = _uncheckedInc(i)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1292
+Call context: 
+None
+TMP_651(uint256) = assets (c)+ totalLoss
+TMP_652(uint256) = TMP_651 (c)* withdrawMaxLoss
+TMP_653(uint256) = TMP_652 (c)/ PERCENT_DIVISOR
+TMP_654(bool) = totalLoss <= TMP_653
+CONDITION TMP_654
+EXPRESSION:TMP_654(bool) = totalLoss <= TMP_653	NodeType.IF";
+"BlockID: 1293
+Call context: 
+True
+TMP_655(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 1294
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1261
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1262
+Call context: 
+None
+INTERNAL_CALL, ERC20._burn(address,uint256)(owner,shares)
+EXPRESSION:_burn(owner,shares)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1262
+Call context: 
+None
+INTERNAL_CALL, ERC20._burn(address,uint256)(owner,shares)
+EXPRESSION:_burn(owner,shares)	NodeType.EXPRESSION" -> "BlockID: 1263
+Call context: 
+None
+TMP_626 = CONVERT asset to IERC20Metadata
+TMP_627 = CONVERT this to address
+TMP_628(uint256) = HIGH_LEVEL_CALL, dest:TMP_626(IERC20Metadata), function:balanceOf, arguments:['TMP_627']  
+EXPRESSION:_burn(owner,shares)	NodeType.EXPRESSION
+assets > IERC20Metadata(asset).balanceOf(address(this))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1263
+Call context: 
+None
+TMP_626 = CONVERT asset to IERC20Metadata
+TMP_627 = CONVERT this to address
+TMP_628(uint256) = HIGH_LEVEL_CALL, dest:TMP_626(IERC20Metadata), function:balanceOf, arguments:['TMP_627']  
+EXPRESSION:_burn(owner,shares)	NodeType.EXPRESSION
+assets > IERC20Metadata(asset).balanceOf(address(this))	NodeType.EXPRESSION" -> "BlockID: 1264
+Call context: 
+None
+TMP_629(bool) = assets > TMP_628
+CONDITION TMP_629
+EXPRESSION:assets > IERC20Metadata(asset).balanceOf(address(this))	NodeType.IF" [key=0];
+"BlockID: 1264
+Call context: 
+None
+TMP_629(bool) = assets > TMP_628
+CONDITION TMP_629
+EXPRESSION:assets > IERC20Metadata(asset).balanceOf(address(this))	NodeType.IF" -> "BlockID: 1265
+Call context: 
+True
+totalLoss(uint256) := 0(uint256)
+REF_191 -> LENGTH withdrawalQueue
+queueLength(uint256) := REF_191(uint256)
+vaultBalance(uint256) := 0(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:totalLoss = 0	NodeType.VARIABLE
+totalLoss = 0	NodeType.EXPRESSION
+queueLength = withdrawalQueue.length	NodeType.VARIABLE
+queueLength = withdrawalQueue.length	NodeType.EXPRESSION
+vaultBalance = 0	NodeType.VARIABLE
+vaultBalance = 0	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 1264
+Call context: 
+None
+TMP_629(bool) = assets > TMP_628
+CONDITION TMP_629
+EXPRESSION:assets > IERC20Metadata(asset).balanceOf(address(this))	NodeType.IF" -> "BlockID: 1266
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1265
+Call context: 
+True
+totalLoss(uint256) := 0(uint256)
+REF_191 -> LENGTH withdrawalQueue
+queueLength(uint256) := REF_191(uint256)
+vaultBalance(uint256) := 0(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:totalLoss = 0	NodeType.VARIABLE
+totalLoss = 0	NodeType.EXPRESSION
+queueLength = withdrawalQueue.length	NodeType.VARIABLE
+queueLength = withdrawalQueue.length	NodeType.EXPRESSION
+vaultBalance = 0	NodeType.VARIABLE
+vaultBalance = 0	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" -> "BlockID: 1269
+Call context: 
+None
+BEGIN_LOOP
+TMP_630(bool) = i < queueLength
+CONDITION TMP_630
+EXPRESSION:None	NodeType.STARTLOOP
+i < queueLength	NodeType.IFLOOP" [key=0];
+"BlockID: 1266
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1267
+Call context: 
+None
+TMP_656 = CONVERT asset to IERC20Metadata
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['TMP_656', 'receiver', 'assets'] 
+EXPRESSION:IERC20Metadata(asset).safeTransfer(receiver,assets)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1267
+Call context: 
+None
+TMP_656 = CONVERT asset to IERC20Metadata
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['TMP_656', 'receiver', 'assets'] 
+EXPRESSION:IERC20Metadata(asset).safeTransfer(receiver,assets)	NodeType.EXPRESSION" -> "BlockID: 1268
+Call context: 
+None
+RETURN assets
+EXPRESSION:IERC20Metadata(asset).safeTransfer(receiver,assets)	NodeType.EXPRESSION
+assets	NodeType.RETURN" [key=0];
+"BlockID: 1269
+Call context: 
+None
+BEGIN_LOOP
+TMP_630(bool) = i < queueLength
+CONDITION TMP_630
+EXPRESSION:None	NodeType.STARTLOOP
+i < queueLength	NodeType.IFLOOP" -> "BlockID: 1270
+Call context: 
+True
+TMP_631 = CONVERT asset to IERC20Metadata
+TMP_632 = CONVERT this to address
+TMP_633(uint256) = HIGH_LEVEL_CALL, dest:TMP_631(IERC20Metadata), function:balanceOf, arguments:['TMP_632']  
+EXPRESSION:vaultBalance = IERC20Metadata(asset).balanceOf(address(this))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1269
+Call context: 
+None
+BEGIN_LOOP
+TMP_630(bool) = i < queueLength
+CONDITION TMP_630
+EXPRESSION:None	NodeType.STARTLOOP
+i < queueLength	NodeType.IFLOOP" -> "BlockID: 1272
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 1270
+Call context: 
+True
+TMP_631 = CONVERT asset to IERC20Metadata
+TMP_632 = CONVERT this to address
+TMP_633(uint256) = HIGH_LEVEL_CALL, dest:TMP_631(IERC20Metadata), function:balanceOf, arguments:['TMP_632']  
+EXPRESSION:vaultBalance = IERC20Metadata(asset).balanceOf(address(this))	NodeType.EXPRESSION" -> "BlockID: 1271
+Call context: 
+None
+vaultBalance(uint256) := TMP_633(uint256)
+TMP_634(bool) = assets <= vaultBalance
+CONDITION TMP_634
+EXPRESSION:vaultBalance = IERC20Metadata(asset).balanceOf(address(this))	NodeType.EXPRESSION
+assets <= vaultBalance	NodeType.IF" [key=0];
+"BlockID: 1272
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 1273
+Call context: 
+None
+TMP_647 = CONVERT asset to IERC20Metadata
+TMP_648 = CONVERT this to address
+TMP_649(uint256) = HIGH_LEVEL_CALL, dest:TMP_647(IERC20Metadata), function:balanceOf, arguments:['TMP_648']  
+EXPRESSION:vaultBalance = IERC20Metadata(asset).balanceOf(address(this))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1273
+Call context: 
+None
+TMP_647 = CONVERT asset to IERC20Metadata
+TMP_648 = CONVERT this to address
+TMP_649(uint256) = HIGH_LEVEL_CALL, dest:TMP_647(IERC20Metadata), function:balanceOf, arguments:['TMP_648']  
+EXPRESSION:vaultBalance = IERC20Metadata(asset).balanceOf(address(this))	NodeType.EXPRESSION" -> "BlockID: 1274
+Call context: 
+None
+vaultBalance(uint256) := TMP_649(uint256)
+TMP_650(bool) = assets > vaultBalance
+CONDITION TMP_650
+EXPRESSION:vaultBalance = IERC20Metadata(asset).balanceOf(address(this))	NodeType.EXPRESSION
+assets > vaultBalance	NodeType.IF" [key=0];
+"BlockID: 1274
+Call context: 
+None
+vaultBalance(uint256) := TMP_649(uint256)
+TMP_650(bool) = assets > vaultBalance
+CONDITION TMP_650
+EXPRESSION:vaultBalance = IERC20Metadata(asset).balanceOf(address(this))	NodeType.EXPRESSION
+assets > vaultBalance	NodeType.IF" -> "BlockID: 1275
+Call context: 
+True
+assets(uint256) := vaultBalance(uint256)
+EXPRESSION:assets = vaultBalance	NodeType.EXPRESSION" [key=0];
+"BlockID: 1274
+Call context: 
+None
+vaultBalance(uint256) := TMP_649(uint256)
+TMP_650(bool) = assets > vaultBalance
+CONDITION TMP_650
+EXPRESSION:vaultBalance = IERC20Metadata(asset).balanceOf(address(this))	NodeType.EXPRESSION
+assets > vaultBalance	NodeType.IF" -> "BlockID: 1276
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1275
+Call context: 
+True
+assets(uint256) := vaultBalance(uint256)
+EXPRESSION:assets = vaultBalance	NodeType.EXPRESSION" -> "BlockID: 1276
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1276
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1292
+Call context: 
+None
+TMP_651(uint256) = assets (c)+ totalLoss
+TMP_652(uint256) = TMP_651 (c)* withdrawMaxLoss
+TMP_653(uint256) = TMP_652 (c)/ PERCENT_DIVISOR
+TMP_654(bool) = totalLoss <= TMP_653
+CONDITION TMP_654
+EXPRESSION:TMP_654(bool) = totalLoss <= TMP_653	NodeType.IF" [key=0];
+"BlockID: 1271
+Call context: 
+None
+vaultBalance(uint256) := TMP_633(uint256)
+TMP_634(bool) = assets <= vaultBalance
+CONDITION TMP_634
+EXPRESSION:vaultBalance = IERC20Metadata(asset).balanceOf(address(this))	NodeType.EXPRESSION
+assets <= vaultBalance	NodeType.IF" -> "BlockID: 1278
+Call context: 
+True
+BREAK
+EXPRESSION:None	NodeType.BREAK" [key=0];
+"BlockID: 1271
+Call context: 
+None
+vaultBalance(uint256) := TMP_633(uint256)
+TMP_634(bool) = assets <= vaultBalance
+CONDITION TMP_634
+EXPRESSION:vaultBalance = IERC20Metadata(asset).balanceOf(address(this))	NodeType.EXPRESSION
+assets <= vaultBalance	NodeType.IF" -> "BlockID: 1279
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1278
+Call context: 
+True
+BREAK
+EXPRESSION:None	NodeType.BREAK" -> "BlockID: 1272
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 1279
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1280
+Call context: 
+None
+REF_193(address) -> withdrawalQueue[i]
+stratAddr(address) := REF_193(address)
+REF_194(ReaperVaultV2.StrategyParams) -> strategies[stratAddr]
+REF_195(uint256) -> REF_194.allocated
+strategyBal(uint256) := REF_195(uint256)
+TMP_635(bool) = strategyBal == 0
+CONDITION TMP_635
+EXPRESSION:stratAddr = withdrawalQueue[i]	NodeType.VARIABLE
+stratAddr = withdrawalQueue[i]	NodeType.EXPRESSION
+strategyBal = strategies[stratAddr].allocated	NodeType.VARIABLE
+strategyBal = strategies[stratAddr].allocated	NodeType.EXPRESSION
+strategyBal == 0	NodeType.IF" [key=0];
+"BlockID: 1280
+Call context: 
+None
+REF_193(address) -> withdrawalQueue[i]
+stratAddr(address) := REF_193(address)
+REF_194(ReaperVaultV2.StrategyParams) -> strategies[stratAddr]
+REF_195(uint256) -> REF_194.allocated
+strategyBal(uint256) := REF_195(uint256)
+TMP_635(bool) = strategyBal == 0
+CONDITION TMP_635
+EXPRESSION:stratAddr = withdrawalQueue[i]	NodeType.VARIABLE
+stratAddr = withdrawalQueue[i]	NodeType.EXPRESSION
+strategyBal = strategies[stratAddr].allocated	NodeType.VARIABLE
+strategyBal = strategies[stratAddr].allocated	NodeType.EXPRESSION
+strategyBal == 0	NodeType.IF" -> "BlockID: 1281
+Call context: 
+True
+CONTINUE
+EXPRESSION:None	NodeType.CONTINUE" [key=0];
+"BlockID: 1280
+Call context: 
+None
+REF_193(address) -> withdrawalQueue[i]
+stratAddr(address) := REF_193(address)
+REF_194(ReaperVaultV2.StrategyParams) -> strategies[stratAddr]
+REF_195(uint256) -> REF_194.allocated
+strategyBal(uint256) := REF_195(uint256)
+TMP_635(bool) = strategyBal == 0
+CONDITION TMP_635
+EXPRESSION:stratAddr = withdrawalQueue[i]	NodeType.VARIABLE
+stratAddr = withdrawalQueue[i]	NodeType.EXPRESSION
+strategyBal = strategies[stratAddr].allocated	NodeType.VARIABLE
+strategyBal = strategies[stratAddr].allocated	NodeType.EXPRESSION
+strategyBal == 0	NodeType.IF" -> "BlockID: 1282
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1281
+Call context: 
+True
+CONTINUE
+EXPRESSION:None	NodeType.CONTINUE" -> "BlockID: 1269
+Call context: 
+None
+BEGIN_LOOP
+TMP_630(bool) = i < queueLength
+CONDITION TMP_630
+EXPRESSION:None	NodeType.STARTLOOP
+i < queueLength	NodeType.IFLOOP" [key=0];
+"BlockID: 1282
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1283
+Call context: 
+None
+TMP_636(uint256) = assets (c)- vaultBalance
+remaining(uint256) := TMP_636(uint256)
+TMP_637 = CONVERT stratAddr to IStrategy
+TMP_638(uint256) = LIBRARY_CALL, dest:Math, function:Math.min(uint256,uint256), arguments:['remaining', 'strategyBal'] 
+EXPRESSION:remaining = assets - vaultBalance	NodeType.VARIABLE
+remaining = assets - vaultBalance	NodeType.EXPRESSION" [key=0];
+"BlockID: 1283
+Call context: 
+None
+TMP_636(uint256) = assets (c)- vaultBalance
+remaining(uint256) := TMP_636(uint256)
+TMP_637 = CONVERT stratAddr to IStrategy
+TMP_638(uint256) = LIBRARY_CALL, dest:Math, function:Math.min(uint256,uint256), arguments:['remaining', 'strategyBal'] 
+EXPRESSION:remaining = assets - vaultBalance	NodeType.VARIABLE
+remaining = assets - vaultBalance	NodeType.EXPRESSION" -> "BlockID: 1284
+Call context: 
+None
+TMP_639(uint256) = HIGH_LEVEL_CALL, dest:TMP_637(IStrategy), function:withdraw, arguments:['TMP_638']  
+EXPRESSION:" [key=0];
+"BlockID: 1284
+Call context: 
+None
+TMP_639(uint256) = HIGH_LEVEL_CALL, dest:TMP_637(IStrategy), function:withdraw, arguments:['TMP_638']  
+EXPRESSION:" -> "BlockID: 1285
+Call context: 
+None
+loss(uint256) := TMP_639(uint256)
+TMP_640 = CONVERT asset to IERC20Metadata
+TMP_641 = CONVERT this to address
+TMP_642(uint256) = HIGH_LEVEL_CALL, dest:TMP_640(IERC20Metadata), function:balanceOf, arguments:['TMP_641']  
+EXPRESSION:loss = IStrategy(stratAddr).withdraw(Math.min(remaining,strategyBal))	NodeType.VARIABLE
+loss = IStrategy(stratAddr).withdraw(Math.min(remaining,strategyBal))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1285
+Call context: 
+None
+loss(uint256) := TMP_639(uint256)
+TMP_640 = CONVERT asset to IERC20Metadata
+TMP_641 = CONVERT this to address
+TMP_642(uint256) = HIGH_LEVEL_CALL, dest:TMP_640(IERC20Metadata), function:balanceOf, arguments:['TMP_641']  
+EXPRESSION:loss = IStrategy(stratAddr).withdraw(Math.min(remaining,strategyBal))	NodeType.VARIABLE
+loss = IStrategy(stratAddr).withdraw(Math.min(remaining,strategyBal))	NodeType.EXPRESSION" -> "BlockID: 1286
+Call context: 
+None
+TMP_643(uint256) = TMP_642 (c)- vaultBalance
+actualWithdrawn(uint256) := TMP_643(uint256)
+TMP_644(bool) = loss != 0
+CONDITION TMP_644
+EXPRESSION:actualWithdrawn = IERC20Metadata(asset).balanceOf(address(this)) - vaultBalance	NodeType.VARIABLE
+actualWithdrawn = IERC20Metadata(asset).balanceOf(address(this)) - vaultBalance	NodeType.EXPRESSION
+loss != 0	NodeType.IF" [key=0];
+"BlockID: 1286
+Call context: 
+None
+TMP_643(uint256) = TMP_642 (c)- vaultBalance
+actualWithdrawn(uint256) := TMP_643(uint256)
+TMP_644(bool) = loss != 0
+CONDITION TMP_644
+EXPRESSION:actualWithdrawn = IERC20Metadata(asset).balanceOf(address(this)) - vaultBalance	NodeType.VARIABLE
+actualWithdrawn = IERC20Metadata(asset).balanceOf(address(this)) - vaultBalance	NodeType.EXPRESSION
+loss != 0	NodeType.IF" -> "BlockID: 1287
+Call context: 
+True
+assets(uint256) = assets (c)- loss
+totalLoss(uint256) = totalLoss (c)+ loss
+INTERNAL_CALL, ReaperVaultV2._reportLoss(address,uint256)(stratAddr,loss)
+EXPRESSION:assets -= loss	NodeType.EXPRESSION
+totalLoss += loss	NodeType.EXPRESSION
+_reportLoss(stratAddr,loss)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1286
+Call context: 
+None
+TMP_643(uint256) = TMP_642 (c)- vaultBalance
+actualWithdrawn(uint256) := TMP_643(uint256)
+TMP_644(bool) = loss != 0
+CONDITION TMP_644
+EXPRESSION:actualWithdrawn = IERC20Metadata(asset).balanceOf(address(this)) - vaultBalance	NodeType.VARIABLE
+actualWithdrawn = IERC20Metadata(asset).balanceOf(address(this)) - vaultBalance	NodeType.EXPRESSION
+loss != 0	NodeType.IF" -> "BlockID: 1288
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1287
+Call context: 
+True
+assets(uint256) = assets (c)- loss
+totalLoss(uint256) = totalLoss (c)+ loss
+INTERNAL_CALL, ReaperVaultV2._reportLoss(address,uint256)(stratAddr,loss)
+EXPRESSION:assets -= loss	NodeType.EXPRESSION
+totalLoss += loss	NodeType.EXPRESSION
+_reportLoss(stratAddr,loss)	NodeType.EXPRESSION" -> "BlockID: 1288
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1288
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1289
+Call context: 
+None
+REF_199(ReaperVaultV2.StrategyParams) -> strategies[stratAddr]
+REF_200(uint256) -> REF_199.allocated
+REF_200(-> strategies) = REF_200 (c)- actualWithdrawn
+totalAllocated(uint256) = totalAllocated (c)- actualWithdrawn
+TMP_646(uint256) = INTERNAL_CALL, ReaperVaultV2._uncheckedInc(uint256)(i)
+EXPRESSION:strategies[stratAddr].allocated -= actualWithdrawn	NodeType.EXPRESSION
+totalAllocated -= actualWithdrawn	NodeType.EXPRESSION
+i = _uncheckedInc(i)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1289
+Call context: 
+None
+REF_199(ReaperVaultV2.StrategyParams) -> strategies[stratAddr]
+REF_200(uint256) -> REF_199.allocated
+REF_200(-> strategies) = REF_200 (c)- actualWithdrawn
+totalAllocated(uint256) = totalAllocated (c)- actualWithdrawn
+TMP_646(uint256) = INTERNAL_CALL, ReaperVaultV2._uncheckedInc(uint256)(i)
+EXPRESSION:strategies[stratAddr].allocated -= actualWithdrawn	NodeType.EXPRESSION
+totalAllocated -= actualWithdrawn	NodeType.EXPRESSION
+i = _uncheckedInc(i)	NodeType.EXPRESSION" -> "BlockID: 1290
+Call context: 
+None
+i(uint256) := TMP_646(uint256)
+EXPRESSION:i = _uncheckedInc(i)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1290
+Call context: 
+None
+i(uint256) := TMP_646(uint256)
+EXPRESSION:i = _uncheckedInc(i)	NodeType.EXPRESSION" -> "BlockID: 1269
+Call context: 
+None
+BEGIN_LOOP
+TMP_630(bool) = i < queueLength
+CONDITION TMP_630
+EXPRESSION:None	NodeType.STARTLOOP
+i < queueLength	NodeType.IFLOOP" [key=0];
+"BlockID: 1292
+Call context: 
+None
+TMP_651(uint256) = assets (c)+ totalLoss
+TMP_652(uint256) = TMP_651 (c)* withdrawMaxLoss
+TMP_653(uint256) = TMP_652 (c)/ PERCENT_DIVISOR
+TMP_654(bool) = totalLoss <= TMP_653
+CONDITION TMP_654
+EXPRESSION:TMP_654(bool) = totalLoss <= TMP_653	NodeType.IF" -> "BlockID: 1293
+Call context: 
+True
+TMP_655(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1292
+Call context: 
+None
+TMP_651(uint256) = assets (c)+ totalLoss
+TMP_652(uint256) = TMP_651 (c)* withdrawMaxLoss
+TMP_653(uint256) = TMP_652 (c)/ PERCENT_DIVISOR
+TMP_654(bool) = totalLoss <= TMP_653
+CONDITION TMP_654
+EXPRESSION:TMP_654(bool) = totalLoss <= TMP_653	NodeType.IF" -> "BlockID: 1294
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1294
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1266
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

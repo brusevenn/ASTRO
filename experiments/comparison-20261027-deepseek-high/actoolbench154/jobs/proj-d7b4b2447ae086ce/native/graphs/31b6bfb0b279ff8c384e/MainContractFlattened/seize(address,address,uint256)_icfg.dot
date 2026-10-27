@@ -1,0 +1,1951 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+CONDITION _notEntered
+EXPRESSION:qiantao require	NodeType.IF";
+"BlockID: 8
+Call context: 
+None
+RETURN TMP_1728
+EXPRESSION:seizeInternal(msg.sender,liquidator,borrower,seizeTokens)	NodeType.RETURN" [shape=box];
+"BlockID: 4
+Call context: seize
+True
+_notEntered(bool) := False(bool)
+_notEntered(bool) := True(bool)
+TMP_1730 = CONVERT this to address
+TMP_1731(uint256) = HIGH_LEVEL_CALL, dest:comptroller(ComptrollerInterface), function:seizeAllowed, arguments:['TMP_1730', 'seizerToken', 'liquidator', 'borrower', 'seizeTokens']  
+EXPRESSION:_notEntered = false	NodeType.EXPRESSION
+_notEntered = true	NodeType.EXPRESSION
+nonReentrant()	NodeType.EXPRESSION";
+"BlockID: 2
+Call context: seize
+True
+TMP_1979(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 3
+Call context: seize
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 5
+Call context: seize
+None
+allowed(uint256) := TMP_1731(uint256)
+TMP_1732(bool) = allowed != 0
+CONDITION TMP_1732
+EXPRESSION:allowed = comptroller.seizeAllowed(address(this),seizerToken,liquidator,borrower,seizeTokens)	NodeType.VARIABLE
+allowed = comptroller.seizeAllowed(address(this),seizerToken,liquidator,borrower,seizeTokens)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" [shape=box];
+"BlockID: 6
+Call context: seize
+True
+REF_1348(TokenErrorReporter.Error) -> Error.COMPTROLLER_REJECTION
+REF_1349(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_SEIZE_COMPTROLLER_REJECTION
+TMP_1852 = CONVERT err to uint256
+TMP_2361(None) := TMP_1852(uint256)
+TMP_2348(None) := TMP_1733(uint256)
+EXPRESSION:";
+"BlockID: 7
+Call context: seize
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 9
+Call context: seize
+None
+TMP_1734(bool) = borrower == liquidator
+CONDITION TMP_1734
+EXPRESSION:borrower == liquidator	NodeType.IF";
+"BlockID: 10
+Call context: seize
+True
+REF_1350(TokenErrorReporter.Error) -> Error.INVALID_ACCOUNT_PAIR
+REF_1351(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_SEIZE_LIQUIDATOR_IS_BORROWER
+TMP_1848 = CONVERT err to uint256
+TMP_2360(None) := TMP_1848(uint256)
+TMP_2348(None) := TMP_1735(uint256)
+EXPRESSION:";
+"BlockID: 11
+Call context: seize
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 12
+Call context: seize
+None
+NEW VARIABLE vars
+REF_1352(CarefulMath.MathError) -> vars.mathErr
+REF_1353(uint256) -> vars.borrowerTokensNew
+REF_1354(uint256) -> accountTokens[borrower]
+TMP_1967(bool) = b <= a
+CONDITION TMP_1967
+EXPRESSION:None	NodeType.VARIABLE
+b <= a	NodeType.IF";
+"BlockID: 15
+Call context: seize
+None
+REF_1352(CarefulMath.MathError)= UNPACK TUPLE_198 index: 0 
+REF_1353(uint256)= UNPACK TUPLE_198 index: 1 
+REF_1355(CarefulMath.MathError) -> vars.mathErr
+REF_1356(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1736(bool) = REF_1355 != REF_1356
+CONDITION TMP_1736
+EXPRESSION:(vars.mathErr,vars.borrowerTokensNew) = subUInt(accountTokens[borrower],seizeTokens)	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 16
+Call context: seize
+True
+REF_1357(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_1358(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_SEIZE_BALANCE_DECREMENT_FAILED
+REF_1359(CarefulMath.MathError) -> vars.mathErr
+TMP_1737 = CONVERT REF_1359 to uint256
+TMP_1852 = CONVERT err to uint256
+TMP_2361(None) := TMP_1852(uint256)
+TMP_2348(None) := TMP_1738(uint256)
+EXPRESSION:";
+"BlockID: 17
+Call context: seize
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 18
+Call context: seize
+None
+REF_1360(uint256) -> vars.protocolSeizeTokens
+TMP_1739(ExponentialNoError.Exp) = new Exp(protocolSeizeShareMantissa)
+REF_1485(uint256) -> b.mantissa
+TMP_1923(uint256) = a * b
+TMP_1924(uint256) = TMP_1923 / expScale
+TMP_2394(None) := TMP_1924(uint256)
+REF_1360(uint256) (->vars) := TMP_1740(uint256)
+REF_1361(uint256) -> vars.liquidatorSeizeTokens
+REF_1362(uint256) -> vars.protocolSeizeTokens
+TMP_1741(uint256) = a - b
+REF_1361(uint256) (->vars) := TMP_1741(uint256)
+REF_1363(CarefulMath.MathError) -> vars.mathErr
+REF_1364(uint256) -> vars.exchangeRateMantissa
+_totalSupply(uint256) := totalSupply(uint256)
+TMP_1498(bool) = _totalSupply == 0
+CONDITION TMP_1498
+EXPRESSION:mul_(a,b.mantissa) / expScale	NodeType.EXPRESSION
+vars.protocolSeizeTokens = mul_(seizeTokens,Exp(protocolSeizeShareMantissa))	NodeType.EXPRESSION
+vars.liquidatorSeizeTokens = sub_(seizeTokens,vars.protocolSeizeTokens)	NodeType.EXPRESSION
+vars.liquidatorSeizeTokens = sub_(seizeTokens,vars.protocolSeizeTokens)	NodeType.EXPRESSION
+_totalSupply = totalSupply	NodeType.VARIABLE
+_totalSupply = totalSupply	NodeType.EXPRESSION
+_totalSupply == 0	NodeType.IF";
+"BlockID: 27
+Call context: seize
+True
+REF_1367(uint256) -> vars.protocolSeizeAmount
+REF_1368(uint256) -> vars.exchangeRateMantissa
+TMP_1744(ExponentialNoError.Exp) = new Exp(REF_1368)
+REF_1369(uint256) -> vars.protocolSeizeTokens
+REF_1484(uint256) -> a.mantissa
+TMP_1921(uint256) = a * b
+TMP_1922(ExponentialNoError.Exp) = new Exp(TMP_1921)
+TMP_2393(None) := TMP_1922(ExponentialNoError.Exp)
+product(ExponentialNoError.Exp) := TMP_1885(ExponentialNoError.Exp)
+REF_1466(uint256) -> exp.mantissa
+TMP_1884(uint256) = REF_1466 / expScale
+TMP_2375(None) := TMP_1884(uint256)
+TMP_2376(None) := TMP_1886(uint256)
+REF_1367(uint256) (->vars) := TMP_1745(uint256)
+REF_1370(uint256) -> vars.totalReservesNew
+REF_1371(uint256) -> vars.protocolSeizeAmount
+TMP_1746(uint256) = a + b
+REF_1370(uint256) (->vars) := TMP_1746(uint256)
+REF_1372(uint256) -> vars.totalSupplyNew
+REF_1373(uint256) -> vars.protocolSeizeTokens
+TMP_1747(uint256) = a - b
+REF_1372(uint256) (->vars) := TMP_1747(uint256)
+REF_1374(CarefulMath.MathError) -> vars.mathErr
+REF_1375(uint256) -> vars.liquidatorTokensNew
+REF_1376(uint256) -> accountTokens[liquidator]
+REF_1377(uint256) -> vars.liquidatorSeizeTokens
+TMP_1969(uint256) = a + b
+c(uint256) := TMP_1969(uint256)
+TMP_1970(bool) = c >= a
+CONDITION TMP_1970
+EXPRESSION:Exp(mul_(a.mantissa,b))	NodeType.EXPRESSION
+product = mul_(a,scalar)	NodeType.VARIABLE
+product = mul_(a,scalar)	NodeType.EXPRESSION
+vars.protocolSeizeAmount = mul_ScalarTruncate(Exp(vars.exchangeRateMantissa),vars.protocolSeizeTokens)	NodeType.EXPRESSION
+vars.totalReservesNew = add_(totalReserves,vars.protocolSeizeAmount)	NodeType.EXPRESSION
+vars.totalReservesNew = add_(totalReserves,vars.protocolSeizeAmount)	NodeType.EXPRESSION
+vars.totalSupplyNew = sub_(totalSupply,vars.protocolSeizeTokens)	NodeType.EXPRESSION
+vars.totalSupplyNew = sub_(totalSupply,vars.protocolSeizeTokens)	NodeType.EXPRESSION
+c = a + b	NodeType.VARIABLE
+c = a + b	NodeType.EXPRESSION
+c >= a	NodeType.IF";
+"BlockID: 33
+Call context: seize
+None
+REF_1374(CarefulMath.MathError)= UNPACK TUPLE_200 index: 0 
+REF_1375(uint256)= UNPACK TUPLE_200 index: 1 
+REF_1378(CarefulMath.MathError) -> vars.mathErr
+REF_1379(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1748(bool) = REF_1378 != REF_1379
+CONDITION TMP_1748
+EXPRESSION:(vars.mathErr,vars.liquidatorTokensNew) = addUInt(accountTokens[liquidator],vars.liquidatorSeizeTokens)	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 36
+Call context: seize
+True
+REF_1380(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_1381(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_SEIZE_BALANCE_INCREMENT_FAILED
+REF_1382(CarefulMath.MathError) -> vars.mathErr
+TMP_1749 = CONVERT REF_1382 to uint256
+TMP_1852 = CONVERT err to uint256
+TMP_2361(None) := TMP_1852(uint256)
+TMP_2348(None) := TMP_1750(uint256)
+EXPRESSION:";
+"BlockID: 37
+Call context: seize
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 42
+Call context: seize
+None
+REF_1383(uint256) -> vars.totalReservesNew
+totalReserves(uint256) := REF_1383(uint256)
+REF_1384(uint256) -> vars.totalSupplyNew
+totalSupply(uint256) := REF_1384(uint256)
+REF_1385(uint256) -> accountTokens[borrower]
+REF_1386(uint256) -> vars.borrowerTokensNew
+REF_1385(uint256) (->accountTokens) := REF_1386(uint256)
+REF_1387(uint256) -> accountTokens[liquidator]
+REF_1388(uint256) -> vars.liquidatorTokensNew
+REF_1387(uint256) (->accountTokens) := REF_1388(uint256)
+REF_1393(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1756 = CONVERT REF_1393 to uint256
+TMP_2348(None) := TMP_1756(uint256)
+EXPRESSION:totalReserves = vars.totalReservesNew	NodeType.EXPRESSION
+totalSupply = vars.totalSupplyNew	NodeType.EXPRESSION
+accountTokens[borrower] = vars.borrowerTokensNew	NodeType.EXPRESSION
+accountTokens[liquidator] = vars.liquidatorTokensNew	NodeType.EXPRESSION";
+"BlockID: 21
+Call context: seize
+None
+REF_1363(CarefulMath.MathError)= UNPACK TUPLE_199 index: 0 
+REF_1364(uint256)= UNPACK TUPLE_199 index: 1 
+REF_1365(CarefulMath.MathError) -> vars.mathErr
+REF_1366(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1742(bool) = REF_1365 == REF_1366
+CONDITION TMP_1742
+EXPRESSION:TMP_1742(bool) = REF_1365 == REF_1366	NodeType.IF";
+"BlockID: 23
+Call context: seize
+True
+TMP_1743(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 24
+Call context: seize
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 13
+Call context: seize,seizeInternal
+True
+REF_1503(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1968(uint256) = a - b
+TMP_2411(None) := REF_1503(CarefulMath.MathError)
+TMP_2411(None) := TMP_1968(uint256)
+EXPRESSION:";
+"BlockID: 14
+Call context: seize,seizeInternal
+False
+REF_1504(CarefulMath.MathError) -> MathError.INTEGER_UNDERFLOW
+TMP_2411(None) := REF_1504(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 19
+Call context: seize,seizeInternal
+True
+REF_1104(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_2332(None) := REF_1104(CarefulMath.MathError)
+TMP_2332(None) := REF_1108(uint256)
+TMP_2332(None) := initialExchangeRateMantissa(uint256)
+EXPRESSION:";
+"BlockID: 20
+Call context: seize,seizeInternal
+False
+TMP_1392 = CONVERT underlying to EIP20Interface
+token(EIP20Interface) := TMP_1392(EIP20Interface)
+TMP_1393 = CONVERT this to address
+TMP_1394(uint256) = HIGH_LEVEL_CALL, dest:token(EIP20Interface), function:balanceOf, arguments:['TMP_1393']  
+EXPRESSION:token = EIP20Interface(underlying)	NodeType.VARIABLE
+token = EIP20Interface(underlying)	NodeType.EXPRESSION
+token.balanceOf(address(this))	NodeType.EXPRESSION";
+"BlockID: 34
+Call context: seize,seizeInternal
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_169 index: 0 
+cashPlusBorrowsMinusReserves(uint256)= UNPACK TUPLE_169 index: 1 
+REF_1105(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1500(bool) = mathErr != REF_1105
+CONDITION TMP_1500
+EXPRESSION:(mathErr,cashPlusBorrowsMinusReserves) = addThenSubUInt(totalCash,totalBorrows,totalReserves)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 38
+Call context: seize,seizeInternal
+True
+TMP_2332(None) := mathErr(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 39
+Call context: seize,seizeInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 43
+Call context: seize,seizeInternal
+None
+NEW VARIABLE err0
+NEW VARIABLE scaledNumerator
+TMP_1961(bool) = a == 0
+CONDITION TMP_1961
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF";
+"BlockID: 53
+Call context: seize,seizeInternal
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_170 index: 0 
+exchangeRate(ExponentialNoError.Exp)= UNPACK TUPLE_170 index: 1 
+REF_1106(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1501(bool) = mathErr != REF_1106
+CONDITION TMP_1501
+EXPRESSION:(mathErr,exchangeRate) = getExp(cashPlusBorrowsMinusReserves,_totalSupply)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 55
+Call context: seize,seizeInternal
+True
+TMP_2332(None) := mathErr(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 56
+Call context: seize,seizeInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 59
+Call context: seize,seizeInternal
+None
+REF_1107(CarefulMath.MathError) -> MathError.NO_ERROR
+REF_1108(uint256) -> exchangeRate.mantissa
+TMP_2332(None) := REF_1107(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 22
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+TMP_2310(None) := TMP_1394(uint256)
+totalCash(uint256) := TMP_1499(uint256)
+NEW VARIABLE cashPlusBorrowsMinusReserves
+NEW VARIABLE exchangeRate
+NEW VARIABLE mathErr
+NEW VARIABLE err0
+NEW VARIABLE sum
+TMP_1969(uint256) = a + b
+c(uint256) := TMP_1969(uint256)
+TMP_1970(bool) = c >= a
+CONDITION TMP_1970
+EXPRESSION:totalCash = getCashPrior()	NodeType.VARIABLE
+totalCash = getCashPrior()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+c = a + b	NodeType.VARIABLE
+c = a + b	NodeType.EXPRESSION
+c >= a	NodeType.IF" [shape=box];
+"BlockID: 28
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_221 index: 0 
+sum(uint256)= UNPACK TUPLE_221 index: 1 
+REF_1507(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1971(bool) = err0 != REF_1507
+CONDITION TMP_1971
+EXPRESSION:(err0,sum) = addUInt(a,b)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 31
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+True
+TMP_2413(None) := err0(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 32
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 35
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+TMP_1967(bool) = b <= a
+CONDITION TMP_1967
+EXPRESSION:b <= a	NodeType.IF";
+"BlockID: 44
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+TMP_2413(None) := TUPLE_222([<slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x78d644aae760>, <slither.core.solidity_types.elementary_type.ElementaryType object at 0x78d644aae670>])
+EXPRESSION:" [shape=box];
+"BlockID: 25
+Call context: seize,seizeInternal,exchangeRateStoredInternal,addThenSubUInt
+True
+REF_1505(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_2412(None) := REF_1505(CarefulMath.MathError)
+TMP_2412(None) := c(uint256)
+EXPRESSION:";
+"BlockID: 26
+Call context: seize,seizeInternal,exchangeRateStoredInternal,addThenSubUInt
+False
+REF_1506(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_2412(None) := REF_1506(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 40
+Call context: seize,seizeInternal,exchangeRateStoredInternal,addThenSubUInt
+True
+REF_1503(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1968(uint256) = a - b
+TMP_2411(None) := REF_1503(CarefulMath.MathError)
+TMP_2411(None) := TMP_1968(uint256)
+EXPRESSION:";
+"BlockID: 41
+Call context: seize,seizeInternal,exchangeRateStoredInternal,addThenSubUInt
+False
+REF_1504(CarefulMath.MathError) -> MathError.INTEGER_UNDERFLOW
+TMP_2411(None) := REF_1504(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 47
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_202 index: 0 
+scaledNumerator(uint256)= UNPACK TUPLE_202 index: 1 
+REF_1437(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1853(bool) = err0 != REF_1437
+CONDITION TMP_1853
+EXPRESSION:(err0,scaledNumerator) = mulUInt(num,expScale)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 49
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+True
+TMP_1854(ExponentialNoError.Exp) = new Exp(0)
+TMP_2362(None) := err0(CarefulMath.MathError)
+TMP_2362(None) := TMP_1856(ExponentialNoError.Exp)
+TMP_2362(None) := TMP_1857(ExponentialNoError.Exp)
+TMP_2362(None) := TMP_1854(ExponentialNoError.Exp)
+EXPRESSION:";
+"BlockID: 50
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 54
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+NEW VARIABLE err1
+NEW VARIABLE rational
+TMP_1965(bool) = b == 0
+CONDITION TMP_1965
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+b == 0	NodeType.IF";
+"BlockID: 60
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+err1(CarefulMath.MathError)= UNPACK TUPLE_203 index: 0 
+rational(uint256)= UNPACK TUPLE_203 index: 1 
+REF_1438(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1855(bool) = err1 != REF_1438
+CONDITION TMP_1855
+EXPRESSION:(err1,rational) = divUInt(scaledNumerator,denom)	NodeType.EXPRESSION
+err1 != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 62
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+True
+TMP_1856(ExponentialNoError.Exp) = new Exp(0)
+TMP_2362(None) := err1(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 63
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 64
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+REF_1439(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1857(ExponentialNoError.Exp) = new Exp(rational)
+TMP_2362(None) := REF_1439(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 45
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+True
+REF_1498(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_2409(None) := REF_1498(CarefulMath.MathError)
+TMP_2409(None) := c(uint256)
+EXPRESSION:";
+"BlockID: 46
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 48
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+None
+TMP_1962(uint256) = a * b
+c(uint256) := TMP_1962(uint256)
+TMP_1963(uint256) = c / a
+TMP_1964(bool) = TMP_1963 != b
+CONDITION TMP_1964
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF";
+"BlockID: 51
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+True
+REF_1499(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_2409(None) := REF_1499(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 52
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+False
+REF_1500(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_2409(None) := REF_1500(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 57
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+True
+REF_1501(CarefulMath.MathError) -> MathError.DIVISION_BY_ZERO
+TMP_2410(None) := REF_1501(CarefulMath.MathError)
+TMP_2410(None) := TMP_1966(uint256)
+EXPRESSION:";
+"BlockID: 58
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 61
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+None
+REF_1502(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1966(uint256) = a / b
+TMP_2410(None) := REF_1502(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 29
+Call context: seize,seizeInternal
+True
+REF_1505(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_2412(None) := REF_1505(CarefulMath.MathError)
+TMP_2412(None) := c(uint256)
+EXPRESSION:";
+"BlockID: 30
+Call context: seize,seizeInternal
+False
+REF_1506(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_2412(None) := REF_1506(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+CONDITION _notEntered
+EXPRESSION:qiantao require	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+CONDITION _notEntered
+EXPRESSION:qiantao require	NodeType.IF" -> "BlockID: 2
+Call context: seize
+True
+TMP_1979(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+CONDITION _notEntered
+EXPRESSION:qiantao require	NodeType.IF" -> "BlockID: 3
+Call context: seize
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 4
+Call context: seize
+True
+_notEntered(bool) := False(bool)
+_notEntered(bool) := True(bool)
+TMP_1730 = CONVERT this to address
+TMP_1731(uint256) = HIGH_LEVEL_CALL, dest:comptroller(ComptrollerInterface), function:seizeAllowed, arguments:['TMP_1730', 'seizerToken', 'liquidator', 'borrower', 'seizeTokens']  
+EXPRESSION:_notEntered = false	NodeType.EXPRESSION
+_notEntered = true	NodeType.EXPRESSION
+nonReentrant()	NodeType.EXPRESSION" -> "BlockID: 5
+Call context: seize
+None
+allowed(uint256) := TMP_1731(uint256)
+TMP_1732(bool) = allowed != 0
+CONDITION TMP_1732
+EXPRESSION:allowed = comptroller.seizeAllowed(address(this),seizerToken,liquidator,borrower,seizeTokens)	NodeType.VARIABLE
+allowed = comptroller.seizeAllowed(address(this),seizerToken,liquidator,borrower,seizeTokens)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" [key="successor_1"];
+"BlockID: 3
+Call context: seize
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: seize
+True
+_notEntered(bool) := False(bool)
+_notEntered(bool) := True(bool)
+TMP_1730 = CONVERT this to address
+TMP_1731(uint256) = HIGH_LEVEL_CALL, dest:comptroller(ComptrollerInterface), function:seizeAllowed, arguments:['TMP_1730', 'seizerToken', 'liquidator', 'borrower', 'seizeTokens']  
+EXPRESSION:_notEntered = false	NodeType.EXPRESSION
+_notEntered = true	NodeType.EXPRESSION
+nonReentrant()	NodeType.EXPRESSION" [key=0];
+"BlockID: 5
+Call context: seize
+None
+allowed(uint256) := TMP_1731(uint256)
+TMP_1732(bool) = allowed != 0
+CONDITION TMP_1732
+EXPRESSION:allowed = comptroller.seizeAllowed(address(this),seizerToken,liquidator,borrower,seizeTokens)	NodeType.VARIABLE
+allowed = comptroller.seizeAllowed(address(this),seizerToken,liquidator,borrower,seizeTokens)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" -> "BlockID: 6
+Call context: seize
+True
+REF_1348(TokenErrorReporter.Error) -> Error.COMPTROLLER_REJECTION
+REF_1349(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_SEIZE_COMPTROLLER_REJECTION
+TMP_1852 = CONVERT err to uint256
+TMP_2361(None) := TMP_1852(uint256)
+TMP_2348(None) := TMP_1733(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 5
+Call context: seize
+None
+allowed(uint256) := TMP_1731(uint256)
+TMP_1732(bool) = allowed != 0
+CONDITION TMP_1732
+EXPRESSION:allowed = comptroller.seizeAllowed(address(this),seizerToken,liquidator,borrower,seizeTokens)	NodeType.VARIABLE
+allowed = comptroller.seizeAllowed(address(this),seizerToken,liquidator,borrower,seizeTokens)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" -> "BlockID: 7
+Call context: seize
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 6
+Call context: seize
+True
+REF_1348(TokenErrorReporter.Error) -> Error.COMPTROLLER_REJECTION
+REF_1349(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_SEIZE_COMPTROLLER_REJECTION
+TMP_1852 = CONVERT err to uint256
+TMP_2361(None) := TMP_1852(uint256)
+TMP_2348(None) := TMP_1733(uint256)
+EXPRESSION:" -> "BlockID: 8
+Call context: 
+None
+RETURN TMP_1728
+EXPRESSION:seizeInternal(msg.sender,liquidator,borrower,seizeTokens)	NodeType.RETURN" [key="successor_5", ref="CErc20Delegate.seizeInternal"];
+"BlockID: 7
+Call context: seize
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 9
+Call context: seize
+None
+TMP_1734(bool) = borrower == liquidator
+CONDITION TMP_1734
+EXPRESSION:borrower == liquidator	NodeType.IF" [key=0];
+"BlockID: 9
+Call context: seize
+None
+TMP_1734(bool) = borrower == liquidator
+CONDITION TMP_1734
+EXPRESSION:borrower == liquidator	NodeType.IF" -> "BlockID: 10
+Call context: seize
+True
+REF_1350(TokenErrorReporter.Error) -> Error.INVALID_ACCOUNT_PAIR
+REF_1351(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_SEIZE_LIQUIDATOR_IS_BORROWER
+TMP_1848 = CONVERT err to uint256
+TMP_2360(None) := TMP_1848(uint256)
+TMP_2348(None) := TMP_1735(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 9
+Call context: seize
+None
+TMP_1734(bool) = borrower == liquidator
+CONDITION TMP_1734
+EXPRESSION:borrower == liquidator	NodeType.IF" -> "BlockID: 11
+Call context: seize
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 10
+Call context: seize
+True
+REF_1350(TokenErrorReporter.Error) -> Error.INVALID_ACCOUNT_PAIR
+REF_1351(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_SEIZE_LIQUIDATOR_IS_BORROWER
+TMP_1848 = CONVERT err to uint256
+TMP_2360(None) := TMP_1848(uint256)
+TMP_2348(None) := TMP_1735(uint256)
+EXPRESSION:" -> "BlockID: 8
+Call context: 
+None
+RETURN TMP_1728
+EXPRESSION:seizeInternal(msg.sender,liquidator,borrower,seizeTokens)	NodeType.RETURN" [key="successor_5", ref="CErc20Delegate.seizeInternal"];
+"BlockID: 11
+Call context: seize
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 12
+Call context: seize
+None
+NEW VARIABLE vars
+REF_1352(CarefulMath.MathError) -> vars.mathErr
+REF_1353(uint256) -> vars.borrowerTokensNew
+REF_1354(uint256) -> accountTokens[borrower]
+TMP_1967(bool) = b <= a
+CONDITION TMP_1967
+EXPRESSION:None	NodeType.VARIABLE
+b <= a	NodeType.IF" [key=0];
+"BlockID: 12
+Call context: seize
+None
+NEW VARIABLE vars
+REF_1352(CarefulMath.MathError) -> vars.mathErr
+REF_1353(uint256) -> vars.borrowerTokensNew
+REF_1354(uint256) -> accountTokens[borrower]
+TMP_1967(bool) = b <= a
+CONDITION TMP_1967
+EXPRESSION:None	NodeType.VARIABLE
+b <= a	NodeType.IF" -> "BlockID: 13
+Call context: seize,seizeInternal
+True
+REF_1503(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1968(uint256) = a - b
+TMP_2411(None) := REF_1503(CarefulMath.MathError)
+TMP_2411(None) := TMP_1968(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 12
+Call context: seize
+None
+NEW VARIABLE vars
+REF_1352(CarefulMath.MathError) -> vars.mathErr
+REF_1353(uint256) -> vars.borrowerTokensNew
+REF_1354(uint256) -> accountTokens[borrower]
+TMP_1967(bool) = b <= a
+CONDITION TMP_1967
+EXPRESSION:None	NodeType.VARIABLE
+b <= a	NodeType.IF" -> "BlockID: 14
+Call context: seize,seizeInternal
+False
+REF_1504(CarefulMath.MathError) -> MathError.INTEGER_UNDERFLOW
+TMP_2411(None) := REF_1504(CarefulMath.MathError)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 15
+Call context: seize
+None
+REF_1352(CarefulMath.MathError)= UNPACK TUPLE_198 index: 0 
+REF_1353(uint256)= UNPACK TUPLE_198 index: 1 
+REF_1355(CarefulMath.MathError) -> vars.mathErr
+REF_1356(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1736(bool) = REF_1355 != REF_1356
+CONDITION TMP_1736
+EXPRESSION:(vars.mathErr,vars.borrowerTokensNew) = subUInt(accountTokens[borrower],seizeTokens)	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 16
+Call context: seize
+True
+REF_1357(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_1358(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_SEIZE_BALANCE_DECREMENT_FAILED
+REF_1359(CarefulMath.MathError) -> vars.mathErr
+TMP_1737 = CONVERT REF_1359 to uint256
+TMP_1852 = CONVERT err to uint256
+TMP_2361(None) := TMP_1852(uint256)
+TMP_2348(None) := TMP_1738(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 15
+Call context: seize
+None
+REF_1352(CarefulMath.MathError)= UNPACK TUPLE_198 index: 0 
+REF_1353(uint256)= UNPACK TUPLE_198 index: 1 
+REF_1355(CarefulMath.MathError) -> vars.mathErr
+REF_1356(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1736(bool) = REF_1355 != REF_1356
+CONDITION TMP_1736
+EXPRESSION:(vars.mathErr,vars.borrowerTokensNew) = subUInt(accountTokens[borrower],seizeTokens)	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 17
+Call context: seize
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 16
+Call context: seize
+True
+REF_1357(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_1358(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_SEIZE_BALANCE_DECREMENT_FAILED
+REF_1359(CarefulMath.MathError) -> vars.mathErr
+TMP_1737 = CONVERT REF_1359 to uint256
+TMP_1852 = CONVERT err to uint256
+TMP_2361(None) := TMP_1852(uint256)
+TMP_2348(None) := TMP_1738(uint256)
+EXPRESSION:" -> "BlockID: 8
+Call context: 
+None
+RETURN TMP_1728
+EXPRESSION:seizeInternal(msg.sender,liquidator,borrower,seizeTokens)	NodeType.RETURN" [key="successor_5", ref="CErc20Delegate.seizeInternal"];
+"BlockID: 17
+Call context: seize
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 18
+Call context: seize
+None
+REF_1360(uint256) -> vars.protocolSeizeTokens
+TMP_1739(ExponentialNoError.Exp) = new Exp(protocolSeizeShareMantissa)
+REF_1485(uint256) -> b.mantissa
+TMP_1923(uint256) = a * b
+TMP_1924(uint256) = TMP_1923 / expScale
+TMP_2394(None) := TMP_1924(uint256)
+REF_1360(uint256) (->vars) := TMP_1740(uint256)
+REF_1361(uint256) -> vars.liquidatorSeizeTokens
+REF_1362(uint256) -> vars.protocolSeizeTokens
+TMP_1741(uint256) = a - b
+REF_1361(uint256) (->vars) := TMP_1741(uint256)
+REF_1363(CarefulMath.MathError) -> vars.mathErr
+REF_1364(uint256) -> vars.exchangeRateMantissa
+_totalSupply(uint256) := totalSupply(uint256)
+TMP_1498(bool) = _totalSupply == 0
+CONDITION TMP_1498
+EXPRESSION:mul_(a,b.mantissa) / expScale	NodeType.EXPRESSION
+vars.protocolSeizeTokens = mul_(seizeTokens,Exp(protocolSeizeShareMantissa))	NodeType.EXPRESSION
+vars.liquidatorSeizeTokens = sub_(seizeTokens,vars.protocolSeizeTokens)	NodeType.EXPRESSION
+vars.liquidatorSeizeTokens = sub_(seizeTokens,vars.protocolSeizeTokens)	NodeType.EXPRESSION
+_totalSupply = totalSupply	NodeType.VARIABLE
+_totalSupply = totalSupply	NodeType.EXPRESSION
+_totalSupply == 0	NodeType.IF" [key=0];
+"BlockID: 18
+Call context: seize
+None
+REF_1360(uint256) -> vars.protocolSeizeTokens
+TMP_1739(ExponentialNoError.Exp) = new Exp(protocolSeizeShareMantissa)
+REF_1485(uint256) -> b.mantissa
+TMP_1923(uint256) = a * b
+TMP_1924(uint256) = TMP_1923 / expScale
+TMP_2394(None) := TMP_1924(uint256)
+REF_1360(uint256) (->vars) := TMP_1740(uint256)
+REF_1361(uint256) -> vars.liquidatorSeizeTokens
+REF_1362(uint256) -> vars.protocolSeizeTokens
+TMP_1741(uint256) = a - b
+REF_1361(uint256) (->vars) := TMP_1741(uint256)
+REF_1363(CarefulMath.MathError) -> vars.mathErr
+REF_1364(uint256) -> vars.exchangeRateMantissa
+_totalSupply(uint256) := totalSupply(uint256)
+TMP_1498(bool) = _totalSupply == 0
+CONDITION TMP_1498
+EXPRESSION:mul_(a,b.mantissa) / expScale	NodeType.EXPRESSION
+vars.protocolSeizeTokens = mul_(seizeTokens,Exp(protocolSeizeShareMantissa))	NodeType.EXPRESSION
+vars.liquidatorSeizeTokens = sub_(seizeTokens,vars.protocolSeizeTokens)	NodeType.EXPRESSION
+vars.liquidatorSeizeTokens = sub_(seizeTokens,vars.protocolSeizeTokens)	NodeType.EXPRESSION
+_totalSupply = totalSupply	NodeType.VARIABLE
+_totalSupply = totalSupply	NodeType.EXPRESSION
+_totalSupply == 0	NodeType.IF" -> "BlockID: 19
+Call context: seize,seizeInternal
+True
+REF_1104(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_2332(None) := REF_1104(CarefulMath.MathError)
+TMP_2332(None) := REF_1108(uint256)
+TMP_2332(None) := initialExchangeRateMantissa(uint256)
+EXPRESSION:" [key="successor_1"];
+"BlockID: 18
+Call context: seize
+None
+REF_1360(uint256) -> vars.protocolSeizeTokens
+TMP_1739(ExponentialNoError.Exp) = new Exp(protocolSeizeShareMantissa)
+REF_1485(uint256) -> b.mantissa
+TMP_1923(uint256) = a * b
+TMP_1924(uint256) = TMP_1923 / expScale
+TMP_2394(None) := TMP_1924(uint256)
+REF_1360(uint256) (->vars) := TMP_1740(uint256)
+REF_1361(uint256) -> vars.liquidatorSeizeTokens
+REF_1362(uint256) -> vars.protocolSeizeTokens
+TMP_1741(uint256) = a - b
+REF_1361(uint256) (->vars) := TMP_1741(uint256)
+REF_1363(CarefulMath.MathError) -> vars.mathErr
+REF_1364(uint256) -> vars.exchangeRateMantissa
+_totalSupply(uint256) := totalSupply(uint256)
+TMP_1498(bool) = _totalSupply == 0
+CONDITION TMP_1498
+EXPRESSION:mul_(a,b.mantissa) / expScale	NodeType.EXPRESSION
+vars.protocolSeizeTokens = mul_(seizeTokens,Exp(protocolSeizeShareMantissa))	NodeType.EXPRESSION
+vars.liquidatorSeizeTokens = sub_(seizeTokens,vars.protocolSeizeTokens)	NodeType.EXPRESSION
+vars.liquidatorSeizeTokens = sub_(seizeTokens,vars.protocolSeizeTokens)	NodeType.EXPRESSION
+_totalSupply = totalSupply	NodeType.VARIABLE
+_totalSupply = totalSupply	NodeType.EXPRESSION
+_totalSupply == 0	NodeType.IF" -> "BlockID: 20
+Call context: seize,seizeInternal
+False
+TMP_1392 = CONVERT underlying to EIP20Interface
+token(EIP20Interface) := TMP_1392(EIP20Interface)
+TMP_1393 = CONVERT this to address
+TMP_1394(uint256) = HIGH_LEVEL_CALL, dest:token(EIP20Interface), function:balanceOf, arguments:['TMP_1393']  
+EXPRESSION:token = EIP20Interface(underlying)	NodeType.VARIABLE
+token = EIP20Interface(underlying)	NodeType.EXPRESSION
+token.balanceOf(address(this))	NodeType.EXPRESSION" [key="successor_1"];
+"BlockID: 27
+Call context: seize
+True
+REF_1367(uint256) -> vars.protocolSeizeAmount
+REF_1368(uint256) -> vars.exchangeRateMantissa
+TMP_1744(ExponentialNoError.Exp) = new Exp(REF_1368)
+REF_1369(uint256) -> vars.protocolSeizeTokens
+REF_1484(uint256) -> a.mantissa
+TMP_1921(uint256) = a * b
+TMP_1922(ExponentialNoError.Exp) = new Exp(TMP_1921)
+TMP_2393(None) := TMP_1922(ExponentialNoError.Exp)
+product(ExponentialNoError.Exp) := TMP_1885(ExponentialNoError.Exp)
+REF_1466(uint256) -> exp.mantissa
+TMP_1884(uint256) = REF_1466 / expScale
+TMP_2375(None) := TMP_1884(uint256)
+TMP_2376(None) := TMP_1886(uint256)
+REF_1367(uint256) (->vars) := TMP_1745(uint256)
+REF_1370(uint256) -> vars.totalReservesNew
+REF_1371(uint256) -> vars.protocolSeizeAmount
+TMP_1746(uint256) = a + b
+REF_1370(uint256) (->vars) := TMP_1746(uint256)
+REF_1372(uint256) -> vars.totalSupplyNew
+REF_1373(uint256) -> vars.protocolSeizeTokens
+TMP_1747(uint256) = a - b
+REF_1372(uint256) (->vars) := TMP_1747(uint256)
+REF_1374(CarefulMath.MathError) -> vars.mathErr
+REF_1375(uint256) -> vars.liquidatorTokensNew
+REF_1376(uint256) -> accountTokens[liquidator]
+REF_1377(uint256) -> vars.liquidatorSeizeTokens
+TMP_1969(uint256) = a + b
+c(uint256) := TMP_1969(uint256)
+TMP_1970(bool) = c >= a
+CONDITION TMP_1970
+EXPRESSION:Exp(mul_(a.mantissa,b))	NodeType.EXPRESSION
+product = mul_(a,scalar)	NodeType.VARIABLE
+product = mul_(a,scalar)	NodeType.EXPRESSION
+vars.protocolSeizeAmount = mul_ScalarTruncate(Exp(vars.exchangeRateMantissa),vars.protocolSeizeTokens)	NodeType.EXPRESSION
+vars.totalReservesNew = add_(totalReserves,vars.protocolSeizeAmount)	NodeType.EXPRESSION
+vars.totalReservesNew = add_(totalReserves,vars.protocolSeizeAmount)	NodeType.EXPRESSION
+vars.totalSupplyNew = sub_(totalSupply,vars.protocolSeizeTokens)	NodeType.EXPRESSION
+vars.totalSupplyNew = sub_(totalSupply,vars.protocolSeizeTokens)	NodeType.EXPRESSION
+c = a + b	NodeType.VARIABLE
+c = a + b	NodeType.EXPRESSION
+c >= a	NodeType.IF" -> "BlockID: 29
+Call context: seize,seizeInternal
+True
+REF_1505(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_2412(None) := REF_1505(CarefulMath.MathError)
+TMP_2412(None) := c(uint256)
+EXPRESSION:" [key="successor_1"];
+"BlockID: 27
+Call context: seize
+True
+REF_1367(uint256) -> vars.protocolSeizeAmount
+REF_1368(uint256) -> vars.exchangeRateMantissa
+TMP_1744(ExponentialNoError.Exp) = new Exp(REF_1368)
+REF_1369(uint256) -> vars.protocolSeizeTokens
+REF_1484(uint256) -> a.mantissa
+TMP_1921(uint256) = a * b
+TMP_1922(ExponentialNoError.Exp) = new Exp(TMP_1921)
+TMP_2393(None) := TMP_1922(ExponentialNoError.Exp)
+product(ExponentialNoError.Exp) := TMP_1885(ExponentialNoError.Exp)
+REF_1466(uint256) -> exp.mantissa
+TMP_1884(uint256) = REF_1466 / expScale
+TMP_2375(None) := TMP_1884(uint256)
+TMP_2376(None) := TMP_1886(uint256)
+REF_1367(uint256) (->vars) := TMP_1745(uint256)
+REF_1370(uint256) -> vars.totalReservesNew
+REF_1371(uint256) -> vars.protocolSeizeAmount
+TMP_1746(uint256) = a + b
+REF_1370(uint256) (->vars) := TMP_1746(uint256)
+REF_1372(uint256) -> vars.totalSupplyNew
+REF_1373(uint256) -> vars.protocolSeizeTokens
+TMP_1747(uint256) = a - b
+REF_1372(uint256) (->vars) := TMP_1747(uint256)
+REF_1374(CarefulMath.MathError) -> vars.mathErr
+REF_1375(uint256) -> vars.liquidatorTokensNew
+REF_1376(uint256) -> accountTokens[liquidator]
+REF_1377(uint256) -> vars.liquidatorSeizeTokens
+TMP_1969(uint256) = a + b
+c(uint256) := TMP_1969(uint256)
+TMP_1970(bool) = c >= a
+CONDITION TMP_1970
+EXPRESSION:Exp(mul_(a.mantissa,b))	NodeType.EXPRESSION
+product = mul_(a,scalar)	NodeType.VARIABLE
+product = mul_(a,scalar)	NodeType.EXPRESSION
+vars.protocolSeizeAmount = mul_ScalarTruncate(Exp(vars.exchangeRateMantissa),vars.protocolSeizeTokens)	NodeType.EXPRESSION
+vars.totalReservesNew = add_(totalReserves,vars.protocolSeizeAmount)	NodeType.EXPRESSION
+vars.totalReservesNew = add_(totalReserves,vars.protocolSeizeAmount)	NodeType.EXPRESSION
+vars.totalSupplyNew = sub_(totalSupply,vars.protocolSeizeTokens)	NodeType.EXPRESSION
+vars.totalSupplyNew = sub_(totalSupply,vars.protocolSeizeTokens)	NodeType.EXPRESSION
+c = a + b	NodeType.VARIABLE
+c = a + b	NodeType.EXPRESSION
+c >= a	NodeType.IF" -> "BlockID: 30
+Call context: seize,seizeInternal
+False
+REF_1506(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_2412(None) := REF_1506(CarefulMath.MathError)
+EXPRESSION:" [key="successor_1"];
+"BlockID: 33
+Call context: seize
+None
+REF_1374(CarefulMath.MathError)= UNPACK TUPLE_200 index: 0 
+REF_1375(uint256)= UNPACK TUPLE_200 index: 1 
+REF_1378(CarefulMath.MathError) -> vars.mathErr
+REF_1379(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1748(bool) = REF_1378 != REF_1379
+CONDITION TMP_1748
+EXPRESSION:(vars.mathErr,vars.liquidatorTokensNew) = addUInt(accountTokens[liquidator],vars.liquidatorSeizeTokens)	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 36
+Call context: seize
+True
+REF_1380(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_1381(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_SEIZE_BALANCE_INCREMENT_FAILED
+REF_1382(CarefulMath.MathError) -> vars.mathErr
+TMP_1749 = CONVERT REF_1382 to uint256
+TMP_1852 = CONVERT err to uint256
+TMP_2361(None) := TMP_1852(uint256)
+TMP_2348(None) := TMP_1750(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 33
+Call context: seize
+None
+REF_1374(CarefulMath.MathError)= UNPACK TUPLE_200 index: 0 
+REF_1375(uint256)= UNPACK TUPLE_200 index: 1 
+REF_1378(CarefulMath.MathError) -> vars.mathErr
+REF_1379(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1748(bool) = REF_1378 != REF_1379
+CONDITION TMP_1748
+EXPRESSION:(vars.mathErr,vars.liquidatorTokensNew) = addUInt(accountTokens[liquidator],vars.liquidatorSeizeTokens)	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 37
+Call context: seize
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 36
+Call context: seize
+True
+REF_1380(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_1381(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_SEIZE_BALANCE_INCREMENT_FAILED
+REF_1382(CarefulMath.MathError) -> vars.mathErr
+TMP_1749 = CONVERT REF_1382 to uint256
+TMP_1852 = CONVERT err to uint256
+TMP_2361(None) := TMP_1852(uint256)
+TMP_2348(None) := TMP_1750(uint256)
+EXPRESSION:" -> "BlockID: 8
+Call context: 
+None
+RETURN TMP_1728
+EXPRESSION:seizeInternal(msg.sender,liquidator,borrower,seizeTokens)	NodeType.RETURN" [key="successor_5", ref="CErc20Delegate.seizeInternal"];
+"BlockID: 37
+Call context: seize
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 42
+Call context: seize
+None
+REF_1383(uint256) -> vars.totalReservesNew
+totalReserves(uint256) := REF_1383(uint256)
+REF_1384(uint256) -> vars.totalSupplyNew
+totalSupply(uint256) := REF_1384(uint256)
+REF_1385(uint256) -> accountTokens[borrower]
+REF_1386(uint256) -> vars.borrowerTokensNew
+REF_1385(uint256) (->accountTokens) := REF_1386(uint256)
+REF_1387(uint256) -> accountTokens[liquidator]
+REF_1388(uint256) -> vars.liquidatorTokensNew
+REF_1387(uint256) (->accountTokens) := REF_1388(uint256)
+REF_1393(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1756 = CONVERT REF_1393 to uint256
+TMP_2348(None) := TMP_1756(uint256)
+EXPRESSION:totalReserves = vars.totalReservesNew	NodeType.EXPRESSION
+totalSupply = vars.totalSupplyNew	NodeType.EXPRESSION
+accountTokens[borrower] = vars.borrowerTokensNew	NodeType.EXPRESSION
+accountTokens[liquidator] = vars.liquidatorTokensNew	NodeType.EXPRESSION" [key=0];
+"BlockID: 42
+Call context: seize
+None
+REF_1383(uint256) -> vars.totalReservesNew
+totalReserves(uint256) := REF_1383(uint256)
+REF_1384(uint256) -> vars.totalSupplyNew
+totalSupply(uint256) := REF_1384(uint256)
+REF_1385(uint256) -> accountTokens[borrower]
+REF_1386(uint256) -> vars.borrowerTokensNew
+REF_1385(uint256) (->accountTokens) := REF_1386(uint256)
+REF_1387(uint256) -> accountTokens[liquidator]
+REF_1388(uint256) -> vars.liquidatorTokensNew
+REF_1387(uint256) (->accountTokens) := REF_1388(uint256)
+REF_1393(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1756 = CONVERT REF_1393 to uint256
+TMP_2348(None) := TMP_1756(uint256)
+EXPRESSION:totalReserves = vars.totalReservesNew	NodeType.EXPRESSION
+totalSupply = vars.totalSupplyNew	NodeType.EXPRESSION
+accountTokens[borrower] = vars.borrowerTokensNew	NodeType.EXPRESSION
+accountTokens[liquidator] = vars.liquidatorTokensNew	NodeType.EXPRESSION" -> "BlockID: 8
+Call context: 
+None
+RETURN TMP_1728
+EXPRESSION:seizeInternal(msg.sender,liquidator,borrower,seizeTokens)	NodeType.RETURN" [key="successor_5", ref="CErc20Delegate.seizeInternal"];
+"BlockID: 21
+Call context: seize
+None
+REF_1363(CarefulMath.MathError)= UNPACK TUPLE_199 index: 0 
+REF_1364(uint256)= UNPACK TUPLE_199 index: 1 
+REF_1365(CarefulMath.MathError) -> vars.mathErr
+REF_1366(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1742(bool) = REF_1365 == REF_1366
+CONDITION TMP_1742
+EXPRESSION:TMP_1742(bool) = REF_1365 == REF_1366	NodeType.IF" -> "BlockID: 23
+Call context: seize
+True
+TMP_1743(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 21
+Call context: seize
+None
+REF_1363(CarefulMath.MathError)= UNPACK TUPLE_199 index: 0 
+REF_1364(uint256)= UNPACK TUPLE_199 index: 1 
+REF_1365(CarefulMath.MathError) -> vars.mathErr
+REF_1366(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1742(bool) = REF_1365 == REF_1366
+CONDITION TMP_1742
+EXPRESSION:TMP_1742(bool) = REF_1365 == REF_1366	NodeType.IF" -> "BlockID: 24
+Call context: seize
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 24
+Call context: seize
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 27
+Call context: seize
+True
+REF_1367(uint256) -> vars.protocolSeizeAmount
+REF_1368(uint256) -> vars.exchangeRateMantissa
+TMP_1744(ExponentialNoError.Exp) = new Exp(REF_1368)
+REF_1369(uint256) -> vars.protocolSeizeTokens
+REF_1484(uint256) -> a.mantissa
+TMP_1921(uint256) = a * b
+TMP_1922(ExponentialNoError.Exp) = new Exp(TMP_1921)
+TMP_2393(None) := TMP_1922(ExponentialNoError.Exp)
+product(ExponentialNoError.Exp) := TMP_1885(ExponentialNoError.Exp)
+REF_1466(uint256) -> exp.mantissa
+TMP_1884(uint256) = REF_1466 / expScale
+TMP_2375(None) := TMP_1884(uint256)
+TMP_2376(None) := TMP_1886(uint256)
+REF_1367(uint256) (->vars) := TMP_1745(uint256)
+REF_1370(uint256) -> vars.totalReservesNew
+REF_1371(uint256) -> vars.protocolSeizeAmount
+TMP_1746(uint256) = a + b
+REF_1370(uint256) (->vars) := TMP_1746(uint256)
+REF_1372(uint256) -> vars.totalSupplyNew
+REF_1373(uint256) -> vars.protocolSeizeTokens
+TMP_1747(uint256) = a - b
+REF_1372(uint256) (->vars) := TMP_1747(uint256)
+REF_1374(CarefulMath.MathError) -> vars.mathErr
+REF_1375(uint256) -> vars.liquidatorTokensNew
+REF_1376(uint256) -> accountTokens[liquidator]
+REF_1377(uint256) -> vars.liquidatorSeizeTokens
+TMP_1969(uint256) = a + b
+c(uint256) := TMP_1969(uint256)
+TMP_1970(bool) = c >= a
+CONDITION TMP_1970
+EXPRESSION:Exp(mul_(a.mantissa,b))	NodeType.EXPRESSION
+product = mul_(a,scalar)	NodeType.VARIABLE
+product = mul_(a,scalar)	NodeType.EXPRESSION
+vars.protocolSeizeAmount = mul_ScalarTruncate(Exp(vars.exchangeRateMantissa),vars.protocolSeizeTokens)	NodeType.EXPRESSION
+vars.totalReservesNew = add_(totalReserves,vars.protocolSeizeAmount)	NodeType.EXPRESSION
+vars.totalReservesNew = add_(totalReserves,vars.protocolSeizeAmount)	NodeType.EXPRESSION
+vars.totalSupplyNew = sub_(totalSupply,vars.protocolSeizeTokens)	NodeType.EXPRESSION
+vars.totalSupplyNew = sub_(totalSupply,vars.protocolSeizeTokens)	NodeType.EXPRESSION
+c = a + b	NodeType.VARIABLE
+c = a + b	NodeType.EXPRESSION
+c >= a	NodeType.IF" [key=0];
+"BlockID: 13
+Call context: seize,seizeInternal
+True
+REF_1503(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1968(uint256) = a - b
+TMP_2411(None) := REF_1503(CarefulMath.MathError)
+TMP_2411(None) := TMP_1968(uint256)
+EXPRESSION:" -> "BlockID: 15
+Call context: seize
+None
+REF_1352(CarefulMath.MathError)= UNPACK TUPLE_198 index: 0 
+REF_1353(uint256)= UNPACK TUPLE_198 index: 1 
+REF_1355(CarefulMath.MathError) -> vars.mathErr
+REF_1356(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1736(bool) = REF_1355 != REF_1356
+CONDITION TMP_1736
+EXPRESSION:(vars.mathErr,vars.borrowerTokensNew) = subUInt(accountTokens[borrower],seizeTokens)	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="CErc20Delegate.subUInt"];
+"BlockID: 14
+Call context: seize,seizeInternal
+False
+REF_1504(CarefulMath.MathError) -> MathError.INTEGER_UNDERFLOW
+TMP_2411(None) := REF_1504(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 15
+Call context: seize
+None
+REF_1352(CarefulMath.MathError)= UNPACK TUPLE_198 index: 0 
+REF_1353(uint256)= UNPACK TUPLE_198 index: 1 
+REF_1355(CarefulMath.MathError) -> vars.mathErr
+REF_1356(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1736(bool) = REF_1355 != REF_1356
+CONDITION TMP_1736
+EXPRESSION:(vars.mathErr,vars.borrowerTokensNew) = subUInt(accountTokens[borrower],seizeTokens)	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="CErc20Delegate.subUInt"];
+"BlockID: 19
+Call context: seize,seizeInternal
+True
+REF_1104(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_2332(None) := REF_1104(CarefulMath.MathError)
+TMP_2332(None) := REF_1108(uint256)
+TMP_2332(None) := initialExchangeRateMantissa(uint256)
+EXPRESSION:" -> "BlockID: 21
+Call context: seize
+None
+REF_1363(CarefulMath.MathError)= UNPACK TUPLE_199 index: 0 
+REF_1364(uint256)= UNPACK TUPLE_199 index: 1 
+REF_1365(CarefulMath.MathError) -> vars.mathErr
+REF_1366(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1742(bool) = REF_1365 == REF_1366
+CONDITION TMP_1742
+EXPRESSION:TMP_1742(bool) = REF_1365 == REF_1366	NodeType.IF" [key="successor_5", ref="CErc20Delegate.exchangeRateStoredInternal"];
+"BlockID: 20
+Call context: seize,seizeInternal
+False
+TMP_1392 = CONVERT underlying to EIP20Interface
+token(EIP20Interface) := TMP_1392(EIP20Interface)
+TMP_1393 = CONVERT this to address
+TMP_1394(uint256) = HIGH_LEVEL_CALL, dest:token(EIP20Interface), function:balanceOf, arguments:['TMP_1393']  
+EXPRESSION:token = EIP20Interface(underlying)	NodeType.VARIABLE
+token = EIP20Interface(underlying)	NodeType.EXPRESSION
+token.balanceOf(address(this))	NodeType.EXPRESSION" -> "BlockID: 22
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+TMP_2310(None) := TMP_1394(uint256)
+totalCash(uint256) := TMP_1499(uint256)
+NEW VARIABLE cashPlusBorrowsMinusReserves
+NEW VARIABLE exchangeRate
+NEW VARIABLE mathErr
+NEW VARIABLE err0
+NEW VARIABLE sum
+TMP_1969(uint256) = a + b
+c(uint256) := TMP_1969(uint256)
+TMP_1970(bool) = c >= a
+CONDITION TMP_1970
+EXPRESSION:totalCash = getCashPrior()	NodeType.VARIABLE
+totalCash = getCashPrior()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+c = a + b	NodeType.VARIABLE
+c = a + b	NodeType.EXPRESSION
+c >= a	NodeType.IF" [key="successor_5"];
+"BlockID: 34
+Call context: seize,seizeInternal
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_169 index: 0 
+cashPlusBorrowsMinusReserves(uint256)= UNPACK TUPLE_169 index: 1 
+REF_1105(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1500(bool) = mathErr != REF_1105
+CONDITION TMP_1500
+EXPRESSION:(mathErr,cashPlusBorrowsMinusReserves) = addThenSubUInt(totalCash,totalBorrows,totalReserves)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 38
+Call context: seize,seizeInternal
+True
+TMP_2332(None) := mathErr(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 34
+Call context: seize,seizeInternal
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_169 index: 0 
+cashPlusBorrowsMinusReserves(uint256)= UNPACK TUPLE_169 index: 1 
+REF_1105(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1500(bool) = mathErr != REF_1105
+CONDITION TMP_1500
+EXPRESSION:(mathErr,cashPlusBorrowsMinusReserves) = addThenSubUInt(totalCash,totalBorrows,totalReserves)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 39
+Call context: seize,seizeInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 38
+Call context: seize,seizeInternal
+True
+TMP_2332(None) := mathErr(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 21
+Call context: seize
+None
+REF_1363(CarefulMath.MathError)= UNPACK TUPLE_199 index: 0 
+REF_1364(uint256)= UNPACK TUPLE_199 index: 1 
+REF_1365(CarefulMath.MathError) -> vars.mathErr
+REF_1366(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1742(bool) = REF_1365 == REF_1366
+CONDITION TMP_1742
+EXPRESSION:TMP_1742(bool) = REF_1365 == REF_1366	NodeType.IF" [key="successor_5", ref="CErc20Delegate.exchangeRateStoredInternal"];
+"BlockID: 39
+Call context: seize,seizeInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 43
+Call context: seize,seizeInternal
+None
+NEW VARIABLE err0
+NEW VARIABLE scaledNumerator
+TMP_1961(bool) = a == 0
+CONDITION TMP_1961
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF" [key=0];
+"BlockID: 43
+Call context: seize,seizeInternal
+None
+NEW VARIABLE err0
+NEW VARIABLE scaledNumerator
+TMP_1961(bool) = a == 0
+CONDITION TMP_1961
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF" -> "BlockID: 45
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+True
+REF_1498(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_2409(None) := REF_1498(CarefulMath.MathError)
+TMP_2409(None) := c(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 43
+Call context: seize,seizeInternal
+None
+NEW VARIABLE err0
+NEW VARIABLE scaledNumerator
+TMP_1961(bool) = a == 0
+CONDITION TMP_1961
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF" -> "BlockID: 46
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 53
+Call context: seize,seizeInternal
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_170 index: 0 
+exchangeRate(ExponentialNoError.Exp)= UNPACK TUPLE_170 index: 1 
+REF_1106(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1501(bool) = mathErr != REF_1106
+CONDITION TMP_1501
+EXPRESSION:(mathErr,exchangeRate) = getExp(cashPlusBorrowsMinusReserves,_totalSupply)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 55
+Call context: seize,seizeInternal
+True
+TMP_2332(None) := mathErr(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 53
+Call context: seize,seizeInternal
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_170 index: 0 
+exchangeRate(ExponentialNoError.Exp)= UNPACK TUPLE_170 index: 1 
+REF_1106(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1501(bool) = mathErr != REF_1106
+CONDITION TMP_1501
+EXPRESSION:(mathErr,exchangeRate) = getExp(cashPlusBorrowsMinusReserves,_totalSupply)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 56
+Call context: seize,seizeInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 55
+Call context: seize,seizeInternal
+True
+TMP_2332(None) := mathErr(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 21
+Call context: seize
+None
+REF_1363(CarefulMath.MathError)= UNPACK TUPLE_199 index: 0 
+REF_1364(uint256)= UNPACK TUPLE_199 index: 1 
+REF_1365(CarefulMath.MathError) -> vars.mathErr
+REF_1366(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1742(bool) = REF_1365 == REF_1366
+CONDITION TMP_1742
+EXPRESSION:TMP_1742(bool) = REF_1365 == REF_1366	NodeType.IF" [key="successor_5", ref="CErc20Delegate.exchangeRateStoredInternal"];
+"BlockID: 56
+Call context: seize,seizeInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 59
+Call context: seize,seizeInternal
+None
+REF_1107(CarefulMath.MathError) -> MathError.NO_ERROR
+REF_1108(uint256) -> exchangeRate.mantissa
+TMP_2332(None) := REF_1107(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 59
+Call context: seize,seizeInternal
+None
+REF_1107(CarefulMath.MathError) -> MathError.NO_ERROR
+REF_1108(uint256) -> exchangeRate.mantissa
+TMP_2332(None) := REF_1107(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 21
+Call context: seize
+None
+REF_1363(CarefulMath.MathError)= UNPACK TUPLE_199 index: 0 
+REF_1364(uint256)= UNPACK TUPLE_199 index: 1 
+REF_1365(CarefulMath.MathError) -> vars.mathErr
+REF_1366(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1742(bool) = REF_1365 == REF_1366
+CONDITION TMP_1742
+EXPRESSION:TMP_1742(bool) = REF_1365 == REF_1366	NodeType.IF" [key="successor_5", ref="CErc20Delegate.exchangeRateStoredInternal"];
+"BlockID: 22
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+TMP_2310(None) := TMP_1394(uint256)
+totalCash(uint256) := TMP_1499(uint256)
+NEW VARIABLE cashPlusBorrowsMinusReserves
+NEW VARIABLE exchangeRate
+NEW VARIABLE mathErr
+NEW VARIABLE err0
+NEW VARIABLE sum
+TMP_1969(uint256) = a + b
+c(uint256) := TMP_1969(uint256)
+TMP_1970(bool) = c >= a
+CONDITION TMP_1970
+EXPRESSION:totalCash = getCashPrior()	NodeType.VARIABLE
+totalCash = getCashPrior()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+c = a + b	NodeType.VARIABLE
+c = a + b	NodeType.EXPRESSION
+c >= a	NodeType.IF" -> "BlockID: 25
+Call context: seize,seizeInternal,exchangeRateStoredInternal,addThenSubUInt
+True
+REF_1505(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_2412(None) := REF_1505(CarefulMath.MathError)
+TMP_2412(None) := c(uint256)
+EXPRESSION:" [key="successor_1"];
+"BlockID: 22
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+TMP_2310(None) := TMP_1394(uint256)
+totalCash(uint256) := TMP_1499(uint256)
+NEW VARIABLE cashPlusBorrowsMinusReserves
+NEW VARIABLE exchangeRate
+NEW VARIABLE mathErr
+NEW VARIABLE err0
+NEW VARIABLE sum
+TMP_1969(uint256) = a + b
+c(uint256) := TMP_1969(uint256)
+TMP_1970(bool) = c >= a
+CONDITION TMP_1970
+EXPRESSION:totalCash = getCashPrior()	NodeType.VARIABLE
+totalCash = getCashPrior()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+c = a + b	NodeType.VARIABLE
+c = a + b	NodeType.EXPRESSION
+c >= a	NodeType.IF" -> "BlockID: 26
+Call context: seize,seizeInternal,exchangeRateStoredInternal,addThenSubUInt
+False
+REF_1506(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_2412(None) := REF_1506(CarefulMath.MathError)
+EXPRESSION:" [key="successor_1"];
+"BlockID: 28
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_221 index: 0 
+sum(uint256)= UNPACK TUPLE_221 index: 1 
+REF_1507(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1971(bool) = err0 != REF_1507
+CONDITION TMP_1971
+EXPRESSION:(err0,sum) = addUInt(a,b)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 31
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+True
+TMP_2413(None) := err0(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 28
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_221 index: 0 
+sum(uint256)= UNPACK TUPLE_221 index: 1 
+REF_1507(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1971(bool) = err0 != REF_1507
+CONDITION TMP_1971
+EXPRESSION:(err0,sum) = addUInt(a,b)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 32
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 31
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+True
+TMP_2413(None) := err0(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 34
+Call context: seize,seizeInternal
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_169 index: 0 
+cashPlusBorrowsMinusReserves(uint256)= UNPACK TUPLE_169 index: 1 
+REF_1105(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1500(bool) = mathErr != REF_1105
+CONDITION TMP_1500
+EXPRESSION:(mathErr,cashPlusBorrowsMinusReserves) = addThenSubUInt(totalCash,totalBorrows,totalReserves)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="CErc20Delegate.addThenSubUInt"];
+"BlockID: 32
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 35
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+TMP_1967(bool) = b <= a
+CONDITION TMP_1967
+EXPRESSION:b <= a	NodeType.IF" [key=0];
+"BlockID: 35
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+TMP_1967(bool) = b <= a
+CONDITION TMP_1967
+EXPRESSION:b <= a	NodeType.IF" -> "BlockID: 40
+Call context: seize,seizeInternal,exchangeRateStoredInternal,addThenSubUInt
+True
+REF_1503(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1968(uint256) = a - b
+TMP_2411(None) := REF_1503(CarefulMath.MathError)
+TMP_2411(None) := TMP_1968(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 35
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+TMP_1967(bool) = b <= a
+CONDITION TMP_1967
+EXPRESSION:b <= a	NodeType.IF" -> "BlockID: 41
+Call context: seize,seizeInternal,exchangeRateStoredInternal,addThenSubUInt
+False
+REF_1504(CarefulMath.MathError) -> MathError.INTEGER_UNDERFLOW
+TMP_2411(None) := REF_1504(CarefulMath.MathError)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 44
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+TMP_2413(None) := TUPLE_222([<slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x78d644aae760>, <slither.core.solidity_types.elementary_type.ElementaryType object at 0x78d644aae670>])
+EXPRESSION:" -> "BlockID: 34
+Call context: seize,seizeInternal
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_169 index: 0 
+cashPlusBorrowsMinusReserves(uint256)= UNPACK TUPLE_169 index: 1 
+REF_1105(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1500(bool) = mathErr != REF_1105
+CONDITION TMP_1500
+EXPRESSION:(mathErr,cashPlusBorrowsMinusReserves) = addThenSubUInt(totalCash,totalBorrows,totalReserves)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="CErc20Delegate.addThenSubUInt"];
+"BlockID: 25
+Call context: seize,seizeInternal,exchangeRateStoredInternal,addThenSubUInt
+True
+REF_1505(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_2412(None) := REF_1505(CarefulMath.MathError)
+TMP_2412(None) := c(uint256)
+EXPRESSION:" -> "BlockID: 28
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_221 index: 0 
+sum(uint256)= UNPACK TUPLE_221 index: 1 
+REF_1507(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1971(bool) = err0 != REF_1507
+CONDITION TMP_1971
+EXPRESSION:(err0,sum) = addUInt(a,b)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="CErc20Delegate.addUInt"];
+"BlockID: 26
+Call context: seize,seizeInternal,exchangeRateStoredInternal,addThenSubUInt
+False
+REF_1506(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_2412(None) := REF_1506(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 28
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_221 index: 0 
+sum(uint256)= UNPACK TUPLE_221 index: 1 
+REF_1507(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1971(bool) = err0 != REF_1507
+CONDITION TMP_1971
+EXPRESSION:(err0,sum) = addUInt(a,b)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="CErc20Delegate.addUInt"];
+"BlockID: 40
+Call context: seize,seizeInternal,exchangeRateStoredInternal,addThenSubUInt
+True
+REF_1503(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1968(uint256) = a - b
+TMP_2411(None) := REF_1503(CarefulMath.MathError)
+TMP_2411(None) := TMP_1968(uint256)
+EXPRESSION:" -> "BlockID: 44
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+TMP_2413(None) := TUPLE_222([<slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x78d644aae760>, <slither.core.solidity_types.elementary_type.ElementaryType object at 0x78d644aae670>])
+EXPRESSION:" [key="successor_5", ref="CErc20Delegate.subUInt"];
+"BlockID: 41
+Call context: seize,seizeInternal,exchangeRateStoredInternal,addThenSubUInt
+False
+REF_1504(CarefulMath.MathError) -> MathError.INTEGER_UNDERFLOW
+TMP_2411(None) := REF_1504(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 44
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+TMP_2413(None) := TUPLE_222([<slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x78d644aae760>, <slither.core.solidity_types.elementary_type.ElementaryType object at 0x78d644aae670>])
+EXPRESSION:" [key="successor_5", ref="CErc20Delegate.subUInt"];
+"BlockID: 47
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_202 index: 0 
+scaledNumerator(uint256)= UNPACK TUPLE_202 index: 1 
+REF_1437(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1853(bool) = err0 != REF_1437
+CONDITION TMP_1853
+EXPRESSION:(err0,scaledNumerator) = mulUInt(num,expScale)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 49
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+True
+TMP_1854(ExponentialNoError.Exp) = new Exp(0)
+TMP_2362(None) := err0(CarefulMath.MathError)
+TMP_2362(None) := TMP_1856(ExponentialNoError.Exp)
+TMP_2362(None) := TMP_1857(ExponentialNoError.Exp)
+TMP_2362(None) := TMP_1854(ExponentialNoError.Exp)
+EXPRESSION:" [key=0];
+"BlockID: 47
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_202 index: 0 
+scaledNumerator(uint256)= UNPACK TUPLE_202 index: 1 
+REF_1437(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1853(bool) = err0 != REF_1437
+CONDITION TMP_1853
+EXPRESSION:(err0,scaledNumerator) = mulUInt(num,expScale)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 50
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 49
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+True
+TMP_1854(ExponentialNoError.Exp) = new Exp(0)
+TMP_2362(None) := err0(CarefulMath.MathError)
+TMP_2362(None) := TMP_1856(ExponentialNoError.Exp)
+TMP_2362(None) := TMP_1857(ExponentialNoError.Exp)
+TMP_2362(None) := TMP_1854(ExponentialNoError.Exp)
+EXPRESSION:" -> "BlockID: 53
+Call context: seize,seizeInternal
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_170 index: 0 
+exchangeRate(ExponentialNoError.Exp)= UNPACK TUPLE_170 index: 1 
+REF_1106(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1501(bool) = mathErr != REF_1106
+CONDITION TMP_1501
+EXPRESSION:(mathErr,exchangeRate) = getExp(cashPlusBorrowsMinusReserves,_totalSupply)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="CErc20Delegate.getExp"];
+"BlockID: 50
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 54
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+NEW VARIABLE err1
+NEW VARIABLE rational
+TMP_1965(bool) = b == 0
+CONDITION TMP_1965
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+b == 0	NodeType.IF" [key=0];
+"BlockID: 54
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+NEW VARIABLE err1
+NEW VARIABLE rational
+TMP_1965(bool) = b == 0
+CONDITION TMP_1965
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+b == 0	NodeType.IF" -> "BlockID: 57
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+True
+REF_1501(CarefulMath.MathError) -> MathError.DIVISION_BY_ZERO
+TMP_2410(None) := REF_1501(CarefulMath.MathError)
+TMP_2410(None) := TMP_1966(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 54
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+NEW VARIABLE err1
+NEW VARIABLE rational
+TMP_1965(bool) = b == 0
+CONDITION TMP_1965
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+b == 0	NodeType.IF" -> "BlockID: 58
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 60
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+err1(CarefulMath.MathError)= UNPACK TUPLE_203 index: 0 
+rational(uint256)= UNPACK TUPLE_203 index: 1 
+REF_1438(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1855(bool) = err1 != REF_1438
+CONDITION TMP_1855
+EXPRESSION:(err1,rational) = divUInt(scaledNumerator,denom)	NodeType.EXPRESSION
+err1 != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 62
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+True
+TMP_1856(ExponentialNoError.Exp) = new Exp(0)
+TMP_2362(None) := err1(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 60
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+err1(CarefulMath.MathError)= UNPACK TUPLE_203 index: 0 
+rational(uint256)= UNPACK TUPLE_203 index: 1 
+REF_1438(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1855(bool) = err1 != REF_1438
+CONDITION TMP_1855
+EXPRESSION:(err1,rational) = divUInt(scaledNumerator,denom)	NodeType.EXPRESSION
+err1 != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 63
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 62
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+True
+TMP_1856(ExponentialNoError.Exp) = new Exp(0)
+TMP_2362(None) := err1(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 53
+Call context: seize,seizeInternal
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_170 index: 0 
+exchangeRate(ExponentialNoError.Exp)= UNPACK TUPLE_170 index: 1 
+REF_1106(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1501(bool) = mathErr != REF_1106
+CONDITION TMP_1501
+EXPRESSION:(mathErr,exchangeRate) = getExp(cashPlusBorrowsMinusReserves,_totalSupply)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="CErc20Delegate.getExp"];
+"BlockID: 63
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 64
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+REF_1439(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1857(ExponentialNoError.Exp) = new Exp(rational)
+TMP_2362(None) := REF_1439(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 64
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+REF_1439(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1857(ExponentialNoError.Exp) = new Exp(rational)
+TMP_2362(None) := REF_1439(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 53
+Call context: seize,seizeInternal
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_170 index: 0 
+exchangeRate(ExponentialNoError.Exp)= UNPACK TUPLE_170 index: 1 
+REF_1106(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1501(bool) = mathErr != REF_1106
+CONDITION TMP_1501
+EXPRESSION:(mathErr,exchangeRate) = getExp(cashPlusBorrowsMinusReserves,_totalSupply)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="CErc20Delegate.getExp"];
+"BlockID: 45
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+True
+REF_1498(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_2409(None) := REF_1498(CarefulMath.MathError)
+TMP_2409(None) := c(uint256)
+EXPRESSION:" -> "BlockID: 47
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_202 index: 0 
+scaledNumerator(uint256)= UNPACK TUPLE_202 index: 1 
+REF_1437(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1853(bool) = err0 != REF_1437
+CONDITION TMP_1853
+EXPRESSION:(err0,scaledNumerator) = mulUInt(num,expScale)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="CErc20Delegate.mulUInt"];
+"BlockID: 46
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 48
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+None
+TMP_1962(uint256) = a * b
+c(uint256) := TMP_1962(uint256)
+TMP_1963(uint256) = c / a
+TMP_1964(bool) = TMP_1963 != b
+CONDITION TMP_1964
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF" [key=0];
+"BlockID: 48
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+None
+TMP_1962(uint256) = a * b
+c(uint256) := TMP_1962(uint256)
+TMP_1963(uint256) = c / a
+TMP_1964(bool) = TMP_1963 != b
+CONDITION TMP_1964
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF" -> "BlockID: 51
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+True
+REF_1499(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_2409(None) := REF_1499(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 48
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+None
+TMP_1962(uint256) = a * b
+c(uint256) := TMP_1962(uint256)
+TMP_1963(uint256) = c / a
+TMP_1964(bool) = TMP_1963 != b
+CONDITION TMP_1964
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF" -> "BlockID: 52
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+False
+REF_1500(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_2409(None) := REF_1500(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 51
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+True
+REF_1499(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_2409(None) := REF_1499(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 47
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_202 index: 0 
+scaledNumerator(uint256)= UNPACK TUPLE_202 index: 1 
+REF_1437(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1853(bool) = err0 != REF_1437
+CONDITION TMP_1853
+EXPRESSION:(err0,scaledNumerator) = mulUInt(num,expScale)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="CErc20Delegate.mulUInt"];
+"BlockID: 52
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+False
+REF_1500(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_2409(None) := REF_1500(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 47
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_202 index: 0 
+scaledNumerator(uint256)= UNPACK TUPLE_202 index: 1 
+REF_1437(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1853(bool) = err0 != REF_1437
+CONDITION TMP_1853
+EXPRESSION:(err0,scaledNumerator) = mulUInt(num,expScale)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="CErc20Delegate.mulUInt"];
+"BlockID: 57
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+True
+REF_1501(CarefulMath.MathError) -> MathError.DIVISION_BY_ZERO
+TMP_2410(None) := REF_1501(CarefulMath.MathError)
+TMP_2410(None) := TMP_1966(uint256)
+EXPRESSION:" -> "BlockID: 60
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+err1(CarefulMath.MathError)= UNPACK TUPLE_203 index: 0 
+rational(uint256)= UNPACK TUPLE_203 index: 1 
+REF_1438(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1855(bool) = err1 != REF_1438
+CONDITION TMP_1855
+EXPRESSION:(err1,rational) = divUInt(scaledNumerator,denom)	NodeType.EXPRESSION
+err1 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="CErc20Delegate.divUInt"];
+"BlockID: 58
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 61
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+None
+REF_1502(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1966(uint256) = a / b
+TMP_2410(None) := REF_1502(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 61
+Call context: seize,seizeInternal,exchangeRateStoredInternal,getExp
+None
+REF_1502(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1966(uint256) = a / b
+TMP_2410(None) := REF_1502(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 60
+Call context: seize,seizeInternal,exchangeRateStoredInternal
+None
+err1(CarefulMath.MathError)= UNPACK TUPLE_203 index: 0 
+rational(uint256)= UNPACK TUPLE_203 index: 1 
+REF_1438(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1855(bool) = err1 != REF_1438
+CONDITION TMP_1855
+EXPRESSION:(err1,rational) = divUInt(scaledNumerator,denom)	NodeType.EXPRESSION
+err1 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="CErc20Delegate.divUInt"];
+"BlockID: 29
+Call context: seize,seizeInternal
+True
+REF_1505(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_2412(None) := REF_1505(CarefulMath.MathError)
+TMP_2412(None) := c(uint256)
+EXPRESSION:" -> "BlockID: 33
+Call context: seize
+None
+REF_1374(CarefulMath.MathError)= UNPACK TUPLE_200 index: 0 
+REF_1375(uint256)= UNPACK TUPLE_200 index: 1 
+REF_1378(CarefulMath.MathError) -> vars.mathErr
+REF_1379(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1748(bool) = REF_1378 != REF_1379
+CONDITION TMP_1748
+EXPRESSION:(vars.mathErr,vars.liquidatorTokensNew) = addUInt(accountTokens[liquidator],vars.liquidatorSeizeTokens)	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="CErc20Delegate.addUInt"];
+"BlockID: 30
+Call context: seize,seizeInternal
+False
+REF_1506(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_2412(None) := REF_1506(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 33
+Call context: seize
+None
+REF_1374(CarefulMath.MathError)= UNPACK TUPLE_200 index: 0 
+REF_1375(uint256)= UNPACK TUPLE_200 index: 1 
+REF_1378(CarefulMath.MathError) -> vars.mathErr
+REF_1379(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1748(bool) = REF_1378 != REF_1379
+CONDITION TMP_1748
+EXPRESSION:(vars.mathErr,vars.liquidatorTokensNew) = addUInt(accountTokens[liquidator],vars.liquidatorSeizeTokens)	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="CErc20Delegate.addUInt"];
+}

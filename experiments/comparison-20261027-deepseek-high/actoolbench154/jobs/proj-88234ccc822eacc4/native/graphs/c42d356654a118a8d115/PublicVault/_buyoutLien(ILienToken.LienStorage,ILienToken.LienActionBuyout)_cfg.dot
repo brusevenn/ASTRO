@@ -1,0 +1,1212 @@
+digraph {
+"BlockID: 2164
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 2165
+Call context: 
+None
+REF_518(ILienToken.LienActionEncumber) -> params.encumber
+TUPLE_5(uint256,ILienToken.Stack) = INTERNAL_CALL, LienToken._createLien(ILienToken.LienStorage,ILienToken.LienActionEncumber)(s,REF_518)
+EXPRESSION:(None,newLien) = _createLien(s,params.encumber)	NodeType.EXPRESSION";
+"BlockID: 2166
+Call context: 
+None
+newLien(ILienToken.Stack)= UNPACK TUPLE_5 index: 1 
+REF_519(IAstariaRouter) -> s.ASTARIA_ROUTER
+REF_521(ILienToken.LienActionEncumber) -> params.encumber
+REF_522(ILienToken.Lien) -> REF_521.lien
+REF_523(uint8) -> params.position
+REF_524(ILienToken.LienActionEncumber) -> params.encumber
+REF_525(ILienToken.Stack[]) -> REF_524.stack
+TMP_1523(bool) = HIGH_LEVEL_CALL, dest:REF_519(IAstariaRouter), function:isValidRefinance, arguments:['REF_522', 'REF_523', 'REF_525']  
+EXPRESSION:(None,newLien) = _createLien(s,params.encumber)	NodeType.EXPRESSION
+! s.ASTARIA_ROUTER.isValidRefinance(params.encumber.lien,params.position,params.encumber.stack)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2167
+Call context: 
+None
+TMP_1524 = ! TMP_1523 
+CONDITION TMP_1524
+EXPRESSION:! s.ASTARIA_ROUTER.isValidRefinance(params.encumber.lien,params.position,params.encumber.stack)	NodeType.IF" [shape=box];
+"BlockID: 2168
+Call context: 
+True
+TMP_1525(None) = SOLIDITY_CALL revert InvalidRefinance()()
+EXPRESSION:revert InvalidRefinance()()	NodeType.EXPRESSION";
+"BlockID: 2169
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2170
+Call context: 
+None
+REF_526(mapping(uint256 => bytes32)) -> s.collateralStateHash
+REF_527(ILienToken.LienActionEncumber) -> params.encumber
+REF_528(ILienToken.Lien) -> REF_527.lien
+REF_529(uint256) -> REF_528.collateralId
+REF_530(bytes32) -> REF_526[REF_529]
+TMP_1526(bool) = REF_530 == ACTIVE_AUCTION
+CONDITION TMP_1526
+EXPRESSION:s.collateralStateHash[params.encumber.lien.collateralId] == ACTIVE_AUCTION	NodeType.IF";
+"BlockID: 2171
+Call context: 
+True
+REF_531(ILienToken.InvalidStates) -> InvalidStates.COLLATERAL_AUCTION
+TMP_1527(None) = SOLIDITY_CALL revert InvalidState(ILienToken.InvalidStates)(REF_531)
+EXPRESSION:revert InvalidState(ILienToken.InvalidStates)(InvalidStates.COLLATERAL_AUCTION)	NodeType.EXPRESSION";
+"BlockID: 2172
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2173
+Call context: 
+None
+NEW VARIABLE owed
+NEW VARIABLE buyout
+REF_532(ILienToken.LienActionEncumber) -> params.encumber
+REF_533(ILienToken.Stack[]) -> REF_532.stack
+REF_534(uint8) -> params.position
+REF_535(ILienToken.Stack) -> REF_533[REF_534]
+TUPLE_6(uint256,uint256) = INTERNAL_CALL, LienToken._getBuyout(ILienToken.LienStorage,ILienToken.Stack)(s,REF_535)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(owed,buyout) = _getBuyout(s,params.encumber.stack[params.position])	NodeType.EXPRESSION";
+"BlockID: 2174
+Call context: 
+None
+owed(uint256)= UNPACK TUPLE_6 index: 0 
+buyout(uint256)= UNPACK TUPLE_6 index: 1 
+REF_536(ILienToken.LienActionEncumber) -> params.encumber
+REF_537(ILienToken.Lien) -> REF_536.lien
+REF_538(ILienToken.Details) -> REF_537.details
+REF_539(uint256) -> REF_538.maxAmount
+TMP_1528(bool) = REF_539 < owed
+CONDITION TMP_1528
+EXPRESSION:(owed,buyout) = _getBuyout(s,params.encumber.stack[params.position])	NodeType.EXPRESSION
+params.encumber.lien.details.maxAmount < owed	NodeType.IF" [shape=box];
+"BlockID: 2175
+Call context: 
+True
+REF_540(ILienToken.LienActionEncumber) -> params.encumber
+REF_541(ILienToken.Lien) -> REF_540.lien
+REF_542(ILienToken.Details) -> REF_541.details
+REF_543(uint256) -> REF_542.maxAmount
+TMP_1529(None) = SOLIDITY_CALL revert InvalidBuyoutDetails(uint256,uint256)(REF_543,owed)
+EXPRESSION:revert InvalidBuyoutDetails(uint256,uint256)(params.encumber.lien.details.maxAmount,owed)	NodeType.EXPRESSION";
+"BlockID: 2176
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2177
+Call context: 
+None
+potentialDebt(uint256) := 0(uint256)
+REF_544(ILienToken.LienActionEncumber) -> params.encumber
+REF_545(ILienToken.Stack[]) -> REF_544.stack
+REF_546 -> LENGTH REF_545
+i(uint256) := REF_546(uint256)
+EXPRESSION:potentialDebt = 0	NodeType.VARIABLE
+potentialDebt = 0	NodeType.EXPRESSION
+i = params.encumber.stack.length	NodeType.VARIABLE
+i = params.encumber.stack.length	NodeType.EXPRESSION";
+"BlockID: 2178
+Call context: 
+None
+BEGIN_LOOP
+TMP_1530(bool) = i > 0
+CONDITION TMP_1530
+EXPRESSION:None	NodeType.STARTLOOP
+i > 0	NodeType.IFLOOP";
+"BlockID: 2179
+Call context: 
+True
+TMP_1531(uint256) = i (c)- 1
+j(uint256) := TMP_1531(uint256)
+REF_547(ILienToken.LienActionEncumber) -> params.encumber
+REF_548(ILienToken.Stack[]) -> REF_547.stack
+REF_549(ILienToken.Stack) -> REF_548[j]
+REF_550(ILienToken.Point) -> REF_549.point
+REF_551(uint40) -> REF_550.end
+TMP_1532(bool) = block.timestamp >= REF_551
+CONDITION TMP_1532
+EXPRESSION:j = i - 1	NodeType.VARIABLE
+j = i - 1	NodeType.EXPRESSION
+block.timestamp >= params.encumber.stack[j].point.end	NodeType.IF";
+"BlockID: 2180
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 2181
+Call context: 
+None
+REF_568(ILienToken.LienActionEncumber) -> params.encumber
+REF_569(ILienToken.Stack[]) -> REF_568.stack
+REF_570(uint8) -> params.position
+REF_571(ILienToken.Stack) -> REF_569[REF_570]
+REF_572(ILienToken.Point) -> REF_571.point
+REF_573(uint256) -> REF_572.lienId
+TMP_1537(address) = INTERNAL_CALL, LienToken._getPayee(ILienToken.LienStorage,uint256)(s,REF_573)
+EXPRESSION:";
+"BlockID: 2182
+Call context: 
+None
+payee(address) := TMP_1537(address)
+REF_574(ITransferProxy) -> s.TRANSFER_PROXY
+REF_576(ILienToken.LienActionEncumber) -> params.encumber
+REF_577(ILienToken.Stack[]) -> REF_576.stack
+REF_578(uint8) -> params.position
+REF_579(ILienToken.Stack) -> REF_577[REF_578]
+REF_580(ILienToken.Lien) -> REF_579.lien
+REF_581(address) -> REF_580.token
+HIGH_LEVEL_CALL, dest:REF_574(ITransferProxy), function:tokenTransferFrom, arguments:['REF_581', 'msg.sender', 'payee', 'buyout']  
+EXPRESSION:payee = _getPayee(s,params.encumber.stack[params.position].point.lienId)	NodeType.VARIABLE
+payee = _getPayee(s,params.encumber.stack[params.position].point.lienId)	NodeType.EXPRESSION
+s.TRANSFER_PROXY.tokenTransferFrom(params.encumber.stack[params.position].lien.token,msg.sender,payee,buyout)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2183
+Call context: 
+None
+TMP_1539(bool) = INTERNAL_CALL, LienToken._isPublicVault(ILienToken.LienStorage,address)(s,payee)
+EXPRESSION:s.TRANSFER_PROXY.tokenTransferFrom(params.encumber.stack[params.position].lien.token,msg.sender,payee,buyout)	NodeType.EXPRESSION
+_isPublicVault(s,payee)	NodeType.EXPRESSION";
+"BlockID: 2184
+Call context: 
+None
+CONDITION TMP_1539
+EXPRESSION:_isPublicVault(s,payee)	NodeType.IF" [shape=box];
+"BlockID: 2185
+Call context: 
+True
+TMP_1540 = CONVERT payee to IPublicVault
+REF_584(ILienToken.LienActionEncumber) -> params.encumber
+REF_585(ILienToken.Stack[]) -> REF_584.stack
+REF_586(uint8) -> params.position
+REF_587(ILienToken.Stack) -> REF_585[REF_586]
+TMP_1541(uint256) = INTERNAL_CALL, LienToken.calculateSlope(ILienToken.Stack)(REF_587)
+EXPRESSION:IPublicVault(payee).handleBuyoutLien(IPublicVault.BuyoutLienParams(calculateSlope(params.encumber.stack[params.position]),params.encumber.stack[params.position].point.end,buyout - params.encumber.stack[params.position].point.amount))	NodeType.EXPRESSION";
+"BlockID: 2188
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2189
+Call context: 
+None
+REF_600(ILienToken.LienActionEncumber) -> params.encumber
+REF_601(ILienToken.Stack[]) -> REF_600.stack
+REF_602(uint8) -> params.position
+REF_603(ILienToken.LienActionEncumber) -> params.encumber
+REF_604(ILienToken.Stack[]) -> REF_603.stack
+REF_605(uint8) -> params.position
+REF_606(ILienToken.Stack) -> REF_604[REF_605]
+REF_607(ILienToken.Point) -> REF_606.point
+REF_608(uint256) -> REF_607.lienId
+TMP_1545(ILienToken.Stack[]) = INTERNAL_CALL, LienToken._replaceStackAtPositionWithNewLien(ILienToken.LienStorage,ILienToken.Stack[],uint256,ILienToken.Stack,uint256)(s,REF_601,REF_602,newLien,REF_608)
+EXPRESSION:newStack = _replaceStackAtPositionWithNewLien(s,params.encumber.stack,params.position,newLien,params.encumber.stack[params.position].point.lienId)	NodeType.EXPRESSION";
+"BlockID: 2190
+Call context: 
+None
+newStack(ILienToken.Stack[]) =  ['TMP_1545(ILienToken.Stack[])']
+NEW VARIABLE maxPotentialDebt
+REF_609 -> LENGTH newStack
+n(uint256) := REF_609(uint256)
+NEW VARIABLE i_scope_0
+EXPRESSION i_scope_0
+EXPRESSION:newStack = _replaceStackAtPositionWithNewLien(s,params.encumber.stack,params.position,newLien,params.encumber.stack[params.position].point.lienId)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+n = newStack.length	NodeType.VARIABLE
+n = newStack.length	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+i_scope_0	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2191
+Call context: 
+None
+BEGIN_LOOP
+TMP_1546(bool) = i_scope_0 < n
+CONDITION TMP_1546
+EXPRESSION:None	NodeType.STARTLOOP
+i_scope_0 < n	NodeType.IFLOOP";
+"BlockID: 2192
+Call context: 
+True
+REF_610(ILienToken.Stack) -> newStack[i_scope_0]
+REF_611(ILienToken.Stack) -> newStack[i_scope_0]
+REF_612(ILienToken.Point) -> REF_611.point
+REF_613(uint40) -> REF_612.end
+TMP_1547(uint88) = INTERNAL_CALL, LienToken._getOwed(ILienToken.Stack,uint256)(REF_610,REF_613)
+EXPRESSION:maxPotentialDebt += _getOwed(newStack[i_scope_0],newStack[i_scope_0].point.end)	NodeType.EXPRESSION";
+"BlockID: 2194
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 2195
+Call context: 
+None
+REF_626(mapping(uint256 => bytes32)) -> s.collateralStateHash
+REF_627(ILienToken.LienActionEncumber) -> params.encumber
+REF_628(ILienToken.Lien) -> REF_627.lien
+REF_629(uint256) -> REF_628.collateralId
+REF_630(bytes32) -> REF_626[REF_629]
+TMP_1555(bytes) = SOLIDITY_CALL abi.encode()(newStack)
+TMP_1556(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_1555)
+REF_630(bytes32) (->s) := TMP_1556(bytes32)
+EXPRESSION:s.collateralStateHash[params.encumber.lien.collateralId] = keccak256(bytes)(abi.encode(newStack))	NodeType.EXPRESSION";
+"BlockID: 2193
+Call context: 
+None
+maxPotentialDebt(uint256) = maxPotentialDebt (c)+ TMP_1547
+REF_614(uint8) -> params.position
+TMP_1548(bool) = i_scope_0 == REF_614
+CONDITION TMP_1548
+EXPRESSION:maxPotentialDebt += _getOwed(newStack[i_scope_0],newStack[i_scope_0].point.end)	NodeType.EXPRESSION
+i_scope_0 == params.position	NodeType.IF" [shape=box];
+"BlockID: 2196
+Call context: 
+True
+REF_615(ILienToken.LienActionEncumber) -> params.encumber
+REF_616(ILienToken.Lien) -> REF_615.lien
+REF_617(ILienToken.Details) -> REF_616.details
+REF_618(uint256) -> REF_617.maxPotentialDebt
+TMP_1549(bool) = maxPotentialDebt > REF_618
+CONDITION TMP_1549
+EXPRESSION:maxPotentialDebt > params.encumber.lien.details.maxPotentialDebt	NodeType.IF";
+"BlockID: 2197
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2198
+Call context: 
+None
+REF_620(uint8) -> params.position
+TMP_1551(bool) = i_scope_0 > REF_620
+REF_621(ILienToken.Stack) -> newStack[i_scope_0]
+REF_622(ILienToken.Lien) -> REF_621.lien
+REF_623(ILienToken.Details) -> REF_622.details
+REF_624(uint256) -> REF_623.maxPotentialDebt
+TMP_1552(bool) = maxPotentialDebt > REF_624
+TMP_1553(bool) = TMP_1551 && TMP_1552
+CONDITION TMP_1553
+EXPRESSION:i_scope_0 > params.position && (maxPotentialDebt > newStack[i_scope_0].lien.details.maxPotentialDebt)	NodeType.IF";
+"BlockID: 2199
+Call context: 
+True
+REF_625(ILienToken.InvalidStates) -> InvalidStates.DEBT_LIMIT
+TMP_1554(None) = SOLIDITY_CALL revert InvalidState(ILienToken.InvalidStates)(REF_625)
+EXPRESSION:revert InvalidState(ILienToken.InvalidStates)(InvalidStates.DEBT_LIMIT)	NodeType.EXPRESSION";
+"BlockID: 2200
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2201
+Call context: 
+None
+i_scope_0(uint256) = i_scope_0 + 1
+EXPRESSION:++ i_scope_0	NodeType.EXPRESSION";
+"BlockID: 2202
+Call context: 
+True
+REF_619(ILienToken.InvalidStates) -> InvalidStates.DEBT_LIMIT
+TMP_1550(None) = SOLIDITY_CALL revert InvalidState(ILienToken.InvalidStates)(REF_619)
+EXPRESSION:revert InvalidState(ILienToken.InvalidStates)(InvalidStates.DEBT_LIMIT)	NodeType.EXPRESSION";
+"BlockID: 2203
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2186
+Call context: 
+None
+REF_588(ILienToken.LienActionEncumber) -> params.encumber
+REF_589(ILienToken.Stack[]) -> REF_588.stack
+REF_590(uint8) -> params.position
+REF_591(ILienToken.Stack) -> REF_589[REF_590]
+REF_592(ILienToken.Point) -> REF_591.point
+REF_593(uint40) -> REF_592.end
+REF_594(ILienToken.LienActionEncumber) -> params.encumber
+REF_595(ILienToken.Stack[]) -> REF_594.stack
+REF_596(uint8) -> params.position
+REF_597(ILienToken.Stack) -> REF_595[REF_596]
+REF_598(ILienToken.Point) -> REF_597.point
+REF_599(uint88) -> REF_598.amount
+TMP_1542(uint256) = buyout (c)- REF_599
+TMP_1543(IPublicVault.BuyoutLienParams) = new BuyoutLienParams(TMP_1541,REF_593,TMP_1542)
+HIGH_LEVEL_CALL, dest:TMP_1540(IPublicVault), function:handleBuyoutLien, arguments:['TMP_1543']  
+EXPRESSION:IPublicVault(payee).handleBuyoutLien(IPublicVault.BuyoutLienParams(calculateSlope(params.encumber.stack[params.position]),params.encumber.stack[params.position].point.end,buyout - params.encumber.stack[params.position].point.amount))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2205
+Call context: 
+True
+REF_552(ILienToken.InvalidStates) -> InvalidStates.EXPIRED_LIEN
+TMP_1533(None) = SOLIDITY_CALL revert InvalidState(ILienToken.InvalidStates)(REF_552)
+EXPRESSION:revert InvalidState(ILienToken.InvalidStates)(InvalidStates.EXPIRED_LIEN)	NodeType.EXPRESSION";
+"BlockID: 2206
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2207
+Call context: 
+None
+REF_553(ILienToken.LienActionEncumber) -> params.encumber
+REF_554(ILienToken.Stack[]) -> REF_553.stack
+REF_555(ILienToken.Stack) -> REF_554[j]
+REF_556(ILienToken.LienActionEncumber) -> params.encumber
+REF_557(ILienToken.Stack[]) -> REF_556.stack
+REF_558(ILienToken.Stack) -> REF_557[j]
+REF_559(ILienToken.Point) -> REF_558.point
+REF_560(uint40) -> REF_559.end
+TMP_1534(uint88) = INTERNAL_CALL, LienToken._getOwed(ILienToken.Stack,uint256)(REF_555,REF_560)
+EXPRESSION:potentialDebt += _getOwed(params.encumber.stack[j],params.encumber.stack[j].point.end)	NodeType.EXPRESSION";
+"BlockID: 2208
+Call context: 
+None
+potentialDebt(uint256) = potentialDebt (c)+ TMP_1534
+REF_561(ILienToken.LienActionEncumber) -> params.encumber
+REF_562(ILienToken.Stack[]) -> REF_561.stack
+REF_563(ILienToken.Stack) -> REF_562[j]
+REF_564(ILienToken.Lien) -> REF_563.lien
+REF_565(ILienToken.Details) -> REF_564.details
+REF_566(uint256) -> REF_565.liquidationInitialAsk
+TMP_1535(bool) = potentialDebt > REF_566
+CONDITION TMP_1535
+EXPRESSION:potentialDebt += _getOwed(params.encumber.stack[j],params.encumber.stack[j].point.end)	NodeType.EXPRESSION
+potentialDebt > params.encumber.stack[j].lien.details.liquidationInitialAsk	NodeType.IF" [shape=box];
+"BlockID: 2209
+Call context: 
+True
+REF_567(ILienToken.InvalidStates) -> InvalidStates.INITIAL_ASK_EXCEEDED
+TMP_1536(None) = SOLIDITY_CALL revert InvalidState(ILienToken.InvalidStates)(REF_567)
+EXPRESSION:revert InvalidState(ILienToken.InvalidStates)(InvalidStates.INITIAL_ASK_EXCEEDED)	NodeType.EXPRESSION";
+"BlockID: 2210
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2211
+Call context: 
+None
+i(uint256) = i - 1
+EXPRESSION:-- i	NodeType.EXPRESSION";
+"BlockID: 2164
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 2165
+Call context: 
+None
+REF_518(ILienToken.LienActionEncumber) -> params.encumber
+TUPLE_5(uint256,ILienToken.Stack) = INTERNAL_CALL, LienToken._createLien(ILienToken.LienStorage,ILienToken.LienActionEncumber)(s,REF_518)
+EXPRESSION:(None,newLien) = _createLien(s,params.encumber)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2165
+Call context: 
+None
+REF_518(ILienToken.LienActionEncumber) -> params.encumber
+TUPLE_5(uint256,ILienToken.Stack) = INTERNAL_CALL, LienToken._createLien(ILienToken.LienStorage,ILienToken.LienActionEncumber)(s,REF_518)
+EXPRESSION:(None,newLien) = _createLien(s,params.encumber)	NodeType.EXPRESSION" -> "BlockID: 2166
+Call context: 
+None
+newLien(ILienToken.Stack)= UNPACK TUPLE_5 index: 1 
+REF_519(IAstariaRouter) -> s.ASTARIA_ROUTER
+REF_521(ILienToken.LienActionEncumber) -> params.encumber
+REF_522(ILienToken.Lien) -> REF_521.lien
+REF_523(uint8) -> params.position
+REF_524(ILienToken.LienActionEncumber) -> params.encumber
+REF_525(ILienToken.Stack[]) -> REF_524.stack
+TMP_1523(bool) = HIGH_LEVEL_CALL, dest:REF_519(IAstariaRouter), function:isValidRefinance, arguments:['REF_522', 'REF_523', 'REF_525']  
+EXPRESSION:(None,newLien) = _createLien(s,params.encumber)	NodeType.EXPRESSION
+! s.ASTARIA_ROUTER.isValidRefinance(params.encumber.lien,params.position,params.encumber.stack)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2166
+Call context: 
+None
+newLien(ILienToken.Stack)= UNPACK TUPLE_5 index: 1 
+REF_519(IAstariaRouter) -> s.ASTARIA_ROUTER
+REF_521(ILienToken.LienActionEncumber) -> params.encumber
+REF_522(ILienToken.Lien) -> REF_521.lien
+REF_523(uint8) -> params.position
+REF_524(ILienToken.LienActionEncumber) -> params.encumber
+REF_525(ILienToken.Stack[]) -> REF_524.stack
+TMP_1523(bool) = HIGH_LEVEL_CALL, dest:REF_519(IAstariaRouter), function:isValidRefinance, arguments:['REF_522', 'REF_523', 'REF_525']  
+EXPRESSION:(None,newLien) = _createLien(s,params.encumber)	NodeType.EXPRESSION
+! s.ASTARIA_ROUTER.isValidRefinance(params.encumber.lien,params.position,params.encumber.stack)	NodeType.EXPRESSION" -> "BlockID: 2167
+Call context: 
+None
+TMP_1524 = ! TMP_1523 
+CONDITION TMP_1524
+EXPRESSION:! s.ASTARIA_ROUTER.isValidRefinance(params.encumber.lien,params.position,params.encumber.stack)	NodeType.IF" [key=0];
+"BlockID: 2167
+Call context: 
+None
+TMP_1524 = ! TMP_1523 
+CONDITION TMP_1524
+EXPRESSION:! s.ASTARIA_ROUTER.isValidRefinance(params.encumber.lien,params.position,params.encumber.stack)	NodeType.IF" -> "BlockID: 2168
+Call context: 
+True
+TMP_1525(None) = SOLIDITY_CALL revert InvalidRefinance()()
+EXPRESSION:revert InvalidRefinance()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2167
+Call context: 
+None
+TMP_1524 = ! TMP_1523 
+CONDITION TMP_1524
+EXPRESSION:! s.ASTARIA_ROUTER.isValidRefinance(params.encumber.lien,params.position,params.encumber.stack)	NodeType.IF" -> "BlockID: 2169
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2169
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2170
+Call context: 
+None
+REF_526(mapping(uint256 => bytes32)) -> s.collateralStateHash
+REF_527(ILienToken.LienActionEncumber) -> params.encumber
+REF_528(ILienToken.Lien) -> REF_527.lien
+REF_529(uint256) -> REF_528.collateralId
+REF_530(bytes32) -> REF_526[REF_529]
+TMP_1526(bool) = REF_530 == ACTIVE_AUCTION
+CONDITION TMP_1526
+EXPRESSION:s.collateralStateHash[params.encumber.lien.collateralId] == ACTIVE_AUCTION	NodeType.IF" [key=0];
+"BlockID: 2170
+Call context: 
+None
+REF_526(mapping(uint256 => bytes32)) -> s.collateralStateHash
+REF_527(ILienToken.LienActionEncumber) -> params.encumber
+REF_528(ILienToken.Lien) -> REF_527.lien
+REF_529(uint256) -> REF_528.collateralId
+REF_530(bytes32) -> REF_526[REF_529]
+TMP_1526(bool) = REF_530 == ACTIVE_AUCTION
+CONDITION TMP_1526
+EXPRESSION:s.collateralStateHash[params.encumber.lien.collateralId] == ACTIVE_AUCTION	NodeType.IF" -> "BlockID: 2171
+Call context: 
+True
+REF_531(ILienToken.InvalidStates) -> InvalidStates.COLLATERAL_AUCTION
+TMP_1527(None) = SOLIDITY_CALL revert InvalidState(ILienToken.InvalidStates)(REF_531)
+EXPRESSION:revert InvalidState(ILienToken.InvalidStates)(InvalidStates.COLLATERAL_AUCTION)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2170
+Call context: 
+None
+REF_526(mapping(uint256 => bytes32)) -> s.collateralStateHash
+REF_527(ILienToken.LienActionEncumber) -> params.encumber
+REF_528(ILienToken.Lien) -> REF_527.lien
+REF_529(uint256) -> REF_528.collateralId
+REF_530(bytes32) -> REF_526[REF_529]
+TMP_1526(bool) = REF_530 == ACTIVE_AUCTION
+CONDITION TMP_1526
+EXPRESSION:s.collateralStateHash[params.encumber.lien.collateralId] == ACTIVE_AUCTION	NodeType.IF" -> "BlockID: 2172
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2172
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2173
+Call context: 
+None
+NEW VARIABLE owed
+NEW VARIABLE buyout
+REF_532(ILienToken.LienActionEncumber) -> params.encumber
+REF_533(ILienToken.Stack[]) -> REF_532.stack
+REF_534(uint8) -> params.position
+REF_535(ILienToken.Stack) -> REF_533[REF_534]
+TUPLE_6(uint256,uint256) = INTERNAL_CALL, LienToken._getBuyout(ILienToken.LienStorage,ILienToken.Stack)(s,REF_535)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(owed,buyout) = _getBuyout(s,params.encumber.stack[params.position])	NodeType.EXPRESSION" [key=0];
+"BlockID: 2173
+Call context: 
+None
+NEW VARIABLE owed
+NEW VARIABLE buyout
+REF_532(ILienToken.LienActionEncumber) -> params.encumber
+REF_533(ILienToken.Stack[]) -> REF_532.stack
+REF_534(uint8) -> params.position
+REF_535(ILienToken.Stack) -> REF_533[REF_534]
+TUPLE_6(uint256,uint256) = INTERNAL_CALL, LienToken._getBuyout(ILienToken.LienStorage,ILienToken.Stack)(s,REF_535)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(owed,buyout) = _getBuyout(s,params.encumber.stack[params.position])	NodeType.EXPRESSION" -> "BlockID: 2174
+Call context: 
+None
+owed(uint256)= UNPACK TUPLE_6 index: 0 
+buyout(uint256)= UNPACK TUPLE_6 index: 1 
+REF_536(ILienToken.LienActionEncumber) -> params.encumber
+REF_537(ILienToken.Lien) -> REF_536.lien
+REF_538(ILienToken.Details) -> REF_537.details
+REF_539(uint256) -> REF_538.maxAmount
+TMP_1528(bool) = REF_539 < owed
+CONDITION TMP_1528
+EXPRESSION:(owed,buyout) = _getBuyout(s,params.encumber.stack[params.position])	NodeType.EXPRESSION
+params.encumber.lien.details.maxAmount < owed	NodeType.IF" [key=0];
+"BlockID: 2174
+Call context: 
+None
+owed(uint256)= UNPACK TUPLE_6 index: 0 
+buyout(uint256)= UNPACK TUPLE_6 index: 1 
+REF_536(ILienToken.LienActionEncumber) -> params.encumber
+REF_537(ILienToken.Lien) -> REF_536.lien
+REF_538(ILienToken.Details) -> REF_537.details
+REF_539(uint256) -> REF_538.maxAmount
+TMP_1528(bool) = REF_539 < owed
+CONDITION TMP_1528
+EXPRESSION:(owed,buyout) = _getBuyout(s,params.encumber.stack[params.position])	NodeType.EXPRESSION
+params.encumber.lien.details.maxAmount < owed	NodeType.IF" -> "BlockID: 2175
+Call context: 
+True
+REF_540(ILienToken.LienActionEncumber) -> params.encumber
+REF_541(ILienToken.Lien) -> REF_540.lien
+REF_542(ILienToken.Details) -> REF_541.details
+REF_543(uint256) -> REF_542.maxAmount
+TMP_1529(None) = SOLIDITY_CALL revert InvalidBuyoutDetails(uint256,uint256)(REF_543,owed)
+EXPRESSION:revert InvalidBuyoutDetails(uint256,uint256)(params.encumber.lien.details.maxAmount,owed)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2174
+Call context: 
+None
+owed(uint256)= UNPACK TUPLE_6 index: 0 
+buyout(uint256)= UNPACK TUPLE_6 index: 1 
+REF_536(ILienToken.LienActionEncumber) -> params.encumber
+REF_537(ILienToken.Lien) -> REF_536.lien
+REF_538(ILienToken.Details) -> REF_537.details
+REF_539(uint256) -> REF_538.maxAmount
+TMP_1528(bool) = REF_539 < owed
+CONDITION TMP_1528
+EXPRESSION:(owed,buyout) = _getBuyout(s,params.encumber.stack[params.position])	NodeType.EXPRESSION
+params.encumber.lien.details.maxAmount < owed	NodeType.IF" -> "BlockID: 2176
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2176
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2177
+Call context: 
+None
+potentialDebt(uint256) := 0(uint256)
+REF_544(ILienToken.LienActionEncumber) -> params.encumber
+REF_545(ILienToken.Stack[]) -> REF_544.stack
+REF_546 -> LENGTH REF_545
+i(uint256) := REF_546(uint256)
+EXPRESSION:potentialDebt = 0	NodeType.VARIABLE
+potentialDebt = 0	NodeType.EXPRESSION
+i = params.encumber.stack.length	NodeType.VARIABLE
+i = params.encumber.stack.length	NodeType.EXPRESSION" [key=0];
+"BlockID: 2177
+Call context: 
+None
+potentialDebt(uint256) := 0(uint256)
+REF_544(ILienToken.LienActionEncumber) -> params.encumber
+REF_545(ILienToken.Stack[]) -> REF_544.stack
+REF_546 -> LENGTH REF_545
+i(uint256) := REF_546(uint256)
+EXPRESSION:potentialDebt = 0	NodeType.VARIABLE
+potentialDebt = 0	NodeType.EXPRESSION
+i = params.encumber.stack.length	NodeType.VARIABLE
+i = params.encumber.stack.length	NodeType.EXPRESSION" -> "BlockID: 2178
+Call context: 
+None
+BEGIN_LOOP
+TMP_1530(bool) = i > 0
+CONDITION TMP_1530
+EXPRESSION:None	NodeType.STARTLOOP
+i > 0	NodeType.IFLOOP" [key=0];
+"BlockID: 2178
+Call context: 
+None
+BEGIN_LOOP
+TMP_1530(bool) = i > 0
+CONDITION TMP_1530
+EXPRESSION:None	NodeType.STARTLOOP
+i > 0	NodeType.IFLOOP" -> "BlockID: 2179
+Call context: 
+True
+TMP_1531(uint256) = i (c)- 1
+j(uint256) := TMP_1531(uint256)
+REF_547(ILienToken.LienActionEncumber) -> params.encumber
+REF_548(ILienToken.Stack[]) -> REF_547.stack
+REF_549(ILienToken.Stack) -> REF_548[j]
+REF_550(ILienToken.Point) -> REF_549.point
+REF_551(uint40) -> REF_550.end
+TMP_1532(bool) = block.timestamp >= REF_551
+CONDITION TMP_1532
+EXPRESSION:j = i - 1	NodeType.VARIABLE
+j = i - 1	NodeType.EXPRESSION
+block.timestamp >= params.encumber.stack[j].point.end	NodeType.IF" [key=0];
+"BlockID: 2178
+Call context: 
+None
+BEGIN_LOOP
+TMP_1530(bool) = i > 0
+CONDITION TMP_1530
+EXPRESSION:None	NodeType.STARTLOOP
+i > 0	NodeType.IFLOOP" -> "BlockID: 2180
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 2179
+Call context: 
+True
+TMP_1531(uint256) = i (c)- 1
+j(uint256) := TMP_1531(uint256)
+REF_547(ILienToken.LienActionEncumber) -> params.encumber
+REF_548(ILienToken.Stack[]) -> REF_547.stack
+REF_549(ILienToken.Stack) -> REF_548[j]
+REF_550(ILienToken.Point) -> REF_549.point
+REF_551(uint40) -> REF_550.end
+TMP_1532(bool) = block.timestamp >= REF_551
+CONDITION TMP_1532
+EXPRESSION:j = i - 1	NodeType.VARIABLE
+j = i - 1	NodeType.EXPRESSION
+block.timestamp >= params.encumber.stack[j].point.end	NodeType.IF" -> "BlockID: 2205
+Call context: 
+True
+REF_552(ILienToken.InvalidStates) -> InvalidStates.EXPIRED_LIEN
+TMP_1533(None) = SOLIDITY_CALL revert InvalidState(ILienToken.InvalidStates)(REF_552)
+EXPRESSION:revert InvalidState(ILienToken.InvalidStates)(InvalidStates.EXPIRED_LIEN)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2179
+Call context: 
+True
+TMP_1531(uint256) = i (c)- 1
+j(uint256) := TMP_1531(uint256)
+REF_547(ILienToken.LienActionEncumber) -> params.encumber
+REF_548(ILienToken.Stack[]) -> REF_547.stack
+REF_549(ILienToken.Stack) -> REF_548[j]
+REF_550(ILienToken.Point) -> REF_549.point
+REF_551(uint40) -> REF_550.end
+TMP_1532(bool) = block.timestamp >= REF_551
+CONDITION TMP_1532
+EXPRESSION:j = i - 1	NodeType.VARIABLE
+j = i - 1	NodeType.EXPRESSION
+block.timestamp >= params.encumber.stack[j].point.end	NodeType.IF" -> "BlockID: 2206
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2180
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 2181
+Call context: 
+None
+REF_568(ILienToken.LienActionEncumber) -> params.encumber
+REF_569(ILienToken.Stack[]) -> REF_568.stack
+REF_570(uint8) -> params.position
+REF_571(ILienToken.Stack) -> REF_569[REF_570]
+REF_572(ILienToken.Point) -> REF_571.point
+REF_573(uint256) -> REF_572.lienId
+TMP_1537(address) = INTERNAL_CALL, LienToken._getPayee(ILienToken.LienStorage,uint256)(s,REF_573)
+EXPRESSION:" [key=0];
+"BlockID: 2181
+Call context: 
+None
+REF_568(ILienToken.LienActionEncumber) -> params.encumber
+REF_569(ILienToken.Stack[]) -> REF_568.stack
+REF_570(uint8) -> params.position
+REF_571(ILienToken.Stack) -> REF_569[REF_570]
+REF_572(ILienToken.Point) -> REF_571.point
+REF_573(uint256) -> REF_572.lienId
+TMP_1537(address) = INTERNAL_CALL, LienToken._getPayee(ILienToken.LienStorage,uint256)(s,REF_573)
+EXPRESSION:" -> "BlockID: 2182
+Call context: 
+None
+payee(address) := TMP_1537(address)
+REF_574(ITransferProxy) -> s.TRANSFER_PROXY
+REF_576(ILienToken.LienActionEncumber) -> params.encumber
+REF_577(ILienToken.Stack[]) -> REF_576.stack
+REF_578(uint8) -> params.position
+REF_579(ILienToken.Stack) -> REF_577[REF_578]
+REF_580(ILienToken.Lien) -> REF_579.lien
+REF_581(address) -> REF_580.token
+HIGH_LEVEL_CALL, dest:REF_574(ITransferProxy), function:tokenTransferFrom, arguments:['REF_581', 'msg.sender', 'payee', 'buyout']  
+EXPRESSION:payee = _getPayee(s,params.encumber.stack[params.position].point.lienId)	NodeType.VARIABLE
+payee = _getPayee(s,params.encumber.stack[params.position].point.lienId)	NodeType.EXPRESSION
+s.TRANSFER_PROXY.tokenTransferFrom(params.encumber.stack[params.position].lien.token,msg.sender,payee,buyout)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2182
+Call context: 
+None
+payee(address) := TMP_1537(address)
+REF_574(ITransferProxy) -> s.TRANSFER_PROXY
+REF_576(ILienToken.LienActionEncumber) -> params.encumber
+REF_577(ILienToken.Stack[]) -> REF_576.stack
+REF_578(uint8) -> params.position
+REF_579(ILienToken.Stack) -> REF_577[REF_578]
+REF_580(ILienToken.Lien) -> REF_579.lien
+REF_581(address) -> REF_580.token
+HIGH_LEVEL_CALL, dest:REF_574(ITransferProxy), function:tokenTransferFrom, arguments:['REF_581', 'msg.sender', 'payee', 'buyout']  
+EXPRESSION:payee = _getPayee(s,params.encumber.stack[params.position].point.lienId)	NodeType.VARIABLE
+payee = _getPayee(s,params.encumber.stack[params.position].point.lienId)	NodeType.EXPRESSION
+s.TRANSFER_PROXY.tokenTransferFrom(params.encumber.stack[params.position].lien.token,msg.sender,payee,buyout)	NodeType.EXPRESSION" -> "BlockID: 2183
+Call context: 
+None
+TMP_1539(bool) = INTERNAL_CALL, LienToken._isPublicVault(ILienToken.LienStorage,address)(s,payee)
+EXPRESSION:s.TRANSFER_PROXY.tokenTransferFrom(params.encumber.stack[params.position].lien.token,msg.sender,payee,buyout)	NodeType.EXPRESSION
+_isPublicVault(s,payee)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2183
+Call context: 
+None
+TMP_1539(bool) = INTERNAL_CALL, LienToken._isPublicVault(ILienToken.LienStorage,address)(s,payee)
+EXPRESSION:s.TRANSFER_PROXY.tokenTransferFrom(params.encumber.stack[params.position].lien.token,msg.sender,payee,buyout)	NodeType.EXPRESSION
+_isPublicVault(s,payee)	NodeType.EXPRESSION" -> "BlockID: 2184
+Call context: 
+None
+CONDITION TMP_1539
+EXPRESSION:_isPublicVault(s,payee)	NodeType.IF" [key=0];
+"BlockID: 2184
+Call context: 
+None
+CONDITION TMP_1539
+EXPRESSION:_isPublicVault(s,payee)	NodeType.IF" -> "BlockID: 2185
+Call context: 
+True
+TMP_1540 = CONVERT payee to IPublicVault
+REF_584(ILienToken.LienActionEncumber) -> params.encumber
+REF_585(ILienToken.Stack[]) -> REF_584.stack
+REF_586(uint8) -> params.position
+REF_587(ILienToken.Stack) -> REF_585[REF_586]
+TMP_1541(uint256) = INTERNAL_CALL, LienToken.calculateSlope(ILienToken.Stack)(REF_587)
+EXPRESSION:IPublicVault(payee).handleBuyoutLien(IPublicVault.BuyoutLienParams(calculateSlope(params.encumber.stack[params.position]),params.encumber.stack[params.position].point.end,buyout - params.encumber.stack[params.position].point.amount))	NodeType.EXPRESSION" [key=0];
+"BlockID: 2184
+Call context: 
+None
+CONDITION TMP_1539
+EXPRESSION:_isPublicVault(s,payee)	NodeType.IF" -> "BlockID: 2188
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2185
+Call context: 
+True
+TMP_1540 = CONVERT payee to IPublicVault
+REF_584(ILienToken.LienActionEncumber) -> params.encumber
+REF_585(ILienToken.Stack[]) -> REF_584.stack
+REF_586(uint8) -> params.position
+REF_587(ILienToken.Stack) -> REF_585[REF_586]
+TMP_1541(uint256) = INTERNAL_CALL, LienToken.calculateSlope(ILienToken.Stack)(REF_587)
+EXPRESSION:IPublicVault(payee).handleBuyoutLien(IPublicVault.BuyoutLienParams(calculateSlope(params.encumber.stack[params.position]),params.encumber.stack[params.position].point.end,buyout - params.encumber.stack[params.position].point.amount))	NodeType.EXPRESSION" -> "BlockID: 2186
+Call context: 
+None
+REF_588(ILienToken.LienActionEncumber) -> params.encumber
+REF_589(ILienToken.Stack[]) -> REF_588.stack
+REF_590(uint8) -> params.position
+REF_591(ILienToken.Stack) -> REF_589[REF_590]
+REF_592(ILienToken.Point) -> REF_591.point
+REF_593(uint40) -> REF_592.end
+REF_594(ILienToken.LienActionEncumber) -> params.encumber
+REF_595(ILienToken.Stack[]) -> REF_594.stack
+REF_596(uint8) -> params.position
+REF_597(ILienToken.Stack) -> REF_595[REF_596]
+REF_598(ILienToken.Point) -> REF_597.point
+REF_599(uint88) -> REF_598.amount
+TMP_1542(uint256) = buyout (c)- REF_599
+TMP_1543(IPublicVault.BuyoutLienParams) = new BuyoutLienParams(TMP_1541,REF_593,TMP_1542)
+HIGH_LEVEL_CALL, dest:TMP_1540(IPublicVault), function:handleBuyoutLien, arguments:['TMP_1543']  
+EXPRESSION:IPublicVault(payee).handleBuyoutLien(IPublicVault.BuyoutLienParams(calculateSlope(params.encumber.stack[params.position]),params.encumber.stack[params.position].point.end,buyout - params.encumber.stack[params.position].point.amount))	NodeType.EXPRESSION" [key=0];
+"BlockID: 2188
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2189
+Call context: 
+None
+REF_600(ILienToken.LienActionEncumber) -> params.encumber
+REF_601(ILienToken.Stack[]) -> REF_600.stack
+REF_602(uint8) -> params.position
+REF_603(ILienToken.LienActionEncumber) -> params.encumber
+REF_604(ILienToken.Stack[]) -> REF_603.stack
+REF_605(uint8) -> params.position
+REF_606(ILienToken.Stack) -> REF_604[REF_605]
+REF_607(ILienToken.Point) -> REF_606.point
+REF_608(uint256) -> REF_607.lienId
+TMP_1545(ILienToken.Stack[]) = INTERNAL_CALL, LienToken._replaceStackAtPositionWithNewLien(ILienToken.LienStorage,ILienToken.Stack[],uint256,ILienToken.Stack,uint256)(s,REF_601,REF_602,newLien,REF_608)
+EXPRESSION:newStack = _replaceStackAtPositionWithNewLien(s,params.encumber.stack,params.position,newLien,params.encumber.stack[params.position].point.lienId)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2189
+Call context: 
+None
+REF_600(ILienToken.LienActionEncumber) -> params.encumber
+REF_601(ILienToken.Stack[]) -> REF_600.stack
+REF_602(uint8) -> params.position
+REF_603(ILienToken.LienActionEncumber) -> params.encumber
+REF_604(ILienToken.Stack[]) -> REF_603.stack
+REF_605(uint8) -> params.position
+REF_606(ILienToken.Stack) -> REF_604[REF_605]
+REF_607(ILienToken.Point) -> REF_606.point
+REF_608(uint256) -> REF_607.lienId
+TMP_1545(ILienToken.Stack[]) = INTERNAL_CALL, LienToken._replaceStackAtPositionWithNewLien(ILienToken.LienStorage,ILienToken.Stack[],uint256,ILienToken.Stack,uint256)(s,REF_601,REF_602,newLien,REF_608)
+EXPRESSION:newStack = _replaceStackAtPositionWithNewLien(s,params.encumber.stack,params.position,newLien,params.encumber.stack[params.position].point.lienId)	NodeType.EXPRESSION" -> "BlockID: 2190
+Call context: 
+None
+newStack(ILienToken.Stack[]) =  ['TMP_1545(ILienToken.Stack[])']
+NEW VARIABLE maxPotentialDebt
+REF_609 -> LENGTH newStack
+n(uint256) := REF_609(uint256)
+NEW VARIABLE i_scope_0
+EXPRESSION i_scope_0
+EXPRESSION:newStack = _replaceStackAtPositionWithNewLien(s,params.encumber.stack,params.position,newLien,params.encumber.stack[params.position].point.lienId)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+n = newStack.length	NodeType.VARIABLE
+n = newStack.length	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+i_scope_0	NodeType.EXPRESSION" [key=0];
+"BlockID: 2190
+Call context: 
+None
+newStack(ILienToken.Stack[]) =  ['TMP_1545(ILienToken.Stack[])']
+NEW VARIABLE maxPotentialDebt
+REF_609 -> LENGTH newStack
+n(uint256) := REF_609(uint256)
+NEW VARIABLE i_scope_0
+EXPRESSION i_scope_0
+EXPRESSION:newStack = _replaceStackAtPositionWithNewLien(s,params.encumber.stack,params.position,newLien,params.encumber.stack[params.position].point.lienId)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+n = newStack.length	NodeType.VARIABLE
+n = newStack.length	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+i_scope_0	NodeType.EXPRESSION" -> "BlockID: 2191
+Call context: 
+None
+BEGIN_LOOP
+TMP_1546(bool) = i_scope_0 < n
+CONDITION TMP_1546
+EXPRESSION:None	NodeType.STARTLOOP
+i_scope_0 < n	NodeType.IFLOOP" [key=0];
+"BlockID: 2191
+Call context: 
+None
+BEGIN_LOOP
+TMP_1546(bool) = i_scope_0 < n
+CONDITION TMP_1546
+EXPRESSION:None	NodeType.STARTLOOP
+i_scope_0 < n	NodeType.IFLOOP" -> "BlockID: 2192
+Call context: 
+True
+REF_610(ILienToken.Stack) -> newStack[i_scope_0]
+REF_611(ILienToken.Stack) -> newStack[i_scope_0]
+REF_612(ILienToken.Point) -> REF_611.point
+REF_613(uint40) -> REF_612.end
+TMP_1547(uint88) = INTERNAL_CALL, LienToken._getOwed(ILienToken.Stack,uint256)(REF_610,REF_613)
+EXPRESSION:maxPotentialDebt += _getOwed(newStack[i_scope_0],newStack[i_scope_0].point.end)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2191
+Call context: 
+None
+BEGIN_LOOP
+TMP_1546(bool) = i_scope_0 < n
+CONDITION TMP_1546
+EXPRESSION:None	NodeType.STARTLOOP
+i_scope_0 < n	NodeType.IFLOOP" -> "BlockID: 2194
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 2192
+Call context: 
+True
+REF_610(ILienToken.Stack) -> newStack[i_scope_0]
+REF_611(ILienToken.Stack) -> newStack[i_scope_0]
+REF_612(ILienToken.Point) -> REF_611.point
+REF_613(uint40) -> REF_612.end
+TMP_1547(uint88) = INTERNAL_CALL, LienToken._getOwed(ILienToken.Stack,uint256)(REF_610,REF_613)
+EXPRESSION:maxPotentialDebt += _getOwed(newStack[i_scope_0],newStack[i_scope_0].point.end)	NodeType.EXPRESSION" -> "BlockID: 2193
+Call context: 
+None
+maxPotentialDebt(uint256) = maxPotentialDebt (c)+ TMP_1547
+REF_614(uint8) -> params.position
+TMP_1548(bool) = i_scope_0 == REF_614
+CONDITION TMP_1548
+EXPRESSION:maxPotentialDebt += _getOwed(newStack[i_scope_0],newStack[i_scope_0].point.end)	NodeType.EXPRESSION
+i_scope_0 == params.position	NodeType.IF" [key=0];
+"BlockID: 2194
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 2195
+Call context: 
+None
+REF_626(mapping(uint256 => bytes32)) -> s.collateralStateHash
+REF_627(ILienToken.LienActionEncumber) -> params.encumber
+REF_628(ILienToken.Lien) -> REF_627.lien
+REF_629(uint256) -> REF_628.collateralId
+REF_630(bytes32) -> REF_626[REF_629]
+TMP_1555(bytes) = SOLIDITY_CALL abi.encode()(newStack)
+TMP_1556(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_1555)
+REF_630(bytes32) (->s) := TMP_1556(bytes32)
+EXPRESSION:s.collateralStateHash[params.encumber.lien.collateralId] = keccak256(bytes)(abi.encode(newStack))	NodeType.EXPRESSION" [key=0];
+"BlockID: 2193
+Call context: 
+None
+maxPotentialDebt(uint256) = maxPotentialDebt (c)+ TMP_1547
+REF_614(uint8) -> params.position
+TMP_1548(bool) = i_scope_0 == REF_614
+CONDITION TMP_1548
+EXPRESSION:maxPotentialDebt += _getOwed(newStack[i_scope_0],newStack[i_scope_0].point.end)	NodeType.EXPRESSION
+i_scope_0 == params.position	NodeType.IF" -> "BlockID: 2196
+Call context: 
+True
+REF_615(ILienToken.LienActionEncumber) -> params.encumber
+REF_616(ILienToken.Lien) -> REF_615.lien
+REF_617(ILienToken.Details) -> REF_616.details
+REF_618(uint256) -> REF_617.maxPotentialDebt
+TMP_1549(bool) = maxPotentialDebt > REF_618
+CONDITION TMP_1549
+EXPRESSION:maxPotentialDebt > params.encumber.lien.details.maxPotentialDebt	NodeType.IF" [key=0];
+"BlockID: 2193
+Call context: 
+None
+maxPotentialDebt(uint256) = maxPotentialDebt (c)+ TMP_1547
+REF_614(uint8) -> params.position
+TMP_1548(bool) = i_scope_0 == REF_614
+CONDITION TMP_1548
+EXPRESSION:maxPotentialDebt += _getOwed(newStack[i_scope_0],newStack[i_scope_0].point.end)	NodeType.EXPRESSION
+i_scope_0 == params.position	NodeType.IF" -> "BlockID: 2197
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2196
+Call context: 
+True
+REF_615(ILienToken.LienActionEncumber) -> params.encumber
+REF_616(ILienToken.Lien) -> REF_615.lien
+REF_617(ILienToken.Details) -> REF_616.details
+REF_618(uint256) -> REF_617.maxPotentialDebt
+TMP_1549(bool) = maxPotentialDebt > REF_618
+CONDITION TMP_1549
+EXPRESSION:maxPotentialDebt > params.encumber.lien.details.maxPotentialDebt	NodeType.IF" -> "BlockID: 2202
+Call context: 
+True
+REF_619(ILienToken.InvalidStates) -> InvalidStates.DEBT_LIMIT
+TMP_1550(None) = SOLIDITY_CALL revert InvalidState(ILienToken.InvalidStates)(REF_619)
+EXPRESSION:revert InvalidState(ILienToken.InvalidStates)(InvalidStates.DEBT_LIMIT)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2196
+Call context: 
+True
+REF_615(ILienToken.LienActionEncumber) -> params.encumber
+REF_616(ILienToken.Lien) -> REF_615.lien
+REF_617(ILienToken.Details) -> REF_616.details
+REF_618(uint256) -> REF_617.maxPotentialDebt
+TMP_1549(bool) = maxPotentialDebt > REF_618
+CONDITION TMP_1549
+EXPRESSION:maxPotentialDebt > params.encumber.lien.details.maxPotentialDebt	NodeType.IF" -> "BlockID: 2203
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2197
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2198
+Call context: 
+None
+REF_620(uint8) -> params.position
+TMP_1551(bool) = i_scope_0 > REF_620
+REF_621(ILienToken.Stack) -> newStack[i_scope_0]
+REF_622(ILienToken.Lien) -> REF_621.lien
+REF_623(ILienToken.Details) -> REF_622.details
+REF_624(uint256) -> REF_623.maxPotentialDebt
+TMP_1552(bool) = maxPotentialDebt > REF_624
+TMP_1553(bool) = TMP_1551 && TMP_1552
+CONDITION TMP_1553
+EXPRESSION:i_scope_0 > params.position && (maxPotentialDebt > newStack[i_scope_0].lien.details.maxPotentialDebt)	NodeType.IF" [key=0];
+"BlockID: 2198
+Call context: 
+None
+REF_620(uint8) -> params.position
+TMP_1551(bool) = i_scope_0 > REF_620
+REF_621(ILienToken.Stack) -> newStack[i_scope_0]
+REF_622(ILienToken.Lien) -> REF_621.lien
+REF_623(ILienToken.Details) -> REF_622.details
+REF_624(uint256) -> REF_623.maxPotentialDebt
+TMP_1552(bool) = maxPotentialDebt > REF_624
+TMP_1553(bool) = TMP_1551 && TMP_1552
+CONDITION TMP_1553
+EXPRESSION:i_scope_0 > params.position && (maxPotentialDebt > newStack[i_scope_0].lien.details.maxPotentialDebt)	NodeType.IF" -> "BlockID: 2199
+Call context: 
+True
+REF_625(ILienToken.InvalidStates) -> InvalidStates.DEBT_LIMIT
+TMP_1554(None) = SOLIDITY_CALL revert InvalidState(ILienToken.InvalidStates)(REF_625)
+EXPRESSION:revert InvalidState(ILienToken.InvalidStates)(InvalidStates.DEBT_LIMIT)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2198
+Call context: 
+None
+REF_620(uint8) -> params.position
+TMP_1551(bool) = i_scope_0 > REF_620
+REF_621(ILienToken.Stack) -> newStack[i_scope_0]
+REF_622(ILienToken.Lien) -> REF_621.lien
+REF_623(ILienToken.Details) -> REF_622.details
+REF_624(uint256) -> REF_623.maxPotentialDebt
+TMP_1552(bool) = maxPotentialDebt > REF_624
+TMP_1553(bool) = TMP_1551 && TMP_1552
+CONDITION TMP_1553
+EXPRESSION:i_scope_0 > params.position && (maxPotentialDebt > newStack[i_scope_0].lien.details.maxPotentialDebt)	NodeType.IF" -> "BlockID: 2200
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2200
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2201
+Call context: 
+None
+i_scope_0(uint256) = i_scope_0 + 1
+EXPRESSION:++ i_scope_0	NodeType.EXPRESSION" [key=0];
+"BlockID: 2201
+Call context: 
+None
+i_scope_0(uint256) = i_scope_0 + 1
+EXPRESSION:++ i_scope_0	NodeType.EXPRESSION" -> "BlockID: 2191
+Call context: 
+None
+BEGIN_LOOP
+TMP_1546(bool) = i_scope_0 < n
+CONDITION TMP_1546
+EXPRESSION:None	NodeType.STARTLOOP
+i_scope_0 < n	NodeType.IFLOOP" [key=0];
+"BlockID: 2203
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2197
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2186
+Call context: 
+None
+REF_588(ILienToken.LienActionEncumber) -> params.encumber
+REF_589(ILienToken.Stack[]) -> REF_588.stack
+REF_590(uint8) -> params.position
+REF_591(ILienToken.Stack) -> REF_589[REF_590]
+REF_592(ILienToken.Point) -> REF_591.point
+REF_593(uint40) -> REF_592.end
+REF_594(ILienToken.LienActionEncumber) -> params.encumber
+REF_595(ILienToken.Stack[]) -> REF_594.stack
+REF_596(uint8) -> params.position
+REF_597(ILienToken.Stack) -> REF_595[REF_596]
+REF_598(ILienToken.Point) -> REF_597.point
+REF_599(uint88) -> REF_598.amount
+TMP_1542(uint256) = buyout (c)- REF_599
+TMP_1543(IPublicVault.BuyoutLienParams) = new BuyoutLienParams(TMP_1541,REF_593,TMP_1542)
+HIGH_LEVEL_CALL, dest:TMP_1540(IPublicVault), function:handleBuyoutLien, arguments:['TMP_1543']  
+EXPRESSION:IPublicVault(payee).handleBuyoutLien(IPublicVault.BuyoutLienParams(calculateSlope(params.encumber.stack[params.position]),params.encumber.stack[params.position].point.end,buyout - params.encumber.stack[params.position].point.amount))	NodeType.EXPRESSION" -> "BlockID: 2188
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2206
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2207
+Call context: 
+None
+REF_553(ILienToken.LienActionEncumber) -> params.encumber
+REF_554(ILienToken.Stack[]) -> REF_553.stack
+REF_555(ILienToken.Stack) -> REF_554[j]
+REF_556(ILienToken.LienActionEncumber) -> params.encumber
+REF_557(ILienToken.Stack[]) -> REF_556.stack
+REF_558(ILienToken.Stack) -> REF_557[j]
+REF_559(ILienToken.Point) -> REF_558.point
+REF_560(uint40) -> REF_559.end
+TMP_1534(uint88) = INTERNAL_CALL, LienToken._getOwed(ILienToken.Stack,uint256)(REF_555,REF_560)
+EXPRESSION:potentialDebt += _getOwed(params.encumber.stack[j],params.encumber.stack[j].point.end)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2207
+Call context: 
+None
+REF_553(ILienToken.LienActionEncumber) -> params.encumber
+REF_554(ILienToken.Stack[]) -> REF_553.stack
+REF_555(ILienToken.Stack) -> REF_554[j]
+REF_556(ILienToken.LienActionEncumber) -> params.encumber
+REF_557(ILienToken.Stack[]) -> REF_556.stack
+REF_558(ILienToken.Stack) -> REF_557[j]
+REF_559(ILienToken.Point) -> REF_558.point
+REF_560(uint40) -> REF_559.end
+TMP_1534(uint88) = INTERNAL_CALL, LienToken._getOwed(ILienToken.Stack,uint256)(REF_555,REF_560)
+EXPRESSION:potentialDebt += _getOwed(params.encumber.stack[j],params.encumber.stack[j].point.end)	NodeType.EXPRESSION" -> "BlockID: 2208
+Call context: 
+None
+potentialDebt(uint256) = potentialDebt (c)+ TMP_1534
+REF_561(ILienToken.LienActionEncumber) -> params.encumber
+REF_562(ILienToken.Stack[]) -> REF_561.stack
+REF_563(ILienToken.Stack) -> REF_562[j]
+REF_564(ILienToken.Lien) -> REF_563.lien
+REF_565(ILienToken.Details) -> REF_564.details
+REF_566(uint256) -> REF_565.liquidationInitialAsk
+TMP_1535(bool) = potentialDebt > REF_566
+CONDITION TMP_1535
+EXPRESSION:potentialDebt += _getOwed(params.encumber.stack[j],params.encumber.stack[j].point.end)	NodeType.EXPRESSION
+potentialDebt > params.encumber.stack[j].lien.details.liquidationInitialAsk	NodeType.IF" [key=0];
+"BlockID: 2208
+Call context: 
+None
+potentialDebt(uint256) = potentialDebt (c)+ TMP_1534
+REF_561(ILienToken.LienActionEncumber) -> params.encumber
+REF_562(ILienToken.Stack[]) -> REF_561.stack
+REF_563(ILienToken.Stack) -> REF_562[j]
+REF_564(ILienToken.Lien) -> REF_563.lien
+REF_565(ILienToken.Details) -> REF_564.details
+REF_566(uint256) -> REF_565.liquidationInitialAsk
+TMP_1535(bool) = potentialDebt > REF_566
+CONDITION TMP_1535
+EXPRESSION:potentialDebt += _getOwed(params.encumber.stack[j],params.encumber.stack[j].point.end)	NodeType.EXPRESSION
+potentialDebt > params.encumber.stack[j].lien.details.liquidationInitialAsk	NodeType.IF" -> "BlockID: 2209
+Call context: 
+True
+REF_567(ILienToken.InvalidStates) -> InvalidStates.INITIAL_ASK_EXCEEDED
+TMP_1536(None) = SOLIDITY_CALL revert InvalidState(ILienToken.InvalidStates)(REF_567)
+EXPRESSION:revert InvalidState(ILienToken.InvalidStates)(InvalidStates.INITIAL_ASK_EXCEEDED)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2208
+Call context: 
+None
+potentialDebt(uint256) = potentialDebt (c)+ TMP_1534
+REF_561(ILienToken.LienActionEncumber) -> params.encumber
+REF_562(ILienToken.Stack[]) -> REF_561.stack
+REF_563(ILienToken.Stack) -> REF_562[j]
+REF_564(ILienToken.Lien) -> REF_563.lien
+REF_565(ILienToken.Details) -> REF_564.details
+REF_566(uint256) -> REF_565.liquidationInitialAsk
+TMP_1535(bool) = potentialDebt > REF_566
+CONDITION TMP_1535
+EXPRESSION:potentialDebt += _getOwed(params.encumber.stack[j],params.encumber.stack[j].point.end)	NodeType.EXPRESSION
+potentialDebt > params.encumber.stack[j].lien.details.liquidationInitialAsk	NodeType.IF" -> "BlockID: 2210
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2210
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2211
+Call context: 
+None
+i(uint256) = i - 1
+EXPRESSION:-- i	NodeType.EXPRESSION" [key=0];
+"BlockID: 2211
+Call context: 
+None
+i(uint256) = i - 1
+EXPRESSION:-- i	NodeType.EXPRESSION" -> "BlockID: 2178
+Call context: 
+None
+BEGIN_LOOP
+TMP_1530(bool) = i > 0
+CONDITION TMP_1530
+EXPRESSION:None	NodeType.STARTLOOP
+i > 0	NodeType.IFLOOP" [key=0];
+}

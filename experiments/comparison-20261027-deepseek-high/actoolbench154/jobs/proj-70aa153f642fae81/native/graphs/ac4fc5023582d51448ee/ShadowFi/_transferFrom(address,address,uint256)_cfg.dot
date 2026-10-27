@@ -1,0 +1,812 @@
+digraph {
+"BlockID: 438
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 439
+Call context: 
+None
+REF_256(bool) -> allowedAddresses[msg.sender]
+TMP_243 = ! REF_256 
+REF_257(bool) -> allowedAddresses[recipient]
+TMP_244 = ! REF_257 
+TMP_245(bool) = TMP_243 && TMP_244
+CONDITION TMP_245
+EXPRESSION:! allowedAddresses[msg.sender] && ! allowedAddresses[recipient]	NodeType.IF";
+"BlockID: 441
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 443
+Call context: 
+True
+CONDITION inSwap
+EXPRESSION:inSwap	NodeType.IF";
+"BlockID: 444
+Call context: 
+True
+TMP_252(bool) = INTERNAL_CALL, ShadowFi._basicTransfer(address,address,uint256)(sender,recipient,amount)
+EXPRESSION:_basicTransfer(sender,recipient,amount)	NodeType.EXPRESSION";
+"BlockID: 446
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 447
+Call context: 
+None
+INTERNAL_CALL, ShadowFi.checkTxLimit(address,uint256)(sender,amount)
+EXPRESSION:checkTxLimit(sender,amount)	NodeType.EXPRESSION";
+"BlockID: 448
+Call context: 
+None
+TMP_254(bool) = INTERNAL_CALL, ShadowFi.shouldSwapBack()()
+EXPRESSION:checkTxLimit(sender,amount)	NodeType.EXPRESSION
+shouldSwapBack()	NodeType.EXPRESSION";
+"BlockID: 449
+Call context: 
+None
+CONDITION TMP_254
+EXPRESSION:shouldSwapBack()	NodeType.IF" [shape=box];
+"BlockID: 450
+Call context: 
+True
+INTERNAL_CALL, ShadowFi.swapBack()()
+EXPRESSION:swapBack()	NodeType.EXPRESSION";
+"BlockID: 452
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 453
+Call context: 
+None
+TMP_256(bool) = INTERNAL_CALL, ShadowFi.launched()()
+EXPRESSION:! launched() && recipient == pancakeV2BNBPair	NodeType.EXPRESSION";
+"BlockID: 454
+Call context: 
+None
+TMP_257 = ! TMP_256 
+TMP_258(bool) = recipient == pancakeV2BNBPair
+TMP_259(bool) = TMP_257 && TMP_258
+CONDITION TMP_259
+EXPRESSION:! launched() && recipient == pancakeV2BNBPair	NodeType.IF" [shape=box];
+"BlockID: 456
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 457
+Call context: 
+None
+REF_261(uint256) -> _balances[sender]
+REF_262(uint256) -> _balances[sender]
+TMP_263(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256,string), arguments:['REF_262', 'amount', 'Insufficient Balance'] 
+EXPRESSION:_balances[sender] = _balances[sender].sub(amount,Insufficient Balance)	NodeType.EXPRESSION";
+"BlockID: 458
+Call context: 
+None
+REF_261(uint256) (->_balances) := TMP_263(uint256)
+TMP_271(bool) = INTERNAL_CALL, ShadowFi.shouldTakeFee(address,address)(sender,recipient)
+EXPRESSION:_balances[sender] = _balances[sender].sub(amount,Insufficient Balance)	NodeType.EXPRESSION
+shouldTakeFee(sender,recipient)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 459
+Call context: 
+None
+CONDITION TMP_271
+EXPRESSION:shouldTakeFee(sender,recipient)	NodeType.IF" [shape=box];
+"BlockID: 460
+Call context: 
+True
+TMP_272(uint256) = INTERNAL_CALL, ShadowFi.takeFee(address,address,uint256)(sender,recipient,amount)
+EXPRESSION:amountReceived = takeFee(sender,recipient,amount)	NodeType.EXPRESSION";
+"BlockID: 462
+Call context: 
+False
+amountReceived(uint256) := amount(uint256)
+EXPRESSION:amountReceived = amount	NodeType.EXPRESSION";
+"BlockID: 463
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 464
+Call context: 
+None
+REF_264(uint256) -> _balances[recipient]
+REF_265(uint256) -> _balances[recipient]
+TMP_264(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['REF_265', 'amountReceived'] 
+EXPRESSION:_balances[recipient] = _balances[recipient].add(amountReceived)	NodeType.EXPRESSION";
+"BlockID: 465
+Call context: 
+None
+REF_264(uint256) (->_balances) := TMP_264(uint256)
+REF_267(bool) -> isDividendExempt[sender]
+TMP_265 = ! REF_267 
+CONDITION TMP_265
+EXPRESSION:_balances[recipient] = _balances[recipient].add(amountReceived)	NodeType.EXPRESSION
+! isDividendExempt[sender]	NodeType.IF" [shape=box];
+"BlockID: 466
+Call context: 
+True
+REF_269(uint256) -> _balances[sender]
+HIGH_LEVEL_CALL, dest:distributor(DividendDistributor), function:setShare, arguments:['sender', 'REF_269']  
+EXPRESSION:distributor.setShare(sender,_balances[sender])	NodeType.EXPRESSION";
+"BlockID: 468
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 469
+Call context: 
+None
+REF_270(bool) -> isDividendExempt[recipient]
+TMP_267 = ! REF_270 
+CONDITION TMP_267
+EXPRESSION:! isDividendExempt[recipient]	NodeType.IF";
+"BlockID: 470
+Call context: 
+True
+REF_272(uint256) -> _balances[recipient]
+HIGH_LEVEL_CALL, dest:distributor(DividendDistributor), function:setShare, arguments:['recipient', 'REF_272']  
+EXPRESSION:distributor.setShare(recipient,_balances[recipient])	NodeType.EXPRESSION";
+"BlockID: 472
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 473
+Call context: 
+None
+HIGH_LEVEL_CALL, dest:distributor(DividendDistributor), function:process, arguments:['distributorGas']  
+EXPRESSION:distributor.process(distributorGas)	NodeType.EXPRESSION";
+"BlockID: 474
+Call context: 
+None
+RETURN True
+CATCH
+CATCH
+EXPRESSION:distributor.process(distributorGas)	NodeType.TRY
+true	NodeType.RETURN
+None	NodeType.CATCH
+None	NodeType.CATCH";
+"BlockID: 471
+Call context: 
+None
+CATCH
+CATCH
+EXPRESSION:distributor.setShare(recipient,_balances[recipient])	NodeType.TRY
+None	NodeType.CATCH
+None	NodeType.CATCH";
+"BlockID: 467
+Call context: 
+None
+CATCH
+CATCH
+EXPRESSION:distributor.setShare(sender,_balances[sender])	NodeType.TRY
+None	NodeType.CATCH
+None	NodeType.CATCH";
+"BlockID: 461
+Call context: 
+None
+amountReceived(uint256) := TMP_272(uint256)
+EXPRESSION:amountReceived = takeFee(sender,recipient,amount)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 475
+Call context: 
+True
+INTERNAL_CALL, ShadowFi.launch()()
+EXPRESSION:launch()	NodeType.EXPRESSION";
+"BlockID: 445
+Call context: 
+None
+RETURN TMP_252
+EXPRESSION:_basicTransfer(sender,recipient,amount)	NodeType.RETURN" [shape=box];
+"BlockID: 477
+Call context: 
+None
+TMP_246(bool) = block.timestamp > transferBlockTime
+CONDITION TMP_246
+EXPRESSION:TMP_246(bool) = block.timestamp > transferBlockTime	NodeType.IF";
+"BlockID: 478
+Call context: 
+True
+TMP_247(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 479
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 480
+Call context: 
+None
+REF_258(bool) -> blackList[sender]
+TMP_248 = ! REF_258 
+REF_259(bool) -> blackList[recipient]
+TMP_249 = ! REF_259 
+TMP_250(bool) = TMP_248 && TMP_249
+CONDITION TMP_250
+EXPRESSION:TMP_250(bool) = TMP_248 && TMP_249	NodeType.IF";
+"BlockID: 481
+Call context: 
+True
+TMP_251(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 482
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 483
+Call context: 
+None
+REF_260(uint256) -> _balances[sender]
+TMP_260(bool) = REF_260 > 0
+CONDITION TMP_260
+EXPRESSION:TMP_260(bool) = REF_260 > 0	NodeType.IF";
+"BlockID: 484
+Call context: 
+True
+TMP_261(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 485
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 438
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 439
+Call context: 
+None
+REF_256(bool) -> allowedAddresses[msg.sender]
+TMP_243 = ! REF_256 
+REF_257(bool) -> allowedAddresses[recipient]
+TMP_244 = ! REF_257 
+TMP_245(bool) = TMP_243 && TMP_244
+CONDITION TMP_245
+EXPRESSION:! allowedAddresses[msg.sender] && ! allowedAddresses[recipient]	NodeType.IF" [key=0];
+"BlockID: 439
+Call context: 
+None
+REF_256(bool) -> allowedAddresses[msg.sender]
+TMP_243 = ! REF_256 
+REF_257(bool) -> allowedAddresses[recipient]
+TMP_244 = ! REF_257 
+TMP_245(bool) = TMP_243 && TMP_244
+CONDITION TMP_245
+EXPRESSION:! allowedAddresses[msg.sender] && ! allowedAddresses[recipient]	NodeType.IF" -> "BlockID: 441
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 439
+Call context: 
+None
+REF_256(bool) -> allowedAddresses[msg.sender]
+TMP_243 = ! REF_256 
+REF_257(bool) -> allowedAddresses[recipient]
+TMP_244 = ! REF_257 
+TMP_245(bool) = TMP_243 && TMP_244
+CONDITION TMP_245
+EXPRESSION:! allowedAddresses[msg.sender] && ! allowedAddresses[recipient]	NodeType.IF" -> "BlockID: 477
+Call context: 
+None
+TMP_246(bool) = block.timestamp > transferBlockTime
+CONDITION TMP_246
+EXPRESSION:TMP_246(bool) = block.timestamp > transferBlockTime	NodeType.IF" [key=0];
+"BlockID: 441
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 480
+Call context: 
+None
+REF_258(bool) -> blackList[sender]
+TMP_248 = ! REF_258 
+REF_259(bool) -> blackList[recipient]
+TMP_249 = ! REF_259 
+TMP_250(bool) = TMP_248 && TMP_249
+CONDITION TMP_250
+EXPRESSION:TMP_250(bool) = TMP_248 && TMP_249	NodeType.IF" [key=0];
+"BlockID: 443
+Call context: 
+True
+CONDITION inSwap
+EXPRESSION:inSwap	NodeType.IF" -> "BlockID: 444
+Call context: 
+True
+TMP_252(bool) = INTERNAL_CALL, ShadowFi._basicTransfer(address,address,uint256)(sender,recipient,amount)
+EXPRESSION:_basicTransfer(sender,recipient,amount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 443
+Call context: 
+True
+CONDITION inSwap
+EXPRESSION:inSwap	NodeType.IF" -> "BlockID: 446
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 444
+Call context: 
+True
+TMP_252(bool) = INTERNAL_CALL, ShadowFi._basicTransfer(address,address,uint256)(sender,recipient,amount)
+EXPRESSION:_basicTransfer(sender,recipient,amount)	NodeType.EXPRESSION" -> "BlockID: 445
+Call context: 
+None
+RETURN TMP_252
+EXPRESSION:_basicTransfer(sender,recipient,amount)	NodeType.RETURN" [key=0];
+"BlockID: 446
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 447
+Call context: 
+None
+INTERNAL_CALL, ShadowFi.checkTxLimit(address,uint256)(sender,amount)
+EXPRESSION:checkTxLimit(sender,amount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 447
+Call context: 
+None
+INTERNAL_CALL, ShadowFi.checkTxLimit(address,uint256)(sender,amount)
+EXPRESSION:checkTxLimit(sender,amount)	NodeType.EXPRESSION" -> "BlockID: 448
+Call context: 
+None
+TMP_254(bool) = INTERNAL_CALL, ShadowFi.shouldSwapBack()()
+EXPRESSION:checkTxLimit(sender,amount)	NodeType.EXPRESSION
+shouldSwapBack()	NodeType.EXPRESSION" [key=0];
+"BlockID: 448
+Call context: 
+None
+TMP_254(bool) = INTERNAL_CALL, ShadowFi.shouldSwapBack()()
+EXPRESSION:checkTxLimit(sender,amount)	NodeType.EXPRESSION
+shouldSwapBack()	NodeType.EXPRESSION" -> "BlockID: 449
+Call context: 
+None
+CONDITION TMP_254
+EXPRESSION:shouldSwapBack()	NodeType.IF" [key=0];
+"BlockID: 449
+Call context: 
+None
+CONDITION TMP_254
+EXPRESSION:shouldSwapBack()	NodeType.IF" -> "BlockID: 450
+Call context: 
+True
+INTERNAL_CALL, ShadowFi.swapBack()()
+EXPRESSION:swapBack()	NodeType.EXPRESSION" [key=0];
+"BlockID: 449
+Call context: 
+None
+CONDITION TMP_254
+EXPRESSION:shouldSwapBack()	NodeType.IF" -> "BlockID: 452
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 450
+Call context: 
+True
+INTERNAL_CALL, ShadowFi.swapBack()()
+EXPRESSION:swapBack()	NodeType.EXPRESSION" -> "BlockID: 452
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 452
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 453
+Call context: 
+None
+TMP_256(bool) = INTERNAL_CALL, ShadowFi.launched()()
+EXPRESSION:! launched() && recipient == pancakeV2BNBPair	NodeType.EXPRESSION" [key=0];
+"BlockID: 453
+Call context: 
+None
+TMP_256(bool) = INTERNAL_CALL, ShadowFi.launched()()
+EXPRESSION:! launched() && recipient == pancakeV2BNBPair	NodeType.EXPRESSION" -> "BlockID: 454
+Call context: 
+None
+TMP_257 = ! TMP_256 
+TMP_258(bool) = recipient == pancakeV2BNBPair
+TMP_259(bool) = TMP_257 && TMP_258
+CONDITION TMP_259
+EXPRESSION:! launched() && recipient == pancakeV2BNBPair	NodeType.IF" [key=0];
+"BlockID: 454
+Call context: 
+None
+TMP_257 = ! TMP_256 
+TMP_258(bool) = recipient == pancakeV2BNBPair
+TMP_259(bool) = TMP_257 && TMP_258
+CONDITION TMP_259
+EXPRESSION:! launched() && recipient == pancakeV2BNBPair	NodeType.IF" -> "BlockID: 456
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 454
+Call context: 
+None
+TMP_257 = ! TMP_256 
+TMP_258(bool) = recipient == pancakeV2BNBPair
+TMP_259(bool) = TMP_257 && TMP_258
+CONDITION TMP_259
+EXPRESSION:! launched() && recipient == pancakeV2BNBPair	NodeType.IF" -> "BlockID: 483
+Call context: 
+None
+REF_260(uint256) -> _balances[sender]
+TMP_260(bool) = REF_260 > 0
+CONDITION TMP_260
+EXPRESSION:TMP_260(bool) = REF_260 > 0	NodeType.IF" [key=0];
+"BlockID: 456
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 457
+Call context: 
+None
+REF_261(uint256) -> _balances[sender]
+REF_262(uint256) -> _balances[sender]
+TMP_263(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256,string), arguments:['REF_262', 'amount', 'Insufficient Balance'] 
+EXPRESSION:_balances[sender] = _balances[sender].sub(amount,Insufficient Balance)	NodeType.EXPRESSION" [key=0];
+"BlockID: 457
+Call context: 
+None
+REF_261(uint256) -> _balances[sender]
+REF_262(uint256) -> _balances[sender]
+TMP_263(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256,string), arguments:['REF_262', 'amount', 'Insufficient Balance'] 
+EXPRESSION:_balances[sender] = _balances[sender].sub(amount,Insufficient Balance)	NodeType.EXPRESSION" -> "BlockID: 458
+Call context: 
+None
+REF_261(uint256) (->_balances) := TMP_263(uint256)
+TMP_271(bool) = INTERNAL_CALL, ShadowFi.shouldTakeFee(address,address)(sender,recipient)
+EXPRESSION:_balances[sender] = _balances[sender].sub(amount,Insufficient Balance)	NodeType.EXPRESSION
+shouldTakeFee(sender,recipient)	NodeType.EXPRESSION" [key=0];
+"BlockID: 458
+Call context: 
+None
+REF_261(uint256) (->_balances) := TMP_263(uint256)
+TMP_271(bool) = INTERNAL_CALL, ShadowFi.shouldTakeFee(address,address)(sender,recipient)
+EXPRESSION:_balances[sender] = _balances[sender].sub(amount,Insufficient Balance)	NodeType.EXPRESSION
+shouldTakeFee(sender,recipient)	NodeType.EXPRESSION" -> "BlockID: 459
+Call context: 
+None
+CONDITION TMP_271
+EXPRESSION:shouldTakeFee(sender,recipient)	NodeType.IF" [key=0];
+"BlockID: 459
+Call context: 
+None
+CONDITION TMP_271
+EXPRESSION:shouldTakeFee(sender,recipient)	NodeType.IF" -> "BlockID: 460
+Call context: 
+True
+TMP_272(uint256) = INTERNAL_CALL, ShadowFi.takeFee(address,address,uint256)(sender,recipient,amount)
+EXPRESSION:amountReceived = takeFee(sender,recipient,amount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 459
+Call context: 
+None
+CONDITION TMP_271
+EXPRESSION:shouldTakeFee(sender,recipient)	NodeType.IF" -> "BlockID: 462
+Call context: 
+False
+amountReceived(uint256) := amount(uint256)
+EXPRESSION:amountReceived = amount	NodeType.EXPRESSION" [key=0];
+"BlockID: 460
+Call context: 
+True
+TMP_272(uint256) = INTERNAL_CALL, ShadowFi.takeFee(address,address,uint256)(sender,recipient,amount)
+EXPRESSION:amountReceived = takeFee(sender,recipient,amount)	NodeType.EXPRESSION" -> "BlockID: 461
+Call context: 
+None
+amountReceived(uint256) := TMP_272(uint256)
+EXPRESSION:amountReceived = takeFee(sender,recipient,amount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 462
+Call context: 
+False
+amountReceived(uint256) := amount(uint256)
+EXPRESSION:amountReceived = amount	NodeType.EXPRESSION" -> "BlockID: 463
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 463
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 464
+Call context: 
+None
+REF_264(uint256) -> _balances[recipient]
+REF_265(uint256) -> _balances[recipient]
+TMP_264(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['REF_265', 'amountReceived'] 
+EXPRESSION:_balances[recipient] = _balances[recipient].add(amountReceived)	NodeType.EXPRESSION" [key=0];
+"BlockID: 464
+Call context: 
+None
+REF_264(uint256) -> _balances[recipient]
+REF_265(uint256) -> _balances[recipient]
+TMP_264(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['REF_265', 'amountReceived'] 
+EXPRESSION:_balances[recipient] = _balances[recipient].add(amountReceived)	NodeType.EXPRESSION" -> "BlockID: 465
+Call context: 
+None
+REF_264(uint256) (->_balances) := TMP_264(uint256)
+REF_267(bool) -> isDividendExempt[sender]
+TMP_265 = ! REF_267 
+CONDITION TMP_265
+EXPRESSION:_balances[recipient] = _balances[recipient].add(amountReceived)	NodeType.EXPRESSION
+! isDividendExempt[sender]	NodeType.IF" [key=0];
+"BlockID: 465
+Call context: 
+None
+REF_264(uint256) (->_balances) := TMP_264(uint256)
+REF_267(bool) -> isDividendExempt[sender]
+TMP_265 = ! REF_267 
+CONDITION TMP_265
+EXPRESSION:_balances[recipient] = _balances[recipient].add(amountReceived)	NodeType.EXPRESSION
+! isDividendExempt[sender]	NodeType.IF" -> "BlockID: 466
+Call context: 
+True
+REF_269(uint256) -> _balances[sender]
+HIGH_LEVEL_CALL, dest:distributor(DividendDistributor), function:setShare, arguments:['sender', 'REF_269']  
+EXPRESSION:distributor.setShare(sender,_balances[sender])	NodeType.EXPRESSION" [key=0];
+"BlockID: 465
+Call context: 
+None
+REF_264(uint256) (->_balances) := TMP_264(uint256)
+REF_267(bool) -> isDividendExempt[sender]
+TMP_265 = ! REF_267 
+CONDITION TMP_265
+EXPRESSION:_balances[recipient] = _balances[recipient].add(amountReceived)	NodeType.EXPRESSION
+! isDividendExempt[sender]	NodeType.IF" -> "BlockID: 468
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 466
+Call context: 
+True
+REF_269(uint256) -> _balances[sender]
+HIGH_LEVEL_CALL, dest:distributor(DividendDistributor), function:setShare, arguments:['sender', 'REF_269']  
+EXPRESSION:distributor.setShare(sender,_balances[sender])	NodeType.EXPRESSION" -> "BlockID: 467
+Call context: 
+None
+CATCH
+CATCH
+EXPRESSION:distributor.setShare(sender,_balances[sender])	NodeType.TRY
+None	NodeType.CATCH
+None	NodeType.CATCH" [key=0];
+"BlockID: 466
+Call context: 
+True
+REF_269(uint256) -> _balances[sender]
+HIGH_LEVEL_CALL, dest:distributor(DividendDistributor), function:setShare, arguments:['sender', 'REF_269']  
+EXPRESSION:distributor.setShare(sender,_balances[sender])	NodeType.EXPRESSION" -> "BlockID: 468
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 468
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 469
+Call context: 
+None
+REF_270(bool) -> isDividendExempt[recipient]
+TMP_267 = ! REF_270 
+CONDITION TMP_267
+EXPRESSION:! isDividendExempt[recipient]	NodeType.IF" [key=0];
+"BlockID: 469
+Call context: 
+None
+REF_270(bool) -> isDividendExempt[recipient]
+TMP_267 = ! REF_270 
+CONDITION TMP_267
+EXPRESSION:! isDividendExempt[recipient]	NodeType.IF" -> "BlockID: 470
+Call context: 
+True
+REF_272(uint256) -> _balances[recipient]
+HIGH_LEVEL_CALL, dest:distributor(DividendDistributor), function:setShare, arguments:['recipient', 'REF_272']  
+EXPRESSION:distributor.setShare(recipient,_balances[recipient])	NodeType.EXPRESSION" [key=0];
+"BlockID: 469
+Call context: 
+None
+REF_270(bool) -> isDividendExempt[recipient]
+TMP_267 = ! REF_270 
+CONDITION TMP_267
+EXPRESSION:! isDividendExempt[recipient]	NodeType.IF" -> "BlockID: 472
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 470
+Call context: 
+True
+REF_272(uint256) -> _balances[recipient]
+HIGH_LEVEL_CALL, dest:distributor(DividendDistributor), function:setShare, arguments:['recipient', 'REF_272']  
+EXPRESSION:distributor.setShare(recipient,_balances[recipient])	NodeType.EXPRESSION" -> "BlockID: 471
+Call context: 
+None
+CATCH
+CATCH
+EXPRESSION:distributor.setShare(recipient,_balances[recipient])	NodeType.TRY
+None	NodeType.CATCH
+None	NodeType.CATCH" [key=0];
+"BlockID: 470
+Call context: 
+True
+REF_272(uint256) -> _balances[recipient]
+HIGH_LEVEL_CALL, dest:distributor(DividendDistributor), function:setShare, arguments:['recipient', 'REF_272']  
+EXPRESSION:distributor.setShare(recipient,_balances[recipient])	NodeType.EXPRESSION" -> "BlockID: 472
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 472
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 473
+Call context: 
+None
+HIGH_LEVEL_CALL, dest:distributor(DividendDistributor), function:process, arguments:['distributorGas']  
+EXPRESSION:distributor.process(distributorGas)	NodeType.EXPRESSION" [key=0];
+"BlockID: 473
+Call context: 
+None
+HIGH_LEVEL_CALL, dest:distributor(DividendDistributor), function:process, arguments:['distributorGas']  
+EXPRESSION:distributor.process(distributorGas)	NodeType.EXPRESSION" -> "BlockID: 474
+Call context: 
+None
+RETURN True
+CATCH
+CATCH
+EXPRESSION:distributor.process(distributorGas)	NodeType.TRY
+true	NodeType.RETURN
+None	NodeType.CATCH
+None	NodeType.CATCH" [key=0];
+"BlockID: 471
+Call context: 
+None
+CATCH
+CATCH
+EXPRESSION:distributor.setShare(recipient,_balances[recipient])	NodeType.TRY
+None	NodeType.CATCH
+None	NodeType.CATCH" -> "BlockID: 472
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 467
+Call context: 
+None
+CATCH
+CATCH
+EXPRESSION:distributor.setShare(sender,_balances[sender])	NodeType.TRY
+None	NodeType.CATCH
+None	NodeType.CATCH" -> "BlockID: 468
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 461
+Call context: 
+None
+amountReceived(uint256) := TMP_272(uint256)
+EXPRESSION:amountReceived = takeFee(sender,recipient,amount)	NodeType.EXPRESSION" -> "BlockID: 463
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 475
+Call context: 
+True
+INTERNAL_CALL, ShadowFi.launch()()
+EXPRESSION:launch()	NodeType.EXPRESSION" -> "BlockID: 456
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 477
+Call context: 
+None
+TMP_246(bool) = block.timestamp > transferBlockTime
+CONDITION TMP_246
+EXPRESSION:TMP_246(bool) = block.timestamp > transferBlockTime	NodeType.IF" -> "BlockID: 478
+Call context: 
+True
+TMP_247(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 477
+Call context: 
+None
+TMP_246(bool) = block.timestamp > transferBlockTime
+CONDITION TMP_246
+EXPRESSION:TMP_246(bool) = block.timestamp > transferBlockTime	NodeType.IF" -> "BlockID: 479
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 479
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 441
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 480
+Call context: 
+None
+REF_258(bool) -> blackList[sender]
+TMP_248 = ! REF_258 
+REF_259(bool) -> blackList[recipient]
+TMP_249 = ! REF_259 
+TMP_250(bool) = TMP_248 && TMP_249
+CONDITION TMP_250
+EXPRESSION:TMP_250(bool) = TMP_248 && TMP_249	NodeType.IF" -> "BlockID: 481
+Call context: 
+True
+TMP_251(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 480
+Call context: 
+None
+REF_258(bool) -> blackList[sender]
+TMP_248 = ! REF_258 
+REF_259(bool) -> blackList[recipient]
+TMP_249 = ! REF_259 
+TMP_250(bool) = TMP_248 && TMP_249
+CONDITION TMP_250
+EXPRESSION:TMP_250(bool) = TMP_248 && TMP_249	NodeType.IF" -> "BlockID: 482
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 482
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 443
+Call context: 
+True
+CONDITION inSwap
+EXPRESSION:inSwap	NodeType.IF" [key=0];
+"BlockID: 483
+Call context: 
+None
+REF_260(uint256) -> _balances[sender]
+TMP_260(bool) = REF_260 > 0
+CONDITION TMP_260
+EXPRESSION:TMP_260(bool) = REF_260 > 0	NodeType.IF" -> "BlockID: 484
+Call context: 
+True
+TMP_261(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 483
+Call context: 
+None
+REF_260(uint256) -> _balances[sender]
+TMP_260(bool) = REF_260 > 0
+CONDITION TMP_260
+EXPRESSION:TMP_260(bool) = REF_260 > 0	NodeType.IF" -> "BlockID: 485
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 485
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 475
+Call context: 
+True
+INTERNAL_CALL, ShadowFi.launch()()
+EXPRESSION:launch()	NodeType.EXPRESSION" [key=0];
+}

@@ -1,0 +1,532 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+TMP_1176(bool) = msg.sender != bridgeAgentExecutorAddress
+CONDITION TMP_1176
+EXPRESSION:msg.sender != bridgeAgentExecutorAddress	NodeType.IF";
+"BlockID: 4
+Call context: 
+None
+i(uint256) := 0(uint256)
+EXPRESSION:requiresAgentExecutor()	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION";
+"BlockID: 5
+Call context: 
+None
+BEGIN_LOOP
+REF_151(address[]) -> _dParams.hTokens
+REF_152 -> LENGTH REF_151
+TMP_868(bool) = i < REF_152
+CONDITION TMP_868
+EXPRESSION:None	NodeType.STARTLOOP
+i < _dParams.hTokens.length	NodeType.IFLOOP";
+"BlockID: 6
+Call context: 
+True
+REF_153(address[]) -> _dParams.hTokens
+REF_154(address) -> REF_153[i]
+REF_155(address[]) -> _dParams.tokens
+REF_156(address) -> REF_155[i]
+REF_157(uint256[]) -> _dParams.amounts
+REF_158(uint256) -> REF_157[i]
+REF_159(uint256[]) -> _dParams.deposits
+REF_160(uint256) -> REF_159[i]
+REF_161(uint24) -> _dParams.toChain
+TMP_869(DepositParams_1) = new DepositParams_1(REF_154,REF_156,REF_158,REF_160,REF_161,0)
+TMP_1176(bool) = msg.sender != bridgeAgentExecutorAddress
+CONDITION TMP_1176
+EXPRESSION:msg.sender != bridgeAgentExecutorAddress	NodeType.IF";
+"BlockID: 7
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 2
+Call context: bridgeInMultiple
+True
+TMP_1177(None) = SOLIDITY_CALL revert UnrecognizedExecutor()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 3
+Call context: bridgeInMultiple
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 10
+Call context: bridgeInMultiple
+None
+REF_104(uint256) -> _dParams.amount
+REF_105(uint256) -> _dParams.deposit
+TMP_751(bool) = REF_104 < REF_105
+REF_106(uint256) -> _dParams.amount
+TMP_752(bool) = REF_106 > 0
+TMP_753 = CONVERT _localPortAddress to IRootPort
+REF_108(address) -> _dParams.hToken
+TMP_754(bool) = HIGH_LEVEL_CALL, dest:TMP_753(IRootPort), function:isLocalToken, arguments:['REF_108', '_fromChain']  
+EXPRESSION:requiresAgentExecutor()	NodeType.EXPRESSION
+(_dParams.amount < _dParams.deposit) || (_dParams.amount > 0 && ! IRootPort(_localPortAddress).isLocalToken(_dParams.hToken,_fromChain)) || (_dParams.deposit > 0 && ! IRootPort(_localPortAddress).isUnderlyingToken(_dParams.token,_fromChain))	NodeType.EXPRESSION";
+"BlockID: 15
+Call context: bridgeInMultiple
+None
+TMP_858 = ! TMP_857 
+CONDITION TMP_858
+EXPRESSION:! CheckParamsLib.checkParams(localPortAddress,_dParams,_fromChain)	NodeType.IF" [shape=box];
+"BlockID: 17
+Call context: bridgeInMultiple
+True
+TMP_859(None) = SOLIDITY_CALL revert InvalidInputParams()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 18
+Call context: bridgeInMultiple
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 19
+Call context: bridgeInMultiple
+None
+TMP_860 = CONVERT localPortAddress to IRootPort
+REF_147(address) -> _dParams.hToken
+TMP_861(address) = HIGH_LEVEL_CALL, dest:TMP_860(IRootPort), function:getGlobalTokenFromLocal, arguments:['REF_147', '_fromChain']  
+EXPRESSION:";
+"BlockID: 20
+Call context: bridgeInMultiple
+None
+globalAddress(address) := TMP_861(address)
+TMP_862 = CONVERT 0 to address
+TMP_863(bool) = globalAddress == TMP_862
+CONDITION TMP_863
+EXPRESSION:globalAddress = IRootPort(localPortAddress).getGlobalTokenFromLocal(_dParams.hToken,_fromChain)	NodeType.VARIABLE
+globalAddress = IRootPort(localPortAddress).getGlobalTokenFromLocal(_dParams.hToken,_fromChain)	NodeType.EXPRESSION
+globalAddress == address(0)	NodeType.IF" [shape=box];
+"BlockID: 21
+Call context: bridgeInMultiple
+True
+TMP_864(None) = SOLIDITY_CALL revert InvalidInputParams()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 22
+Call context: bridgeInMultiple
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 23
+Call context: bridgeInMultiple
+None
+TMP_865 = CONVERT localPortAddress to IRootPort
+REF_149(uint256) -> _dParams.amount
+REF_150(uint256) -> _dParams.deposit
+HIGH_LEVEL_CALL, dest:TMP_865(IRootPort), function:bridgeToRoot, arguments:['_recipient', 'globalAddress', 'REF_149', 'REF_150', '_fromChain']  
+i(uint256) = i + 1
+EXPRESSION:IRootPort(localPortAddress).bridgeToRoot(_recipient,globalAddress,_dParams.amount,_dParams.deposit,_fromChain)	NodeType.EXPRESSION
+bridgeIn(_recipient,DepositParams_1(_dParams.hTokens[i],_dParams.tokens[i],_dParams.amounts[i],_dParams.deposits[i],_dParams.toChain,0),_fromChain)	NodeType.EXPRESSION
+++ i	NodeType.EXPRESSION";
+"BlockID: 8
+Call context: bridgeInMultiple,bridgeIn
+True
+TMP_1177(None) = SOLIDITY_CALL revert UnrecognizedExecutor()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 9
+Call context: bridgeInMultiple,bridgeIn
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 11
+Call context: bridgeInMultiple,bridgeIn
+None
+TMP_755 = ! TMP_754 
+TMP_756(bool) = TMP_752 && TMP_755
+TMP_757(bool) = TMP_751 || TMP_756
+REF_109(uint256) -> _dParams.deposit
+TMP_758(bool) = REF_109 > 0
+TMP_759 = CONVERT _localPortAddress to IRootPort
+REF_111(address) -> _dParams.token
+TMP_760(bool) = HIGH_LEVEL_CALL, dest:TMP_759(IRootPort), function:isUnderlyingToken, arguments:['REF_111', '_fromChain']  
+EXPRESSION:(_dParams.amount < _dParams.deposit) || (_dParams.amount > 0 && ! IRootPort(_localPortAddress).isLocalToken(_dParams.hToken,_fromChain)) || (_dParams.deposit > 0 && ! IRootPort(_localPortAddress).isUnderlyingToken(_dParams.token,_fromChain))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 12
+Call context: bridgeInMultiple,bridgeIn
+None
+TMP_761 = ! TMP_760 
+TMP_762(bool) = TMP_758 && TMP_761
+TMP_763(bool) = TMP_757 || TMP_762
+CONDITION TMP_763
+EXPRESSION:(_dParams.amount < _dParams.deposit) || (_dParams.amount > 0 && ! IRootPort(_localPortAddress).isLocalToken(_dParams.hToken,_fromChain)) || (_dParams.deposit > 0 && ! IRootPort(_localPortAddress).isUnderlyingToken(_dParams.token,_fromChain))	NodeType.IF" [shape=box];
+"BlockID: 13
+Call context: bridgeInMultiple,bridgeIn
+True
+TMP_1340(None) := False(bool)
+EXPRESSION:";
+"BlockID: 14
+Call context: bridgeInMultiple,bridgeIn
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 16
+Call context: bridgeInMultiple,bridgeIn
+None
+TMP_1340(None) := True(bool)
+EXPRESSION:";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+TMP_1176(bool) = msg.sender != bridgeAgentExecutorAddress
+CONDITION TMP_1176
+EXPRESSION:msg.sender != bridgeAgentExecutorAddress	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_1176(bool) = msg.sender != bridgeAgentExecutorAddress
+CONDITION TMP_1176
+EXPRESSION:msg.sender != bridgeAgentExecutorAddress	NodeType.IF" -> "BlockID: 2
+Call context: bridgeInMultiple
+True
+TMP_1177(None) = SOLIDITY_CALL revert UnrecognizedExecutor()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+TMP_1176(bool) = msg.sender != bridgeAgentExecutorAddress
+CONDITION TMP_1176
+EXPRESSION:msg.sender != bridgeAgentExecutorAddress	NodeType.IF" -> "BlockID: 3
+Call context: bridgeInMultiple
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 4
+Call context: 
+None
+i(uint256) := 0(uint256)
+EXPRESSION:requiresAgentExecutor()	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" -> "BlockID: 5
+Call context: 
+None
+BEGIN_LOOP
+REF_151(address[]) -> _dParams.hTokens
+REF_152 -> LENGTH REF_151
+TMP_868(bool) = i < REF_152
+CONDITION TMP_868
+EXPRESSION:None	NodeType.STARTLOOP
+i < _dParams.hTokens.length	NodeType.IFLOOP" [key=0];
+"BlockID: 5
+Call context: 
+None
+BEGIN_LOOP
+REF_151(address[]) -> _dParams.hTokens
+REF_152 -> LENGTH REF_151
+TMP_868(bool) = i < REF_152
+CONDITION TMP_868
+EXPRESSION:None	NodeType.STARTLOOP
+i < _dParams.hTokens.length	NodeType.IFLOOP" -> "BlockID: 6
+Call context: 
+True
+REF_153(address[]) -> _dParams.hTokens
+REF_154(address) -> REF_153[i]
+REF_155(address[]) -> _dParams.tokens
+REF_156(address) -> REF_155[i]
+REF_157(uint256[]) -> _dParams.amounts
+REF_158(uint256) -> REF_157[i]
+REF_159(uint256[]) -> _dParams.deposits
+REF_160(uint256) -> REF_159[i]
+REF_161(uint24) -> _dParams.toChain
+TMP_869(DepositParams_1) = new DepositParams_1(REF_154,REF_156,REF_158,REF_160,REF_161,0)
+TMP_1176(bool) = msg.sender != bridgeAgentExecutorAddress
+CONDITION TMP_1176
+EXPRESSION:msg.sender != bridgeAgentExecutorAddress	NodeType.IF" [key=0];
+"BlockID: 5
+Call context: 
+None
+BEGIN_LOOP
+REF_151(address[]) -> _dParams.hTokens
+REF_152 -> LENGTH REF_151
+TMP_868(bool) = i < REF_152
+CONDITION TMP_868
+EXPRESSION:None	NodeType.STARTLOOP
+i < _dParams.hTokens.length	NodeType.IFLOOP" -> "BlockID: 7
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 6
+Call context: 
+True
+REF_153(address[]) -> _dParams.hTokens
+REF_154(address) -> REF_153[i]
+REF_155(address[]) -> _dParams.tokens
+REF_156(address) -> REF_155[i]
+REF_157(uint256[]) -> _dParams.amounts
+REF_158(uint256) -> REF_157[i]
+REF_159(uint256[]) -> _dParams.deposits
+REF_160(uint256) -> REF_159[i]
+REF_161(uint24) -> _dParams.toChain
+TMP_869(DepositParams_1) = new DepositParams_1(REF_154,REF_156,REF_158,REF_160,REF_161,0)
+TMP_1176(bool) = msg.sender != bridgeAgentExecutorAddress
+CONDITION TMP_1176
+EXPRESSION:msg.sender != bridgeAgentExecutorAddress	NodeType.IF" -> "BlockID: 8
+Call context: bridgeInMultiple,bridgeIn
+True
+TMP_1177(None) = SOLIDITY_CALL revert UnrecognizedExecutor()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 6
+Call context: 
+True
+REF_153(address[]) -> _dParams.hTokens
+REF_154(address) -> REF_153[i]
+REF_155(address[]) -> _dParams.tokens
+REF_156(address) -> REF_155[i]
+REF_157(uint256[]) -> _dParams.amounts
+REF_158(uint256) -> REF_157[i]
+REF_159(uint256[]) -> _dParams.deposits
+REF_160(uint256) -> REF_159[i]
+REF_161(uint24) -> _dParams.toChain
+TMP_869(DepositParams_1) = new DepositParams_1(REF_154,REF_156,REF_158,REF_160,REF_161,0)
+TMP_1176(bool) = msg.sender != bridgeAgentExecutorAddress
+CONDITION TMP_1176
+EXPRESSION:msg.sender != bridgeAgentExecutorAddress	NodeType.IF" -> "BlockID: 9
+Call context: bridgeInMultiple,bridgeIn
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 3
+Call context: bridgeInMultiple
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: 
+None
+i(uint256) := 0(uint256)
+EXPRESSION:requiresAgentExecutor()	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" [key="Exit: requiresAgentExecutor", ref="RootBridgeAgent.requiresAgentExecutor"];
+"BlockID: 10
+Call context: bridgeInMultiple
+None
+REF_104(uint256) -> _dParams.amount
+REF_105(uint256) -> _dParams.deposit
+TMP_751(bool) = REF_104 < REF_105
+REF_106(uint256) -> _dParams.amount
+TMP_752(bool) = REF_106 > 0
+TMP_753 = CONVERT _localPortAddress to IRootPort
+REF_108(address) -> _dParams.hToken
+TMP_754(bool) = HIGH_LEVEL_CALL, dest:TMP_753(IRootPort), function:isLocalToken, arguments:['REF_108', '_fromChain']  
+EXPRESSION:requiresAgentExecutor()	NodeType.EXPRESSION
+(_dParams.amount < _dParams.deposit) || (_dParams.amount > 0 && ! IRootPort(_localPortAddress).isLocalToken(_dParams.hToken,_fromChain)) || (_dParams.deposit > 0 && ! IRootPort(_localPortAddress).isUnderlyingToken(_dParams.token,_fromChain))	NodeType.EXPRESSION" -> "BlockID: 11
+Call context: bridgeInMultiple,bridgeIn
+None
+TMP_755 = ! TMP_754 
+TMP_756(bool) = TMP_752 && TMP_755
+TMP_757(bool) = TMP_751 || TMP_756
+REF_109(uint256) -> _dParams.deposit
+TMP_758(bool) = REF_109 > 0
+TMP_759 = CONVERT _localPortAddress to IRootPort
+REF_111(address) -> _dParams.token
+TMP_760(bool) = HIGH_LEVEL_CALL, dest:TMP_759(IRootPort), function:isUnderlyingToken, arguments:['REF_111', '_fromChain']  
+EXPRESSION:(_dParams.amount < _dParams.deposit) || (_dParams.amount > 0 && ! IRootPort(_localPortAddress).isLocalToken(_dParams.hToken,_fromChain)) || (_dParams.deposit > 0 && ! IRootPort(_localPortAddress).isUnderlyingToken(_dParams.token,_fromChain))	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 15
+Call context: bridgeInMultiple
+None
+TMP_858 = ! TMP_857 
+CONDITION TMP_858
+EXPRESSION:! CheckParamsLib.checkParams(localPortAddress,_dParams,_fromChain)	NodeType.IF" -> "BlockID: 17
+Call context: bridgeInMultiple
+True
+TMP_859(None) = SOLIDITY_CALL revert InvalidInputParams()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 15
+Call context: bridgeInMultiple
+None
+TMP_858 = ! TMP_857 
+CONDITION TMP_858
+EXPRESSION:! CheckParamsLib.checkParams(localPortAddress,_dParams,_fromChain)	NodeType.IF" -> "BlockID: 18
+Call context: bridgeInMultiple
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 18
+Call context: bridgeInMultiple
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 19
+Call context: bridgeInMultiple
+None
+TMP_860 = CONVERT localPortAddress to IRootPort
+REF_147(address) -> _dParams.hToken
+TMP_861(address) = HIGH_LEVEL_CALL, dest:TMP_860(IRootPort), function:getGlobalTokenFromLocal, arguments:['REF_147', '_fromChain']  
+EXPRESSION:" [key=0];
+"BlockID: 19
+Call context: bridgeInMultiple
+None
+TMP_860 = CONVERT localPortAddress to IRootPort
+REF_147(address) -> _dParams.hToken
+TMP_861(address) = HIGH_LEVEL_CALL, dest:TMP_860(IRootPort), function:getGlobalTokenFromLocal, arguments:['REF_147', '_fromChain']  
+EXPRESSION:" -> "BlockID: 20
+Call context: bridgeInMultiple
+None
+globalAddress(address) := TMP_861(address)
+TMP_862 = CONVERT 0 to address
+TMP_863(bool) = globalAddress == TMP_862
+CONDITION TMP_863
+EXPRESSION:globalAddress = IRootPort(localPortAddress).getGlobalTokenFromLocal(_dParams.hToken,_fromChain)	NodeType.VARIABLE
+globalAddress = IRootPort(localPortAddress).getGlobalTokenFromLocal(_dParams.hToken,_fromChain)	NodeType.EXPRESSION
+globalAddress == address(0)	NodeType.IF" [key=0];
+"BlockID: 20
+Call context: bridgeInMultiple
+None
+globalAddress(address) := TMP_861(address)
+TMP_862 = CONVERT 0 to address
+TMP_863(bool) = globalAddress == TMP_862
+CONDITION TMP_863
+EXPRESSION:globalAddress = IRootPort(localPortAddress).getGlobalTokenFromLocal(_dParams.hToken,_fromChain)	NodeType.VARIABLE
+globalAddress = IRootPort(localPortAddress).getGlobalTokenFromLocal(_dParams.hToken,_fromChain)	NodeType.EXPRESSION
+globalAddress == address(0)	NodeType.IF" -> "BlockID: 21
+Call context: bridgeInMultiple
+True
+TMP_864(None) = SOLIDITY_CALL revert InvalidInputParams()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 20
+Call context: bridgeInMultiple
+None
+globalAddress(address) := TMP_861(address)
+TMP_862 = CONVERT 0 to address
+TMP_863(bool) = globalAddress == TMP_862
+CONDITION TMP_863
+EXPRESSION:globalAddress = IRootPort(localPortAddress).getGlobalTokenFromLocal(_dParams.hToken,_fromChain)	NodeType.VARIABLE
+globalAddress = IRootPort(localPortAddress).getGlobalTokenFromLocal(_dParams.hToken,_fromChain)	NodeType.EXPRESSION
+globalAddress == address(0)	NodeType.IF" -> "BlockID: 22
+Call context: bridgeInMultiple
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 22
+Call context: bridgeInMultiple
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 23
+Call context: bridgeInMultiple
+None
+TMP_865 = CONVERT localPortAddress to IRootPort
+REF_149(uint256) -> _dParams.amount
+REF_150(uint256) -> _dParams.deposit
+HIGH_LEVEL_CALL, dest:TMP_865(IRootPort), function:bridgeToRoot, arguments:['_recipient', 'globalAddress', 'REF_149', 'REF_150', '_fromChain']  
+i(uint256) = i + 1
+EXPRESSION:IRootPort(localPortAddress).bridgeToRoot(_recipient,globalAddress,_dParams.amount,_dParams.deposit,_fromChain)	NodeType.EXPRESSION
+bridgeIn(_recipient,DepositParams_1(_dParams.hTokens[i],_dParams.tokens[i],_dParams.amounts[i],_dParams.deposits[i],_dParams.toChain,0),_fromChain)	NodeType.EXPRESSION
+++ i	NodeType.EXPRESSION" [key=0];
+"BlockID: 23
+Call context: bridgeInMultiple
+None
+TMP_865 = CONVERT localPortAddress to IRootPort
+REF_149(uint256) -> _dParams.amount
+REF_150(uint256) -> _dParams.deposit
+HIGH_LEVEL_CALL, dest:TMP_865(IRootPort), function:bridgeToRoot, arguments:['_recipient', 'globalAddress', 'REF_149', 'REF_150', '_fromChain']  
+i(uint256) = i + 1
+EXPRESSION:IRootPort(localPortAddress).bridgeToRoot(_recipient,globalAddress,_dParams.amount,_dParams.deposit,_fromChain)	NodeType.EXPRESSION
+bridgeIn(_recipient,DepositParams_1(_dParams.hTokens[i],_dParams.tokens[i],_dParams.amounts[i],_dParams.deposits[i],_dParams.toChain,0),_fromChain)	NodeType.EXPRESSION
+++ i	NodeType.EXPRESSION" -> "BlockID: 5
+Call context: 
+None
+BEGIN_LOOP
+REF_151(address[]) -> _dParams.hTokens
+REF_152 -> LENGTH REF_151
+TMP_868(bool) = i < REF_152
+CONDITION TMP_868
+EXPRESSION:None	NodeType.STARTLOOP
+i < _dParams.hTokens.length	NodeType.IFLOOP" [key="successor_2"];
+"BlockID: 9
+Call context: bridgeInMultiple,bridgeIn
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 10
+Call context: bridgeInMultiple
+None
+REF_104(uint256) -> _dParams.amount
+REF_105(uint256) -> _dParams.deposit
+TMP_751(bool) = REF_104 < REF_105
+REF_106(uint256) -> _dParams.amount
+TMP_752(bool) = REF_106 > 0
+TMP_753 = CONVERT _localPortAddress to IRootPort
+REF_108(address) -> _dParams.hToken
+TMP_754(bool) = HIGH_LEVEL_CALL, dest:TMP_753(IRootPort), function:isLocalToken, arguments:['REF_108', '_fromChain']  
+EXPRESSION:requiresAgentExecutor()	NodeType.EXPRESSION
+(_dParams.amount < _dParams.deposit) || (_dParams.amount > 0 && ! IRootPort(_localPortAddress).isLocalToken(_dParams.hToken,_fromChain)) || (_dParams.deposit > 0 && ! IRootPort(_localPortAddress).isUnderlyingToken(_dParams.token,_fromChain))	NodeType.EXPRESSION" [key="Exit: requiresAgentExecutor", ref="RootBridgeAgent.requiresAgentExecutor"];
+"BlockID: 11
+Call context: bridgeInMultiple,bridgeIn
+None
+TMP_755 = ! TMP_754 
+TMP_756(bool) = TMP_752 && TMP_755
+TMP_757(bool) = TMP_751 || TMP_756
+REF_109(uint256) -> _dParams.deposit
+TMP_758(bool) = REF_109 > 0
+TMP_759 = CONVERT _localPortAddress to IRootPort
+REF_111(address) -> _dParams.token
+TMP_760(bool) = HIGH_LEVEL_CALL, dest:TMP_759(IRootPort), function:isUnderlyingToken, arguments:['REF_111', '_fromChain']  
+EXPRESSION:(_dParams.amount < _dParams.deposit) || (_dParams.amount > 0 && ! IRootPort(_localPortAddress).isLocalToken(_dParams.hToken,_fromChain)) || (_dParams.deposit > 0 && ! IRootPort(_localPortAddress).isUnderlyingToken(_dParams.token,_fromChain))	NodeType.EXPRESSION" -> "BlockID: 12
+Call context: bridgeInMultiple,bridgeIn
+None
+TMP_761 = ! TMP_760 
+TMP_762(bool) = TMP_758 && TMP_761
+TMP_763(bool) = TMP_757 || TMP_762
+CONDITION TMP_763
+EXPRESSION:(_dParams.amount < _dParams.deposit) || (_dParams.amount > 0 && ! IRootPort(_localPortAddress).isLocalToken(_dParams.hToken,_fromChain)) || (_dParams.deposit > 0 && ! IRootPort(_localPortAddress).isUnderlyingToken(_dParams.token,_fromChain))	NodeType.IF" [key=0];
+"BlockID: 12
+Call context: bridgeInMultiple,bridgeIn
+None
+TMP_761 = ! TMP_760 
+TMP_762(bool) = TMP_758 && TMP_761
+TMP_763(bool) = TMP_757 || TMP_762
+CONDITION TMP_763
+EXPRESSION:(_dParams.amount < _dParams.deposit) || (_dParams.amount > 0 && ! IRootPort(_localPortAddress).isLocalToken(_dParams.hToken,_fromChain)) || (_dParams.deposit > 0 && ! IRootPort(_localPortAddress).isUnderlyingToken(_dParams.token,_fromChain))	NodeType.IF" -> "BlockID: 13
+Call context: bridgeInMultiple,bridgeIn
+True
+TMP_1340(None) := False(bool)
+EXPRESSION:" [key=0];
+"BlockID: 12
+Call context: bridgeInMultiple,bridgeIn
+None
+TMP_761 = ! TMP_760 
+TMP_762(bool) = TMP_758 && TMP_761
+TMP_763(bool) = TMP_757 || TMP_762
+CONDITION TMP_763
+EXPRESSION:(_dParams.amount < _dParams.deposit) || (_dParams.amount > 0 && ! IRootPort(_localPortAddress).isLocalToken(_dParams.hToken,_fromChain)) || (_dParams.deposit > 0 && ! IRootPort(_localPortAddress).isUnderlyingToken(_dParams.token,_fromChain))	NodeType.IF" -> "BlockID: 14
+Call context: bridgeInMultiple,bridgeIn
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 13
+Call context: bridgeInMultiple,bridgeIn
+True
+TMP_1340(None) := False(bool)
+EXPRESSION:" -> "BlockID: 15
+Call context: bridgeInMultiple
+None
+TMP_858 = ! TMP_857 
+CONDITION TMP_858
+EXPRESSION:! CheckParamsLib.checkParams(localPortAddress,_dParams,_fromChain)	NodeType.IF" [key="successor_5", ref="CheckParamsLib.checkParams"];
+"BlockID: 14
+Call context: bridgeInMultiple,bridgeIn
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 16
+Call context: bridgeInMultiple,bridgeIn
+None
+TMP_1340(None) := True(bool)
+EXPRESSION:" [key=0];
+"BlockID: 16
+Call context: bridgeInMultiple,bridgeIn
+None
+TMP_1340(None) := True(bool)
+EXPRESSION:" -> "BlockID: 15
+Call context: bridgeInMultiple
+None
+TMP_858 = ! TMP_857 
+CONDITION TMP_858
+EXPRESSION:! CheckParamsLib.checkParams(localPortAddress,_dParams,_fromChain)	NodeType.IF" [key="successor_5", ref="CheckParamsLib.checkParams"];
+}

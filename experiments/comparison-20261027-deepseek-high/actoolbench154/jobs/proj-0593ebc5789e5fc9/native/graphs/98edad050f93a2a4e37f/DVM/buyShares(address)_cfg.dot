@@ -1,0 +1,590 @@
+digraph {
+"BlockID: 990
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 991
+Call context: 
+None
+MODIFIER_CALL, ReentrancyGuard.preventReentrant()()
+EXPRESSION:preventReentrant()	NodeType.EXPRESSION";
+"BlockID: 992
+Call context: 
+None
+TMP_672 = CONVERT this to address
+TMP_673(uint256) = HIGH_LEVEL_CALL, dest:_BASE_TOKEN_(IERC20), function:balanceOf, arguments:['TMP_672']  
+EXPRESSION:preventReentrant()	NodeType.EXPRESSION";
+"BlockID: 993
+Call context: 
+None
+baseBalance(uint256) := TMP_673(uint256)
+TMP_674 = CONVERT this to address
+TMP_675(uint256) = HIGH_LEVEL_CALL, dest:_QUOTE_TOKEN_(IERC20), function:balanceOf, arguments:['TMP_674']  
+EXPRESSION:baseBalance = _BASE_TOKEN_.balanceOf(address(this))	NodeType.VARIABLE
+baseBalance = _BASE_TOKEN_.balanceOf(address(this))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 994
+Call context: 
+None
+quoteBalance(uint256) := TMP_675(uint256)
+baseReserve(uint256) := _BASE_RESERVE_(uint112)
+quoteReserve(uint256) := _QUOTE_RESERVE_(uint112)
+TMP_676(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['baseBalance', 'baseReserve'] 
+EXPRESSION:quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this))	NodeType.VARIABLE
+quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this))	NodeType.EXPRESSION
+baseReserve = _BASE_RESERVE_	NodeType.VARIABLE
+baseReserve = _BASE_RESERVE_	NodeType.EXPRESSION
+quoteReserve = _QUOTE_RESERVE_	NodeType.VARIABLE
+quoteReserve = _QUOTE_RESERVE_	NodeType.EXPRESSION
+baseInput = baseBalance.sub(baseReserve)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 995
+Call context: 
+None
+baseInput(uint256) := TMP_676(uint256)
+TMP_677(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['quoteBalance', 'quoteReserve'] 
+EXPRESSION:baseInput = baseBalance.sub(baseReserve)	NodeType.EXPRESSION
+quoteInput = quoteBalance.sub(quoteReserve)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 997
+Call context: 
+True
+TMP_680(bool) = totalSupply == 0
+CONDITION TMP_680
+EXPRESSION:totalSupply == 0	NodeType.IF";
+"BlockID: 999
+Call context: 
+False
+TMP_684(bool) = baseReserve > 0
+TMP_685(bool) = quoteReserve == 0
+TMP_686(bool) = TMP_684 && TMP_685
+CONDITION TMP_686
+EXPRESSION:baseReserve > 0 && quoteReserve == 0	NodeType.IF";
+"BlockID: 1000
+Call context: 
+True
+TMP_687(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['baseInput', 'totalSupply'] 
+EXPRESSION:shares = baseInput.mul(totalSupply).div(baseReserve)	NodeType.EXPRESSION";
+"BlockID: 1003
+Call context: 
+False
+TMP_689(bool) = baseReserve > 0
+TMP_690(bool) = quoteReserve > 0
+TMP_691(bool) = TMP_689 && TMP_690
+CONDITION TMP_691
+EXPRESSION:baseReserve > 0 && quoteReserve > 0	NodeType.IF";
+"BlockID: 1004
+Call context: 
+True
+TMP_692(uint256) = LIBRARY_CALL, dest:DecimalMath, function:DecimalMath.divFloor(uint256,uint256), arguments:['baseInput', 'baseReserve'] 
+EXPRESSION:";
+"BlockID: 1006
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1008
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1010
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1011
+Call context: 
+None
+INTERNAL_CALL, DVMVault._mint(address,uint256)(to,shares)
+EXPRESSION:_mint(to,shares)	NodeType.EXPRESSION";
+"BlockID: 1012
+Call context: 
+None
+INTERNAL_CALL, DVMVault._setReserve(uint256,uint256)(baseBalance,quoteBalance)
+EXPRESSION:_mint(to,shares)	NodeType.EXPRESSION
+_setReserve(baseBalance,quoteBalance)	NodeType.EXPRESSION";
+"BlockID: 1005
+Call context: 
+None
+baseInputRatio(uint256) := TMP_692(uint256)
+TMP_693(uint256) = LIBRARY_CALL, dest:DecimalMath, function:DecimalMath.divFloor(uint256,uint256), arguments:['quoteInput', 'quoteReserve'] 
+EXPRESSION:baseInputRatio = DecimalMath.divFloor(baseInput,baseReserve)	NodeType.VARIABLE
+baseInputRatio = DecimalMath.divFloor(baseInput,baseReserve)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1014
+Call context: 
+None
+quoteInputRatio(uint256) := TMP_693(uint256)
+TMP_699(bool) = quoteInputRatio < baseInputRatio
+CONDITION TMP_699
+EXPRESSION:quoteInputRatio = DecimalMath.divFloor(quoteInput,quoteReserve)	NodeType.VARIABLE
+quoteInputRatio = DecimalMath.divFloor(quoteInput,quoteReserve)	NodeType.EXPRESSION
+quoteInputRatio < baseInputRatio	NodeType.IF" [shape=box];
+"BlockID: 1015
+Call context: 
+True
+mintRatio(uint256) := quoteInputRatio(uint256)
+EXPRESSION:mintRatio = quoteInputRatio	NodeType.EXPRESSION";
+"BlockID: 1016
+Call context: 
+False
+mintRatio(uint256) := baseInputRatio(uint256)
+EXPRESSION:mintRatio = baseInputRatio	NodeType.EXPRESSION";
+"BlockID: 1017
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1018
+Call context: 
+None
+TMP_694(uint256) = LIBRARY_CALL, dest:DecimalMath, function:DecimalMath.mulFloor(uint256,uint256), arguments:['totalSupply', 'mintRatio'] 
+EXPRESSION:shares = DecimalMath.mulFloor(totalSupply,mintRatio)	NodeType.EXPRESSION";
+"BlockID: 1019
+Call context: 
+None
+shares(uint256) := TMP_694(uint256)
+EXPRESSION:shares = DecimalMath.mulFloor(totalSupply,mintRatio)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1001
+Call context: 
+None
+TMP_688(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_687', 'baseReserve'] 
+EXPRESSION:shares = baseInput.mul(totalSupply).div(baseReserve)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1002
+Call context: 
+None
+shares(uint256) := TMP_688(uint256)
+EXPRESSION:shares = baseInput.mul(totalSupply).div(baseReserve)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1020
+Call context: 
+True
+shares(uint256) := baseBalance(uint256)
+EXPRESSION:shares = baseBalance	NodeType.EXPRESSION";
+"BlockID: 1021
+Call context: 
+None
+quoteInput(uint256) := TMP_677(uint256)
+TMP_678(bool) = baseInput > 0
+CONDITION TMP_678
+EXPRESSION:TMP_678(bool) = baseInput > 0	NodeType.IF";
+"BlockID: 1022
+Call context: 
+True
+TMP_679(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 1023
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1024
+Call context: 
+None
+TMP_681(uint256) = 10 ** 3
+TMP_682(bool) = baseBalance >= TMP_681
+CONDITION TMP_682
+EXPRESSION:TMP_682(bool) = baseBalance >= TMP_681	NodeType.IF";
+"BlockID: 1025
+Call context: 
+True
+TMP_683(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 1026
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 990
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 991
+Call context: 
+None
+MODIFIER_CALL, ReentrancyGuard.preventReentrant()()
+EXPRESSION:preventReentrant()	NodeType.EXPRESSION" [key=0];
+"BlockID: 991
+Call context: 
+None
+MODIFIER_CALL, ReentrancyGuard.preventReentrant()()
+EXPRESSION:preventReentrant()	NodeType.EXPRESSION" -> "BlockID: 992
+Call context: 
+None
+TMP_672 = CONVERT this to address
+TMP_673(uint256) = HIGH_LEVEL_CALL, dest:_BASE_TOKEN_(IERC20), function:balanceOf, arguments:['TMP_672']  
+EXPRESSION:preventReentrant()	NodeType.EXPRESSION" [key=0];
+"BlockID: 992
+Call context: 
+None
+TMP_672 = CONVERT this to address
+TMP_673(uint256) = HIGH_LEVEL_CALL, dest:_BASE_TOKEN_(IERC20), function:balanceOf, arguments:['TMP_672']  
+EXPRESSION:preventReentrant()	NodeType.EXPRESSION" -> "BlockID: 993
+Call context: 
+None
+baseBalance(uint256) := TMP_673(uint256)
+TMP_674 = CONVERT this to address
+TMP_675(uint256) = HIGH_LEVEL_CALL, dest:_QUOTE_TOKEN_(IERC20), function:balanceOf, arguments:['TMP_674']  
+EXPRESSION:baseBalance = _BASE_TOKEN_.balanceOf(address(this))	NodeType.VARIABLE
+baseBalance = _BASE_TOKEN_.balanceOf(address(this))	NodeType.EXPRESSION" [key=0];
+"BlockID: 993
+Call context: 
+None
+baseBalance(uint256) := TMP_673(uint256)
+TMP_674 = CONVERT this to address
+TMP_675(uint256) = HIGH_LEVEL_CALL, dest:_QUOTE_TOKEN_(IERC20), function:balanceOf, arguments:['TMP_674']  
+EXPRESSION:baseBalance = _BASE_TOKEN_.balanceOf(address(this))	NodeType.VARIABLE
+baseBalance = _BASE_TOKEN_.balanceOf(address(this))	NodeType.EXPRESSION" -> "BlockID: 994
+Call context: 
+None
+quoteBalance(uint256) := TMP_675(uint256)
+baseReserve(uint256) := _BASE_RESERVE_(uint112)
+quoteReserve(uint256) := _QUOTE_RESERVE_(uint112)
+TMP_676(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['baseBalance', 'baseReserve'] 
+EXPRESSION:quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this))	NodeType.VARIABLE
+quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this))	NodeType.EXPRESSION
+baseReserve = _BASE_RESERVE_	NodeType.VARIABLE
+baseReserve = _BASE_RESERVE_	NodeType.EXPRESSION
+quoteReserve = _QUOTE_RESERVE_	NodeType.VARIABLE
+quoteReserve = _QUOTE_RESERVE_	NodeType.EXPRESSION
+baseInput = baseBalance.sub(baseReserve)	NodeType.EXPRESSION" [key=0];
+"BlockID: 994
+Call context: 
+None
+quoteBalance(uint256) := TMP_675(uint256)
+baseReserve(uint256) := _BASE_RESERVE_(uint112)
+quoteReserve(uint256) := _QUOTE_RESERVE_(uint112)
+TMP_676(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['baseBalance', 'baseReserve'] 
+EXPRESSION:quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this))	NodeType.VARIABLE
+quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this))	NodeType.EXPRESSION
+baseReserve = _BASE_RESERVE_	NodeType.VARIABLE
+baseReserve = _BASE_RESERVE_	NodeType.EXPRESSION
+quoteReserve = _QUOTE_RESERVE_	NodeType.VARIABLE
+quoteReserve = _QUOTE_RESERVE_	NodeType.EXPRESSION
+baseInput = baseBalance.sub(baseReserve)	NodeType.EXPRESSION" -> "BlockID: 995
+Call context: 
+None
+baseInput(uint256) := TMP_676(uint256)
+TMP_677(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['quoteBalance', 'quoteReserve'] 
+EXPRESSION:baseInput = baseBalance.sub(baseReserve)	NodeType.EXPRESSION
+quoteInput = quoteBalance.sub(quoteReserve)	NodeType.EXPRESSION" [key=0];
+"BlockID: 995
+Call context: 
+None
+baseInput(uint256) := TMP_676(uint256)
+TMP_677(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['quoteBalance', 'quoteReserve'] 
+EXPRESSION:baseInput = baseBalance.sub(baseReserve)	NodeType.EXPRESSION
+quoteInput = quoteBalance.sub(quoteReserve)	NodeType.EXPRESSION" -> "BlockID: 1021
+Call context: 
+None
+quoteInput(uint256) := TMP_677(uint256)
+TMP_678(bool) = baseInput > 0
+CONDITION TMP_678
+EXPRESSION:TMP_678(bool) = baseInput > 0	NodeType.IF" [key=0];
+"BlockID: 997
+Call context: 
+True
+TMP_680(bool) = totalSupply == 0
+CONDITION TMP_680
+EXPRESSION:totalSupply == 0	NodeType.IF" -> "BlockID: 999
+Call context: 
+False
+TMP_684(bool) = baseReserve > 0
+TMP_685(bool) = quoteReserve == 0
+TMP_686(bool) = TMP_684 && TMP_685
+CONDITION TMP_686
+EXPRESSION:baseReserve > 0 && quoteReserve == 0	NodeType.IF" [key=0];
+"BlockID: 997
+Call context: 
+True
+TMP_680(bool) = totalSupply == 0
+CONDITION TMP_680
+EXPRESSION:totalSupply == 0	NodeType.IF" -> "BlockID: 1024
+Call context: 
+None
+TMP_681(uint256) = 10 ** 3
+TMP_682(bool) = baseBalance >= TMP_681
+CONDITION TMP_682
+EXPRESSION:TMP_682(bool) = baseBalance >= TMP_681	NodeType.IF" [key=0];
+"BlockID: 999
+Call context: 
+False
+TMP_684(bool) = baseReserve > 0
+TMP_685(bool) = quoteReserve == 0
+TMP_686(bool) = TMP_684 && TMP_685
+CONDITION TMP_686
+EXPRESSION:baseReserve > 0 && quoteReserve == 0	NodeType.IF" -> "BlockID: 1000
+Call context: 
+True
+TMP_687(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['baseInput', 'totalSupply'] 
+EXPRESSION:shares = baseInput.mul(totalSupply).div(baseReserve)	NodeType.EXPRESSION" [key=0];
+"BlockID: 999
+Call context: 
+False
+TMP_684(bool) = baseReserve > 0
+TMP_685(bool) = quoteReserve == 0
+TMP_686(bool) = TMP_684 && TMP_685
+CONDITION TMP_686
+EXPRESSION:baseReserve > 0 && quoteReserve == 0	NodeType.IF" -> "BlockID: 1003
+Call context: 
+False
+TMP_689(bool) = baseReserve > 0
+TMP_690(bool) = quoteReserve > 0
+TMP_691(bool) = TMP_689 && TMP_690
+CONDITION TMP_691
+EXPRESSION:baseReserve > 0 && quoteReserve > 0	NodeType.IF" [key=0];
+"BlockID: 1000
+Call context: 
+True
+TMP_687(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['baseInput', 'totalSupply'] 
+EXPRESSION:shares = baseInput.mul(totalSupply).div(baseReserve)	NodeType.EXPRESSION" -> "BlockID: 1001
+Call context: 
+None
+TMP_688(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_687', 'baseReserve'] 
+EXPRESSION:shares = baseInput.mul(totalSupply).div(baseReserve)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1003
+Call context: 
+False
+TMP_689(bool) = baseReserve > 0
+TMP_690(bool) = quoteReserve > 0
+TMP_691(bool) = TMP_689 && TMP_690
+CONDITION TMP_691
+EXPRESSION:baseReserve > 0 && quoteReserve > 0	NodeType.IF" -> "BlockID: 1004
+Call context: 
+True
+TMP_692(uint256) = LIBRARY_CALL, dest:DecimalMath, function:DecimalMath.divFloor(uint256,uint256), arguments:['baseInput', 'baseReserve'] 
+EXPRESSION:" [key=0];
+"BlockID: 1003
+Call context: 
+False
+TMP_689(bool) = baseReserve > 0
+TMP_690(bool) = quoteReserve > 0
+TMP_691(bool) = TMP_689 && TMP_690
+CONDITION TMP_691
+EXPRESSION:baseReserve > 0 && quoteReserve > 0	NodeType.IF" -> "BlockID: 1006
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1004
+Call context: 
+True
+TMP_692(uint256) = LIBRARY_CALL, dest:DecimalMath, function:DecimalMath.divFloor(uint256,uint256), arguments:['baseInput', 'baseReserve'] 
+EXPRESSION:" -> "BlockID: 1005
+Call context: 
+None
+baseInputRatio(uint256) := TMP_692(uint256)
+TMP_693(uint256) = LIBRARY_CALL, dest:DecimalMath, function:DecimalMath.divFloor(uint256,uint256), arguments:['quoteInput', 'quoteReserve'] 
+EXPRESSION:baseInputRatio = DecimalMath.divFloor(baseInput,baseReserve)	NodeType.VARIABLE
+baseInputRatio = DecimalMath.divFloor(baseInput,baseReserve)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1006
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1008
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1008
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1010
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1010
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1011
+Call context: 
+None
+INTERNAL_CALL, DVMVault._mint(address,uint256)(to,shares)
+EXPRESSION:_mint(to,shares)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1011
+Call context: 
+None
+INTERNAL_CALL, DVMVault._mint(address,uint256)(to,shares)
+EXPRESSION:_mint(to,shares)	NodeType.EXPRESSION" -> "BlockID: 1012
+Call context: 
+None
+INTERNAL_CALL, DVMVault._setReserve(uint256,uint256)(baseBalance,quoteBalance)
+EXPRESSION:_mint(to,shares)	NodeType.EXPRESSION
+_setReserve(baseBalance,quoteBalance)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1005
+Call context: 
+None
+baseInputRatio(uint256) := TMP_692(uint256)
+TMP_693(uint256) = LIBRARY_CALL, dest:DecimalMath, function:DecimalMath.divFloor(uint256,uint256), arguments:['quoteInput', 'quoteReserve'] 
+EXPRESSION:baseInputRatio = DecimalMath.divFloor(baseInput,baseReserve)	NodeType.VARIABLE
+baseInputRatio = DecimalMath.divFloor(baseInput,baseReserve)	NodeType.EXPRESSION" -> "BlockID: 1014
+Call context: 
+None
+quoteInputRatio(uint256) := TMP_693(uint256)
+TMP_699(bool) = quoteInputRatio < baseInputRatio
+CONDITION TMP_699
+EXPRESSION:quoteInputRatio = DecimalMath.divFloor(quoteInput,quoteReserve)	NodeType.VARIABLE
+quoteInputRatio = DecimalMath.divFloor(quoteInput,quoteReserve)	NodeType.EXPRESSION
+quoteInputRatio < baseInputRatio	NodeType.IF" [key=0];
+"BlockID: 1014
+Call context: 
+None
+quoteInputRatio(uint256) := TMP_693(uint256)
+TMP_699(bool) = quoteInputRatio < baseInputRatio
+CONDITION TMP_699
+EXPRESSION:quoteInputRatio = DecimalMath.divFloor(quoteInput,quoteReserve)	NodeType.VARIABLE
+quoteInputRatio = DecimalMath.divFloor(quoteInput,quoteReserve)	NodeType.EXPRESSION
+quoteInputRatio < baseInputRatio	NodeType.IF" -> "BlockID: 1015
+Call context: 
+True
+mintRatio(uint256) := quoteInputRatio(uint256)
+EXPRESSION:mintRatio = quoteInputRatio	NodeType.EXPRESSION" [key=0];
+"BlockID: 1014
+Call context: 
+None
+quoteInputRatio(uint256) := TMP_693(uint256)
+TMP_699(bool) = quoteInputRatio < baseInputRatio
+CONDITION TMP_699
+EXPRESSION:quoteInputRatio = DecimalMath.divFloor(quoteInput,quoteReserve)	NodeType.VARIABLE
+quoteInputRatio = DecimalMath.divFloor(quoteInput,quoteReserve)	NodeType.EXPRESSION
+quoteInputRatio < baseInputRatio	NodeType.IF" -> "BlockID: 1016
+Call context: 
+False
+mintRatio(uint256) := baseInputRatio(uint256)
+EXPRESSION:mintRatio = baseInputRatio	NodeType.EXPRESSION" [key=0];
+"BlockID: 1015
+Call context: 
+True
+mintRatio(uint256) := quoteInputRatio(uint256)
+EXPRESSION:mintRatio = quoteInputRatio	NodeType.EXPRESSION" -> "BlockID: 1017
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1016
+Call context: 
+False
+mintRatio(uint256) := baseInputRatio(uint256)
+EXPRESSION:mintRatio = baseInputRatio	NodeType.EXPRESSION" -> "BlockID: 1017
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1017
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1018
+Call context: 
+None
+TMP_694(uint256) = LIBRARY_CALL, dest:DecimalMath, function:DecimalMath.mulFloor(uint256,uint256), arguments:['totalSupply', 'mintRatio'] 
+EXPRESSION:shares = DecimalMath.mulFloor(totalSupply,mintRatio)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1018
+Call context: 
+None
+TMP_694(uint256) = LIBRARY_CALL, dest:DecimalMath, function:DecimalMath.mulFloor(uint256,uint256), arguments:['totalSupply', 'mintRatio'] 
+EXPRESSION:shares = DecimalMath.mulFloor(totalSupply,mintRatio)	NodeType.EXPRESSION" -> "BlockID: 1019
+Call context: 
+None
+shares(uint256) := TMP_694(uint256)
+EXPRESSION:shares = DecimalMath.mulFloor(totalSupply,mintRatio)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1019
+Call context: 
+None
+shares(uint256) := TMP_694(uint256)
+EXPRESSION:shares = DecimalMath.mulFloor(totalSupply,mintRatio)	NodeType.EXPRESSION" -> "BlockID: 1006
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1001
+Call context: 
+None
+TMP_688(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_687', 'baseReserve'] 
+EXPRESSION:shares = baseInput.mul(totalSupply).div(baseReserve)	NodeType.EXPRESSION" -> "BlockID: 1002
+Call context: 
+None
+shares(uint256) := TMP_688(uint256)
+EXPRESSION:shares = baseInput.mul(totalSupply).div(baseReserve)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1002
+Call context: 
+None
+shares(uint256) := TMP_688(uint256)
+EXPRESSION:shares = baseInput.mul(totalSupply).div(baseReserve)	NodeType.EXPRESSION" -> "BlockID: 1008
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1020
+Call context: 
+True
+shares(uint256) := baseBalance(uint256)
+EXPRESSION:shares = baseBalance	NodeType.EXPRESSION" -> "BlockID: 1010
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1021
+Call context: 
+None
+quoteInput(uint256) := TMP_677(uint256)
+TMP_678(bool) = baseInput > 0
+CONDITION TMP_678
+EXPRESSION:TMP_678(bool) = baseInput > 0	NodeType.IF" -> "BlockID: 1022
+Call context: 
+True
+TMP_679(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1021
+Call context: 
+None
+quoteInput(uint256) := TMP_677(uint256)
+TMP_678(bool) = baseInput > 0
+CONDITION TMP_678
+EXPRESSION:TMP_678(bool) = baseInput > 0	NodeType.IF" -> "BlockID: 1023
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1023
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 997
+Call context: 
+True
+TMP_680(bool) = totalSupply == 0
+CONDITION TMP_680
+EXPRESSION:totalSupply == 0	NodeType.IF" [key=0];
+"BlockID: 1024
+Call context: 
+None
+TMP_681(uint256) = 10 ** 3
+TMP_682(bool) = baseBalance >= TMP_681
+CONDITION TMP_682
+EXPRESSION:TMP_682(bool) = baseBalance >= TMP_681	NodeType.IF" -> "BlockID: 1025
+Call context: 
+True
+TMP_683(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1024
+Call context: 
+None
+TMP_681(uint256) = 10 ** 3
+TMP_682(bool) = baseBalance >= TMP_681
+CONDITION TMP_682
+EXPRESSION:TMP_682(bool) = baseBalance >= TMP_681	NodeType.IF" -> "BlockID: 1026
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1026
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1020
+Call context: 
+True
+shares(uint256) := baseBalance(uint256)
+EXPRESSION:shares = baseBalance	NodeType.EXPRESSION" [key=0];
+}

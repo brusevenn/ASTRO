@@ -1,0 +1,858 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+TMP_1006 = CONVERT levelManager to address
+TMP_1007(bool) = msg.sender == TMP_1006
+CONDITION TMP_1007
+EXPRESSION:TMP_1007(bool) = msg.sender == TMP_1006	NodeType.IF";
+"BlockID: 4
+Call context: 
+None
+REF_125(uint256) -> depositLockStart[account]
+TMP_732(uint256) = REF_125 (c)+ lockPeriod
+TMP_733(bool) = block.timestamp < TMP_732
+TMP_1260(None) := TMP_733(bool)
+isUserLocked(bool) := TMP_894(bool)
+REF_212(IStaking.UserInfo) -> userInfo[account]
+REF_213(uint256) -> REF_212.amount
+TMP_895(bool) = REF_213 == 0
+TMP_896 = ! alwaysLockOnRegister 
+TMP_897(bool) = isUserLocked && TMP_896
+TMP_898(bool) = TMP_895 || TMP_897
+CONDITION TMP_898
+EXPRESSION:isUserLocked = isLocked(account)	NodeType.VARIABLE
+isUserLocked = isLocked(account)	NodeType.EXPRESSION
+userInfo[account].amount == 0 || (isUserLocked && ! alwaysLockOnRegister)	NodeType.IF";
+"BlockID: 5
+Call context: 
+True
+RETURN
+EXPRESSION:None	NodeType.RETURN";
+"BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 7
+Call context: 
+None
+TMP_899 = ! isUserLocked 
+TMP_900(bool) = TMP_899 || alwaysLockOnRegister
+CONDITION TMP_900
+EXPRESSION:! isUserLocked || alwaysLockOnRegister	NodeType.IF";
+"BlockID: 8
+Call context: 
+True
+REF_191(IStaking.UserInfo) -> userInfo[account]
+user(IStaking.UserInfo) := REF_191(IStaking.UserInfo)
+REF_192(uint256) -> user.amount
+TMP_853(bool) = REF_192 == 0
+CONDITION TMP_853
+EXPRESSION:user = userInfo[account]	NodeType.VARIABLE
+user = userInfo[account]	NodeType.EXPRESSION
+user.amount == 0	NodeType.IF";
+"BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2
+Call context: lock
+True
+TMP_1008(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 3
+Call context: lock
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 12
+Call context: lock
+None
+REF_242(uint256) -> depositLockStart[account]
+REF_242(uint256) (->depositLockStart) := lockStart(uint256)
+REF_202(IStaking.UserInfo) -> userInfo[account]
+user(IStaking.UserInfo) := REF_202(IStaking.UserInfo)
+REF_203(uint256) -> user.rewardDebt
+REF_198(uint256) -> depositLockStart[account]
+TMP_858(bool) = REF_198 == 0
+REF_199(uint256) -> depositLockStart[account]
+TMP_859(bool) = REF_199 == block.timestamp
+TMP_860(bool) = TMP_858 || TMP_859
+CONDITION TMP_860
+EXPRESSION:updateUserPending(account)	NodeType.EXPRESSION
+depositLockStart[account] = lockStart	NodeType.EXPRESSION
+user = userInfo[account]	NodeType.VARIABLE
+user = userInfo[account]	NodeType.EXPRESSION
+depositLockStart[account] == 0 || depositLockStart[account] == block.timestamp	NodeType.IF";
+"BlockID: 10
+Call context: lock,updateDepositLockStart
+True
+RETURN
+EXPRESSION:None	NodeType.RETURN";
+"BlockID: 11
+Call context: lock,updateDepositLockStart
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 13
+Call context: lock,updateDepositLockStart
+None
+REF_193(uint256) -> user.pendingRewards
+REF_198(uint256) -> depositLockStart[account]
+TMP_858(bool) = REF_198 == 0
+REF_199(uint256) -> depositLockStart[account]
+TMP_859(bool) = REF_199 == block.timestamp
+TMP_860(bool) = TMP_858 || TMP_859
+CONDITION TMP_860
+EXPRESSION:depositLockStart[account] == 0 || depositLockStart[account] == block.timestamp	NodeType.IF";
+"BlockID: 20
+Call context: lock,updateDepositLockStart
+None
+TMP_855(uint256) = REF_193 (c)+ TMP_854
+totalPending(uint256) := TMP_855(uint256)
+REF_194(uint256) -> user.rewardDebt
+TMP_856(bool) = totalPending < REF_194
+CONDITION TMP_856
+EXPRESSION:totalPending = user.pendingRewards + getFixedAprPendingReward(account)	NodeType.VARIABLE
+totalPending = user.pendingRewards + getFixedAprPendingReward(account)	NodeType.EXPRESSION
+totalPending < user.rewardDebt	NodeType.IF" [shape=box];
+"BlockID: 24
+Call context: lock,updateDepositLockStart
+True
+REF_195(uint256) -> user.pendingRewards
+REF_195(uint256) (->user) := 0(uint256)
+EXPRESSION:user.pendingRewards = 0	NodeType.EXPRESSION";
+"BlockID: 25
+Call context: lock,updateDepositLockStart
+False
+REF_196(uint256) -> user.pendingRewards
+REF_197(uint256) -> user.rewardDebt
+TMP_857(uint256) = totalPending (c)- REF_197
+REF_196(uint256) (->user) := TMP_857(uint256)
+EXPRESSION:user.pendingRewards = totalPending - user.rewardDebt	NodeType.EXPRESSION";
+"BlockID: 29
+Call context: lock,updateDepositLockStart
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 16
+Call context: lock,updateDepositLockStart,updateUserPending
+True
+TMP_1286(None) := 0(uint256)
+EXPRESSION:";
+"BlockID: 17
+Call context: lock,updateDepositLockStart,updateUserPending
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 21
+Call context: lock,updateDepositLockStart,updateUserPending
+None
+REF_200(uint256) -> depositLockStart[account]
+TMP_863(uint256) = REF_200 (c)+ lockPeriod
+TMP_864(bool) = block.timestamp >= TMP_863
+CONDITION TMP_864
+EXPRESSION:block.timestamp >= depositLockStart[account] + lockPeriod	NodeType.IF";
+"BlockID: 26
+Call context: lock,updateDepositLockStart,updateUserPending
+True
+passedTime(uint256) := lockPeriod(uint256)
+EXPRESSION:passedTime = lockPeriod	NodeType.EXPRESSION";
+"BlockID: 27
+Call context: lock,updateDepositLockStart,updateUserPending
+False
+REF_201(uint256) -> depositLockStart[account]
+TMP_865(uint256) = block.timestamp (c)- REF_201
+passedTime(uint256) := TMP_865(uint256)
+EXPRESSION:passedTime = block.timestamp - depositLockStart[account]	NodeType.EXPRESSION";
+"BlockID: 30
+Call context: lock,updateDepositLockStart,updateUserPending
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 32
+Call context: lock,updateDepositLockStart,updateUserPending
+None
+REF_132(IStaking.UserInfo) -> userInfo[account]
+REF_133(uint256) -> REF_132.amount
+TMP_742(uint256) = REF_133 (c)* fixedApr
+TMP_743(uint256) = TMP_742 (c)/ 100
+TMP_744(uint256) = TMP_743 (c)/ 100
+TMP_745(uint256) = 365 (c)* 24
+TMP_746(uint256) = TMP_745 (c)* 3600
+TMP_747(uint256) = TMP_744 (c)/ TMP_746
+TMP_1266(None) := TMP_747(uint256)
+TMP_862(uint256) = passedTime (c)* TMP_861
+TMP_1286(None) := TMP_862(uint256)
+EXPRESSION:";
+"BlockID: 18
+Call context: lock,updateDepositLockStart
+None
+REF_203(uint256) (->user) := TMP_866(uint256)
+REF_214(uint256) -> lastClaimedAt[account]
+REF_214(uint256) (->lastClaimedAt) := block.timestamp(uint256)
+EXPRESSION:user.rewardDebt = getFixedAprPendingReward(account)	NodeType.EXPRESSION
+updateDepositLockStart(account,block.timestamp)	NodeType.EXPRESSION
+lastClaimedAt[account] = block.timestamp	NodeType.EXPRESSION" [shape=box];
+"BlockID: 14
+Call context: lock,updateDepositLockStart,updateUserDebt
+True
+TMP_1286(None) := 0(uint256)
+EXPRESSION:";
+"BlockID: 15
+Call context: lock,updateDepositLockStart,updateUserDebt
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 19
+Call context: lock,updateDepositLockStart,updateUserDebt
+None
+REF_200(uint256) -> depositLockStart[account]
+TMP_863(uint256) = REF_200 (c)+ lockPeriod
+TMP_864(bool) = block.timestamp >= TMP_863
+CONDITION TMP_864
+EXPRESSION:block.timestamp >= depositLockStart[account] + lockPeriod	NodeType.IF";
+"BlockID: 22
+Call context: lock,updateDepositLockStart,updateUserDebt
+True
+passedTime(uint256) := lockPeriod(uint256)
+EXPRESSION:passedTime = lockPeriod	NodeType.EXPRESSION";
+"BlockID: 23
+Call context: lock,updateDepositLockStart,updateUserDebt
+False
+REF_201(uint256) -> depositLockStart[account]
+TMP_865(uint256) = block.timestamp (c)- REF_201
+passedTime(uint256) := TMP_865(uint256)
+EXPRESSION:passedTime = block.timestamp - depositLockStart[account]	NodeType.EXPRESSION";
+"BlockID: 28
+Call context: lock,updateDepositLockStart,updateUserDebt
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 31
+Call context: lock,updateDepositLockStart,updateUserDebt
+None
+REF_132(IStaking.UserInfo) -> userInfo[account]
+REF_133(uint256) -> REF_132.amount
+TMP_742(uint256) = REF_133 (c)* fixedApr
+TMP_743(uint256) = TMP_742 (c)/ 100
+TMP_744(uint256) = TMP_743 (c)/ 100
+TMP_745(uint256) = 365 (c)* 24
+TMP_746(uint256) = TMP_745 (c)* 3600
+TMP_747(uint256) = TMP_744 (c)/ TMP_746
+TMP_1266(None) := TMP_747(uint256)
+TMP_862(uint256) = passedTime (c)* TMP_861
+TMP_1286(None) := TMP_862(uint256)
+EXPRESSION:";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+TMP_1006 = CONVERT levelManager to address
+TMP_1007(bool) = msg.sender == TMP_1006
+CONDITION TMP_1007
+EXPRESSION:TMP_1007(bool) = msg.sender == TMP_1006	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_1006 = CONVERT levelManager to address
+TMP_1007(bool) = msg.sender == TMP_1006
+CONDITION TMP_1007
+EXPRESSION:TMP_1007(bool) = msg.sender == TMP_1006	NodeType.IF" -> "BlockID: 2
+Call context: lock
+True
+TMP_1008(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+TMP_1006 = CONVERT levelManager to address
+TMP_1007(bool) = msg.sender == TMP_1006
+CONDITION TMP_1007
+EXPRESSION:TMP_1007(bool) = msg.sender == TMP_1006	NodeType.IF" -> "BlockID: 3
+Call context: lock
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 4
+Call context: 
+None
+REF_125(uint256) -> depositLockStart[account]
+TMP_732(uint256) = REF_125 (c)+ lockPeriod
+TMP_733(bool) = block.timestamp < TMP_732
+TMP_1260(None) := TMP_733(bool)
+isUserLocked(bool) := TMP_894(bool)
+REF_212(IStaking.UserInfo) -> userInfo[account]
+REF_213(uint256) -> REF_212.amount
+TMP_895(bool) = REF_213 == 0
+TMP_896 = ! alwaysLockOnRegister 
+TMP_897(bool) = isUserLocked && TMP_896
+TMP_898(bool) = TMP_895 || TMP_897
+CONDITION TMP_898
+EXPRESSION:isUserLocked = isLocked(account)	NodeType.VARIABLE
+isUserLocked = isLocked(account)	NodeType.EXPRESSION
+userInfo[account].amount == 0 || (isUserLocked && ! alwaysLockOnRegister)	NodeType.IF" -> "BlockID: 5
+Call context: 
+True
+RETURN
+EXPRESSION:None	NodeType.RETURN" [key="successor_3"];
+"BlockID: 4
+Call context: 
+None
+REF_125(uint256) -> depositLockStart[account]
+TMP_732(uint256) = REF_125 (c)+ lockPeriod
+TMP_733(bool) = block.timestamp < TMP_732
+TMP_1260(None) := TMP_733(bool)
+isUserLocked(bool) := TMP_894(bool)
+REF_212(IStaking.UserInfo) -> userInfo[account]
+REF_213(uint256) -> REF_212.amount
+TMP_895(bool) = REF_213 == 0
+TMP_896 = ! alwaysLockOnRegister 
+TMP_897(bool) = isUserLocked && TMP_896
+TMP_898(bool) = TMP_895 || TMP_897
+CONDITION TMP_898
+EXPRESSION:isUserLocked = isLocked(account)	NodeType.VARIABLE
+isUserLocked = isLocked(account)	NodeType.EXPRESSION
+userInfo[account].amount == 0 || (isUserLocked && ! alwaysLockOnRegister)	NodeType.IF" -> "BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_3"];
+"BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 7
+Call context: 
+None
+TMP_899 = ! isUserLocked 
+TMP_900(bool) = TMP_899 || alwaysLockOnRegister
+CONDITION TMP_900
+EXPRESSION:! isUserLocked || alwaysLockOnRegister	NodeType.IF" [key=0];
+"BlockID: 7
+Call context: 
+None
+TMP_899 = ! isUserLocked 
+TMP_900(bool) = TMP_899 || alwaysLockOnRegister
+CONDITION TMP_900
+EXPRESSION:! isUserLocked || alwaysLockOnRegister	NodeType.IF" -> "BlockID: 8
+Call context: 
+True
+REF_191(IStaking.UserInfo) -> userInfo[account]
+user(IStaking.UserInfo) := REF_191(IStaking.UserInfo)
+REF_192(uint256) -> user.amount
+TMP_853(bool) = REF_192 == 0
+CONDITION TMP_853
+EXPRESSION:user = userInfo[account]	NodeType.VARIABLE
+user = userInfo[account]	NodeType.EXPRESSION
+user.amount == 0	NodeType.IF" [key=0];
+"BlockID: 7
+Call context: 
+None
+TMP_899 = ! isUserLocked 
+TMP_900(bool) = TMP_899 || alwaysLockOnRegister
+CONDITION TMP_900
+EXPRESSION:! isUserLocked || alwaysLockOnRegister	NodeType.IF" -> "BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 8
+Call context: 
+True
+REF_191(IStaking.UserInfo) -> userInfo[account]
+user(IStaking.UserInfo) := REF_191(IStaking.UserInfo)
+REF_192(uint256) -> user.amount
+TMP_853(bool) = REF_192 == 0
+CONDITION TMP_853
+EXPRESSION:user = userInfo[account]	NodeType.VARIABLE
+user = userInfo[account]	NodeType.EXPRESSION
+user.amount == 0	NodeType.IF" -> "BlockID: 10
+Call context: lock,updateDepositLockStart
+True
+RETURN
+EXPRESSION:None	NodeType.RETURN" [key="successor_5"];
+"BlockID: 8
+Call context: 
+True
+REF_191(IStaking.UserInfo) -> userInfo[account]
+user(IStaking.UserInfo) := REF_191(IStaking.UserInfo)
+REF_192(uint256) -> user.amount
+TMP_853(bool) = REF_192 == 0
+CONDITION TMP_853
+EXPRESSION:user = userInfo[account]	NodeType.VARIABLE
+user = userInfo[account]	NodeType.EXPRESSION
+user.amount == 0	NodeType.IF" -> "BlockID: 11
+Call context: lock,updateDepositLockStart
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 3
+Call context: lock
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: 
+None
+REF_125(uint256) -> depositLockStart[account]
+TMP_732(uint256) = REF_125 (c)+ lockPeriod
+TMP_733(bool) = block.timestamp < TMP_732
+TMP_1260(None) := TMP_733(bool)
+isUserLocked(bool) := TMP_894(bool)
+REF_212(IStaking.UserInfo) -> userInfo[account]
+REF_213(uint256) -> REF_212.amount
+TMP_895(bool) = REF_213 == 0
+TMP_896 = ! alwaysLockOnRegister 
+TMP_897(bool) = isUserLocked && TMP_896
+TMP_898(bool) = TMP_895 || TMP_897
+CONDITION TMP_898
+EXPRESSION:isUserLocked = isLocked(account)	NodeType.VARIABLE
+isUserLocked = isLocked(account)	NodeType.EXPRESSION
+userInfo[account].amount == 0 || (isUserLocked && ! alwaysLockOnRegister)	NodeType.IF" [key="Exit: onlyLevelManager", ref="LaunchpadLockableStaking.onlyLevelManager"];
+"BlockID: 12
+Call context: lock
+None
+REF_242(uint256) -> depositLockStart[account]
+REF_242(uint256) (->depositLockStart) := lockStart(uint256)
+REF_202(IStaking.UserInfo) -> userInfo[account]
+user(IStaking.UserInfo) := REF_202(IStaking.UserInfo)
+REF_203(uint256) -> user.rewardDebt
+REF_198(uint256) -> depositLockStart[account]
+TMP_858(bool) = REF_198 == 0
+REF_199(uint256) -> depositLockStart[account]
+TMP_859(bool) = REF_199 == block.timestamp
+TMP_860(bool) = TMP_858 || TMP_859
+CONDITION TMP_860
+EXPRESSION:updateUserPending(account)	NodeType.EXPRESSION
+depositLockStart[account] = lockStart	NodeType.EXPRESSION
+user = userInfo[account]	NodeType.VARIABLE
+user = userInfo[account]	NodeType.EXPRESSION
+depositLockStart[account] == 0 || depositLockStart[account] == block.timestamp	NodeType.IF" -> "BlockID: 14
+Call context: lock,updateDepositLockStart,updateUserDebt
+True
+TMP_1286(None) := 0(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 12
+Call context: lock
+None
+REF_242(uint256) -> depositLockStart[account]
+REF_242(uint256) (->depositLockStart) := lockStart(uint256)
+REF_202(IStaking.UserInfo) -> userInfo[account]
+user(IStaking.UserInfo) := REF_202(IStaking.UserInfo)
+REF_203(uint256) -> user.rewardDebt
+REF_198(uint256) -> depositLockStart[account]
+TMP_858(bool) = REF_198 == 0
+REF_199(uint256) -> depositLockStart[account]
+TMP_859(bool) = REF_199 == block.timestamp
+TMP_860(bool) = TMP_858 || TMP_859
+CONDITION TMP_860
+EXPRESSION:updateUserPending(account)	NodeType.EXPRESSION
+depositLockStart[account] = lockStart	NodeType.EXPRESSION
+user = userInfo[account]	NodeType.VARIABLE
+user = userInfo[account]	NodeType.EXPRESSION
+depositLockStart[account] == 0 || depositLockStart[account] == block.timestamp	NodeType.IF" -> "BlockID: 15
+Call context: lock,updateDepositLockStart,updateUserDebt
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 10
+Call context: lock,updateDepositLockStart
+True
+RETURN
+EXPRESSION:None	NodeType.RETURN" -> "BlockID: 12
+Call context: lock
+None
+REF_242(uint256) -> depositLockStart[account]
+REF_242(uint256) (->depositLockStart) := lockStart(uint256)
+REF_202(IStaking.UserInfo) -> userInfo[account]
+user(IStaking.UserInfo) := REF_202(IStaking.UserInfo)
+REF_203(uint256) -> user.rewardDebt
+REF_198(uint256) -> depositLockStart[account]
+TMP_858(bool) = REF_198 == 0
+REF_199(uint256) -> depositLockStart[account]
+TMP_859(bool) = REF_199 == block.timestamp
+TMP_860(bool) = TMP_858 || TMP_859
+CONDITION TMP_860
+EXPRESSION:updateUserPending(account)	NodeType.EXPRESSION
+depositLockStart[account] = lockStart	NodeType.EXPRESSION
+user = userInfo[account]	NodeType.VARIABLE
+user = userInfo[account]	NodeType.EXPRESSION
+depositLockStart[account] == 0 || depositLockStart[account] == block.timestamp	NodeType.IF" [key="successor_5", ref="LaunchpadLockableStaking.updateUserPending"];
+"BlockID: 11
+Call context: lock,updateDepositLockStart
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 13
+Call context: lock,updateDepositLockStart
+None
+REF_193(uint256) -> user.pendingRewards
+REF_198(uint256) -> depositLockStart[account]
+TMP_858(bool) = REF_198 == 0
+REF_199(uint256) -> depositLockStart[account]
+TMP_859(bool) = REF_199 == block.timestamp
+TMP_860(bool) = TMP_858 || TMP_859
+CONDITION TMP_860
+EXPRESSION:depositLockStart[account] == 0 || depositLockStart[account] == block.timestamp	NodeType.IF" [key=0];
+"BlockID: 13
+Call context: lock,updateDepositLockStart
+None
+REF_193(uint256) -> user.pendingRewards
+REF_198(uint256) -> depositLockStart[account]
+TMP_858(bool) = REF_198 == 0
+REF_199(uint256) -> depositLockStart[account]
+TMP_859(bool) = REF_199 == block.timestamp
+TMP_860(bool) = TMP_858 || TMP_859
+CONDITION TMP_860
+EXPRESSION:depositLockStart[account] == 0 || depositLockStart[account] == block.timestamp	NodeType.IF" -> "BlockID: 16
+Call context: lock,updateDepositLockStart,updateUserPending
+True
+TMP_1286(None) := 0(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 13
+Call context: lock,updateDepositLockStart
+None
+REF_193(uint256) -> user.pendingRewards
+REF_198(uint256) -> depositLockStart[account]
+TMP_858(bool) = REF_198 == 0
+REF_199(uint256) -> depositLockStart[account]
+TMP_859(bool) = REF_199 == block.timestamp
+TMP_860(bool) = TMP_858 || TMP_859
+CONDITION TMP_860
+EXPRESSION:depositLockStart[account] == 0 || depositLockStart[account] == block.timestamp	NodeType.IF" -> "BlockID: 17
+Call context: lock,updateDepositLockStart,updateUserPending
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 20
+Call context: lock,updateDepositLockStart
+None
+TMP_855(uint256) = REF_193 (c)+ TMP_854
+totalPending(uint256) := TMP_855(uint256)
+REF_194(uint256) -> user.rewardDebt
+TMP_856(bool) = totalPending < REF_194
+CONDITION TMP_856
+EXPRESSION:totalPending = user.pendingRewards + getFixedAprPendingReward(account)	NodeType.VARIABLE
+totalPending = user.pendingRewards + getFixedAprPendingReward(account)	NodeType.EXPRESSION
+totalPending < user.rewardDebt	NodeType.IF" -> "BlockID: 24
+Call context: lock,updateDepositLockStart
+True
+REF_195(uint256) -> user.pendingRewards
+REF_195(uint256) (->user) := 0(uint256)
+EXPRESSION:user.pendingRewards = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 20
+Call context: lock,updateDepositLockStart
+None
+TMP_855(uint256) = REF_193 (c)+ TMP_854
+totalPending(uint256) := TMP_855(uint256)
+REF_194(uint256) -> user.rewardDebt
+TMP_856(bool) = totalPending < REF_194
+CONDITION TMP_856
+EXPRESSION:totalPending = user.pendingRewards + getFixedAprPendingReward(account)	NodeType.VARIABLE
+totalPending = user.pendingRewards + getFixedAprPendingReward(account)	NodeType.EXPRESSION
+totalPending < user.rewardDebt	NodeType.IF" -> "BlockID: 25
+Call context: lock,updateDepositLockStart
+False
+REF_196(uint256) -> user.pendingRewards
+REF_197(uint256) -> user.rewardDebt
+TMP_857(uint256) = totalPending (c)- REF_197
+REF_196(uint256) (->user) := TMP_857(uint256)
+EXPRESSION:user.pendingRewards = totalPending - user.rewardDebt	NodeType.EXPRESSION" [key=0];
+"BlockID: 24
+Call context: lock,updateDepositLockStart
+True
+REF_195(uint256) -> user.pendingRewards
+REF_195(uint256) (->user) := 0(uint256)
+EXPRESSION:user.pendingRewards = 0	NodeType.EXPRESSION" -> "BlockID: 29
+Call context: lock,updateDepositLockStart
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 25
+Call context: lock,updateDepositLockStart
+False
+REF_196(uint256) -> user.pendingRewards
+REF_197(uint256) -> user.rewardDebt
+TMP_857(uint256) = totalPending (c)- REF_197
+REF_196(uint256) (->user) := TMP_857(uint256)
+EXPRESSION:user.pendingRewards = totalPending - user.rewardDebt	NodeType.EXPRESSION" -> "BlockID: 29
+Call context: lock,updateDepositLockStart
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 29
+Call context: lock,updateDepositLockStart
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 12
+Call context: lock
+None
+REF_242(uint256) -> depositLockStart[account]
+REF_242(uint256) (->depositLockStart) := lockStart(uint256)
+REF_202(IStaking.UserInfo) -> userInfo[account]
+user(IStaking.UserInfo) := REF_202(IStaking.UserInfo)
+REF_203(uint256) -> user.rewardDebt
+REF_198(uint256) -> depositLockStart[account]
+TMP_858(bool) = REF_198 == 0
+REF_199(uint256) -> depositLockStart[account]
+TMP_859(bool) = REF_199 == block.timestamp
+TMP_860(bool) = TMP_858 || TMP_859
+CONDITION TMP_860
+EXPRESSION:updateUserPending(account)	NodeType.EXPRESSION
+depositLockStart[account] = lockStart	NodeType.EXPRESSION
+user = userInfo[account]	NodeType.VARIABLE
+user = userInfo[account]	NodeType.EXPRESSION
+depositLockStart[account] == 0 || depositLockStart[account] == block.timestamp	NodeType.IF" [key="successor_5", ref="LaunchpadLockableStaking.updateUserPending"];
+"BlockID: 16
+Call context: lock,updateDepositLockStart,updateUserPending
+True
+TMP_1286(None) := 0(uint256)
+EXPRESSION:" -> "BlockID: 20
+Call context: lock,updateDepositLockStart
+None
+TMP_855(uint256) = REF_193 (c)+ TMP_854
+totalPending(uint256) := TMP_855(uint256)
+REF_194(uint256) -> user.rewardDebt
+TMP_856(bool) = totalPending < REF_194
+CONDITION TMP_856
+EXPRESSION:totalPending = user.pendingRewards + getFixedAprPendingReward(account)	NodeType.VARIABLE
+totalPending = user.pendingRewards + getFixedAprPendingReward(account)	NodeType.EXPRESSION
+totalPending < user.rewardDebt	NodeType.IF" [key="successor_5", ref="LaunchpadLockableStaking.getFixedAprPendingReward"];
+"BlockID: 17
+Call context: lock,updateDepositLockStart,updateUserPending
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 21
+Call context: lock,updateDepositLockStart,updateUserPending
+None
+REF_200(uint256) -> depositLockStart[account]
+TMP_863(uint256) = REF_200 (c)+ lockPeriod
+TMP_864(bool) = block.timestamp >= TMP_863
+CONDITION TMP_864
+EXPRESSION:block.timestamp >= depositLockStart[account] + lockPeriod	NodeType.IF" [key=0];
+"BlockID: 21
+Call context: lock,updateDepositLockStart,updateUserPending
+None
+REF_200(uint256) -> depositLockStart[account]
+TMP_863(uint256) = REF_200 (c)+ lockPeriod
+TMP_864(bool) = block.timestamp >= TMP_863
+CONDITION TMP_864
+EXPRESSION:block.timestamp >= depositLockStart[account] + lockPeriod	NodeType.IF" -> "BlockID: 26
+Call context: lock,updateDepositLockStart,updateUserPending
+True
+passedTime(uint256) := lockPeriod(uint256)
+EXPRESSION:passedTime = lockPeriod	NodeType.EXPRESSION" [key=0];
+"BlockID: 21
+Call context: lock,updateDepositLockStart,updateUserPending
+None
+REF_200(uint256) -> depositLockStart[account]
+TMP_863(uint256) = REF_200 (c)+ lockPeriod
+TMP_864(bool) = block.timestamp >= TMP_863
+CONDITION TMP_864
+EXPRESSION:block.timestamp >= depositLockStart[account] + lockPeriod	NodeType.IF" -> "BlockID: 27
+Call context: lock,updateDepositLockStart,updateUserPending
+False
+REF_201(uint256) -> depositLockStart[account]
+TMP_865(uint256) = block.timestamp (c)- REF_201
+passedTime(uint256) := TMP_865(uint256)
+EXPRESSION:passedTime = block.timestamp - depositLockStart[account]	NodeType.EXPRESSION" [key=0];
+"BlockID: 26
+Call context: lock,updateDepositLockStart,updateUserPending
+True
+passedTime(uint256) := lockPeriod(uint256)
+EXPRESSION:passedTime = lockPeriod	NodeType.EXPRESSION" -> "BlockID: 30
+Call context: lock,updateDepositLockStart,updateUserPending
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 27
+Call context: lock,updateDepositLockStart,updateUserPending
+False
+REF_201(uint256) -> depositLockStart[account]
+TMP_865(uint256) = block.timestamp (c)- REF_201
+passedTime(uint256) := TMP_865(uint256)
+EXPRESSION:passedTime = block.timestamp - depositLockStart[account]	NodeType.EXPRESSION" -> "BlockID: 30
+Call context: lock,updateDepositLockStart,updateUserPending
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 30
+Call context: lock,updateDepositLockStart,updateUserPending
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 32
+Call context: lock,updateDepositLockStart,updateUserPending
+None
+REF_132(IStaking.UserInfo) -> userInfo[account]
+REF_133(uint256) -> REF_132.amount
+TMP_742(uint256) = REF_133 (c)* fixedApr
+TMP_743(uint256) = TMP_742 (c)/ 100
+TMP_744(uint256) = TMP_743 (c)/ 100
+TMP_745(uint256) = 365 (c)* 24
+TMP_746(uint256) = TMP_745 (c)* 3600
+TMP_747(uint256) = TMP_744 (c)/ TMP_746
+TMP_1266(None) := TMP_747(uint256)
+TMP_862(uint256) = passedTime (c)* TMP_861
+TMP_1286(None) := TMP_862(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 32
+Call context: lock,updateDepositLockStart,updateUserPending
+None
+REF_132(IStaking.UserInfo) -> userInfo[account]
+REF_133(uint256) -> REF_132.amount
+TMP_742(uint256) = REF_133 (c)* fixedApr
+TMP_743(uint256) = TMP_742 (c)/ 100
+TMP_744(uint256) = TMP_743 (c)/ 100
+TMP_745(uint256) = 365 (c)* 24
+TMP_746(uint256) = TMP_745 (c)* 3600
+TMP_747(uint256) = TMP_744 (c)/ TMP_746
+TMP_1266(None) := TMP_747(uint256)
+TMP_862(uint256) = passedTime (c)* TMP_861
+TMP_1286(None) := TMP_862(uint256)
+EXPRESSION:" -> "BlockID: 20
+Call context: lock,updateDepositLockStart
+None
+TMP_855(uint256) = REF_193 (c)+ TMP_854
+totalPending(uint256) := TMP_855(uint256)
+REF_194(uint256) -> user.rewardDebt
+TMP_856(bool) = totalPending < REF_194
+CONDITION TMP_856
+EXPRESSION:totalPending = user.pendingRewards + getFixedAprPendingReward(account)	NodeType.VARIABLE
+totalPending = user.pendingRewards + getFixedAprPendingReward(account)	NodeType.EXPRESSION
+totalPending < user.rewardDebt	NodeType.IF" [key="successor_5", ref="LaunchpadLockableStaking.getFixedAprPendingReward"];
+"BlockID: 18
+Call context: lock,updateDepositLockStart
+None
+REF_203(uint256) (->user) := TMP_866(uint256)
+REF_214(uint256) -> lastClaimedAt[account]
+REF_214(uint256) (->lastClaimedAt) := block.timestamp(uint256)
+EXPRESSION:user.rewardDebt = getFixedAprPendingReward(account)	NodeType.EXPRESSION
+updateDepositLockStart(account,block.timestamp)	NodeType.EXPRESSION
+lastClaimedAt[account] = block.timestamp	NodeType.EXPRESSION" -> "BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+"BlockID: 14
+Call context: lock,updateDepositLockStart,updateUserDebt
+True
+TMP_1286(None) := 0(uint256)
+EXPRESSION:" -> "BlockID: 18
+Call context: lock,updateDepositLockStart
+None
+REF_203(uint256) (->user) := TMP_866(uint256)
+REF_214(uint256) -> lastClaimedAt[account]
+REF_214(uint256) (->lastClaimedAt) := block.timestamp(uint256)
+EXPRESSION:user.rewardDebt = getFixedAprPendingReward(account)	NodeType.EXPRESSION
+updateDepositLockStart(account,block.timestamp)	NodeType.EXPRESSION
+lastClaimedAt[account] = block.timestamp	NodeType.EXPRESSION" [key="successor_5", ref="LaunchpadLockableStaking.getFixedAprPendingReward"];
+"BlockID: 15
+Call context: lock,updateDepositLockStart,updateUserDebt
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 19
+Call context: lock,updateDepositLockStart,updateUserDebt
+None
+REF_200(uint256) -> depositLockStart[account]
+TMP_863(uint256) = REF_200 (c)+ lockPeriod
+TMP_864(bool) = block.timestamp >= TMP_863
+CONDITION TMP_864
+EXPRESSION:block.timestamp >= depositLockStart[account] + lockPeriod	NodeType.IF" [key=0];
+"BlockID: 19
+Call context: lock,updateDepositLockStart,updateUserDebt
+None
+REF_200(uint256) -> depositLockStart[account]
+TMP_863(uint256) = REF_200 (c)+ lockPeriod
+TMP_864(bool) = block.timestamp >= TMP_863
+CONDITION TMP_864
+EXPRESSION:block.timestamp >= depositLockStart[account] + lockPeriod	NodeType.IF" -> "BlockID: 22
+Call context: lock,updateDepositLockStart,updateUserDebt
+True
+passedTime(uint256) := lockPeriod(uint256)
+EXPRESSION:passedTime = lockPeriod	NodeType.EXPRESSION" [key=0];
+"BlockID: 19
+Call context: lock,updateDepositLockStart,updateUserDebt
+None
+REF_200(uint256) -> depositLockStart[account]
+TMP_863(uint256) = REF_200 (c)+ lockPeriod
+TMP_864(bool) = block.timestamp >= TMP_863
+CONDITION TMP_864
+EXPRESSION:block.timestamp >= depositLockStart[account] + lockPeriod	NodeType.IF" -> "BlockID: 23
+Call context: lock,updateDepositLockStart,updateUserDebt
+False
+REF_201(uint256) -> depositLockStart[account]
+TMP_865(uint256) = block.timestamp (c)- REF_201
+passedTime(uint256) := TMP_865(uint256)
+EXPRESSION:passedTime = block.timestamp - depositLockStart[account]	NodeType.EXPRESSION" [key=0];
+"BlockID: 22
+Call context: lock,updateDepositLockStart,updateUserDebt
+True
+passedTime(uint256) := lockPeriod(uint256)
+EXPRESSION:passedTime = lockPeriod	NodeType.EXPRESSION" -> "BlockID: 28
+Call context: lock,updateDepositLockStart,updateUserDebt
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 23
+Call context: lock,updateDepositLockStart,updateUserDebt
+False
+REF_201(uint256) -> depositLockStart[account]
+TMP_865(uint256) = block.timestamp (c)- REF_201
+passedTime(uint256) := TMP_865(uint256)
+EXPRESSION:passedTime = block.timestamp - depositLockStart[account]	NodeType.EXPRESSION" -> "BlockID: 28
+Call context: lock,updateDepositLockStart,updateUserDebt
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 28
+Call context: lock,updateDepositLockStart,updateUserDebt
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 31
+Call context: lock,updateDepositLockStart,updateUserDebt
+None
+REF_132(IStaking.UserInfo) -> userInfo[account]
+REF_133(uint256) -> REF_132.amount
+TMP_742(uint256) = REF_133 (c)* fixedApr
+TMP_743(uint256) = TMP_742 (c)/ 100
+TMP_744(uint256) = TMP_743 (c)/ 100
+TMP_745(uint256) = 365 (c)* 24
+TMP_746(uint256) = TMP_745 (c)* 3600
+TMP_747(uint256) = TMP_744 (c)/ TMP_746
+TMP_1266(None) := TMP_747(uint256)
+TMP_862(uint256) = passedTime (c)* TMP_861
+TMP_1286(None) := TMP_862(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 31
+Call context: lock,updateDepositLockStart,updateUserDebt
+None
+REF_132(IStaking.UserInfo) -> userInfo[account]
+REF_133(uint256) -> REF_132.amount
+TMP_742(uint256) = REF_133 (c)* fixedApr
+TMP_743(uint256) = TMP_742 (c)/ 100
+TMP_744(uint256) = TMP_743 (c)/ 100
+TMP_745(uint256) = 365 (c)* 24
+TMP_746(uint256) = TMP_745 (c)* 3600
+TMP_747(uint256) = TMP_744 (c)/ TMP_746
+TMP_1266(None) := TMP_747(uint256)
+TMP_862(uint256) = passedTime (c)* TMP_861
+TMP_1286(None) := TMP_862(uint256)
+EXPRESSION:" -> "BlockID: 18
+Call context: lock,updateDepositLockStart
+None
+REF_203(uint256) (->user) := TMP_866(uint256)
+REF_214(uint256) -> lastClaimedAt[account]
+REF_214(uint256) (->lastClaimedAt) := block.timestamp(uint256)
+EXPRESSION:user.rewardDebt = getFixedAprPendingReward(account)	NodeType.EXPRESSION
+updateDepositLockStart(account,block.timestamp)	NodeType.EXPRESSION
+lastClaimedAt[account] = block.timestamp	NodeType.EXPRESSION" [key="successor_5", ref="LaunchpadLockableStaking.getFixedAprPendingReward"];
+}

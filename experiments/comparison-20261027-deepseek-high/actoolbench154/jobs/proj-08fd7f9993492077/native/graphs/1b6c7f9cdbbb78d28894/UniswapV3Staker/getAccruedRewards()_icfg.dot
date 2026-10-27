@@ -1,0 +1,593 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+TMP_2524(uint256) = HIGH_LEVEL_CALL, dest:minter(IBaseV2Minter), function:updatePeriod, arguments:[]  
+EXPRESSION:minter.updatePeriod()	NodeType.EXPRESSION";
+"BlockID: 2
+Call context: 
+None
+TMP_2525 = CONVERT msg.sender to ERC20
+REF_540(IFlywheelGaugeRewards.QueuedRewards) -> gaugeQueuedRewards[TMP_2525]
+queuedRewards(IFlywheelGaugeRewards.QueuedRewards) := REF_540(IFlywheelGaugeRewards.QueuedRewards)
+cycle(uint32) := gaugeCycle(uint32)
+REF_541(uint32) -> queuedRewards.storedCycle
+TMP_2526(bool) = REF_541 > cycle
+incompleteCycle(bool) := TMP_2526(bool)
+REF_542(uint112) -> queuedRewards.priorCycleRewards
+TMP_2527(bool) = REF_542 == 0
+REF_543(uint112) -> queuedRewards.cycleRewards
+TMP_2528(bool) = REF_543 == 0
+TMP_2529(bool) = TMP_2528 || incompleteCycle
+TMP_2530(bool) = TMP_2527 && TMP_2529
+CONDITION TMP_2530
+EXPRESSION:minter.updatePeriod()	NodeType.EXPRESSION
+queuedRewards = gaugeQueuedRewards[ERC20(msg.sender)]	NodeType.VARIABLE
+queuedRewards = gaugeQueuedRewards[ERC20(msg.sender)]	NodeType.EXPRESSION
+cycle = gaugeCycle	NodeType.VARIABLE
+cycle = gaugeCycle	NodeType.EXPRESSION
+incompleteCycle = queuedRewards.storedCycle > cycle	NodeType.VARIABLE
+incompleteCycle = queuedRewards.storedCycle > cycle	NodeType.EXPRESSION
+queuedRewards.priorCycleRewards == 0 && (queuedRewards.cycleRewards == 0 || incompleteCycle)	NodeType.IF";
+"BlockID: 3
+Call context: 
+True
+RETURN 0
+EXPRESSION:0	NodeType.RETURN";
+"BlockID: 4
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 11
+Call context: 
+True
+REF_545(uint112) -> queuedRewards.priorCycleRewards
+accruedRewards(uint256) := REF_545(uint112)
+REF_546(uint112) -> queuedRewards.cycleRewards
+cycleRewardsNext(uint112) := REF_546(uint112)
+CONDITION incompleteCycle
+EXPRESSION:accruedRewards = queuedRewards.priorCycleRewards	NodeType.EXPRESSION
+cycleRewardsNext = queuedRewards.cycleRewards	NodeType.VARIABLE
+cycleRewardsNext = queuedRewards.cycleRewards	NodeType.EXPRESSION
+incompleteCycle	NodeType.IF";
+"BlockID: 12
+Call context: 
+True
+accruedRewards(uint256) = accruedRewards (c)+ cycleRewardsNext
+cycleRewardsNext(uint112) := 0(uint256)
+EXPRESSION:accruedRewards += cycleRewardsNext	NodeType.EXPRESSION
+cycleRewardsNext = 0	NodeType.EXPRESSION";
+"BlockID: 13
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 14
+Call context: 
+None
+TMP_2533 = CONVERT msg.sender to ERC20
+REF_547(IFlywheelGaugeRewards.QueuedRewards) -> gaugeQueuedRewards[TMP_2533]
+REF_548(uint32) -> queuedRewards.storedCycle
+TMP_2534(IFlywheelGaugeRewards.QueuedRewards) = new QueuedRewards(0,cycleRewardsNext,REF_548)
+REF_547(IFlywheelGaugeRewards.QueuedRewards) (->gaugeQueuedRewards) := TMP_2534(IFlywheelGaugeRewards.QueuedRewards)
+TMP_2535(bool) = accruedRewards > 0
+CONDITION TMP_2535
+EXPRESSION:gaugeQueuedRewards[ERC20(msg.sender)] = QueuedRewards(0,cycleRewardsNext,queuedRewards.storedCycle)	NodeType.EXPRESSION
+accruedRewards > 0	NodeType.IF";
+"BlockID: 15
+Call context: 
+True
+INLINE ASM
+TMP_963(None) = SOLIDITY_CALL mstore(uint256,uint256)(20,to)
+TMP_964(None) = SOLIDITY_CALL mstore(uint256,uint256)(52,amount)
+TMP_965(None) = SOLIDITY_CALL mstore(uint256,uint256)(0,224668671643508016486903311432943665152)
+TMP_966(uint256) = SOLIDITY_CALL mload(uint256)(0)
+TMP_967(bool) = TMP_966 == 1
+TMP_968(uint256) = SOLIDITY_CALL returndatasize()()
+TMP_969 = ! TMP_968 
+TMP_970(bool) = TMP_967 | TMP_969
+TMP_971(uint256) = SOLIDITY_CALL gas()()
+TMP_972(uint256) = SOLIDITY_CALL call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(TMP_971,token,0,16,68,0,32)
+TMP_973(bool) = TMP_970 & TMP_972
+TMP_974 = ! TMP_973 
+CONDITION TMP_974
+EXPRESSION:None	NodeType.ASSEMBLY
+mstore(uint256,uint256)(0x14,to)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x34,amount)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x00,0xa9059cbb000000000000000000000000)	NodeType.EXPRESSION
+! mload(uint256)(0x00) == 1 | ! returndatasize()() & call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(gas()(),token,0,0x10,0x44,0x00,0x20)	NodeType.IF";
+"BlockID: 16
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 8
+Call context: 
+None
+REF_544(uint32) -> queuedRewards.storedCycle
+TMP_2531(bool) = REF_544 >= cycle
+CONDITION TMP_2531
+EXPRESSION:TMP_2531(bool) = REF_544 >= cycle	NodeType.IF";
+"BlockID: 9
+Call context: 
+True
+TMP_2532(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 10
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 17
+Call context: getAccruedRewards
+True
+TMP_975(None) = SOLIDITY_CALL mstore(uint256,uint256)(0,2428038168)
+TMP_976(None) = SOLIDITY_CALL revert(uint256,uint256)(28,4)
+EXPRESSION:mstore(uint256,uint256)(0x00,0x90b8ec18)	NodeType.EXPRESSION
+revert()()	ExtraNodeType.REVERT";
+"BlockID: 18
+Call context: getAccruedRewards
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 19
+Call context: getAccruedRewards
+None
+TMP_977(None) = SOLIDITY_CALL mstore(uint256,uint256)(52,0)
+EXPRESSION:mstore(uint256,uint256)(0x34,0)	NodeType.EXPRESSION";
+"BlockID: 5
+Call context: 
+None
+TMP_2525 = CONVERT msg.sender to ERC20
+REF_540(IFlywheelGaugeRewards.QueuedRewards) -> gaugeQueuedRewards[TMP_2525]
+queuedRewards(IFlywheelGaugeRewards.QueuedRewards) := REF_540(IFlywheelGaugeRewards.QueuedRewards)
+cycle(uint32) := gaugeCycle(uint32)
+REF_541(uint32) -> queuedRewards.storedCycle
+TMP_2526(bool) = REF_541 > cycle
+incompleteCycle(bool) := TMP_2526(bool)
+REF_542(uint112) -> queuedRewards.priorCycleRewards
+TMP_2527(bool) = REF_542 == 0
+REF_543(uint112) -> queuedRewards.cycleRewards
+TMP_2528(bool) = REF_543 == 0
+TMP_2529(bool) = TMP_2528 || incompleteCycle
+TMP_2530(bool) = TMP_2527 && TMP_2529
+CONDITION TMP_2530
+EXPRESSION:minter.updatePeriod()	NodeType.EXPRESSION
+queuedRewards = gaugeQueuedRewards[ERC20(msg.sender)]	NodeType.VARIABLE
+queuedRewards = gaugeQueuedRewards[ERC20(msg.sender)]	NodeType.EXPRESSION
+cycle = gaugeCycle	NodeType.VARIABLE
+cycle = gaugeCycle	NodeType.EXPRESSION
+incompleteCycle = queuedRewards.storedCycle > cycle	NodeType.VARIABLE
+incompleteCycle = queuedRewards.storedCycle > cycle	NodeType.EXPRESSION
+queuedRewards.priorCycleRewards == 0 && (queuedRewards.cycleRewards == 0 || incompleteCycle)	NodeType.IF";
+"BlockID: 6
+Call context: 
+True
+TMP_2530(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 7
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+TMP_2524(uint256) = HIGH_LEVEL_CALL, dest:minter(IBaseV2Minter), function:updatePeriod, arguments:[]  
+EXPRESSION:minter.updatePeriod()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_2524(uint256) = HIGH_LEVEL_CALL, dest:minter(IBaseV2Minter), function:updatePeriod, arguments:[]  
+EXPRESSION:minter.updatePeriod()	NodeType.EXPRESSION" -> "BlockID: 2
+Call context: 
+None
+TMP_2525 = CONVERT msg.sender to ERC20
+REF_540(IFlywheelGaugeRewards.QueuedRewards) -> gaugeQueuedRewards[TMP_2525]
+queuedRewards(IFlywheelGaugeRewards.QueuedRewards) := REF_540(IFlywheelGaugeRewards.QueuedRewards)
+cycle(uint32) := gaugeCycle(uint32)
+REF_541(uint32) -> queuedRewards.storedCycle
+TMP_2526(bool) = REF_541 > cycle
+incompleteCycle(bool) := TMP_2526(bool)
+REF_542(uint112) -> queuedRewards.priorCycleRewards
+TMP_2527(bool) = REF_542 == 0
+REF_543(uint112) -> queuedRewards.cycleRewards
+TMP_2528(bool) = REF_543 == 0
+TMP_2529(bool) = TMP_2528 || incompleteCycle
+TMP_2530(bool) = TMP_2527 && TMP_2529
+CONDITION TMP_2530
+EXPRESSION:minter.updatePeriod()	NodeType.EXPRESSION
+queuedRewards = gaugeQueuedRewards[ERC20(msg.sender)]	NodeType.VARIABLE
+queuedRewards = gaugeQueuedRewards[ERC20(msg.sender)]	NodeType.EXPRESSION
+cycle = gaugeCycle	NodeType.VARIABLE
+cycle = gaugeCycle	NodeType.EXPRESSION
+incompleteCycle = queuedRewards.storedCycle > cycle	NodeType.VARIABLE
+incompleteCycle = queuedRewards.storedCycle > cycle	NodeType.EXPRESSION
+queuedRewards.priorCycleRewards == 0 && (queuedRewards.cycleRewards == 0 || incompleteCycle)	NodeType.IF" [key=0];
+"BlockID: 2
+Call context: 
+None
+TMP_2525 = CONVERT msg.sender to ERC20
+REF_540(IFlywheelGaugeRewards.QueuedRewards) -> gaugeQueuedRewards[TMP_2525]
+queuedRewards(IFlywheelGaugeRewards.QueuedRewards) := REF_540(IFlywheelGaugeRewards.QueuedRewards)
+cycle(uint32) := gaugeCycle(uint32)
+REF_541(uint32) -> queuedRewards.storedCycle
+TMP_2526(bool) = REF_541 > cycle
+incompleteCycle(bool) := TMP_2526(bool)
+REF_542(uint112) -> queuedRewards.priorCycleRewards
+TMP_2527(bool) = REF_542 == 0
+REF_543(uint112) -> queuedRewards.cycleRewards
+TMP_2528(bool) = REF_543 == 0
+TMP_2529(bool) = TMP_2528 || incompleteCycle
+TMP_2530(bool) = TMP_2527 && TMP_2529
+CONDITION TMP_2530
+EXPRESSION:minter.updatePeriod()	NodeType.EXPRESSION
+queuedRewards = gaugeQueuedRewards[ERC20(msg.sender)]	NodeType.VARIABLE
+queuedRewards = gaugeQueuedRewards[ERC20(msg.sender)]	NodeType.EXPRESSION
+cycle = gaugeCycle	NodeType.VARIABLE
+cycle = gaugeCycle	NodeType.EXPRESSION
+incompleteCycle = queuedRewards.storedCycle > cycle	NodeType.VARIABLE
+incompleteCycle = queuedRewards.storedCycle > cycle	NodeType.EXPRESSION
+queuedRewards.priorCycleRewards == 0 && (queuedRewards.cycleRewards == 0 || incompleteCycle)	NodeType.IF" -> "BlockID: 3
+Call context: 
+True
+RETURN 0
+EXPRESSION:0	NodeType.RETURN" [key=0];
+"BlockID: 2
+Call context: 
+None
+TMP_2525 = CONVERT msg.sender to ERC20
+REF_540(IFlywheelGaugeRewards.QueuedRewards) -> gaugeQueuedRewards[TMP_2525]
+queuedRewards(IFlywheelGaugeRewards.QueuedRewards) := REF_540(IFlywheelGaugeRewards.QueuedRewards)
+cycle(uint32) := gaugeCycle(uint32)
+REF_541(uint32) -> queuedRewards.storedCycle
+TMP_2526(bool) = REF_541 > cycle
+incompleteCycle(bool) := TMP_2526(bool)
+REF_542(uint112) -> queuedRewards.priorCycleRewards
+TMP_2527(bool) = REF_542 == 0
+REF_543(uint112) -> queuedRewards.cycleRewards
+TMP_2528(bool) = REF_543 == 0
+TMP_2529(bool) = TMP_2528 || incompleteCycle
+TMP_2530(bool) = TMP_2527 && TMP_2529
+CONDITION TMP_2530
+EXPRESSION:minter.updatePeriod()	NodeType.EXPRESSION
+queuedRewards = gaugeQueuedRewards[ERC20(msg.sender)]	NodeType.VARIABLE
+queuedRewards = gaugeQueuedRewards[ERC20(msg.sender)]	NodeType.EXPRESSION
+cycle = gaugeCycle	NodeType.VARIABLE
+cycle = gaugeCycle	NodeType.EXPRESSION
+incompleteCycle = queuedRewards.storedCycle > cycle	NodeType.VARIABLE
+incompleteCycle = queuedRewards.storedCycle > cycle	NodeType.EXPRESSION
+queuedRewards.priorCycleRewards == 0 && (queuedRewards.cycleRewards == 0 || incompleteCycle)	NodeType.IF" -> "BlockID: 4
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 4
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 5
+Call context: 
+None
+TMP_2525 = CONVERT msg.sender to ERC20
+REF_540(IFlywheelGaugeRewards.QueuedRewards) -> gaugeQueuedRewards[TMP_2525]
+queuedRewards(IFlywheelGaugeRewards.QueuedRewards) := REF_540(IFlywheelGaugeRewards.QueuedRewards)
+cycle(uint32) := gaugeCycle(uint32)
+REF_541(uint32) -> queuedRewards.storedCycle
+TMP_2526(bool) = REF_541 > cycle
+incompleteCycle(bool) := TMP_2526(bool)
+REF_542(uint112) -> queuedRewards.priorCycleRewards
+TMP_2527(bool) = REF_542 == 0
+REF_543(uint112) -> queuedRewards.cycleRewards
+TMP_2528(bool) = REF_543 == 0
+TMP_2529(bool) = TMP_2528 || incompleteCycle
+TMP_2530(bool) = TMP_2527 && TMP_2529
+CONDITION TMP_2530
+EXPRESSION:minter.updatePeriod()	NodeType.EXPRESSION
+queuedRewards = gaugeQueuedRewards[ERC20(msg.sender)]	NodeType.VARIABLE
+queuedRewards = gaugeQueuedRewards[ERC20(msg.sender)]	NodeType.EXPRESSION
+cycle = gaugeCycle	NodeType.VARIABLE
+cycle = gaugeCycle	NodeType.EXPRESSION
+incompleteCycle = queuedRewards.storedCycle > cycle	NodeType.VARIABLE
+incompleteCycle = queuedRewards.storedCycle > cycle	NodeType.EXPRESSION
+queuedRewards.priorCycleRewards == 0 && (queuedRewards.cycleRewards == 0 || incompleteCycle)	NodeType.IF" [key=0];
+"BlockID: 11
+Call context: 
+True
+REF_545(uint112) -> queuedRewards.priorCycleRewards
+accruedRewards(uint256) := REF_545(uint112)
+REF_546(uint112) -> queuedRewards.cycleRewards
+cycleRewardsNext(uint112) := REF_546(uint112)
+CONDITION incompleteCycle
+EXPRESSION:accruedRewards = queuedRewards.priorCycleRewards	NodeType.EXPRESSION
+cycleRewardsNext = queuedRewards.cycleRewards	NodeType.VARIABLE
+cycleRewardsNext = queuedRewards.cycleRewards	NodeType.EXPRESSION
+incompleteCycle	NodeType.IF" -> "BlockID: 12
+Call context: 
+True
+accruedRewards(uint256) = accruedRewards (c)+ cycleRewardsNext
+cycleRewardsNext(uint112) := 0(uint256)
+EXPRESSION:accruedRewards += cycleRewardsNext	NodeType.EXPRESSION
+cycleRewardsNext = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 11
+Call context: 
+True
+REF_545(uint112) -> queuedRewards.priorCycleRewards
+accruedRewards(uint256) := REF_545(uint112)
+REF_546(uint112) -> queuedRewards.cycleRewards
+cycleRewardsNext(uint112) := REF_546(uint112)
+CONDITION incompleteCycle
+EXPRESSION:accruedRewards = queuedRewards.priorCycleRewards	NodeType.EXPRESSION
+cycleRewardsNext = queuedRewards.cycleRewards	NodeType.VARIABLE
+cycleRewardsNext = queuedRewards.cycleRewards	NodeType.EXPRESSION
+incompleteCycle	NodeType.IF" -> "BlockID: 13
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 12
+Call context: 
+True
+accruedRewards(uint256) = accruedRewards (c)+ cycleRewardsNext
+cycleRewardsNext(uint112) := 0(uint256)
+EXPRESSION:accruedRewards += cycleRewardsNext	NodeType.EXPRESSION
+cycleRewardsNext = 0	NodeType.EXPRESSION" -> "BlockID: 13
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 13
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 14
+Call context: 
+None
+TMP_2533 = CONVERT msg.sender to ERC20
+REF_547(IFlywheelGaugeRewards.QueuedRewards) -> gaugeQueuedRewards[TMP_2533]
+REF_548(uint32) -> queuedRewards.storedCycle
+TMP_2534(IFlywheelGaugeRewards.QueuedRewards) = new QueuedRewards(0,cycleRewardsNext,REF_548)
+REF_547(IFlywheelGaugeRewards.QueuedRewards) (->gaugeQueuedRewards) := TMP_2534(IFlywheelGaugeRewards.QueuedRewards)
+TMP_2535(bool) = accruedRewards > 0
+CONDITION TMP_2535
+EXPRESSION:gaugeQueuedRewards[ERC20(msg.sender)] = QueuedRewards(0,cycleRewardsNext,queuedRewards.storedCycle)	NodeType.EXPRESSION
+accruedRewards > 0	NodeType.IF" [key=0];
+"BlockID: 14
+Call context: 
+None
+TMP_2533 = CONVERT msg.sender to ERC20
+REF_547(IFlywheelGaugeRewards.QueuedRewards) -> gaugeQueuedRewards[TMP_2533]
+REF_548(uint32) -> queuedRewards.storedCycle
+TMP_2534(IFlywheelGaugeRewards.QueuedRewards) = new QueuedRewards(0,cycleRewardsNext,REF_548)
+REF_547(IFlywheelGaugeRewards.QueuedRewards) (->gaugeQueuedRewards) := TMP_2534(IFlywheelGaugeRewards.QueuedRewards)
+TMP_2535(bool) = accruedRewards > 0
+CONDITION TMP_2535
+EXPRESSION:gaugeQueuedRewards[ERC20(msg.sender)] = QueuedRewards(0,cycleRewardsNext,queuedRewards.storedCycle)	NodeType.EXPRESSION
+accruedRewards > 0	NodeType.IF" -> "BlockID: 15
+Call context: 
+True
+INLINE ASM
+TMP_963(None) = SOLIDITY_CALL mstore(uint256,uint256)(20,to)
+TMP_964(None) = SOLIDITY_CALL mstore(uint256,uint256)(52,amount)
+TMP_965(None) = SOLIDITY_CALL mstore(uint256,uint256)(0,224668671643508016486903311432943665152)
+TMP_966(uint256) = SOLIDITY_CALL mload(uint256)(0)
+TMP_967(bool) = TMP_966 == 1
+TMP_968(uint256) = SOLIDITY_CALL returndatasize()()
+TMP_969 = ! TMP_968 
+TMP_970(bool) = TMP_967 | TMP_969
+TMP_971(uint256) = SOLIDITY_CALL gas()()
+TMP_972(uint256) = SOLIDITY_CALL call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(TMP_971,token,0,16,68,0,32)
+TMP_973(bool) = TMP_970 & TMP_972
+TMP_974 = ! TMP_973 
+CONDITION TMP_974
+EXPRESSION:None	NodeType.ASSEMBLY
+mstore(uint256,uint256)(0x14,to)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x34,amount)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x00,0xa9059cbb000000000000000000000000)	NodeType.EXPRESSION
+! mload(uint256)(0x00) == 1 | ! returndatasize()() & call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(gas()(),token,0,0x10,0x44,0x00,0x20)	NodeType.IF" [key=0];
+"BlockID: 14
+Call context: 
+None
+TMP_2533 = CONVERT msg.sender to ERC20
+REF_547(IFlywheelGaugeRewards.QueuedRewards) -> gaugeQueuedRewards[TMP_2533]
+REF_548(uint32) -> queuedRewards.storedCycle
+TMP_2534(IFlywheelGaugeRewards.QueuedRewards) = new QueuedRewards(0,cycleRewardsNext,REF_548)
+REF_547(IFlywheelGaugeRewards.QueuedRewards) (->gaugeQueuedRewards) := TMP_2534(IFlywheelGaugeRewards.QueuedRewards)
+TMP_2535(bool) = accruedRewards > 0
+CONDITION TMP_2535
+EXPRESSION:gaugeQueuedRewards[ERC20(msg.sender)] = QueuedRewards(0,cycleRewardsNext,queuedRewards.storedCycle)	NodeType.EXPRESSION
+accruedRewards > 0	NodeType.IF" -> "BlockID: 16
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 15
+Call context: 
+True
+INLINE ASM
+TMP_963(None) = SOLIDITY_CALL mstore(uint256,uint256)(20,to)
+TMP_964(None) = SOLIDITY_CALL mstore(uint256,uint256)(52,amount)
+TMP_965(None) = SOLIDITY_CALL mstore(uint256,uint256)(0,224668671643508016486903311432943665152)
+TMP_966(uint256) = SOLIDITY_CALL mload(uint256)(0)
+TMP_967(bool) = TMP_966 == 1
+TMP_968(uint256) = SOLIDITY_CALL returndatasize()()
+TMP_969 = ! TMP_968 
+TMP_970(bool) = TMP_967 | TMP_969
+TMP_971(uint256) = SOLIDITY_CALL gas()()
+TMP_972(uint256) = SOLIDITY_CALL call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(TMP_971,token,0,16,68,0,32)
+TMP_973(bool) = TMP_970 & TMP_972
+TMP_974 = ! TMP_973 
+CONDITION TMP_974
+EXPRESSION:None	NodeType.ASSEMBLY
+mstore(uint256,uint256)(0x14,to)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x34,amount)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x00,0xa9059cbb000000000000000000000000)	NodeType.EXPRESSION
+! mload(uint256)(0x00) == 1 | ! returndatasize()() & call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(gas()(),token,0,0x10,0x44,0x00,0x20)	NodeType.IF" -> "BlockID: 17
+Call context: getAccruedRewards
+True
+TMP_975(None) = SOLIDITY_CALL mstore(uint256,uint256)(0,2428038168)
+TMP_976(None) = SOLIDITY_CALL revert(uint256,uint256)(28,4)
+EXPRESSION:mstore(uint256,uint256)(0x00,0x90b8ec18)	NodeType.EXPRESSION
+revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 15
+Call context: 
+True
+INLINE ASM
+TMP_963(None) = SOLIDITY_CALL mstore(uint256,uint256)(20,to)
+TMP_964(None) = SOLIDITY_CALL mstore(uint256,uint256)(52,amount)
+TMP_965(None) = SOLIDITY_CALL mstore(uint256,uint256)(0,224668671643508016486903311432943665152)
+TMP_966(uint256) = SOLIDITY_CALL mload(uint256)(0)
+TMP_967(bool) = TMP_966 == 1
+TMP_968(uint256) = SOLIDITY_CALL returndatasize()()
+TMP_969 = ! TMP_968 
+TMP_970(bool) = TMP_967 | TMP_969
+TMP_971(uint256) = SOLIDITY_CALL gas()()
+TMP_972(uint256) = SOLIDITY_CALL call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(TMP_971,token,0,16,68,0,32)
+TMP_973(bool) = TMP_970 & TMP_972
+TMP_974 = ! TMP_973 
+CONDITION TMP_974
+EXPRESSION:None	NodeType.ASSEMBLY
+mstore(uint256,uint256)(0x14,to)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x34,amount)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x00,0xa9059cbb000000000000000000000000)	NodeType.EXPRESSION
+! mload(uint256)(0x00) == 1 | ! returndatasize()() & call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(gas()(),token,0,0x10,0x44,0x00,0x20)	NodeType.IF" -> "BlockID: 18
+Call context: getAccruedRewards
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 8
+Call context: 
+None
+REF_544(uint32) -> queuedRewards.storedCycle
+TMP_2531(bool) = REF_544 >= cycle
+CONDITION TMP_2531
+EXPRESSION:TMP_2531(bool) = REF_544 >= cycle	NodeType.IF" -> "BlockID: 9
+Call context: 
+True
+TMP_2532(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 8
+Call context: 
+None
+REF_544(uint32) -> queuedRewards.storedCycle
+TMP_2531(bool) = REF_544 >= cycle
+CONDITION TMP_2531
+EXPRESSION:TMP_2531(bool) = REF_544 >= cycle	NodeType.IF" -> "BlockID: 10
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 10
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 11
+Call context: 
+True
+REF_545(uint112) -> queuedRewards.priorCycleRewards
+accruedRewards(uint256) := REF_545(uint112)
+REF_546(uint112) -> queuedRewards.cycleRewards
+cycleRewardsNext(uint112) := REF_546(uint112)
+CONDITION incompleteCycle
+EXPRESSION:accruedRewards = queuedRewards.priorCycleRewards	NodeType.EXPRESSION
+cycleRewardsNext = queuedRewards.cycleRewards	NodeType.VARIABLE
+cycleRewardsNext = queuedRewards.cycleRewards	NodeType.EXPRESSION
+incompleteCycle	NodeType.IF" [key=0];
+"BlockID: 18
+Call context: getAccruedRewards
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 19
+Call context: getAccruedRewards
+None
+TMP_977(None) = SOLIDITY_CALL mstore(uint256,uint256)(52,0)
+EXPRESSION:mstore(uint256,uint256)(0x34,0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 19
+Call context: getAccruedRewards
+None
+TMP_977(None) = SOLIDITY_CALL mstore(uint256,uint256)(52,0)
+EXPRESSION:mstore(uint256,uint256)(0x34,0)	NodeType.EXPRESSION" -> "BlockID: 16
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="Exit: safeTransfer", ref="SafeTransferLib.safeTransfer"];
+"BlockID: 5
+Call context: 
+None
+TMP_2525 = CONVERT msg.sender to ERC20
+REF_540(IFlywheelGaugeRewards.QueuedRewards) -> gaugeQueuedRewards[TMP_2525]
+queuedRewards(IFlywheelGaugeRewards.QueuedRewards) := REF_540(IFlywheelGaugeRewards.QueuedRewards)
+cycle(uint32) := gaugeCycle(uint32)
+REF_541(uint32) -> queuedRewards.storedCycle
+TMP_2526(bool) = REF_541 > cycle
+incompleteCycle(bool) := TMP_2526(bool)
+REF_542(uint112) -> queuedRewards.priorCycleRewards
+TMP_2527(bool) = REF_542 == 0
+REF_543(uint112) -> queuedRewards.cycleRewards
+TMP_2528(bool) = REF_543 == 0
+TMP_2529(bool) = TMP_2528 || incompleteCycle
+TMP_2530(bool) = TMP_2527 && TMP_2529
+CONDITION TMP_2530
+EXPRESSION:minter.updatePeriod()	NodeType.EXPRESSION
+queuedRewards = gaugeQueuedRewards[ERC20(msg.sender)]	NodeType.VARIABLE
+queuedRewards = gaugeQueuedRewards[ERC20(msg.sender)]	NodeType.EXPRESSION
+cycle = gaugeCycle	NodeType.VARIABLE
+cycle = gaugeCycle	NodeType.EXPRESSION
+incompleteCycle = queuedRewards.storedCycle > cycle	NodeType.VARIABLE
+incompleteCycle = queuedRewards.storedCycle > cycle	NodeType.EXPRESSION
+queuedRewards.priorCycleRewards == 0 && (queuedRewards.cycleRewards == 0 || incompleteCycle)	NodeType.IF" -> "BlockID: 6
+Call context: 
+True
+TMP_2530(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 5
+Call context: 
+None
+TMP_2525 = CONVERT msg.sender to ERC20
+REF_540(IFlywheelGaugeRewards.QueuedRewards) -> gaugeQueuedRewards[TMP_2525]
+queuedRewards(IFlywheelGaugeRewards.QueuedRewards) := REF_540(IFlywheelGaugeRewards.QueuedRewards)
+cycle(uint32) := gaugeCycle(uint32)
+REF_541(uint32) -> queuedRewards.storedCycle
+TMP_2526(bool) = REF_541 > cycle
+incompleteCycle(bool) := TMP_2526(bool)
+REF_542(uint112) -> queuedRewards.priorCycleRewards
+TMP_2527(bool) = REF_542 == 0
+REF_543(uint112) -> queuedRewards.cycleRewards
+TMP_2528(bool) = REF_543 == 0
+TMP_2529(bool) = TMP_2528 || incompleteCycle
+TMP_2530(bool) = TMP_2527 && TMP_2529
+CONDITION TMP_2530
+EXPRESSION:minter.updatePeriod()	NodeType.EXPRESSION
+queuedRewards = gaugeQueuedRewards[ERC20(msg.sender)]	NodeType.VARIABLE
+queuedRewards = gaugeQueuedRewards[ERC20(msg.sender)]	NodeType.EXPRESSION
+cycle = gaugeCycle	NodeType.VARIABLE
+cycle = gaugeCycle	NodeType.EXPRESSION
+incompleteCycle = queuedRewards.storedCycle > cycle	NodeType.VARIABLE
+incompleteCycle = queuedRewards.storedCycle > cycle	NodeType.EXPRESSION
+queuedRewards.priorCycleRewards == 0 && (queuedRewards.cycleRewards == 0 || incompleteCycle)	NodeType.IF" -> "BlockID: 7
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 7
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 8
+Call context: 
+None
+REF_544(uint32) -> queuedRewards.storedCycle
+TMP_2531(bool) = REF_544 >= cycle
+CONDITION TMP_2531
+EXPRESSION:TMP_2531(bool) = REF_544 >= cycle	NodeType.IF" [key=0];
+}

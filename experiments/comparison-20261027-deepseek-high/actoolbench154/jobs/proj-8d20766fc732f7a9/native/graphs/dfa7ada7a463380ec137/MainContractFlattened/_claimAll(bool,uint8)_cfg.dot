@@ -1,0 +1,500 @@
+digraph {
+"BlockID: 1353
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1354
+Call context: 
+None
+REF_137(GymSinglePool.UserInfo) -> userInfo[msg.sender]
+user(GymSinglePool.UserInfo) := REF_137(GymSinglePool.UserInfo)
+TMP_593 = CONVERT tokenAddress to IERC20Upgradeable
+token(IERC20Upgradeable) := TMP_593(IERC20Upgradeable)
+pool(GymSinglePool.PoolInfo) := poolInfo(GymSinglePool.PoolInfo)
+INTERNAL_CALL, GymSinglePool.updatePool()()
+EXPRESSION:user = userInfo[msg.sender]	NodeType.VARIABLE
+user = userInfo[msg.sender]	NodeType.EXPRESSION
+token = IERC20Upgradeable(tokenAddress)	NodeType.VARIABLE
+token = IERC20Upgradeable(tokenAddress)	NodeType.EXPRESSION
+pool = poolInfo	NodeType.VARIABLE
+pool = poolInfo	NodeType.EXPRESSION
+updatePool()	NodeType.EXPRESSION";
+"BlockID: 1355
+Call context: 
+None
+distributeRewardTokenAmtTotal(uint256) := 0(uint256)
+calcUserRewardsTotal(uint256) := 0(uint256)
+totalDistribute(uint256) := 0(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:updatePool()	NodeType.EXPRESSION
+distributeRewardTokenAmtTotal = 0	NodeType.VARIABLE
+distributeRewardTokenAmtTotal = 0	NodeType.EXPRESSION
+calcUserRewardsTotal = 0	NodeType.VARIABLE
+calcUserRewardsTotal = 0	NodeType.EXPRESSION
+totalDistribute = 0	NodeType.VARIABLE
+totalDistribute = 0	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION";
+"BlockID: 1356
+Call context: 
+None
+BEGIN_LOOP
+REF_138(uint256) -> user.depositId
+TMP_595(bool) = i < REF_138
+CONDITION TMP_595
+EXPRESSION:None	NodeType.STARTLOOP
+i < user.depositId	NodeType.IFLOOP";
+"BlockID: 1357
+Call context: 
+True
+REF_139(GymSinglePool.UserDeposits[]) -> user_deposits[msg.sender]
+REF_140(GymSinglePool.UserDeposits) -> REF_139[i]
+depositDetails(GymSinglePool.UserDeposits) := REF_140(GymSinglePool.UserDeposits)
+TMP_596(uint256) = INTERNAL_CALL, GymSinglePool.pendingReward(uint256,address)(i,msg.sender)
+EXPRESSION:depositDetails = user_deposits[msg.sender][i]	NodeType.VARIABLE
+depositDetails = user_deposits[msg.sender][i]	NodeType.EXPRESSION";
+"BlockID: 1358
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 1359
+Call context: 
+None
+LIBRARY_CALL, dest:SafeERC20Upgradeable, function:SafeERC20Upgradeable.safeTransfer(IERC20Upgradeable,address,uint256), arguments:['token', 'relationship', 'distributeRewardTokenAmtTotal'] 
+EXPRESSION:token.safeTransfer(relationship,distributeRewardTokenAmtTotal)	NodeType.EXPRESSION";
+"BlockID: 1360
+Call context: 
+None
+TMP_609 = CONVERT relationship to IGymMLM
+TMP_610 = CONVERT tokenAddress to address
+HIGH_LEVEL_CALL, dest:TMP_609(IGymMLM), function:distributeRewards, arguments:['totalDistribute', 'TMP_610', 'msg.sender', '3']  
+EXPRESSION:token.safeTransfer(relationship,distributeRewardTokenAmtTotal)	NodeType.EXPRESSION
+IGymMLM(relationship).distributeRewards(totalDistribute,address(tokenAddress),msg.sender,3)	NodeType.EXPRESSION";
+"BlockID: 1361
+Call context: 
+None
+INTERNAL_CALL, GymSinglePool.safeRewardTransfer(address,address,uint256)(tokenAddress,msg.sender,calcUserRewardsTotal)
+EXPRESSION:IGymMLM(relationship).distributeRewards(totalDistribute,address(tokenAddress),msg.sender,3)	NodeType.EXPRESSION
+safeRewardTransfer(tokenAddress,msg.sender,calcUserRewardsTotal)	NodeType.EXPRESSION";
+"BlockID: 1362
+Call context: 
+None
+TMP_613(bool) = reinvest == True
+CONDITION TMP_613
+EXPRESSION:safeRewardTransfer(tokenAddress,msg.sender,calcUserRewardsTotal)	NodeType.EXPRESSION
+reinvest == true	NodeType.IF";
+"BlockID: 1363
+Call context: 
+True
+INTERNAL_CALL, GymSinglePool._deposit(uint256,uint8,bool)(calcUserRewardsTotal,reinvestPeriodId,False)
+EXPRESSION:_deposit(calcUserRewardsTotal,reinvestPeriodId,false)	NodeType.EXPRESSION";
+"BlockID: 1365
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1367
+Call context: 
+None
+pending(uint256) := TMP_596(uint256)
+totalDistribute(uint256) = totalDistribute (c)+ pending
+TMP_597(bool) = pending > 0
+CONDITION TMP_597
+EXPRESSION:pending = pendingReward(i,msg.sender)	NodeType.VARIABLE
+pending = pendingReward(i,msg.sender)	NodeType.EXPRESSION
+totalDistribute += pending	NodeType.EXPRESSION
+pending > 0	NodeType.IF" [shape=box];
+"BlockID: 1368
+Call context: 
+True
+TMP_598(uint256) = pending (c)* RELATIONSHIP_REWARD
+TMP_599(uint256) = TMP_598 (c)/ 100
+distributeRewardTokenAmt(uint256) := TMP_599(uint256)
+distributeRewardTokenAmtTotal(uint256) = distributeRewardTokenAmtTotal (c)+ distributeRewardTokenAmt
+TMP_600(uint256) = pending (c)* 6
+TMP_601(uint256) = TMP_600 (c)/ 100
+calculateDistrubutionReward(uint256) := TMP_601(uint256)
+poolRewardsAmount(uint256) = poolRewardsAmount (c)+ calculateDistrubutionReward
+TMP_602(uint256) = pending (c)- distributeRewardTokenAmt
+TMP_603(uint256) = TMP_602 (c)- calculateDistrubutionReward
+calcUserRewards(uint256) := TMP_603(uint256)
+calcUserRewardsTotal(uint256) = calcUserRewardsTotal (c)+ calcUserRewards
+REF_141(uint256) -> user.totalClaimt
+REF_141(-> user) = REF_141 (c)+ calcUserRewards
+totalClaimtInPool(uint256) = totalClaimtInPool (c)+ pending
+REF_142(uint256) -> depositDetails.rewardsClaimt
+REF_142(-> depositDetails) = REF_142 (c)+ pending
+REF_143(uint256) -> depositDetails.rewardDebt
+REF_144(uint256) -> depositDetails.depositTokens
+REF_145(uint256) -> pool.accRewardPerShare
+TMP_604(uint256) = REF_144 (c)* REF_145
+TMP_605(uint256) = TMP_604 (c)/ 1000000000000000000
+REF_143(uint256) (->depositDetails) := TMP_605(uint256)
+REF_146(uint256) -> depositDetails.rewardsGained
+REF_146(uint256) (->depositDetails) := 0(uint256)
+EXPRESSION:distributeRewardTokenAmt = (pending * RELATIONSHIP_REWARD) / 100	NodeType.VARIABLE
+distributeRewardTokenAmt = (pending * RELATIONSHIP_REWARD) / 100	NodeType.EXPRESSION
+distributeRewardTokenAmtTotal += distributeRewardTokenAmt	NodeType.EXPRESSION
+calculateDistrubutionReward = (pending * 6) / 100	NodeType.VARIABLE
+calculateDistrubutionReward = (pending * 6) / 100	NodeType.EXPRESSION
+poolRewardsAmount += calculateDistrubutionReward	NodeType.EXPRESSION
+calcUserRewards = (pending - distributeRewardTokenAmt - calculateDistrubutionReward)	NodeType.VARIABLE
+calcUserRewards = (pending - distributeRewardTokenAmt - calculateDistrubutionReward)	NodeType.EXPRESSION
+calcUserRewardsTotal += calcUserRewards	NodeType.EXPRESSION
+user.totalClaimt += calcUserRewards	NodeType.EXPRESSION
+totalClaimtInPool += pending	NodeType.EXPRESSION
+depositDetails.rewardsClaimt += pending	NodeType.EXPRESSION
+depositDetails.rewardDebt = (depositDetails.depositTokens * (pool.accRewardPerShare)) / (1e18)	NodeType.EXPRESSION
+depositDetails.rewardsGained = 0	NodeType.EXPRESSION";
+"BlockID: 1369
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1370
+Call context: 
+None
+TMP_607(uint256) := i(uint256)
+i(uint256) = i (c)+ 1
+EXPRESSION:i ++	NodeType.EXPRESSION";
+"BlockID: 1353
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1354
+Call context: 
+None
+REF_137(GymSinglePool.UserInfo) -> userInfo[msg.sender]
+user(GymSinglePool.UserInfo) := REF_137(GymSinglePool.UserInfo)
+TMP_593 = CONVERT tokenAddress to IERC20Upgradeable
+token(IERC20Upgradeable) := TMP_593(IERC20Upgradeable)
+pool(GymSinglePool.PoolInfo) := poolInfo(GymSinglePool.PoolInfo)
+INTERNAL_CALL, GymSinglePool.updatePool()()
+EXPRESSION:user = userInfo[msg.sender]	NodeType.VARIABLE
+user = userInfo[msg.sender]	NodeType.EXPRESSION
+token = IERC20Upgradeable(tokenAddress)	NodeType.VARIABLE
+token = IERC20Upgradeable(tokenAddress)	NodeType.EXPRESSION
+pool = poolInfo	NodeType.VARIABLE
+pool = poolInfo	NodeType.EXPRESSION
+updatePool()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1354
+Call context: 
+None
+REF_137(GymSinglePool.UserInfo) -> userInfo[msg.sender]
+user(GymSinglePool.UserInfo) := REF_137(GymSinglePool.UserInfo)
+TMP_593 = CONVERT tokenAddress to IERC20Upgradeable
+token(IERC20Upgradeable) := TMP_593(IERC20Upgradeable)
+pool(GymSinglePool.PoolInfo) := poolInfo(GymSinglePool.PoolInfo)
+INTERNAL_CALL, GymSinglePool.updatePool()()
+EXPRESSION:user = userInfo[msg.sender]	NodeType.VARIABLE
+user = userInfo[msg.sender]	NodeType.EXPRESSION
+token = IERC20Upgradeable(tokenAddress)	NodeType.VARIABLE
+token = IERC20Upgradeable(tokenAddress)	NodeType.EXPRESSION
+pool = poolInfo	NodeType.VARIABLE
+pool = poolInfo	NodeType.EXPRESSION
+updatePool()	NodeType.EXPRESSION" -> "BlockID: 1355
+Call context: 
+None
+distributeRewardTokenAmtTotal(uint256) := 0(uint256)
+calcUserRewardsTotal(uint256) := 0(uint256)
+totalDistribute(uint256) := 0(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:updatePool()	NodeType.EXPRESSION
+distributeRewardTokenAmtTotal = 0	NodeType.VARIABLE
+distributeRewardTokenAmtTotal = 0	NodeType.EXPRESSION
+calcUserRewardsTotal = 0	NodeType.VARIABLE
+calcUserRewardsTotal = 0	NodeType.EXPRESSION
+totalDistribute = 0	NodeType.VARIABLE
+totalDistribute = 0	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 1355
+Call context: 
+None
+distributeRewardTokenAmtTotal(uint256) := 0(uint256)
+calcUserRewardsTotal(uint256) := 0(uint256)
+totalDistribute(uint256) := 0(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:updatePool()	NodeType.EXPRESSION
+distributeRewardTokenAmtTotal = 0	NodeType.VARIABLE
+distributeRewardTokenAmtTotal = 0	NodeType.EXPRESSION
+calcUserRewardsTotal = 0	NodeType.VARIABLE
+calcUserRewardsTotal = 0	NodeType.EXPRESSION
+totalDistribute = 0	NodeType.VARIABLE
+totalDistribute = 0	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" -> "BlockID: 1356
+Call context: 
+None
+BEGIN_LOOP
+REF_138(uint256) -> user.depositId
+TMP_595(bool) = i < REF_138
+CONDITION TMP_595
+EXPRESSION:None	NodeType.STARTLOOP
+i < user.depositId	NodeType.IFLOOP" [key=0];
+"BlockID: 1356
+Call context: 
+None
+BEGIN_LOOP
+REF_138(uint256) -> user.depositId
+TMP_595(bool) = i < REF_138
+CONDITION TMP_595
+EXPRESSION:None	NodeType.STARTLOOP
+i < user.depositId	NodeType.IFLOOP" -> "BlockID: 1357
+Call context: 
+True
+REF_139(GymSinglePool.UserDeposits[]) -> user_deposits[msg.sender]
+REF_140(GymSinglePool.UserDeposits) -> REF_139[i]
+depositDetails(GymSinglePool.UserDeposits) := REF_140(GymSinglePool.UserDeposits)
+TMP_596(uint256) = INTERNAL_CALL, GymSinglePool.pendingReward(uint256,address)(i,msg.sender)
+EXPRESSION:depositDetails = user_deposits[msg.sender][i]	NodeType.VARIABLE
+depositDetails = user_deposits[msg.sender][i]	NodeType.EXPRESSION" [key=0];
+"BlockID: 1356
+Call context: 
+None
+BEGIN_LOOP
+REF_138(uint256) -> user.depositId
+TMP_595(bool) = i < REF_138
+CONDITION TMP_595
+EXPRESSION:None	NodeType.STARTLOOP
+i < user.depositId	NodeType.IFLOOP" -> "BlockID: 1358
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 1357
+Call context: 
+True
+REF_139(GymSinglePool.UserDeposits[]) -> user_deposits[msg.sender]
+REF_140(GymSinglePool.UserDeposits) -> REF_139[i]
+depositDetails(GymSinglePool.UserDeposits) := REF_140(GymSinglePool.UserDeposits)
+TMP_596(uint256) = INTERNAL_CALL, GymSinglePool.pendingReward(uint256,address)(i,msg.sender)
+EXPRESSION:depositDetails = user_deposits[msg.sender][i]	NodeType.VARIABLE
+depositDetails = user_deposits[msg.sender][i]	NodeType.EXPRESSION" -> "BlockID: 1367
+Call context: 
+None
+pending(uint256) := TMP_596(uint256)
+totalDistribute(uint256) = totalDistribute (c)+ pending
+TMP_597(bool) = pending > 0
+CONDITION TMP_597
+EXPRESSION:pending = pendingReward(i,msg.sender)	NodeType.VARIABLE
+pending = pendingReward(i,msg.sender)	NodeType.EXPRESSION
+totalDistribute += pending	NodeType.EXPRESSION
+pending > 0	NodeType.IF" [key=0];
+"BlockID: 1358
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 1359
+Call context: 
+None
+LIBRARY_CALL, dest:SafeERC20Upgradeable, function:SafeERC20Upgradeable.safeTransfer(IERC20Upgradeable,address,uint256), arguments:['token', 'relationship', 'distributeRewardTokenAmtTotal'] 
+EXPRESSION:token.safeTransfer(relationship,distributeRewardTokenAmtTotal)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1359
+Call context: 
+None
+LIBRARY_CALL, dest:SafeERC20Upgradeable, function:SafeERC20Upgradeable.safeTransfer(IERC20Upgradeable,address,uint256), arguments:['token', 'relationship', 'distributeRewardTokenAmtTotal'] 
+EXPRESSION:token.safeTransfer(relationship,distributeRewardTokenAmtTotal)	NodeType.EXPRESSION" -> "BlockID: 1360
+Call context: 
+None
+TMP_609 = CONVERT relationship to IGymMLM
+TMP_610 = CONVERT tokenAddress to address
+HIGH_LEVEL_CALL, dest:TMP_609(IGymMLM), function:distributeRewards, arguments:['totalDistribute', 'TMP_610', 'msg.sender', '3']  
+EXPRESSION:token.safeTransfer(relationship,distributeRewardTokenAmtTotal)	NodeType.EXPRESSION
+IGymMLM(relationship).distributeRewards(totalDistribute,address(tokenAddress),msg.sender,3)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1360
+Call context: 
+None
+TMP_609 = CONVERT relationship to IGymMLM
+TMP_610 = CONVERT tokenAddress to address
+HIGH_LEVEL_CALL, dest:TMP_609(IGymMLM), function:distributeRewards, arguments:['totalDistribute', 'TMP_610', 'msg.sender', '3']  
+EXPRESSION:token.safeTransfer(relationship,distributeRewardTokenAmtTotal)	NodeType.EXPRESSION
+IGymMLM(relationship).distributeRewards(totalDistribute,address(tokenAddress),msg.sender,3)	NodeType.EXPRESSION" -> "BlockID: 1361
+Call context: 
+None
+INTERNAL_CALL, GymSinglePool.safeRewardTransfer(address,address,uint256)(tokenAddress,msg.sender,calcUserRewardsTotal)
+EXPRESSION:IGymMLM(relationship).distributeRewards(totalDistribute,address(tokenAddress),msg.sender,3)	NodeType.EXPRESSION
+safeRewardTransfer(tokenAddress,msg.sender,calcUserRewardsTotal)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1361
+Call context: 
+None
+INTERNAL_CALL, GymSinglePool.safeRewardTransfer(address,address,uint256)(tokenAddress,msg.sender,calcUserRewardsTotal)
+EXPRESSION:IGymMLM(relationship).distributeRewards(totalDistribute,address(tokenAddress),msg.sender,3)	NodeType.EXPRESSION
+safeRewardTransfer(tokenAddress,msg.sender,calcUserRewardsTotal)	NodeType.EXPRESSION" -> "BlockID: 1362
+Call context: 
+None
+TMP_613(bool) = reinvest == True
+CONDITION TMP_613
+EXPRESSION:safeRewardTransfer(tokenAddress,msg.sender,calcUserRewardsTotal)	NodeType.EXPRESSION
+reinvest == true	NodeType.IF" [key=0];
+"BlockID: 1362
+Call context: 
+None
+TMP_613(bool) = reinvest == True
+CONDITION TMP_613
+EXPRESSION:safeRewardTransfer(tokenAddress,msg.sender,calcUserRewardsTotal)	NodeType.EXPRESSION
+reinvest == true	NodeType.IF" -> "BlockID: 1363
+Call context: 
+True
+INTERNAL_CALL, GymSinglePool._deposit(uint256,uint8,bool)(calcUserRewardsTotal,reinvestPeriodId,False)
+EXPRESSION:_deposit(calcUserRewardsTotal,reinvestPeriodId,false)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1362
+Call context: 
+None
+TMP_613(bool) = reinvest == True
+CONDITION TMP_613
+EXPRESSION:safeRewardTransfer(tokenAddress,msg.sender,calcUserRewardsTotal)	NodeType.EXPRESSION
+reinvest == true	NodeType.IF" -> "BlockID: 1365
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1363
+Call context: 
+True
+INTERNAL_CALL, GymSinglePool._deposit(uint256,uint8,bool)(calcUserRewardsTotal,reinvestPeriodId,False)
+EXPRESSION:_deposit(calcUserRewardsTotal,reinvestPeriodId,false)	NodeType.EXPRESSION" -> "BlockID: 1365
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1367
+Call context: 
+None
+pending(uint256) := TMP_596(uint256)
+totalDistribute(uint256) = totalDistribute (c)+ pending
+TMP_597(bool) = pending > 0
+CONDITION TMP_597
+EXPRESSION:pending = pendingReward(i,msg.sender)	NodeType.VARIABLE
+pending = pendingReward(i,msg.sender)	NodeType.EXPRESSION
+totalDistribute += pending	NodeType.EXPRESSION
+pending > 0	NodeType.IF" -> "BlockID: 1368
+Call context: 
+True
+TMP_598(uint256) = pending (c)* RELATIONSHIP_REWARD
+TMP_599(uint256) = TMP_598 (c)/ 100
+distributeRewardTokenAmt(uint256) := TMP_599(uint256)
+distributeRewardTokenAmtTotal(uint256) = distributeRewardTokenAmtTotal (c)+ distributeRewardTokenAmt
+TMP_600(uint256) = pending (c)* 6
+TMP_601(uint256) = TMP_600 (c)/ 100
+calculateDistrubutionReward(uint256) := TMP_601(uint256)
+poolRewardsAmount(uint256) = poolRewardsAmount (c)+ calculateDistrubutionReward
+TMP_602(uint256) = pending (c)- distributeRewardTokenAmt
+TMP_603(uint256) = TMP_602 (c)- calculateDistrubutionReward
+calcUserRewards(uint256) := TMP_603(uint256)
+calcUserRewardsTotal(uint256) = calcUserRewardsTotal (c)+ calcUserRewards
+REF_141(uint256) -> user.totalClaimt
+REF_141(-> user) = REF_141 (c)+ calcUserRewards
+totalClaimtInPool(uint256) = totalClaimtInPool (c)+ pending
+REF_142(uint256) -> depositDetails.rewardsClaimt
+REF_142(-> depositDetails) = REF_142 (c)+ pending
+REF_143(uint256) -> depositDetails.rewardDebt
+REF_144(uint256) -> depositDetails.depositTokens
+REF_145(uint256) -> pool.accRewardPerShare
+TMP_604(uint256) = REF_144 (c)* REF_145
+TMP_605(uint256) = TMP_604 (c)/ 1000000000000000000
+REF_143(uint256) (->depositDetails) := TMP_605(uint256)
+REF_146(uint256) -> depositDetails.rewardsGained
+REF_146(uint256) (->depositDetails) := 0(uint256)
+EXPRESSION:distributeRewardTokenAmt = (pending * RELATIONSHIP_REWARD) / 100	NodeType.VARIABLE
+distributeRewardTokenAmt = (pending * RELATIONSHIP_REWARD) / 100	NodeType.EXPRESSION
+distributeRewardTokenAmtTotal += distributeRewardTokenAmt	NodeType.EXPRESSION
+calculateDistrubutionReward = (pending * 6) / 100	NodeType.VARIABLE
+calculateDistrubutionReward = (pending * 6) / 100	NodeType.EXPRESSION
+poolRewardsAmount += calculateDistrubutionReward	NodeType.EXPRESSION
+calcUserRewards = (pending - distributeRewardTokenAmt - calculateDistrubutionReward)	NodeType.VARIABLE
+calcUserRewards = (pending - distributeRewardTokenAmt - calculateDistrubutionReward)	NodeType.EXPRESSION
+calcUserRewardsTotal += calcUserRewards	NodeType.EXPRESSION
+user.totalClaimt += calcUserRewards	NodeType.EXPRESSION
+totalClaimtInPool += pending	NodeType.EXPRESSION
+depositDetails.rewardsClaimt += pending	NodeType.EXPRESSION
+depositDetails.rewardDebt = (depositDetails.depositTokens * (pool.accRewardPerShare)) / (1e18)	NodeType.EXPRESSION
+depositDetails.rewardsGained = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 1367
+Call context: 
+None
+pending(uint256) := TMP_596(uint256)
+totalDistribute(uint256) = totalDistribute (c)+ pending
+TMP_597(bool) = pending > 0
+CONDITION TMP_597
+EXPRESSION:pending = pendingReward(i,msg.sender)	NodeType.VARIABLE
+pending = pendingReward(i,msg.sender)	NodeType.EXPRESSION
+totalDistribute += pending	NodeType.EXPRESSION
+pending > 0	NodeType.IF" -> "BlockID: 1369
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1368
+Call context: 
+True
+TMP_598(uint256) = pending (c)* RELATIONSHIP_REWARD
+TMP_599(uint256) = TMP_598 (c)/ 100
+distributeRewardTokenAmt(uint256) := TMP_599(uint256)
+distributeRewardTokenAmtTotal(uint256) = distributeRewardTokenAmtTotal (c)+ distributeRewardTokenAmt
+TMP_600(uint256) = pending (c)* 6
+TMP_601(uint256) = TMP_600 (c)/ 100
+calculateDistrubutionReward(uint256) := TMP_601(uint256)
+poolRewardsAmount(uint256) = poolRewardsAmount (c)+ calculateDistrubutionReward
+TMP_602(uint256) = pending (c)- distributeRewardTokenAmt
+TMP_603(uint256) = TMP_602 (c)- calculateDistrubutionReward
+calcUserRewards(uint256) := TMP_603(uint256)
+calcUserRewardsTotal(uint256) = calcUserRewardsTotal (c)+ calcUserRewards
+REF_141(uint256) -> user.totalClaimt
+REF_141(-> user) = REF_141 (c)+ calcUserRewards
+totalClaimtInPool(uint256) = totalClaimtInPool (c)+ pending
+REF_142(uint256) -> depositDetails.rewardsClaimt
+REF_142(-> depositDetails) = REF_142 (c)+ pending
+REF_143(uint256) -> depositDetails.rewardDebt
+REF_144(uint256) -> depositDetails.depositTokens
+REF_145(uint256) -> pool.accRewardPerShare
+TMP_604(uint256) = REF_144 (c)* REF_145
+TMP_605(uint256) = TMP_604 (c)/ 1000000000000000000
+REF_143(uint256) (->depositDetails) := TMP_605(uint256)
+REF_146(uint256) -> depositDetails.rewardsGained
+REF_146(uint256) (->depositDetails) := 0(uint256)
+EXPRESSION:distributeRewardTokenAmt = (pending * RELATIONSHIP_REWARD) / 100	NodeType.VARIABLE
+distributeRewardTokenAmt = (pending * RELATIONSHIP_REWARD) / 100	NodeType.EXPRESSION
+distributeRewardTokenAmtTotal += distributeRewardTokenAmt	NodeType.EXPRESSION
+calculateDistrubutionReward = (pending * 6) / 100	NodeType.VARIABLE
+calculateDistrubutionReward = (pending * 6) / 100	NodeType.EXPRESSION
+poolRewardsAmount += calculateDistrubutionReward	NodeType.EXPRESSION
+calcUserRewards = (pending - distributeRewardTokenAmt - calculateDistrubutionReward)	NodeType.VARIABLE
+calcUserRewards = (pending - distributeRewardTokenAmt - calculateDistrubutionReward)	NodeType.EXPRESSION
+calcUserRewardsTotal += calcUserRewards	NodeType.EXPRESSION
+user.totalClaimt += calcUserRewards	NodeType.EXPRESSION
+totalClaimtInPool += pending	NodeType.EXPRESSION
+depositDetails.rewardsClaimt += pending	NodeType.EXPRESSION
+depositDetails.rewardDebt = (depositDetails.depositTokens * (pool.accRewardPerShare)) / (1e18)	NodeType.EXPRESSION
+depositDetails.rewardsGained = 0	NodeType.EXPRESSION" -> "BlockID: 1369
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1369
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1370
+Call context: 
+None
+TMP_607(uint256) := i(uint256)
+i(uint256) = i (c)+ 1
+EXPRESSION:i ++	NodeType.EXPRESSION" [key=0];
+"BlockID: 1370
+Call context: 
+None
+TMP_607(uint256) := i(uint256)
+i(uint256) = i (c)+ 1
+EXPRESSION:i ++	NodeType.EXPRESSION" -> "BlockID: 1356
+Call context: 
+None
+BEGIN_LOOP
+REF_138(uint256) -> user.depositId
+TMP_595(bool) = i < REF_138
+CONDITION TMP_595
+EXPRESSION:None	NodeType.STARTLOOP
+i < user.depositId	NodeType.IFLOOP" [key=0];
+}

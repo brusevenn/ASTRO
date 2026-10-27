@@ -1,0 +1,351 @@
+digraph {
+"BlockID: 3315
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 3316
+Call context: 
+None
+REF_1244(address) -> params.tokenContract
+REF_1246(uint256) -> params.tokenId
+TMP_2450(uint256) = LIBRARY_CALL, dest:CollateralLookup, function:CollateralLookup.computeId(address,uint256), arguments:['REF_1244', 'REF_1246'] 
+EXPRESSION:";
+"BlockID: 3317
+Call context: 
+None
+collateralId(uint256) := TMP_2450(uint256)
+TMP_2451(ICollateralToken) = INTERNAL_CALL, AstariaVaultBase.COLLATERAL_TOKEN()()
+EXPRESSION:collateralId = params.tokenContract.computeId(params.tokenId)	NodeType.VARIABLE
+collateralId = params.tokenContract.computeId(params.tokenId)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3318
+Call context: 
+None
+TMP_2452 = CONVERT TMP_2451 to address
+TMP_2453 = CONVERT TMP_2452 to ERC721_0
+CT(ERC721_0) := TMP_2453(ERC721_0)
+TMP_2454(address) = HIGH_LEVEL_CALL, dest:CT(ERC721_0), function:ownerOf, arguments:['collateralId']  
+EXPRESSION:CT = ERC721_0(address(COLLATERAL_TOKEN()))	NodeType.VARIABLE
+CT = ERC721_0(address(COLLATERAL_TOKEN()))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3319
+Call context: 
+None
+holder(address) := TMP_2454(address)
+TMP_2455(address) = HIGH_LEVEL_CALL, dest:CT(ERC721_0), function:getApproved, arguments:['collateralId']  
+EXPRESSION:holder = CT.ownerOf(collateralId)	NodeType.VARIABLE
+holder = CT.ownerOf(collateralId)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3320
+Call context: 
+None
+operator(address) := TMP_2455(address)
+TMP_2456(bool) = msg.sender != holder
+TMP_2457(bool) = receiver != holder
+TMP_2458(bool) = TMP_2456 && TMP_2457
+TMP_2459(bool) = receiver != operator
+TMP_2460(bool) = TMP_2458 && TMP_2459
+TMP_2461(bool) = HIGH_LEVEL_CALL, dest:CT(ERC721_0), function:isApprovedForAll, arguments:['holder', 'msg.sender']  
+EXPRESSION:operator = CT.getApproved(collateralId)	NodeType.VARIABLE
+operator = CT.getApproved(collateralId)	NodeType.EXPRESSION
+msg.sender != holder && receiver != holder && receiver != operator && ! CT.isApprovedForAll(holder,msg.sender)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3321
+Call context: 
+None
+TMP_2462 = ! TMP_2461 
+TMP_2463(bool) = TMP_2460 && TMP_2462
+CONDITION TMP_2463
+EXPRESSION:msg.sender != holder && receiver != holder && receiver != operator && ! CT.isApprovedForAll(holder,msg.sender)	NodeType.IF" [shape=box];
+"BlockID: 3322
+Call context: 
+True
+REF_1250(IVaultImplementation.InvalidRequestReason) -> InvalidRequestReason.NO_AUTHORITY
+TMP_2464(None) = SOLIDITY_CALL revert InvalidRequest(IVaultImplementation.InvalidRequestReason)(REF_1250)
+EXPRESSION:revert InvalidRequest(IVaultImplementation.InvalidRequestReason)(InvalidRequestReason.NO_AUTHORITY)	NodeType.EXPRESSION";
+"BlockID: 3323
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3324
+Call context: 
+None
+TMP_2465(IVaultImplementation.VIData) = INTERNAL_CALL, VaultImplementation._loadVISlot()()
+EXPRESSION:";
+"BlockID: 3325
+Call context: 
+None
+s(IVaultImplementation.VIData) := TMP_2465(IVaultImplementation.VIData)
+REF_1251(IAstariaRouter.NewLienRequest) -> params.lienRequest
+REF_1252(IAstariaRouter.StrategyDetailsParam) -> REF_1251.strategy
+REF_1253(IAstariaRouter.NewLienRequest) -> params.lienRequest
+REF_1254(IAstariaRouter.MerkleData) -> REF_1253.merkle
+REF_1255(bytes32) -> REF_1254.root
+TMP_2466(bytes) = INTERNAL_CALL, VaultImplementation._encodeStrategyData(IVaultImplementation.VIData,IAstariaRouter.StrategyDetailsParam,bytes32)(s,REF_1252,REF_1255)
+EXPRESSION:s = _loadVISlot()	NodeType.VARIABLE
+s = _loadVISlot()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3326
+Call context: 
+None
+TMP_2467(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_2466)
+REF_1256(IAstariaRouter.NewLienRequest) -> params.lienRequest
+REF_1257(uint8) -> REF_1256.v
+REF_1258(IAstariaRouter.NewLienRequest) -> params.lienRequest
+REF_1259(bytes32) -> REF_1258.r
+REF_1260(IAstariaRouter.NewLienRequest) -> params.lienRequest
+REF_1261(bytes32) -> REF_1260.s
+TMP_2468(address) = SOLIDITY_CALL ecrecover(bytes32,uint8,bytes32,bytes32)(TMP_2467,REF_1257,REF_1259,REF_1261)
+recovered(address) := TMP_2468(address)
+TMP_2469(address) = INTERNAL_CALL, AstariaVaultBase.owner()()
+EXPRESSION:recovered = ecrecover(bytes32,uint8,bytes32,bytes32)(keccak256(bytes)(_encodeStrategyData(s,params.lienRequest.strategy,params.lienRequest.merkle.root)),params.lienRequest.v,params.lienRequest.r,params.lienRequest.s)	NodeType.VARIABLE
+recovered = ecrecover(bytes32,uint8,bytes32,bytes32)(keccak256(bytes)(_encodeStrategyData(s,params.lienRequest.strategy,params.lienRequest.merkle.root)),params.lienRequest.v,params.lienRequest.r,params.lienRequest.s)	NodeType.EXPRESSION
+(recovered != owner() && recovered != s.delegate) || recovered == address(0)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3327
+Call context: 
+None
+TMP_2470(bool) = recovered != TMP_2469
+REF_1262(address) -> s.delegate
+TMP_2471(bool) = recovered != REF_1262
+TMP_2472(bool) = TMP_2470 && TMP_2471
+TMP_2473 = CONVERT 0 to address
+TMP_2474(bool) = recovered == TMP_2473
+TMP_2475(bool) = TMP_2472 || TMP_2474
+CONDITION TMP_2475
+EXPRESSION:(recovered != owner() && recovered != s.delegate) || recovered == address(0)	NodeType.IF" [shape=box];
+"BlockID: 3328
+Call context: 
+True
+REF_1263(IVaultImplementation.InvalidRequestReason) -> InvalidRequestReason.INVALID_SIGNATURE
+TMP_2476(None) = SOLIDITY_CALL revert InvalidRequest(IVaultImplementation.InvalidRequestReason)(REF_1263)
+EXPRESSION:IVaultImplementation.InvalidRequest(InvalidRequestReason.INVALID_SIGNATURE)	NodeType.EXPRESSION";
+"BlockID: 3329
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3315
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 3316
+Call context: 
+None
+REF_1244(address) -> params.tokenContract
+REF_1246(uint256) -> params.tokenId
+TMP_2450(uint256) = LIBRARY_CALL, dest:CollateralLookup, function:CollateralLookup.computeId(address,uint256), arguments:['REF_1244', 'REF_1246'] 
+EXPRESSION:" [key=0];
+"BlockID: 3316
+Call context: 
+None
+REF_1244(address) -> params.tokenContract
+REF_1246(uint256) -> params.tokenId
+TMP_2450(uint256) = LIBRARY_CALL, dest:CollateralLookup, function:CollateralLookup.computeId(address,uint256), arguments:['REF_1244', 'REF_1246'] 
+EXPRESSION:" -> "BlockID: 3317
+Call context: 
+None
+collateralId(uint256) := TMP_2450(uint256)
+TMP_2451(ICollateralToken) = INTERNAL_CALL, AstariaVaultBase.COLLATERAL_TOKEN()()
+EXPRESSION:collateralId = params.tokenContract.computeId(params.tokenId)	NodeType.VARIABLE
+collateralId = params.tokenContract.computeId(params.tokenId)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3317
+Call context: 
+None
+collateralId(uint256) := TMP_2450(uint256)
+TMP_2451(ICollateralToken) = INTERNAL_CALL, AstariaVaultBase.COLLATERAL_TOKEN()()
+EXPRESSION:collateralId = params.tokenContract.computeId(params.tokenId)	NodeType.VARIABLE
+collateralId = params.tokenContract.computeId(params.tokenId)	NodeType.EXPRESSION" -> "BlockID: 3318
+Call context: 
+None
+TMP_2452 = CONVERT TMP_2451 to address
+TMP_2453 = CONVERT TMP_2452 to ERC721_0
+CT(ERC721_0) := TMP_2453(ERC721_0)
+TMP_2454(address) = HIGH_LEVEL_CALL, dest:CT(ERC721_0), function:ownerOf, arguments:['collateralId']  
+EXPRESSION:CT = ERC721_0(address(COLLATERAL_TOKEN()))	NodeType.VARIABLE
+CT = ERC721_0(address(COLLATERAL_TOKEN()))	NodeType.EXPRESSION" [key=0];
+"BlockID: 3318
+Call context: 
+None
+TMP_2452 = CONVERT TMP_2451 to address
+TMP_2453 = CONVERT TMP_2452 to ERC721_0
+CT(ERC721_0) := TMP_2453(ERC721_0)
+TMP_2454(address) = HIGH_LEVEL_CALL, dest:CT(ERC721_0), function:ownerOf, arguments:['collateralId']  
+EXPRESSION:CT = ERC721_0(address(COLLATERAL_TOKEN()))	NodeType.VARIABLE
+CT = ERC721_0(address(COLLATERAL_TOKEN()))	NodeType.EXPRESSION" -> "BlockID: 3319
+Call context: 
+None
+holder(address) := TMP_2454(address)
+TMP_2455(address) = HIGH_LEVEL_CALL, dest:CT(ERC721_0), function:getApproved, arguments:['collateralId']  
+EXPRESSION:holder = CT.ownerOf(collateralId)	NodeType.VARIABLE
+holder = CT.ownerOf(collateralId)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3319
+Call context: 
+None
+holder(address) := TMP_2454(address)
+TMP_2455(address) = HIGH_LEVEL_CALL, dest:CT(ERC721_0), function:getApproved, arguments:['collateralId']  
+EXPRESSION:holder = CT.ownerOf(collateralId)	NodeType.VARIABLE
+holder = CT.ownerOf(collateralId)	NodeType.EXPRESSION" -> "BlockID: 3320
+Call context: 
+None
+operator(address) := TMP_2455(address)
+TMP_2456(bool) = msg.sender != holder
+TMP_2457(bool) = receiver != holder
+TMP_2458(bool) = TMP_2456 && TMP_2457
+TMP_2459(bool) = receiver != operator
+TMP_2460(bool) = TMP_2458 && TMP_2459
+TMP_2461(bool) = HIGH_LEVEL_CALL, dest:CT(ERC721_0), function:isApprovedForAll, arguments:['holder', 'msg.sender']  
+EXPRESSION:operator = CT.getApproved(collateralId)	NodeType.VARIABLE
+operator = CT.getApproved(collateralId)	NodeType.EXPRESSION
+msg.sender != holder && receiver != holder && receiver != operator && ! CT.isApprovedForAll(holder,msg.sender)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3320
+Call context: 
+None
+operator(address) := TMP_2455(address)
+TMP_2456(bool) = msg.sender != holder
+TMP_2457(bool) = receiver != holder
+TMP_2458(bool) = TMP_2456 && TMP_2457
+TMP_2459(bool) = receiver != operator
+TMP_2460(bool) = TMP_2458 && TMP_2459
+TMP_2461(bool) = HIGH_LEVEL_CALL, dest:CT(ERC721_0), function:isApprovedForAll, arguments:['holder', 'msg.sender']  
+EXPRESSION:operator = CT.getApproved(collateralId)	NodeType.VARIABLE
+operator = CT.getApproved(collateralId)	NodeType.EXPRESSION
+msg.sender != holder && receiver != holder && receiver != operator && ! CT.isApprovedForAll(holder,msg.sender)	NodeType.EXPRESSION" -> "BlockID: 3321
+Call context: 
+None
+TMP_2462 = ! TMP_2461 
+TMP_2463(bool) = TMP_2460 && TMP_2462
+CONDITION TMP_2463
+EXPRESSION:msg.sender != holder && receiver != holder && receiver != operator && ! CT.isApprovedForAll(holder,msg.sender)	NodeType.IF" [key=0];
+"BlockID: 3321
+Call context: 
+None
+TMP_2462 = ! TMP_2461 
+TMP_2463(bool) = TMP_2460 && TMP_2462
+CONDITION TMP_2463
+EXPRESSION:msg.sender != holder && receiver != holder && receiver != operator && ! CT.isApprovedForAll(holder,msg.sender)	NodeType.IF" -> "BlockID: 3322
+Call context: 
+True
+REF_1250(IVaultImplementation.InvalidRequestReason) -> InvalidRequestReason.NO_AUTHORITY
+TMP_2464(None) = SOLIDITY_CALL revert InvalidRequest(IVaultImplementation.InvalidRequestReason)(REF_1250)
+EXPRESSION:revert InvalidRequest(IVaultImplementation.InvalidRequestReason)(InvalidRequestReason.NO_AUTHORITY)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3321
+Call context: 
+None
+TMP_2462 = ! TMP_2461 
+TMP_2463(bool) = TMP_2460 && TMP_2462
+CONDITION TMP_2463
+EXPRESSION:msg.sender != holder && receiver != holder && receiver != operator && ! CT.isApprovedForAll(holder,msg.sender)	NodeType.IF" -> "BlockID: 3323
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3323
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3324
+Call context: 
+None
+TMP_2465(IVaultImplementation.VIData) = INTERNAL_CALL, VaultImplementation._loadVISlot()()
+EXPRESSION:" [key=0];
+"BlockID: 3324
+Call context: 
+None
+TMP_2465(IVaultImplementation.VIData) = INTERNAL_CALL, VaultImplementation._loadVISlot()()
+EXPRESSION:" -> "BlockID: 3325
+Call context: 
+None
+s(IVaultImplementation.VIData) := TMP_2465(IVaultImplementation.VIData)
+REF_1251(IAstariaRouter.NewLienRequest) -> params.lienRequest
+REF_1252(IAstariaRouter.StrategyDetailsParam) -> REF_1251.strategy
+REF_1253(IAstariaRouter.NewLienRequest) -> params.lienRequest
+REF_1254(IAstariaRouter.MerkleData) -> REF_1253.merkle
+REF_1255(bytes32) -> REF_1254.root
+TMP_2466(bytes) = INTERNAL_CALL, VaultImplementation._encodeStrategyData(IVaultImplementation.VIData,IAstariaRouter.StrategyDetailsParam,bytes32)(s,REF_1252,REF_1255)
+EXPRESSION:s = _loadVISlot()	NodeType.VARIABLE
+s = _loadVISlot()	NodeType.EXPRESSION" [key=0];
+"BlockID: 3325
+Call context: 
+None
+s(IVaultImplementation.VIData) := TMP_2465(IVaultImplementation.VIData)
+REF_1251(IAstariaRouter.NewLienRequest) -> params.lienRequest
+REF_1252(IAstariaRouter.StrategyDetailsParam) -> REF_1251.strategy
+REF_1253(IAstariaRouter.NewLienRequest) -> params.lienRequest
+REF_1254(IAstariaRouter.MerkleData) -> REF_1253.merkle
+REF_1255(bytes32) -> REF_1254.root
+TMP_2466(bytes) = INTERNAL_CALL, VaultImplementation._encodeStrategyData(IVaultImplementation.VIData,IAstariaRouter.StrategyDetailsParam,bytes32)(s,REF_1252,REF_1255)
+EXPRESSION:s = _loadVISlot()	NodeType.VARIABLE
+s = _loadVISlot()	NodeType.EXPRESSION" -> "BlockID: 3326
+Call context: 
+None
+TMP_2467(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_2466)
+REF_1256(IAstariaRouter.NewLienRequest) -> params.lienRequest
+REF_1257(uint8) -> REF_1256.v
+REF_1258(IAstariaRouter.NewLienRequest) -> params.lienRequest
+REF_1259(bytes32) -> REF_1258.r
+REF_1260(IAstariaRouter.NewLienRequest) -> params.lienRequest
+REF_1261(bytes32) -> REF_1260.s
+TMP_2468(address) = SOLIDITY_CALL ecrecover(bytes32,uint8,bytes32,bytes32)(TMP_2467,REF_1257,REF_1259,REF_1261)
+recovered(address) := TMP_2468(address)
+TMP_2469(address) = INTERNAL_CALL, AstariaVaultBase.owner()()
+EXPRESSION:recovered = ecrecover(bytes32,uint8,bytes32,bytes32)(keccak256(bytes)(_encodeStrategyData(s,params.lienRequest.strategy,params.lienRequest.merkle.root)),params.lienRequest.v,params.lienRequest.r,params.lienRequest.s)	NodeType.VARIABLE
+recovered = ecrecover(bytes32,uint8,bytes32,bytes32)(keccak256(bytes)(_encodeStrategyData(s,params.lienRequest.strategy,params.lienRequest.merkle.root)),params.lienRequest.v,params.lienRequest.r,params.lienRequest.s)	NodeType.EXPRESSION
+(recovered != owner() && recovered != s.delegate) || recovered == address(0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3326
+Call context: 
+None
+TMP_2467(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_2466)
+REF_1256(IAstariaRouter.NewLienRequest) -> params.lienRequest
+REF_1257(uint8) -> REF_1256.v
+REF_1258(IAstariaRouter.NewLienRequest) -> params.lienRequest
+REF_1259(bytes32) -> REF_1258.r
+REF_1260(IAstariaRouter.NewLienRequest) -> params.lienRequest
+REF_1261(bytes32) -> REF_1260.s
+TMP_2468(address) = SOLIDITY_CALL ecrecover(bytes32,uint8,bytes32,bytes32)(TMP_2467,REF_1257,REF_1259,REF_1261)
+recovered(address) := TMP_2468(address)
+TMP_2469(address) = INTERNAL_CALL, AstariaVaultBase.owner()()
+EXPRESSION:recovered = ecrecover(bytes32,uint8,bytes32,bytes32)(keccak256(bytes)(_encodeStrategyData(s,params.lienRequest.strategy,params.lienRequest.merkle.root)),params.lienRequest.v,params.lienRequest.r,params.lienRequest.s)	NodeType.VARIABLE
+recovered = ecrecover(bytes32,uint8,bytes32,bytes32)(keccak256(bytes)(_encodeStrategyData(s,params.lienRequest.strategy,params.lienRequest.merkle.root)),params.lienRequest.v,params.lienRequest.r,params.lienRequest.s)	NodeType.EXPRESSION
+(recovered != owner() && recovered != s.delegate) || recovered == address(0)	NodeType.EXPRESSION" -> "BlockID: 3327
+Call context: 
+None
+TMP_2470(bool) = recovered != TMP_2469
+REF_1262(address) -> s.delegate
+TMP_2471(bool) = recovered != REF_1262
+TMP_2472(bool) = TMP_2470 && TMP_2471
+TMP_2473 = CONVERT 0 to address
+TMP_2474(bool) = recovered == TMP_2473
+TMP_2475(bool) = TMP_2472 || TMP_2474
+CONDITION TMP_2475
+EXPRESSION:(recovered != owner() && recovered != s.delegate) || recovered == address(0)	NodeType.IF" [key=0];
+"BlockID: 3327
+Call context: 
+None
+TMP_2470(bool) = recovered != TMP_2469
+REF_1262(address) -> s.delegate
+TMP_2471(bool) = recovered != REF_1262
+TMP_2472(bool) = TMP_2470 && TMP_2471
+TMP_2473 = CONVERT 0 to address
+TMP_2474(bool) = recovered == TMP_2473
+TMP_2475(bool) = TMP_2472 || TMP_2474
+CONDITION TMP_2475
+EXPRESSION:(recovered != owner() && recovered != s.delegate) || recovered == address(0)	NodeType.IF" -> "BlockID: 3328
+Call context: 
+True
+REF_1263(IVaultImplementation.InvalidRequestReason) -> InvalidRequestReason.INVALID_SIGNATURE
+TMP_2476(None) = SOLIDITY_CALL revert InvalidRequest(IVaultImplementation.InvalidRequestReason)(REF_1263)
+EXPRESSION:IVaultImplementation.InvalidRequest(InvalidRequestReason.INVALID_SIGNATURE)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3327
+Call context: 
+None
+TMP_2470(bool) = recovered != TMP_2469
+REF_1262(address) -> s.delegate
+TMP_2471(bool) = recovered != REF_1262
+TMP_2472(bool) = TMP_2470 && TMP_2471
+TMP_2473 = CONVERT 0 to address
+TMP_2474(bool) = recovered == TMP_2473
+TMP_2475(bool) = TMP_2472 || TMP_2474
+CONDITION TMP_2475
+EXPRESSION:(recovered != owner() && recovered != s.delegate) || recovered == address(0)	NodeType.IF" -> "BlockID: 3329
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

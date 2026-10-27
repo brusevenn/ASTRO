@@ -1,0 +1,1917 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+REF_20(address) -> req.from
+REF_21(address) -> req.to
+REF_22(uint256) -> req.value
+REF_23(uint256) -> req.gas
+REF_24(uint256) -> req.nonce
+REF_25(bytes) -> req.data
+TMP_71(bytes32) = SOLIDITY_CALL keccak256(bytes)(REF_25)
+TMP_72(bytes) = SOLIDITY_CALL abi.encode()(TYPEHASH,REF_20,REF_21,REF_22,REF_23,REF_24,TMP_71)
+TMP_73(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_72)
+TMP_63(bool) = block.chainid == _CACHED_CHAIN_ID
+CONDITION TMP_63
+EXPRESSION:block.chainid == _CACHED_CHAIN_ID	NodeType.IF";
+"BlockID: 38
+Call context: 
+True
+REF_31(address) -> req.from
+REF_32(uint256) -> _nonces[REF_31]
+REF_33(uint256) -> req.nonce
+TMP_81(uint256) = REF_33 (c)+ 1
+REF_32(uint256) (->_nonces) := TMP_81(uint256)
+NEW VARIABLE success
+NEW VARIABLE result
+REF_34(address) -> req.to
+REF_37(bytes) -> req.data
+REF_38(address) -> req.from
+TMP_82(bytes) = SOLIDITY_CALL abi.encodePacked()(REF_37,REF_38)
+REF_39(uint256) -> req.value
+REF_40(uint256) -> req.gas
+TUPLE_6(bool,bytes) = LOW_LEVEL_CALL, dest:REF_34, function:call, arguments:['TMP_82'] value:REF_39 gas:REF_40
+EXPRESSION:_nonces[req.from] = req.nonce + 1	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,result) = req.to.call{gas: req.gas,value: req.value}(abi.encodePacked(req.data,req.from))	NodeType.EXPRESSION";
+"BlockID: 44
+Call context: 
+None
+success(bool)= UNPACK TUPLE_6 index: 0 
+result(bytes)= UNPACK TUPLE_6 index: 1 
+TMP_83 = ! success 
+CONDITION TMP_83
+EXPRESSION:(success,result) = req.to.call{gas: req.gas,value: req.value}(abi.encodePacked(req.data,req.from))	NodeType.EXPRESSION
+! success	NodeType.IF" [shape=box];
+"BlockID: 50
+Call context: 
+True
+REF_41 -> LENGTH result
+TMP_84(bool) = REF_41 < 68
+CONDITION TMP_84
+EXPRESSION:result.length < 68	NodeType.IF";
+"BlockID: 51
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 70
+Call context: 
+True
+RETURN success,result
+EXPRESSION:(success,result)	NodeType.RETURN";
+"BlockID: 56
+Call context: 
+True
+TMP_85(None) = SOLIDITY_CALL revert(string)(Transaction reverted silently)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 57
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 63
+Call context: 
+None
+INLINE ASM
+TMP_86(bytes) = result + 4
+result(bytes) := TMP_86(bytes)
+TMP_87(string) = SOLIDITY_CALL abi.decode()(result,string)
+TMP_88(None) = SOLIDITY_CALL revert(string)(TMP_87)
+EXPRESSION:None	NodeType.ASSEMBLY
+result = result + 0x04	NodeType.EXPRESSION
+revert(string)(abi.decode(result,(string)))	NodeType.EXPRESSION";
+"BlockID: 31
+Call context: 
+True
+TMP_80(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 32
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 58
+Call context: 
+None
+TMP_89(uint256) = SOLIDITY_CALL gasleft()()
+REF_43(uint256) -> req.gas
+TMP_90(uint256) = REF_43 (c)/ 63
+TMP_91(bool) = TMP_89 > TMP_90
+CONDITION TMP_91
+EXPRESSION:TMP_91(bool) = TMP_89 > TMP_90	NodeType.IF";
+"BlockID: 64
+Call context: 
+True
+TMP_92(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 65
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 4
+Call context: execute,verify
+None
+TMP_42(bytes) = SOLIDITY_CALL abi.encodePacked()(,domainSeparator,structHash)
+TMP_43(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_42)
+TMP_102(None) := TMP_43(bytes32)
+TMP_110(None) := TMP_69(bytes32)
+NEW VARIABLE recovered
+NEW VARIABLE error
+REF_5 -> LENGTH signature
+TMP_9(bool) = REF_5 == 65
+CONDITION TMP_9
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+signature.length == 65	NodeType.IF" [shape=box];
+"BlockID: 2
+Call context: execute,verify,_hashTypedDataV4
+True
+TMP_108(None) := _CACHED_DOMAIN_SEPARATOR(bytes32)
+EXPRESSION:";
+"BlockID: 3
+Call context: execute,verify,_hashTypedDataV4
+False
+TMP_65 = CONVERT this to address
+TMP_66(bytes) = SOLIDITY_CALL abi.encode()(typeHash,nameHash,versionHash,block.chainid,TMP_65)
+TMP_67(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_66)
+TMP_109(None) := TMP_67(bytes32)
+TMP_108(None) := TMP_64(bytes32)
+EXPRESSION:";
+"BlockID: 15
+Call context: execute,verify
+None
+recovered(address)= UNPACK TUPLE_2 index: 0 
+error(ECDSA.RecoverError)= UNPACK TUPLE_2 index: 1 
+REF_0(ECDSA.RecoverError) -> RecoverError.NoError
+TMP_0(bool) = error == REF_0
+CONDITION TMP_0
+EXPRESSION:(recovered,error) = tryRecover(hash,signature)	NodeType.EXPRESSION
+error == RecoverError.NoError	NodeType.IF" [shape=box];
+"BlockID: 25
+Call context: execute,verify
+None
+TMP_96(None) := recovered(address)
+signer(address) := TMP_75(address)
+REF_27(address) -> req.from
+REF_28(uint256) -> _nonces[REF_27]
+REF_29(uint256) -> req.nonce
+TMP_76(bool) = REF_28 == REF_29
+REF_30(address) -> req.from
+TMP_77(bool) = signer == REF_30
+TMP_78(bool) = TMP_76 && TMP_77
+TMP_113(None) := TMP_78(bool)
+CONDITION TMP_79
+EXPRESSION:_throwError(error)	NodeType.EXPRESSION
+signer = _hashTypedDataV4(keccak256(bytes)(abi.encode(TYPEHASH,req.from,req.to,req.value,req.gas,req.nonce,keccak256(bytes)(req.data)))).recover(signature)	NodeType.VARIABLE
+signer = _hashTypedDataV4(keccak256(bytes)(abi.encode(TYPEHASH,req.from,req.to,req.value,req.gas,req.nonce,keccak256(bytes)(req.data)))).recover(signature)	NodeType.EXPRESSION
+qiantao require	NodeType.IF";
+"BlockID: 5
+Call context: execute,verify,recover
+True
+NEW VARIABLE r
+NEW VARIABLE s
+NEW VARIABLE v
+INLINE ASM
+TMP_10(bytes) = signature + 32
+TMP_11(uint256) = SOLIDITY_CALL mload(uint256)(TMP_10)
+r(bytes32) := TMP_11(uint256)
+TMP_12(bytes) = signature + 64
+TMP_13(uint256) = SOLIDITY_CALL mload(uint256)(TMP_12)
+s(bytes32) := TMP_13(uint256)
+TMP_14(bytes) = signature + 96
+TMP_15(uint256) = SOLIDITY_CALL mload(uint256)(TMP_14)
+TMP_16(uint256) = SOLIDITY_CALL byte(uint256,uint256)(0,TMP_15)
+v(uint8) := TMP_16(uint256)
+TMP_28 = CONVERT s to uint256
+TMP_29(bool) = TMP_28 > 57896044618658097711785492504343953926418782139537452191302581570759080747168
+CONDITION TMP_29
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+r = mload(uint256)(signature + 0x20)	NodeType.EXPRESSION
+s = mload(uint256)(signature + 0x40)	NodeType.EXPRESSION
+v = byte(uint256,uint256)(0,mload(uint256)(signature + 0x60))	NodeType.EXPRESSION
+uint256(s) > 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5D576E7357A4501DDFE92F46681B20A0	NodeType.IF";
+"BlockID: 6
+Call context: execute,verify,recover
+False
+REF_6 -> LENGTH signature
+TMP_17(bool) = REF_6 == 64
+CONDITION TMP_17
+EXPRESSION:signature.length == 64	NodeType.IF";
+"BlockID: 9
+Call context: execute,verify,recover
+True
+NEW VARIABLE r_scope_0
+NEW VARIABLE vs
+INLINE ASM
+TMP_18(bytes) = signature + 32
+TMP_19(uint256) = SOLIDITY_CALL mload(uint256)(TMP_18)
+r(bytes32) := TMP_19(uint256)
+TMP_20(bytes) = signature + 64
+TMP_21(uint256) = SOLIDITY_CALL mload(uint256)(TMP_20)
+vs(bytes32) := TMP_21(uint256)
+NEW VARIABLE s
+NEW VARIABLE v
+INLINE ASM
+TMP_24(bytes32) = vs & 57896044618658097711785492504343953926634992332820282019728792003956564819967
+s(bytes32) := TMP_24(bytes32)
+TMP_25(bytes32) = vs >> 255
+TMP_26(bytes32) = TMP_25 + 27
+v(uint8) := TMP_26(bytes32)
+TMP_28 = CONVERT s to uint256
+TMP_29(bool) = TMP_28 > 57896044618658097711785492504343953926418782139537452191302581570759080747168
+CONDITION TMP_29
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+r = mload(uint256)(signature + 0x20)	NodeType.EXPRESSION
+vs = mload(uint256)(signature + 0x40)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+s = vs & 0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff	NodeType.EXPRESSION
+v = vs >> 255 + 27	NodeType.EXPRESSION
+uint256(s) > 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5D576E7357A4501DDFE92F46681B20A0	NodeType.IF";
+"BlockID: 10
+Call context: execute,verify,recover
+False
+TMP_22 = CONVERT 0 to address
+REF_7(ECDSA.RecoverError) -> RecoverError.InvalidSignatureLength
+TMP_95(None) := TMP_22(address)
+TMP_95(None) := REF_7(ECDSA.RecoverError)
+EXPRESSION:";
+"BlockID: 11
+Call context: execute,verify,recover
+None
+TMP_95(None) := TUPLE_0([<slither.core.solidity_types.elementary_type.ElementaryType object at 0x78247f262b80>, <slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x78247f262e50>])
+EXPRESSION:" [shape=box];
+"BlockID: 18
+Call context: execute,verify,recover,tryRecover
+None
+TMP_97(None) := TUPLE_3([<slither.core.solidity_types.elementary_type.ElementaryType object at 0x78247f262b80>, <slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x78247f262e50>])
+TMP_95(None) := TUPLE_1([<slither.core.solidity_types.elementary_type.ElementaryType object at 0x78247f2620d0>, <slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x78247f2623a0>])
+EXPRESSION:" [shape=box];
+"BlockID: 13
+Call context: execute,verify,recover,tryRecover,tryRecover
+True
+TMP_30 = CONVERT 0 to address
+REF_8(ECDSA.RecoverError) -> RecoverError.InvalidSignatureS
+TMP_99(None) := TMP_30(address)
+TMP_99(None) := REF_9(ECDSA.RecoverError)
+TMP_99(None) := REF_11(ECDSA.RecoverError)
+TMP_99(None) := REF_8(ECDSA.RecoverError)
+TMP_99(None) := REF_10(ECDSA.RecoverError)
+EXPRESSION:";
+"BlockID: 14
+Call context: execute,verify,recover,tryRecover,tryRecover
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 19
+Call context: execute,verify,recover,tryRecover,tryRecover
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF";
+"BlockID: 23
+Call context: execute,verify,recover,tryRecover,tryRecover
+True
+TMP_34 = CONVERT 0 to address
+REF_9(ECDSA.RecoverError) -> RecoverError.InvalidSignatureV
+TMP_99(None) := TMP_34(address)
+EXPRESSION:";
+"BlockID: 24
+Call context: execute,verify,recover,tryRecover,tryRecover
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 69
+Call context: execute,verify,recover,tryRecover,tryRecover
+None
+TMP_35(address) = SOLIDITY_CALL ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)
+signer(address) := TMP_35(address)
+TMP_36 = CONVERT 0 to address
+TMP_37(bool) = signer == TMP_36
+CONDITION TMP_37
+EXPRESSION:signer = ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)	NodeType.VARIABLE
+signer = ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)	NodeType.EXPRESSION
+signer == address(0)	NodeType.IF";
+"BlockID: 73
+Call context: execute,verify,recover,tryRecover,tryRecover
+True
+TMP_38 = CONVERT 0 to address
+REF_10(ECDSA.RecoverError) -> RecoverError.InvalidSignature
+TMP_99(None) := TMP_38(address)
+EXPRESSION:";
+"BlockID: 74
+Call context: execute,verify,recover,tryRecover,tryRecover
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 75
+Call context: execute,verify,recover,tryRecover,tryRecover
+None
+REF_11(ECDSA.RecoverError) -> RecoverError.NoError
+TMP_99(None) := signer(address)
+EXPRESSION:";
+"BlockID: 7
+Call context: execute,verify,recover,tryRecover
+True
+TMP_30 = CONVERT 0 to address
+REF_8(ECDSA.RecoverError) -> RecoverError.InvalidSignatureS
+TMP_99(None) := TMP_30(address)
+TMP_99(None) := REF_9(ECDSA.RecoverError)
+TMP_99(None) := REF_11(ECDSA.RecoverError)
+TMP_99(None) := REF_8(ECDSA.RecoverError)
+TMP_99(None) := REF_10(ECDSA.RecoverError)
+EXPRESSION:";
+"BlockID: 8
+Call context: execute,verify,recover,tryRecover
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 12
+Call context: execute,verify,recover,tryRecover
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF";
+"BlockID: 16
+Call context: execute,verify,recover,tryRecover
+True
+TMP_34 = CONVERT 0 to address
+REF_9(ECDSA.RecoverError) -> RecoverError.InvalidSignatureV
+TMP_99(None) := TMP_34(address)
+EXPRESSION:";
+"BlockID: 17
+Call context: execute,verify,recover,tryRecover
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 60
+Call context: execute,verify,recover,tryRecover
+None
+TMP_35(address) = SOLIDITY_CALL ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)
+signer(address) := TMP_35(address)
+TMP_36 = CONVERT 0 to address
+TMP_37(bool) = signer == TMP_36
+CONDITION TMP_37
+EXPRESSION:signer = ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)	NodeType.VARIABLE
+signer = ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)	NodeType.EXPRESSION
+signer == address(0)	NodeType.IF";
+"BlockID: 67
+Call context: execute,verify,recover,tryRecover
+True
+TMP_38 = CONVERT 0 to address
+REF_10(ECDSA.RecoverError) -> RecoverError.InvalidSignature
+TMP_99(None) := TMP_38(address)
+EXPRESSION:";
+"BlockID: 68
+Call context: execute,verify,recover,tryRecover
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 72
+Call context: execute,verify,recover,tryRecover
+None
+REF_11(ECDSA.RecoverError) -> RecoverError.NoError
+TMP_99(None) := signer(address)
+EXPRESSION:";
+"BlockID: 20
+Call context: execute,verify,recover
+True
+RETURN
+EXPRESSION:None	NodeType.RETURN";
+"BlockID: 21
+Call context: execute,verify,recover
+False
+REF_1(ECDSA.RecoverError) -> RecoverError.InvalidSignature
+TMP_1(bool) = error == REF_1
+CONDITION TMP_1
+EXPRESSION:error == RecoverError.InvalidSignature	NodeType.IF";
+"BlockID: 26
+Call context: execute,verify,recover
+True
+TMP_2(None) = SOLIDITY_CALL revert(string)(ECDSA: invalid signature)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 27
+Call context: execute,verify,recover
+False
+REF_2(ECDSA.RecoverError) -> RecoverError.InvalidSignatureLength
+TMP_3(bool) = error == REF_2
+CONDITION TMP_3
+EXPRESSION:error == RecoverError.InvalidSignatureLength	NodeType.IF";
+"BlockID: 33
+Call context: execute,verify,recover
+True
+TMP_4(None) = SOLIDITY_CALL revert(string)(ECDSA: invalid signature length)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 34
+Call context: execute,verify,recover
+False
+REF_3(ECDSA.RecoverError) -> RecoverError.InvalidSignatureS
+TMP_5(bool) = error == REF_3
+CONDITION TMP_5
+EXPRESSION:error == RecoverError.InvalidSignatureS	NodeType.IF";
+"BlockID: 39
+Call context: execute,verify,recover
+True
+TMP_6(None) = SOLIDITY_CALL revert(string)(ECDSA: invalid signature 's' value)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 40
+Call context: execute,verify,recover
+False
+REF_4(ECDSA.RecoverError) -> RecoverError.InvalidSignatureV
+TMP_7(bool) = error == REF_4
+CONDITION TMP_7
+EXPRESSION:error == RecoverError.InvalidSignatureV	NodeType.IF";
+"BlockID: 45
+Call context: execute,verify,recover
+True
+TMP_8(None) = SOLIDITY_CALL revert(string)(ECDSA: invalid signature 'v' value)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 46
+Call context: execute,verify,recover
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 52
+Call context: execute,verify,recover
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 59
+Call context: execute,verify,recover
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 66
+Call context: execute,verify,recover
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 71
+Call context: execute,verify,recover
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 43
+Call context: execute
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF";
+"BlockID: 48
+Call context: execute
+True
+TMP_33(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 49
+Call context: execute
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 35
+Call context: execute
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF";
+"BlockID: 41
+Call context: execute
+True
+TMP_33(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 42
+Call context: execute
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 30
+Call context: 
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF";
+"BlockID: 36
+Call context: 
+True
+TMP_33(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 37
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 22
+Call context: 
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF";
+"BlockID: 28
+Call context: 
+True
+TMP_33(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 29
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 55
+Call context: 
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF";
+"BlockID: 61
+Call context: 
+True
+TMP_33(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 62
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 47
+Call context: 
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF";
+"BlockID: 53
+Call context: 
+True
+TMP_33(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 54
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+REF_20(address) -> req.from
+REF_21(address) -> req.to
+REF_22(uint256) -> req.value
+REF_23(uint256) -> req.gas
+REF_24(uint256) -> req.nonce
+REF_25(bytes) -> req.data
+TMP_71(bytes32) = SOLIDITY_CALL keccak256(bytes)(REF_25)
+TMP_72(bytes) = SOLIDITY_CALL abi.encode()(TYPEHASH,REF_20,REF_21,REF_22,REF_23,REF_24,TMP_71)
+TMP_73(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_72)
+TMP_63(bool) = block.chainid == _CACHED_CHAIN_ID
+CONDITION TMP_63
+EXPRESSION:block.chainid == _CACHED_CHAIN_ID	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+REF_20(address) -> req.from
+REF_21(address) -> req.to
+REF_22(uint256) -> req.value
+REF_23(uint256) -> req.gas
+REF_24(uint256) -> req.nonce
+REF_25(bytes) -> req.data
+TMP_71(bytes32) = SOLIDITY_CALL keccak256(bytes)(REF_25)
+TMP_72(bytes) = SOLIDITY_CALL abi.encode()(TYPEHASH,REF_20,REF_21,REF_22,REF_23,REF_24,TMP_71)
+TMP_73(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_72)
+TMP_63(bool) = block.chainid == _CACHED_CHAIN_ID
+CONDITION TMP_63
+EXPRESSION:block.chainid == _CACHED_CHAIN_ID	NodeType.IF" -> "BlockID: 2
+Call context: execute,verify,_hashTypedDataV4
+True
+TMP_108(None) := _CACHED_DOMAIN_SEPARATOR(bytes32)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+REF_20(address) -> req.from
+REF_21(address) -> req.to
+REF_22(uint256) -> req.value
+REF_23(uint256) -> req.gas
+REF_24(uint256) -> req.nonce
+REF_25(bytes) -> req.data
+TMP_71(bytes32) = SOLIDITY_CALL keccak256(bytes)(REF_25)
+TMP_72(bytes) = SOLIDITY_CALL abi.encode()(TYPEHASH,REF_20,REF_21,REF_22,REF_23,REF_24,TMP_71)
+TMP_73(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_72)
+TMP_63(bool) = block.chainid == _CACHED_CHAIN_ID
+CONDITION TMP_63
+EXPRESSION:block.chainid == _CACHED_CHAIN_ID	NodeType.IF" -> "BlockID: 3
+Call context: execute,verify,_hashTypedDataV4
+False
+TMP_65 = CONVERT this to address
+TMP_66(bytes) = SOLIDITY_CALL abi.encode()(typeHash,nameHash,versionHash,block.chainid,TMP_65)
+TMP_67(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_66)
+TMP_109(None) := TMP_67(bytes32)
+TMP_108(None) := TMP_64(bytes32)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 38
+Call context: 
+True
+REF_31(address) -> req.from
+REF_32(uint256) -> _nonces[REF_31]
+REF_33(uint256) -> req.nonce
+TMP_81(uint256) = REF_33 (c)+ 1
+REF_32(uint256) (->_nonces) := TMP_81(uint256)
+NEW VARIABLE success
+NEW VARIABLE result
+REF_34(address) -> req.to
+REF_37(bytes) -> req.data
+REF_38(address) -> req.from
+TMP_82(bytes) = SOLIDITY_CALL abi.encodePacked()(REF_37,REF_38)
+REF_39(uint256) -> req.value
+REF_40(uint256) -> req.gas
+TUPLE_6(bool,bytes) = LOW_LEVEL_CALL, dest:REF_34, function:call, arguments:['TMP_82'] value:REF_39 gas:REF_40
+EXPRESSION:_nonces[req.from] = req.nonce + 1	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,result) = req.to.call{gas: req.gas,value: req.value}(abi.encodePacked(req.data,req.from))	NodeType.EXPRESSION" -> "BlockID: 44
+Call context: 
+None
+success(bool)= UNPACK TUPLE_6 index: 0 
+result(bytes)= UNPACK TUPLE_6 index: 1 
+TMP_83 = ! success 
+CONDITION TMP_83
+EXPRESSION:(success,result) = req.to.call{gas: req.gas,value: req.value}(abi.encodePacked(req.data,req.from))	NodeType.EXPRESSION
+! success	NodeType.IF" [key=0];
+"BlockID: 44
+Call context: 
+None
+success(bool)= UNPACK TUPLE_6 index: 0 
+result(bytes)= UNPACK TUPLE_6 index: 1 
+TMP_83 = ! success 
+CONDITION TMP_83
+EXPRESSION:(success,result) = req.to.call{gas: req.gas,value: req.value}(abi.encodePacked(req.data,req.from))	NodeType.EXPRESSION
+! success	NodeType.IF" -> "BlockID: 50
+Call context: 
+True
+REF_41 -> LENGTH result
+TMP_84(bool) = REF_41 < 68
+CONDITION TMP_84
+EXPRESSION:result.length < 68	NodeType.IF" [key=0];
+"BlockID: 44
+Call context: 
+None
+success(bool)= UNPACK TUPLE_6 index: 0 
+result(bytes)= UNPACK TUPLE_6 index: 1 
+TMP_83 = ! success 
+CONDITION TMP_83
+EXPRESSION:(success,result) = req.to.call{gas: req.gas,value: req.value}(abi.encodePacked(req.data,req.from))	NodeType.EXPRESSION
+! success	NodeType.IF" -> "BlockID: 51
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 50
+Call context: 
+True
+REF_41 -> LENGTH result
+TMP_84(bool) = REF_41 < 68
+CONDITION TMP_84
+EXPRESSION:result.length < 68	NodeType.IF" -> "BlockID: 56
+Call context: 
+True
+TMP_85(None) = SOLIDITY_CALL revert(string)(Transaction reverted silently)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 50
+Call context: 
+True
+REF_41 -> LENGTH result
+TMP_84(bool) = REF_41 < 68
+CONDITION TMP_84
+EXPRESSION:result.length < 68	NodeType.IF" -> "BlockID: 57
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 51
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 58
+Call context: 
+None
+TMP_89(uint256) = SOLIDITY_CALL gasleft()()
+REF_43(uint256) -> req.gas
+TMP_90(uint256) = REF_43 (c)/ 63
+TMP_91(bool) = TMP_89 > TMP_90
+CONDITION TMP_91
+EXPRESSION:TMP_91(bool) = TMP_89 > TMP_90	NodeType.IF" [key=0];
+"BlockID: 57
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 63
+Call context: 
+None
+INLINE ASM
+TMP_86(bytes) = result + 4
+result(bytes) := TMP_86(bytes)
+TMP_87(string) = SOLIDITY_CALL abi.decode()(result,string)
+TMP_88(None) = SOLIDITY_CALL revert(string)(TMP_87)
+EXPRESSION:None	NodeType.ASSEMBLY
+result = result + 0x04	NodeType.EXPRESSION
+revert(string)(abi.decode(result,(string)))	NodeType.EXPRESSION" [key=0];
+"BlockID: 32
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 38
+Call context: 
+True
+REF_31(address) -> req.from
+REF_32(uint256) -> _nonces[REF_31]
+REF_33(uint256) -> req.nonce
+TMP_81(uint256) = REF_33 (c)+ 1
+REF_32(uint256) (->_nonces) := TMP_81(uint256)
+NEW VARIABLE success
+NEW VARIABLE result
+REF_34(address) -> req.to
+REF_37(bytes) -> req.data
+REF_38(address) -> req.from
+TMP_82(bytes) = SOLIDITY_CALL abi.encodePacked()(REF_37,REF_38)
+REF_39(uint256) -> req.value
+REF_40(uint256) -> req.gas
+TUPLE_6(bool,bytes) = LOW_LEVEL_CALL, dest:REF_34, function:call, arguments:['TMP_82'] value:REF_39 gas:REF_40
+EXPRESSION:_nonces[req.from] = req.nonce + 1	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,result) = req.to.call{gas: req.gas,value: req.value}(abi.encodePacked(req.data,req.from))	NodeType.EXPRESSION" [key=0];
+"BlockID: 58
+Call context: 
+None
+TMP_89(uint256) = SOLIDITY_CALL gasleft()()
+REF_43(uint256) -> req.gas
+TMP_90(uint256) = REF_43 (c)/ 63
+TMP_91(bool) = TMP_89 > TMP_90
+CONDITION TMP_91
+EXPRESSION:TMP_91(bool) = TMP_89 > TMP_90	NodeType.IF" -> "BlockID: 64
+Call context: 
+True
+TMP_92(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 58
+Call context: 
+None
+TMP_89(uint256) = SOLIDITY_CALL gasleft()()
+REF_43(uint256) -> req.gas
+TMP_90(uint256) = REF_43 (c)/ 63
+TMP_91(bool) = TMP_89 > TMP_90
+CONDITION TMP_91
+EXPRESSION:TMP_91(bool) = TMP_89 > TMP_90	NodeType.IF" -> "BlockID: 65
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 65
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 70
+Call context: 
+True
+RETURN success,result
+EXPRESSION:(success,result)	NodeType.RETURN" [key=0];
+"BlockID: 4
+Call context: execute,verify
+None
+TMP_42(bytes) = SOLIDITY_CALL abi.encodePacked()(,domainSeparator,structHash)
+TMP_43(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_42)
+TMP_102(None) := TMP_43(bytes32)
+TMP_110(None) := TMP_69(bytes32)
+NEW VARIABLE recovered
+NEW VARIABLE error
+REF_5 -> LENGTH signature
+TMP_9(bool) = REF_5 == 65
+CONDITION TMP_9
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+signature.length == 65	NodeType.IF" -> "BlockID: 5
+Call context: execute,verify,recover
+True
+NEW VARIABLE r
+NEW VARIABLE s
+NEW VARIABLE v
+INLINE ASM
+TMP_10(bytes) = signature + 32
+TMP_11(uint256) = SOLIDITY_CALL mload(uint256)(TMP_10)
+r(bytes32) := TMP_11(uint256)
+TMP_12(bytes) = signature + 64
+TMP_13(uint256) = SOLIDITY_CALL mload(uint256)(TMP_12)
+s(bytes32) := TMP_13(uint256)
+TMP_14(bytes) = signature + 96
+TMP_15(uint256) = SOLIDITY_CALL mload(uint256)(TMP_14)
+TMP_16(uint256) = SOLIDITY_CALL byte(uint256,uint256)(0,TMP_15)
+v(uint8) := TMP_16(uint256)
+TMP_28 = CONVERT s to uint256
+TMP_29(bool) = TMP_28 > 57896044618658097711785492504343953926418782139537452191302581570759080747168
+CONDITION TMP_29
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+r = mload(uint256)(signature + 0x20)	NodeType.EXPRESSION
+s = mload(uint256)(signature + 0x40)	NodeType.EXPRESSION
+v = byte(uint256,uint256)(0,mload(uint256)(signature + 0x60))	NodeType.EXPRESSION
+uint256(s) > 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5D576E7357A4501DDFE92F46681B20A0	NodeType.IF" [key="successor_1"];
+"BlockID: 4
+Call context: execute,verify
+None
+TMP_42(bytes) = SOLIDITY_CALL abi.encodePacked()(,domainSeparator,structHash)
+TMP_43(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_42)
+TMP_102(None) := TMP_43(bytes32)
+TMP_110(None) := TMP_69(bytes32)
+NEW VARIABLE recovered
+NEW VARIABLE error
+REF_5 -> LENGTH signature
+TMP_9(bool) = REF_5 == 65
+CONDITION TMP_9
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+signature.length == 65	NodeType.IF" -> "BlockID: 6
+Call context: execute,verify,recover
+False
+REF_6 -> LENGTH signature
+TMP_17(bool) = REF_6 == 64
+CONDITION TMP_17
+EXPRESSION:signature.length == 64	NodeType.IF" [key="successor_1"];
+"BlockID: 2
+Call context: execute,verify,_hashTypedDataV4
+True
+TMP_108(None) := _CACHED_DOMAIN_SEPARATOR(bytes32)
+EXPRESSION:" -> "BlockID: 4
+Call context: execute,verify
+None
+TMP_42(bytes) = SOLIDITY_CALL abi.encodePacked()(,domainSeparator,structHash)
+TMP_43(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_42)
+TMP_102(None) := TMP_43(bytes32)
+TMP_110(None) := TMP_69(bytes32)
+NEW VARIABLE recovered
+NEW VARIABLE error
+REF_5 -> LENGTH signature
+TMP_9(bool) = REF_5 == 65
+CONDITION TMP_9
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+signature.length == 65	NodeType.IF" [key="successor_5", ref="Forwarder._domainSeparatorV4"];
+"BlockID: 3
+Call context: execute,verify,_hashTypedDataV4
+False
+TMP_65 = CONVERT this to address
+TMP_66(bytes) = SOLIDITY_CALL abi.encode()(typeHash,nameHash,versionHash,block.chainid,TMP_65)
+TMP_67(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_66)
+TMP_109(None) := TMP_67(bytes32)
+TMP_108(None) := TMP_64(bytes32)
+EXPRESSION:" -> "BlockID: 4
+Call context: execute,verify
+None
+TMP_42(bytes) = SOLIDITY_CALL abi.encodePacked()(,domainSeparator,structHash)
+TMP_43(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_42)
+TMP_102(None) := TMP_43(bytes32)
+TMP_110(None) := TMP_69(bytes32)
+NEW VARIABLE recovered
+NEW VARIABLE error
+REF_5 -> LENGTH signature
+TMP_9(bool) = REF_5 == 65
+CONDITION TMP_9
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+signature.length == 65	NodeType.IF" [key="successor_5", ref="Forwarder._domainSeparatorV4"];
+"BlockID: 15
+Call context: execute,verify
+None
+recovered(address)= UNPACK TUPLE_2 index: 0 
+error(ECDSA.RecoverError)= UNPACK TUPLE_2 index: 1 
+REF_0(ECDSA.RecoverError) -> RecoverError.NoError
+TMP_0(bool) = error == REF_0
+CONDITION TMP_0
+EXPRESSION:(recovered,error) = tryRecover(hash,signature)	NodeType.EXPRESSION
+error == RecoverError.NoError	NodeType.IF" -> "BlockID: 20
+Call context: execute,verify,recover
+True
+RETURN
+EXPRESSION:None	NodeType.RETURN" [key="successor_5"];
+"BlockID: 15
+Call context: execute,verify
+None
+recovered(address)= UNPACK TUPLE_2 index: 0 
+error(ECDSA.RecoverError)= UNPACK TUPLE_2 index: 1 
+REF_0(ECDSA.RecoverError) -> RecoverError.NoError
+TMP_0(bool) = error == REF_0
+CONDITION TMP_0
+EXPRESSION:(recovered,error) = tryRecover(hash,signature)	NodeType.EXPRESSION
+error == RecoverError.NoError	NodeType.IF" -> "BlockID: 21
+Call context: execute,verify,recover
+False
+REF_1(ECDSA.RecoverError) -> RecoverError.InvalidSignature
+TMP_1(bool) = error == REF_1
+CONDITION TMP_1
+EXPRESSION:error == RecoverError.InvalidSignature	NodeType.IF" [key="successor_5"];
+"BlockID: 25
+Call context: execute,verify
+None
+TMP_96(None) := recovered(address)
+signer(address) := TMP_75(address)
+REF_27(address) -> req.from
+REF_28(uint256) -> _nonces[REF_27]
+REF_29(uint256) -> req.nonce
+TMP_76(bool) = REF_28 == REF_29
+REF_30(address) -> req.from
+TMP_77(bool) = signer == REF_30
+TMP_78(bool) = TMP_76 && TMP_77
+TMP_113(None) := TMP_78(bool)
+CONDITION TMP_79
+EXPRESSION:_throwError(error)	NodeType.EXPRESSION
+signer = _hashTypedDataV4(keccak256(bytes)(abi.encode(TYPEHASH,req.from,req.to,req.value,req.gas,req.nonce,keccak256(bytes)(req.data)))).recover(signature)	NodeType.VARIABLE
+signer = _hashTypedDataV4(keccak256(bytes)(abi.encode(TYPEHASH,req.from,req.to,req.value,req.gas,req.nonce,keccak256(bytes)(req.data)))).recover(signature)	NodeType.EXPRESSION
+qiantao require	NodeType.IF" -> "BlockID: 31
+Call context: 
+True
+TMP_80(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_2"];
+"BlockID: 25
+Call context: execute,verify
+None
+TMP_96(None) := recovered(address)
+signer(address) := TMP_75(address)
+REF_27(address) -> req.from
+REF_28(uint256) -> _nonces[REF_27]
+REF_29(uint256) -> req.nonce
+TMP_76(bool) = REF_28 == REF_29
+REF_30(address) -> req.from
+TMP_77(bool) = signer == REF_30
+TMP_78(bool) = TMP_76 && TMP_77
+TMP_113(None) := TMP_78(bool)
+CONDITION TMP_79
+EXPRESSION:_throwError(error)	NodeType.EXPRESSION
+signer = _hashTypedDataV4(keccak256(bytes)(abi.encode(TYPEHASH,req.from,req.to,req.value,req.gas,req.nonce,keccak256(bytes)(req.data)))).recover(signature)	NodeType.VARIABLE
+signer = _hashTypedDataV4(keccak256(bytes)(abi.encode(TYPEHASH,req.from,req.to,req.value,req.gas,req.nonce,keccak256(bytes)(req.data)))).recover(signature)	NodeType.EXPRESSION
+qiantao require	NodeType.IF" -> "BlockID: 32
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+"BlockID: 5
+Call context: execute,verify,recover
+True
+NEW VARIABLE r
+NEW VARIABLE s
+NEW VARIABLE v
+INLINE ASM
+TMP_10(bytes) = signature + 32
+TMP_11(uint256) = SOLIDITY_CALL mload(uint256)(TMP_10)
+r(bytes32) := TMP_11(uint256)
+TMP_12(bytes) = signature + 64
+TMP_13(uint256) = SOLIDITY_CALL mload(uint256)(TMP_12)
+s(bytes32) := TMP_13(uint256)
+TMP_14(bytes) = signature + 96
+TMP_15(uint256) = SOLIDITY_CALL mload(uint256)(TMP_14)
+TMP_16(uint256) = SOLIDITY_CALL byte(uint256,uint256)(0,TMP_15)
+v(uint8) := TMP_16(uint256)
+TMP_28 = CONVERT s to uint256
+TMP_29(bool) = TMP_28 > 57896044618658097711785492504343953926418782139537452191302581570759080747168
+CONDITION TMP_29
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+r = mload(uint256)(signature + 0x20)	NodeType.EXPRESSION
+s = mload(uint256)(signature + 0x40)	NodeType.EXPRESSION
+v = byte(uint256,uint256)(0,mload(uint256)(signature + 0x60))	NodeType.EXPRESSION
+uint256(s) > 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5D576E7357A4501DDFE92F46681B20A0	NodeType.IF" -> "BlockID: 7
+Call context: execute,verify,recover,tryRecover
+True
+TMP_30 = CONVERT 0 to address
+REF_8(ECDSA.RecoverError) -> RecoverError.InvalidSignatureS
+TMP_99(None) := TMP_30(address)
+TMP_99(None) := REF_9(ECDSA.RecoverError)
+TMP_99(None) := REF_11(ECDSA.RecoverError)
+TMP_99(None) := REF_8(ECDSA.RecoverError)
+TMP_99(None) := REF_10(ECDSA.RecoverError)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 5
+Call context: execute,verify,recover
+True
+NEW VARIABLE r
+NEW VARIABLE s
+NEW VARIABLE v
+INLINE ASM
+TMP_10(bytes) = signature + 32
+TMP_11(uint256) = SOLIDITY_CALL mload(uint256)(TMP_10)
+r(bytes32) := TMP_11(uint256)
+TMP_12(bytes) = signature + 64
+TMP_13(uint256) = SOLIDITY_CALL mload(uint256)(TMP_12)
+s(bytes32) := TMP_13(uint256)
+TMP_14(bytes) = signature + 96
+TMP_15(uint256) = SOLIDITY_CALL mload(uint256)(TMP_14)
+TMP_16(uint256) = SOLIDITY_CALL byte(uint256,uint256)(0,TMP_15)
+v(uint8) := TMP_16(uint256)
+TMP_28 = CONVERT s to uint256
+TMP_29(bool) = TMP_28 > 57896044618658097711785492504343953926418782139537452191302581570759080747168
+CONDITION TMP_29
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+r = mload(uint256)(signature + 0x20)	NodeType.EXPRESSION
+s = mload(uint256)(signature + 0x40)	NodeType.EXPRESSION
+v = byte(uint256,uint256)(0,mload(uint256)(signature + 0x60))	NodeType.EXPRESSION
+uint256(s) > 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5D576E7357A4501DDFE92F46681B20A0	NodeType.IF" -> "BlockID: 8
+Call context: execute,verify,recover,tryRecover
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 6
+Call context: execute,verify,recover
+False
+REF_6 -> LENGTH signature
+TMP_17(bool) = REF_6 == 64
+CONDITION TMP_17
+EXPRESSION:signature.length == 64	NodeType.IF" -> "BlockID: 9
+Call context: execute,verify,recover
+True
+NEW VARIABLE r_scope_0
+NEW VARIABLE vs
+INLINE ASM
+TMP_18(bytes) = signature + 32
+TMP_19(uint256) = SOLIDITY_CALL mload(uint256)(TMP_18)
+r(bytes32) := TMP_19(uint256)
+TMP_20(bytes) = signature + 64
+TMP_21(uint256) = SOLIDITY_CALL mload(uint256)(TMP_20)
+vs(bytes32) := TMP_21(uint256)
+NEW VARIABLE s
+NEW VARIABLE v
+INLINE ASM
+TMP_24(bytes32) = vs & 57896044618658097711785492504343953926634992332820282019728792003956564819967
+s(bytes32) := TMP_24(bytes32)
+TMP_25(bytes32) = vs >> 255
+TMP_26(bytes32) = TMP_25 + 27
+v(uint8) := TMP_26(bytes32)
+TMP_28 = CONVERT s to uint256
+TMP_29(bool) = TMP_28 > 57896044618658097711785492504343953926418782139537452191302581570759080747168
+CONDITION TMP_29
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+r = mload(uint256)(signature + 0x20)	NodeType.EXPRESSION
+vs = mload(uint256)(signature + 0x40)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+s = vs & 0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff	NodeType.EXPRESSION
+v = vs >> 255 + 27	NodeType.EXPRESSION
+uint256(s) > 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5D576E7357A4501DDFE92F46681B20A0	NodeType.IF" [key=0];
+"BlockID: 6
+Call context: execute,verify,recover
+False
+REF_6 -> LENGTH signature
+TMP_17(bool) = REF_6 == 64
+CONDITION TMP_17
+EXPRESSION:signature.length == 64	NodeType.IF" -> "BlockID: 10
+Call context: execute,verify,recover
+False
+TMP_22 = CONVERT 0 to address
+REF_7(ECDSA.RecoverError) -> RecoverError.InvalidSignatureLength
+TMP_95(None) := TMP_22(address)
+TMP_95(None) := REF_7(ECDSA.RecoverError)
+EXPRESSION:" [key=0];
+"BlockID: 9
+Call context: execute,verify,recover
+True
+NEW VARIABLE r_scope_0
+NEW VARIABLE vs
+INLINE ASM
+TMP_18(bytes) = signature + 32
+TMP_19(uint256) = SOLIDITY_CALL mload(uint256)(TMP_18)
+r(bytes32) := TMP_19(uint256)
+TMP_20(bytes) = signature + 64
+TMP_21(uint256) = SOLIDITY_CALL mload(uint256)(TMP_20)
+vs(bytes32) := TMP_21(uint256)
+NEW VARIABLE s
+NEW VARIABLE v
+INLINE ASM
+TMP_24(bytes32) = vs & 57896044618658097711785492504343953926634992332820282019728792003956564819967
+s(bytes32) := TMP_24(bytes32)
+TMP_25(bytes32) = vs >> 255
+TMP_26(bytes32) = TMP_25 + 27
+v(uint8) := TMP_26(bytes32)
+TMP_28 = CONVERT s to uint256
+TMP_29(bool) = TMP_28 > 57896044618658097711785492504343953926418782139537452191302581570759080747168
+CONDITION TMP_29
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+r = mload(uint256)(signature + 0x20)	NodeType.EXPRESSION
+vs = mload(uint256)(signature + 0x40)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+s = vs & 0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff	NodeType.EXPRESSION
+v = vs >> 255 + 27	NodeType.EXPRESSION
+uint256(s) > 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5D576E7357A4501DDFE92F46681B20A0	NodeType.IF" -> "BlockID: 13
+Call context: execute,verify,recover,tryRecover,tryRecover
+True
+TMP_30 = CONVERT 0 to address
+REF_8(ECDSA.RecoverError) -> RecoverError.InvalidSignatureS
+TMP_99(None) := TMP_30(address)
+TMP_99(None) := REF_9(ECDSA.RecoverError)
+TMP_99(None) := REF_11(ECDSA.RecoverError)
+TMP_99(None) := REF_8(ECDSA.RecoverError)
+TMP_99(None) := REF_10(ECDSA.RecoverError)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 9
+Call context: execute,verify,recover
+True
+NEW VARIABLE r_scope_0
+NEW VARIABLE vs
+INLINE ASM
+TMP_18(bytes) = signature + 32
+TMP_19(uint256) = SOLIDITY_CALL mload(uint256)(TMP_18)
+r(bytes32) := TMP_19(uint256)
+TMP_20(bytes) = signature + 64
+TMP_21(uint256) = SOLIDITY_CALL mload(uint256)(TMP_20)
+vs(bytes32) := TMP_21(uint256)
+NEW VARIABLE s
+NEW VARIABLE v
+INLINE ASM
+TMP_24(bytes32) = vs & 57896044618658097711785492504343953926634992332820282019728792003956564819967
+s(bytes32) := TMP_24(bytes32)
+TMP_25(bytes32) = vs >> 255
+TMP_26(bytes32) = TMP_25 + 27
+v(uint8) := TMP_26(bytes32)
+TMP_28 = CONVERT s to uint256
+TMP_29(bool) = TMP_28 > 57896044618658097711785492504343953926418782139537452191302581570759080747168
+CONDITION TMP_29
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+r = mload(uint256)(signature + 0x20)	NodeType.EXPRESSION
+vs = mload(uint256)(signature + 0x40)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+s = vs & 0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff	NodeType.EXPRESSION
+v = vs >> 255 + 27	NodeType.EXPRESSION
+uint256(s) > 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5D576E7357A4501DDFE92F46681B20A0	NodeType.IF" -> "BlockID: 14
+Call context: execute,verify,recover,tryRecover,tryRecover
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 10
+Call context: execute,verify,recover
+False
+TMP_22 = CONVERT 0 to address
+REF_7(ECDSA.RecoverError) -> RecoverError.InvalidSignatureLength
+TMP_95(None) := TMP_22(address)
+TMP_95(None) := REF_7(ECDSA.RecoverError)
+EXPRESSION:" -> "BlockID: 15
+Call context: execute,verify
+None
+recovered(address)= UNPACK TUPLE_2 index: 0 
+error(ECDSA.RecoverError)= UNPACK TUPLE_2 index: 1 
+REF_0(ECDSA.RecoverError) -> RecoverError.NoError
+TMP_0(bool) = error == REF_0
+CONDITION TMP_0
+EXPRESSION:(recovered,error) = tryRecover(hash,signature)	NodeType.EXPRESSION
+error == RecoverError.NoError	NodeType.IF" [key="successor_5", ref="ECDSA.tryRecover"];
+"BlockID: 11
+Call context: execute,verify,recover
+None
+TMP_95(None) := TUPLE_0([<slither.core.solidity_types.elementary_type.ElementaryType object at 0x78247f262b80>, <slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x78247f262e50>])
+EXPRESSION:" -> "BlockID: 15
+Call context: execute,verify
+None
+recovered(address)= UNPACK TUPLE_2 index: 0 
+error(ECDSA.RecoverError)= UNPACK TUPLE_2 index: 1 
+REF_0(ECDSA.RecoverError) -> RecoverError.NoError
+TMP_0(bool) = error == REF_0
+CONDITION TMP_0
+EXPRESSION:(recovered,error) = tryRecover(hash,signature)	NodeType.EXPRESSION
+error == RecoverError.NoError	NodeType.IF" [key="successor_5", ref="ECDSA.tryRecover"];
+"BlockID: 18
+Call context: execute,verify,recover,tryRecover
+None
+TMP_97(None) := TUPLE_3([<slither.core.solidity_types.elementary_type.ElementaryType object at 0x78247f262b80>, <slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x78247f262e50>])
+TMP_95(None) := TUPLE_1([<slither.core.solidity_types.elementary_type.ElementaryType object at 0x78247f2620d0>, <slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x78247f2623a0>])
+EXPRESSION:" -> "BlockID: 15
+Call context: execute,verify
+None
+recovered(address)= UNPACK TUPLE_2 index: 0 
+error(ECDSA.RecoverError)= UNPACK TUPLE_2 index: 1 
+REF_0(ECDSA.RecoverError) -> RecoverError.NoError
+TMP_0(bool) = error == REF_0
+CONDITION TMP_0
+EXPRESSION:(recovered,error) = tryRecover(hash,signature)	NodeType.EXPRESSION
+error == RecoverError.NoError	NodeType.IF" [key="successor_5", ref="ECDSA.tryRecover"];
+"BlockID: 13
+Call context: execute,verify,recover,tryRecover,tryRecover
+True
+TMP_30 = CONVERT 0 to address
+REF_8(ECDSA.RecoverError) -> RecoverError.InvalidSignatureS
+TMP_99(None) := TMP_30(address)
+TMP_99(None) := REF_9(ECDSA.RecoverError)
+TMP_99(None) := REF_11(ECDSA.RecoverError)
+TMP_99(None) := REF_8(ECDSA.RecoverError)
+TMP_99(None) := REF_10(ECDSA.RecoverError)
+EXPRESSION:" -> "BlockID: 18
+Call context: execute,verify,recover,tryRecover
+None
+TMP_97(None) := TUPLE_3([<slither.core.solidity_types.elementary_type.ElementaryType object at 0x78247f262b80>, <slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x78247f262e50>])
+TMP_95(None) := TUPLE_1([<slither.core.solidity_types.elementary_type.ElementaryType object at 0x78247f2620d0>, <slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x78247f2623a0>])
+EXPRESSION:" [key="successor_5", ref="ECDSA.tryRecover"];
+"BlockID: 14
+Call context: execute,verify,recover,tryRecover,tryRecover
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 19
+Call context: execute,verify,recover,tryRecover,tryRecover
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF" [key=0];
+"BlockID: 19
+Call context: execute,verify,recover,tryRecover,tryRecover
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF" -> "BlockID: 23
+Call context: execute,verify,recover,tryRecover,tryRecover
+True
+TMP_34 = CONVERT 0 to address
+REF_9(ECDSA.RecoverError) -> RecoverError.InvalidSignatureV
+TMP_99(None) := TMP_34(address)
+EXPRESSION:" [key=0];
+"BlockID: 19
+Call context: execute,verify,recover,tryRecover,tryRecover
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF" -> "BlockID: 24
+Call context: execute,verify,recover,tryRecover,tryRecover
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 23
+Call context: execute,verify,recover,tryRecover,tryRecover
+True
+TMP_34 = CONVERT 0 to address
+REF_9(ECDSA.RecoverError) -> RecoverError.InvalidSignatureV
+TMP_99(None) := TMP_34(address)
+EXPRESSION:" -> "BlockID: 18
+Call context: execute,verify,recover,tryRecover
+None
+TMP_97(None) := TUPLE_3([<slither.core.solidity_types.elementary_type.ElementaryType object at 0x78247f262b80>, <slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x78247f262e50>])
+TMP_95(None) := TUPLE_1([<slither.core.solidity_types.elementary_type.ElementaryType object at 0x78247f2620d0>, <slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x78247f2623a0>])
+EXPRESSION:" [key="successor_5", ref="ECDSA.tryRecover"];
+"BlockID: 24
+Call context: execute,verify,recover,tryRecover,tryRecover
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 30
+Call context: 
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF" [key=0];
+"BlockID: 69
+Call context: execute,verify,recover,tryRecover,tryRecover
+None
+TMP_35(address) = SOLIDITY_CALL ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)
+signer(address) := TMP_35(address)
+TMP_36 = CONVERT 0 to address
+TMP_37(bool) = signer == TMP_36
+CONDITION TMP_37
+EXPRESSION:signer = ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)	NodeType.VARIABLE
+signer = ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)	NodeType.EXPRESSION
+signer == address(0)	NodeType.IF" -> "BlockID: 73
+Call context: execute,verify,recover,tryRecover,tryRecover
+True
+TMP_38 = CONVERT 0 to address
+REF_10(ECDSA.RecoverError) -> RecoverError.InvalidSignature
+TMP_99(None) := TMP_38(address)
+EXPRESSION:" [key=0];
+"BlockID: 69
+Call context: execute,verify,recover,tryRecover,tryRecover
+None
+TMP_35(address) = SOLIDITY_CALL ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)
+signer(address) := TMP_35(address)
+TMP_36 = CONVERT 0 to address
+TMP_37(bool) = signer == TMP_36
+CONDITION TMP_37
+EXPRESSION:signer = ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)	NodeType.VARIABLE
+signer = ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)	NodeType.EXPRESSION
+signer == address(0)	NodeType.IF" -> "BlockID: 74
+Call context: execute,verify,recover,tryRecover,tryRecover
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 73
+Call context: execute,verify,recover,tryRecover,tryRecover
+True
+TMP_38 = CONVERT 0 to address
+REF_10(ECDSA.RecoverError) -> RecoverError.InvalidSignature
+TMP_99(None) := TMP_38(address)
+EXPRESSION:" -> "BlockID: 18
+Call context: execute,verify,recover,tryRecover
+None
+TMP_97(None) := TUPLE_3([<slither.core.solidity_types.elementary_type.ElementaryType object at 0x78247f262b80>, <slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x78247f262e50>])
+TMP_95(None) := TUPLE_1([<slither.core.solidity_types.elementary_type.ElementaryType object at 0x78247f2620d0>, <slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x78247f2623a0>])
+EXPRESSION:" [key="successor_5", ref="ECDSA.tryRecover"];
+"BlockID: 74
+Call context: execute,verify,recover,tryRecover,tryRecover
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 75
+Call context: execute,verify,recover,tryRecover,tryRecover
+None
+REF_11(ECDSA.RecoverError) -> RecoverError.NoError
+TMP_99(None) := signer(address)
+EXPRESSION:" [key=0];
+"BlockID: 75
+Call context: execute,verify,recover,tryRecover,tryRecover
+None
+REF_11(ECDSA.RecoverError) -> RecoverError.NoError
+TMP_99(None) := signer(address)
+EXPRESSION:" -> "BlockID: 18
+Call context: execute,verify,recover,tryRecover
+None
+TMP_97(None) := TUPLE_3([<slither.core.solidity_types.elementary_type.ElementaryType object at 0x78247f262b80>, <slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x78247f262e50>])
+TMP_95(None) := TUPLE_1([<slither.core.solidity_types.elementary_type.ElementaryType object at 0x78247f2620d0>, <slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x78247f2623a0>])
+EXPRESSION:" [key="successor_5", ref="ECDSA.tryRecover"];
+"BlockID: 7
+Call context: execute,verify,recover,tryRecover
+True
+TMP_30 = CONVERT 0 to address
+REF_8(ECDSA.RecoverError) -> RecoverError.InvalidSignatureS
+TMP_99(None) := TMP_30(address)
+TMP_99(None) := REF_9(ECDSA.RecoverError)
+TMP_99(None) := REF_11(ECDSA.RecoverError)
+TMP_99(None) := REF_8(ECDSA.RecoverError)
+TMP_99(None) := REF_10(ECDSA.RecoverError)
+EXPRESSION:" -> "BlockID: 11
+Call context: execute,verify,recover
+None
+TMP_95(None) := TUPLE_0([<slither.core.solidity_types.elementary_type.ElementaryType object at 0x78247f262b80>, <slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x78247f262e50>])
+EXPRESSION:" [key="successor_5", ref="ECDSA.tryRecover"];
+"BlockID: 8
+Call context: execute,verify,recover,tryRecover
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 12
+Call context: execute,verify,recover,tryRecover
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF" [key=0];
+"BlockID: 12
+Call context: execute,verify,recover,tryRecover
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF" -> "BlockID: 16
+Call context: execute,verify,recover,tryRecover
+True
+TMP_34 = CONVERT 0 to address
+REF_9(ECDSA.RecoverError) -> RecoverError.InvalidSignatureV
+TMP_99(None) := TMP_34(address)
+EXPRESSION:" [key=0];
+"BlockID: 12
+Call context: execute,verify,recover,tryRecover
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF" -> "BlockID: 17
+Call context: execute,verify,recover,tryRecover
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 16
+Call context: execute,verify,recover,tryRecover
+True
+TMP_34 = CONVERT 0 to address
+REF_9(ECDSA.RecoverError) -> RecoverError.InvalidSignatureV
+TMP_99(None) := TMP_34(address)
+EXPRESSION:" -> "BlockID: 11
+Call context: execute,verify,recover
+None
+TMP_95(None) := TUPLE_0([<slither.core.solidity_types.elementary_type.ElementaryType object at 0x78247f262b80>, <slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x78247f262e50>])
+EXPRESSION:" [key="successor_5", ref="ECDSA.tryRecover"];
+"BlockID: 17
+Call context: execute,verify,recover,tryRecover
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 22
+Call context: 
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF" [key=0];
+"BlockID: 60
+Call context: execute,verify,recover,tryRecover
+None
+TMP_35(address) = SOLIDITY_CALL ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)
+signer(address) := TMP_35(address)
+TMP_36 = CONVERT 0 to address
+TMP_37(bool) = signer == TMP_36
+CONDITION TMP_37
+EXPRESSION:signer = ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)	NodeType.VARIABLE
+signer = ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)	NodeType.EXPRESSION
+signer == address(0)	NodeType.IF" -> "BlockID: 67
+Call context: execute,verify,recover,tryRecover
+True
+TMP_38 = CONVERT 0 to address
+REF_10(ECDSA.RecoverError) -> RecoverError.InvalidSignature
+TMP_99(None) := TMP_38(address)
+EXPRESSION:" [key=0];
+"BlockID: 60
+Call context: execute,verify,recover,tryRecover
+None
+TMP_35(address) = SOLIDITY_CALL ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)
+signer(address) := TMP_35(address)
+TMP_36 = CONVERT 0 to address
+TMP_37(bool) = signer == TMP_36
+CONDITION TMP_37
+EXPRESSION:signer = ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)	NodeType.VARIABLE
+signer = ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)	NodeType.EXPRESSION
+signer == address(0)	NodeType.IF" -> "BlockID: 68
+Call context: execute,verify,recover,tryRecover
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 67
+Call context: execute,verify,recover,tryRecover
+True
+TMP_38 = CONVERT 0 to address
+REF_10(ECDSA.RecoverError) -> RecoverError.InvalidSignature
+TMP_99(None) := TMP_38(address)
+EXPRESSION:" -> "BlockID: 11
+Call context: execute,verify,recover
+None
+TMP_95(None) := TUPLE_0([<slither.core.solidity_types.elementary_type.ElementaryType object at 0x78247f262b80>, <slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x78247f262e50>])
+EXPRESSION:" [key="successor_5", ref="ECDSA.tryRecover"];
+"BlockID: 68
+Call context: execute,verify,recover,tryRecover
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 72
+Call context: execute,verify,recover,tryRecover
+None
+REF_11(ECDSA.RecoverError) -> RecoverError.NoError
+TMP_99(None) := signer(address)
+EXPRESSION:" [key=0];
+"BlockID: 72
+Call context: execute,verify,recover,tryRecover
+None
+REF_11(ECDSA.RecoverError) -> RecoverError.NoError
+TMP_99(None) := signer(address)
+EXPRESSION:" -> "BlockID: 11
+Call context: execute,verify,recover
+None
+TMP_95(None) := TUPLE_0([<slither.core.solidity_types.elementary_type.ElementaryType object at 0x78247f262b80>, <slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x78247f262e50>])
+EXPRESSION:" [key="successor_5", ref="ECDSA.tryRecover"];
+"BlockID: 20
+Call context: execute,verify,recover
+True
+RETURN
+EXPRESSION:None	NodeType.RETURN" -> "BlockID: 25
+Call context: execute,verify
+None
+TMP_96(None) := recovered(address)
+signer(address) := TMP_75(address)
+REF_27(address) -> req.from
+REF_28(uint256) -> _nonces[REF_27]
+REF_29(uint256) -> req.nonce
+TMP_76(bool) = REF_28 == REF_29
+REF_30(address) -> req.from
+TMP_77(bool) = signer == REF_30
+TMP_78(bool) = TMP_76 && TMP_77
+TMP_113(None) := TMP_78(bool)
+CONDITION TMP_79
+EXPRESSION:_throwError(error)	NodeType.EXPRESSION
+signer = _hashTypedDataV4(keccak256(bytes)(abi.encode(TYPEHASH,req.from,req.to,req.value,req.gas,req.nonce,keccak256(bytes)(req.data)))).recover(signature)	NodeType.VARIABLE
+signer = _hashTypedDataV4(keccak256(bytes)(abi.encode(TYPEHASH,req.from,req.to,req.value,req.gas,req.nonce,keccak256(bytes)(req.data)))).recover(signature)	NodeType.EXPRESSION
+qiantao require	NodeType.IF" [key="successor_5", ref="ECDSA._throwError"];
+"BlockID: 21
+Call context: execute,verify,recover
+False
+REF_1(ECDSA.RecoverError) -> RecoverError.InvalidSignature
+TMP_1(bool) = error == REF_1
+CONDITION TMP_1
+EXPRESSION:error == RecoverError.InvalidSignature	NodeType.IF" -> "BlockID: 26
+Call context: execute,verify,recover
+True
+TMP_2(None) = SOLIDITY_CALL revert(string)(ECDSA: invalid signature)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 21
+Call context: execute,verify,recover
+False
+REF_1(ECDSA.RecoverError) -> RecoverError.InvalidSignature
+TMP_1(bool) = error == REF_1
+CONDITION TMP_1
+EXPRESSION:error == RecoverError.InvalidSignature	NodeType.IF" -> "BlockID: 27
+Call context: execute,verify,recover
+False
+REF_2(ECDSA.RecoverError) -> RecoverError.InvalidSignatureLength
+TMP_3(bool) = error == REF_2
+CONDITION TMP_3
+EXPRESSION:error == RecoverError.InvalidSignatureLength	NodeType.IF" [key=0];
+"BlockID: 27
+Call context: execute,verify,recover
+False
+REF_2(ECDSA.RecoverError) -> RecoverError.InvalidSignatureLength
+TMP_3(bool) = error == REF_2
+CONDITION TMP_3
+EXPRESSION:error == RecoverError.InvalidSignatureLength	NodeType.IF" -> "BlockID: 33
+Call context: execute,verify,recover
+True
+TMP_4(None) = SOLIDITY_CALL revert(string)(ECDSA: invalid signature length)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 27
+Call context: execute,verify,recover
+False
+REF_2(ECDSA.RecoverError) -> RecoverError.InvalidSignatureLength
+TMP_3(bool) = error == REF_2
+CONDITION TMP_3
+EXPRESSION:error == RecoverError.InvalidSignatureLength	NodeType.IF" -> "BlockID: 34
+Call context: execute,verify,recover
+False
+REF_3(ECDSA.RecoverError) -> RecoverError.InvalidSignatureS
+TMP_5(bool) = error == REF_3
+CONDITION TMP_5
+EXPRESSION:error == RecoverError.InvalidSignatureS	NodeType.IF" [key=0];
+"BlockID: 34
+Call context: execute,verify,recover
+False
+REF_3(ECDSA.RecoverError) -> RecoverError.InvalidSignatureS
+TMP_5(bool) = error == REF_3
+CONDITION TMP_5
+EXPRESSION:error == RecoverError.InvalidSignatureS	NodeType.IF" -> "BlockID: 39
+Call context: execute,verify,recover
+True
+TMP_6(None) = SOLIDITY_CALL revert(string)(ECDSA: invalid signature 's' value)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 34
+Call context: execute,verify,recover
+False
+REF_3(ECDSA.RecoverError) -> RecoverError.InvalidSignatureS
+TMP_5(bool) = error == REF_3
+CONDITION TMP_5
+EXPRESSION:error == RecoverError.InvalidSignatureS	NodeType.IF" -> "BlockID: 40
+Call context: execute,verify,recover
+False
+REF_4(ECDSA.RecoverError) -> RecoverError.InvalidSignatureV
+TMP_7(bool) = error == REF_4
+CONDITION TMP_7
+EXPRESSION:error == RecoverError.InvalidSignatureV	NodeType.IF" [key=0];
+"BlockID: 40
+Call context: execute,verify,recover
+False
+REF_4(ECDSA.RecoverError) -> RecoverError.InvalidSignatureV
+TMP_7(bool) = error == REF_4
+CONDITION TMP_7
+EXPRESSION:error == RecoverError.InvalidSignatureV	NodeType.IF" -> "BlockID: 45
+Call context: execute,verify,recover
+True
+TMP_8(None) = SOLIDITY_CALL revert(string)(ECDSA: invalid signature 'v' value)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 40
+Call context: execute,verify,recover
+False
+REF_4(ECDSA.RecoverError) -> RecoverError.InvalidSignatureV
+TMP_7(bool) = error == REF_4
+CONDITION TMP_7
+EXPRESSION:error == RecoverError.InvalidSignatureV	NodeType.IF" -> "BlockID: 46
+Call context: execute,verify,recover
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 46
+Call context: execute,verify,recover
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 52
+Call context: execute,verify,recover
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 52
+Call context: execute,verify,recover
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 59
+Call context: execute,verify,recover
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 59
+Call context: execute,verify,recover
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 66
+Call context: execute,verify,recover
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 66
+Call context: execute,verify,recover
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 71
+Call context: execute,verify,recover
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 71
+Call context: execute,verify,recover
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 25
+Call context: execute,verify
+None
+TMP_96(None) := recovered(address)
+signer(address) := TMP_75(address)
+REF_27(address) -> req.from
+REF_28(uint256) -> _nonces[REF_27]
+REF_29(uint256) -> req.nonce
+TMP_76(bool) = REF_28 == REF_29
+REF_30(address) -> req.from
+TMP_77(bool) = signer == REF_30
+TMP_78(bool) = TMP_76 && TMP_77
+TMP_113(None) := TMP_78(bool)
+CONDITION TMP_79
+EXPRESSION:_throwError(error)	NodeType.EXPRESSION
+signer = _hashTypedDataV4(keccak256(bytes)(abi.encode(TYPEHASH,req.from,req.to,req.value,req.gas,req.nonce,keccak256(bytes)(req.data)))).recover(signature)	NodeType.VARIABLE
+signer = _hashTypedDataV4(keccak256(bytes)(abi.encode(TYPEHASH,req.from,req.to,req.value,req.gas,req.nonce,keccak256(bytes)(req.data)))).recover(signature)	NodeType.EXPRESSION
+qiantao require	NodeType.IF" [key="successor_5", ref="ECDSA._throwError"];
+"BlockID: 43
+Call context: execute
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF" -> "BlockID: 48
+Call context: execute
+True
+TMP_33(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 43
+Call context: execute
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF" -> "BlockID: 49
+Call context: execute
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 49
+Call context: execute
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 55
+Call context: 
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF" [key=0];
+"BlockID: 35
+Call context: execute
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF" -> "BlockID: 41
+Call context: execute
+True
+TMP_33(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 35
+Call context: execute
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF" -> "BlockID: 42
+Call context: execute
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 42
+Call context: execute
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 47
+Call context: 
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF" [key=0];
+"BlockID: 30
+Call context: 
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF" -> "BlockID: 36
+Call context: 
+True
+TMP_33(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 30
+Call context: 
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF" -> "BlockID: 37
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 37
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 43
+Call context: execute
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF" [key=0];
+"BlockID: 22
+Call context: 
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF" -> "BlockID: 28
+Call context: 
+True
+TMP_33(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 22
+Call context: 
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF" -> "BlockID: 29
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 29
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 35
+Call context: execute
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF" [key=0];
+"BlockID: 55
+Call context: 
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF" -> "BlockID: 61
+Call context: 
+True
+TMP_33(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 55
+Call context: 
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF" -> "BlockID: 62
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 62
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 69
+Call context: execute,verify,recover,tryRecover,tryRecover
+None
+TMP_35(address) = SOLIDITY_CALL ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)
+signer(address) := TMP_35(address)
+TMP_36 = CONVERT 0 to address
+TMP_37(bool) = signer == TMP_36
+CONDITION TMP_37
+EXPRESSION:signer = ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)	NodeType.VARIABLE
+signer = ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)	NodeType.EXPRESSION
+signer == address(0)	NodeType.IF" [key=0];
+"BlockID: 47
+Call context: 
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF" -> "BlockID: 53
+Call context: 
+True
+TMP_33(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 47
+Call context: 
+None
+TMP_31(bool) = v != 27
+TMP_32(bool) = v != 28
+TMP_33(bool) = TMP_31 && TMP_32
+CONDITION TMP_33
+EXPRESSION:v != 27 && v != 28	NodeType.IF" -> "BlockID: 54
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 54
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 60
+Call context: execute,verify,recover,tryRecover
+None
+TMP_35(address) = SOLIDITY_CALL ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)
+signer(address) := TMP_35(address)
+TMP_36 = CONVERT 0 to address
+TMP_37(bool) = signer == TMP_36
+CONDITION TMP_37
+EXPRESSION:signer = ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)	NodeType.VARIABLE
+signer = ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)	NodeType.EXPRESSION
+signer == address(0)	NodeType.IF" [key=0];
+}

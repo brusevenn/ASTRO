@@ -1,0 +1,600 @@
+digraph {
+"BlockID: 412
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 413
+Call context: 
+None
+MODIFIER_CALL, RBACWithAdmin.onlyAdmin()()
+EXPRESSION:onlyAdmin()	NodeType.EXPRESSION";
+"BlockID: 414
+Call context: 
+None
+MODIFIER_CALL, FacultyPool.noReentrancy()()
+EXPRESSION:onlyAdmin()	NodeType.EXPRESSION
+noReentrancy()	NodeType.EXPRESSION";
+"BlockID: 416
+Call context: 
+True
+CONDITION _useAsDefault
+EXPRESSION:_useAsDefault	NodeType.IF";
+"BlockID: 417
+Call context: 
+True
+defaultToken(address) := _tokenAddr(address)
+EXPRESSION:defaultToken = _tokenAddr	NodeType.EXPRESSION";
+"BlockID: 419
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 420
+Call context: 
+None
+REF_105(FacultyPool.TokenAllocation) -> tokenAllocationMap[_tokenAddr]
+ta(FacultyPool.TokenAllocation) := REF_105(FacultyPool.TokenAllocation)
+REF_106(uint256[]) -> ta.pct
+REF_107 -> LENGTH REF_106
+TMP_170(bool) = REF_107 == 0
+CONDITION TMP_170
+EXPRESSION:ta = tokenAllocationMap[_tokenAddr]	NodeType.VARIABLE
+ta = tokenAllocationMap[_tokenAddr]	NodeType.EXPRESSION
+ta.pct.length == 0	NodeType.IF";
+"BlockID: 421
+Call context: 
+True
+REF_108(ERC20) -> ta.token
+TMP_171 = CONVERT _tokenAddr to ERC20
+REF_108(ERC20) (->ta) := TMP_171(ERC20)
+EXPRESSION:ta.token = ERC20(_tokenAddr)	NodeType.EXPRESSION";
+"BlockID: 422
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 423
+Call context: 
+None
+REF_109(ERC20) -> ta.token
+TMP_172(uint256) = HIGH_LEVEL_CALL, dest:REF_109(ERC20), function:balanceOf, arguments:['this']  
+EXPRESSION:";
+"BlockID: 424
+Call context: 
+None
+REF_112(uint256) -> ta.balanceRemaining
+TMP_173(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['TMP_172', 'REF_112'] 
+EXPRESSION:" [shape=box];
+"BlockID: 426
+Call context: 
+True
+TMP_176(bool) = feePct > 0
+CONDITION TMP_176
+EXPRESSION:feePct > 0	NodeType.IF";
+"BlockID: 427
+Call context: 
+True
+TMP_177(uint256) = INTERNAL_CALL, FacultyPool._toPct(uint256,uint256)(feePct,10000)
+EXPRESSION:";
+"BlockID: 429
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 430
+Call context: 
+None
+REF_115(ERC20) -> ta.token
+TMP_182(uint256) = HIGH_LEVEL_CALL, dest:REF_115(ERC20), function:balanceOf, arguments:['this']  
+EXPRESSION:amount = ta.token.balanceOf(this).sub(ta.balanceRemaining)	NodeType.EXPRESSION";
+"BlockID: 431
+Call context: 
+None
+REF_118(uint256) -> ta.balanceRemaining
+TMP_183(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['TMP_182', 'REF_118'] 
+EXPRESSION:amount = ta.token.balanceOf(this).sub(ta.balanceRemaining)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 432
+Call context: 
+None
+amount(uint256) := TMP_183(uint256)
+REF_119(uint256) -> ta.balanceRemaining
+REF_120(ERC20) -> ta.token
+TMP_184(uint256) = HIGH_LEVEL_CALL, dest:REF_120(ERC20), function:balanceOf, arguments:['this']  
+EXPRESSION:amount = ta.token.balanceOf(this).sub(ta.balanceRemaining)	NodeType.EXPRESSION
+ta.balanceRemaining = ta.token.balanceOf(this)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 433
+Call context: 
+None
+REF_119(uint256) (->ta) := TMP_184(uint256)
+REF_122(uint256[]) -> ta.pct
+TMP_185(uint256) = INTERNAL_CALL, FacultyPool._toPct(uint256,uint256)(amount,finalBalance)
+EXPRESSION:ta.balanceRemaining = ta.token.balanceOf(this)	NodeType.EXPRESSION
+ta.pct.push(_toPct(amount,finalBalance))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 434
+Call context: 
+None
+REF_124 -> LENGTH REF_122
+TMP_187(uint256) := REF_124(uint256)
+TMP_188(uint256) = TMP_187 + 1
+REF_124(uint256) (->ta) := TMP_188(uint256)
+REF_125(uint256) -> REF_122[TMP_187]
+REF_125(uint256) (->ta) := TMP_185(uint256)
+EXPRESSION:ta.pct.push(_toPct(amount,finalBalance))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 428
+Call context: 
+None
+feePctFromBips(uint256) := TMP_177(uint256)
+TMP_178(uint256) = INTERNAL_CALL, FacultyPool._applyPct(uint256,uint256)(amount,feePctFromBips)
+EXPRESSION:feePctFromBips = _toPct(feePct,10000)	NodeType.VARIABLE
+feePctFromBips = _toPct(feePct,10000)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 435
+Call context: 
+None
+feeAmount(uint256) := TMP_178(uint256)
+REF_113(ERC20) -> ta.token
+TMP_179(bool) = HIGH_LEVEL_CALL, dest:REF_113(ERC20), function:transfer, arguments:['owner', 'feeAmount']  
+EXPRESSION:feeAmount = _applyPct(amount,feePctFromBips)	NodeType.VARIABLE
+feeAmount = _applyPct(amount,feePctFromBips)	NodeType.EXPRESSION
+require(bool)(ta.token.transfer(owner,feeAmount))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 439
+Call context: 
+None
+TMP_166(bool) = contractStage == CONTRACT_SUBMIT_FUNDS
+CONDITION TMP_166
+EXPRESSION:TMP_166(bool) = contractStage == CONTRACT_SUBMIT_FUNDS	NodeType.IF";
+"BlockID: 440
+Call context: 
+True
+TMP_167(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 441
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 442
+Call context: 
+None
+TMP_168(bool) = defaultToken != 0
+CONDITION TMP_168
+EXPRESSION:TMP_168(bool) = defaultToken != 0	NodeType.IF";
+"BlockID: 443
+Call context: 
+True
+TMP_169(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 444
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 445
+Call context: 
+None
+amount(uint256) := TMP_173(uint256)
+TMP_174(bool) = amount > 0
+CONDITION TMP_174
+EXPRESSION:TMP_174(bool) = amount > 0	NodeType.IF";
+"BlockID: 446
+Call context: 
+True
+TMP_175(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 447
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 448
+Call context: 
+None
+CONDITION TMP_179
+EXPRESSION:TMP_180(None) = SOLIDITY_CALL require(bool)(TMP_179)	NodeType.IF";
+"BlockID: 449
+Call context: 
+True
+TMP_180(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 450
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 412
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 413
+Call context: 
+None
+MODIFIER_CALL, RBACWithAdmin.onlyAdmin()()
+EXPRESSION:onlyAdmin()	NodeType.EXPRESSION" [key=0];
+"BlockID: 413
+Call context: 
+None
+MODIFIER_CALL, RBACWithAdmin.onlyAdmin()()
+EXPRESSION:onlyAdmin()	NodeType.EXPRESSION" -> "BlockID: 414
+Call context: 
+None
+MODIFIER_CALL, FacultyPool.noReentrancy()()
+EXPRESSION:onlyAdmin()	NodeType.EXPRESSION
+noReentrancy()	NodeType.EXPRESSION" [key=0];
+"BlockID: 414
+Call context: 
+None
+MODIFIER_CALL, FacultyPool.noReentrancy()()
+EXPRESSION:onlyAdmin()	NodeType.EXPRESSION
+noReentrancy()	NodeType.EXPRESSION" -> "BlockID: 439
+Call context: 
+None
+TMP_166(bool) = contractStage == CONTRACT_SUBMIT_FUNDS
+CONDITION TMP_166
+EXPRESSION:TMP_166(bool) = contractStage == CONTRACT_SUBMIT_FUNDS	NodeType.IF" [key=0];
+"BlockID: 416
+Call context: 
+True
+CONDITION _useAsDefault
+EXPRESSION:_useAsDefault	NodeType.IF" -> "BlockID: 417
+Call context: 
+True
+defaultToken(address) := _tokenAddr(address)
+EXPRESSION:defaultToken = _tokenAddr	NodeType.EXPRESSION" [key=0];
+"BlockID: 416
+Call context: 
+True
+CONDITION _useAsDefault
+EXPRESSION:_useAsDefault	NodeType.IF" -> "BlockID: 442
+Call context: 
+None
+TMP_168(bool) = defaultToken != 0
+CONDITION TMP_168
+EXPRESSION:TMP_168(bool) = defaultToken != 0	NodeType.IF" [key=0];
+"BlockID: 417
+Call context: 
+True
+defaultToken(address) := _tokenAddr(address)
+EXPRESSION:defaultToken = _tokenAddr	NodeType.EXPRESSION" -> "BlockID: 419
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 419
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 420
+Call context: 
+None
+REF_105(FacultyPool.TokenAllocation) -> tokenAllocationMap[_tokenAddr]
+ta(FacultyPool.TokenAllocation) := REF_105(FacultyPool.TokenAllocation)
+REF_106(uint256[]) -> ta.pct
+REF_107 -> LENGTH REF_106
+TMP_170(bool) = REF_107 == 0
+CONDITION TMP_170
+EXPRESSION:ta = tokenAllocationMap[_tokenAddr]	NodeType.VARIABLE
+ta = tokenAllocationMap[_tokenAddr]	NodeType.EXPRESSION
+ta.pct.length == 0	NodeType.IF" [key=0];
+"BlockID: 420
+Call context: 
+None
+REF_105(FacultyPool.TokenAllocation) -> tokenAllocationMap[_tokenAddr]
+ta(FacultyPool.TokenAllocation) := REF_105(FacultyPool.TokenAllocation)
+REF_106(uint256[]) -> ta.pct
+REF_107 -> LENGTH REF_106
+TMP_170(bool) = REF_107 == 0
+CONDITION TMP_170
+EXPRESSION:ta = tokenAllocationMap[_tokenAddr]	NodeType.VARIABLE
+ta = tokenAllocationMap[_tokenAddr]	NodeType.EXPRESSION
+ta.pct.length == 0	NodeType.IF" -> "BlockID: 421
+Call context: 
+True
+REF_108(ERC20) -> ta.token
+TMP_171 = CONVERT _tokenAddr to ERC20
+REF_108(ERC20) (->ta) := TMP_171(ERC20)
+EXPRESSION:ta.token = ERC20(_tokenAddr)	NodeType.EXPRESSION" [key=0];
+"BlockID: 420
+Call context: 
+None
+REF_105(FacultyPool.TokenAllocation) -> tokenAllocationMap[_tokenAddr]
+ta(FacultyPool.TokenAllocation) := REF_105(FacultyPool.TokenAllocation)
+REF_106(uint256[]) -> ta.pct
+REF_107 -> LENGTH REF_106
+TMP_170(bool) = REF_107 == 0
+CONDITION TMP_170
+EXPRESSION:ta = tokenAllocationMap[_tokenAddr]	NodeType.VARIABLE
+ta = tokenAllocationMap[_tokenAddr]	NodeType.EXPRESSION
+ta.pct.length == 0	NodeType.IF" -> "BlockID: 422
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 421
+Call context: 
+True
+REF_108(ERC20) -> ta.token
+TMP_171 = CONVERT _tokenAddr to ERC20
+REF_108(ERC20) (->ta) := TMP_171(ERC20)
+EXPRESSION:ta.token = ERC20(_tokenAddr)	NodeType.EXPRESSION" -> "BlockID: 422
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 422
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 423
+Call context: 
+None
+REF_109(ERC20) -> ta.token
+TMP_172(uint256) = HIGH_LEVEL_CALL, dest:REF_109(ERC20), function:balanceOf, arguments:['this']  
+EXPRESSION:" [key=0];
+"BlockID: 423
+Call context: 
+None
+REF_109(ERC20) -> ta.token
+TMP_172(uint256) = HIGH_LEVEL_CALL, dest:REF_109(ERC20), function:balanceOf, arguments:['this']  
+EXPRESSION:" -> "BlockID: 424
+Call context: 
+None
+REF_112(uint256) -> ta.balanceRemaining
+TMP_173(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['TMP_172', 'REF_112'] 
+EXPRESSION:" [key=0];
+"BlockID: 424
+Call context: 
+None
+REF_112(uint256) -> ta.balanceRemaining
+TMP_173(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['TMP_172', 'REF_112'] 
+EXPRESSION:" -> "BlockID: 445
+Call context: 
+None
+amount(uint256) := TMP_173(uint256)
+TMP_174(bool) = amount > 0
+CONDITION TMP_174
+EXPRESSION:TMP_174(bool) = amount > 0	NodeType.IF" [key=0];
+"BlockID: 426
+Call context: 
+True
+TMP_176(bool) = feePct > 0
+CONDITION TMP_176
+EXPRESSION:feePct > 0	NodeType.IF" -> "BlockID: 427
+Call context: 
+True
+TMP_177(uint256) = INTERNAL_CALL, FacultyPool._toPct(uint256,uint256)(feePct,10000)
+EXPRESSION:" [key=0];
+"BlockID: 426
+Call context: 
+True
+TMP_176(bool) = feePct > 0
+CONDITION TMP_176
+EXPRESSION:feePct > 0	NodeType.IF" -> "BlockID: 429
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 427
+Call context: 
+True
+TMP_177(uint256) = INTERNAL_CALL, FacultyPool._toPct(uint256,uint256)(feePct,10000)
+EXPRESSION:" -> "BlockID: 428
+Call context: 
+None
+feePctFromBips(uint256) := TMP_177(uint256)
+TMP_178(uint256) = INTERNAL_CALL, FacultyPool._applyPct(uint256,uint256)(amount,feePctFromBips)
+EXPRESSION:feePctFromBips = _toPct(feePct,10000)	NodeType.VARIABLE
+feePctFromBips = _toPct(feePct,10000)	NodeType.EXPRESSION" [key=0];
+"BlockID: 429
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 430
+Call context: 
+None
+REF_115(ERC20) -> ta.token
+TMP_182(uint256) = HIGH_LEVEL_CALL, dest:REF_115(ERC20), function:balanceOf, arguments:['this']  
+EXPRESSION:amount = ta.token.balanceOf(this).sub(ta.balanceRemaining)	NodeType.EXPRESSION" [key=0];
+"BlockID: 430
+Call context: 
+None
+REF_115(ERC20) -> ta.token
+TMP_182(uint256) = HIGH_LEVEL_CALL, dest:REF_115(ERC20), function:balanceOf, arguments:['this']  
+EXPRESSION:amount = ta.token.balanceOf(this).sub(ta.balanceRemaining)	NodeType.EXPRESSION" -> "BlockID: 431
+Call context: 
+None
+REF_118(uint256) -> ta.balanceRemaining
+TMP_183(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['TMP_182', 'REF_118'] 
+EXPRESSION:amount = ta.token.balanceOf(this).sub(ta.balanceRemaining)	NodeType.EXPRESSION" [key=0];
+"BlockID: 431
+Call context: 
+None
+REF_118(uint256) -> ta.balanceRemaining
+TMP_183(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['TMP_182', 'REF_118'] 
+EXPRESSION:amount = ta.token.balanceOf(this).sub(ta.balanceRemaining)	NodeType.EXPRESSION" -> "BlockID: 432
+Call context: 
+None
+amount(uint256) := TMP_183(uint256)
+REF_119(uint256) -> ta.balanceRemaining
+REF_120(ERC20) -> ta.token
+TMP_184(uint256) = HIGH_LEVEL_CALL, dest:REF_120(ERC20), function:balanceOf, arguments:['this']  
+EXPRESSION:amount = ta.token.balanceOf(this).sub(ta.balanceRemaining)	NodeType.EXPRESSION
+ta.balanceRemaining = ta.token.balanceOf(this)	NodeType.EXPRESSION" [key=0];
+"BlockID: 432
+Call context: 
+None
+amount(uint256) := TMP_183(uint256)
+REF_119(uint256) -> ta.balanceRemaining
+REF_120(ERC20) -> ta.token
+TMP_184(uint256) = HIGH_LEVEL_CALL, dest:REF_120(ERC20), function:balanceOf, arguments:['this']  
+EXPRESSION:amount = ta.token.balanceOf(this).sub(ta.balanceRemaining)	NodeType.EXPRESSION
+ta.balanceRemaining = ta.token.balanceOf(this)	NodeType.EXPRESSION" -> "BlockID: 433
+Call context: 
+None
+REF_119(uint256) (->ta) := TMP_184(uint256)
+REF_122(uint256[]) -> ta.pct
+TMP_185(uint256) = INTERNAL_CALL, FacultyPool._toPct(uint256,uint256)(amount,finalBalance)
+EXPRESSION:ta.balanceRemaining = ta.token.balanceOf(this)	NodeType.EXPRESSION
+ta.pct.push(_toPct(amount,finalBalance))	NodeType.EXPRESSION" [key=0];
+"BlockID: 433
+Call context: 
+None
+REF_119(uint256) (->ta) := TMP_184(uint256)
+REF_122(uint256[]) -> ta.pct
+TMP_185(uint256) = INTERNAL_CALL, FacultyPool._toPct(uint256,uint256)(amount,finalBalance)
+EXPRESSION:ta.balanceRemaining = ta.token.balanceOf(this)	NodeType.EXPRESSION
+ta.pct.push(_toPct(amount,finalBalance))	NodeType.EXPRESSION" -> "BlockID: 434
+Call context: 
+None
+REF_124 -> LENGTH REF_122
+TMP_187(uint256) := REF_124(uint256)
+TMP_188(uint256) = TMP_187 + 1
+REF_124(uint256) (->ta) := TMP_188(uint256)
+REF_125(uint256) -> REF_122[TMP_187]
+REF_125(uint256) (->ta) := TMP_185(uint256)
+EXPRESSION:ta.pct.push(_toPct(amount,finalBalance))	NodeType.EXPRESSION" [key=0];
+"BlockID: 428
+Call context: 
+None
+feePctFromBips(uint256) := TMP_177(uint256)
+TMP_178(uint256) = INTERNAL_CALL, FacultyPool._applyPct(uint256,uint256)(amount,feePctFromBips)
+EXPRESSION:feePctFromBips = _toPct(feePct,10000)	NodeType.VARIABLE
+feePctFromBips = _toPct(feePct,10000)	NodeType.EXPRESSION" -> "BlockID: 435
+Call context: 
+None
+feeAmount(uint256) := TMP_178(uint256)
+REF_113(ERC20) -> ta.token
+TMP_179(bool) = HIGH_LEVEL_CALL, dest:REF_113(ERC20), function:transfer, arguments:['owner', 'feeAmount']  
+EXPRESSION:feeAmount = _applyPct(amount,feePctFromBips)	NodeType.VARIABLE
+feeAmount = _applyPct(amount,feePctFromBips)	NodeType.EXPRESSION
+require(bool)(ta.token.transfer(owner,feeAmount))	NodeType.EXPRESSION" [key=0];
+"BlockID: 435
+Call context: 
+None
+feeAmount(uint256) := TMP_178(uint256)
+REF_113(ERC20) -> ta.token
+TMP_179(bool) = HIGH_LEVEL_CALL, dest:REF_113(ERC20), function:transfer, arguments:['owner', 'feeAmount']  
+EXPRESSION:feeAmount = _applyPct(amount,feePctFromBips)	NodeType.VARIABLE
+feeAmount = _applyPct(amount,feePctFromBips)	NodeType.EXPRESSION
+require(bool)(ta.token.transfer(owner,feeAmount))	NodeType.EXPRESSION" -> "BlockID: 448
+Call context: 
+None
+CONDITION TMP_179
+EXPRESSION:TMP_180(None) = SOLIDITY_CALL require(bool)(TMP_179)	NodeType.IF" [key=0];
+"BlockID: 439
+Call context: 
+None
+TMP_166(bool) = contractStage == CONTRACT_SUBMIT_FUNDS
+CONDITION TMP_166
+EXPRESSION:TMP_166(bool) = contractStage == CONTRACT_SUBMIT_FUNDS	NodeType.IF" -> "BlockID: 440
+Call context: 
+True
+TMP_167(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 439
+Call context: 
+None
+TMP_166(bool) = contractStage == CONTRACT_SUBMIT_FUNDS
+CONDITION TMP_166
+EXPRESSION:TMP_166(bool) = contractStage == CONTRACT_SUBMIT_FUNDS	NodeType.IF" -> "BlockID: 441
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 441
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 416
+Call context: 
+True
+CONDITION _useAsDefault
+EXPRESSION:_useAsDefault	NodeType.IF" [key=0];
+"BlockID: 442
+Call context: 
+None
+TMP_168(bool) = defaultToken != 0
+CONDITION TMP_168
+EXPRESSION:TMP_168(bool) = defaultToken != 0	NodeType.IF" -> "BlockID: 443
+Call context: 
+True
+TMP_169(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 442
+Call context: 
+None
+TMP_168(bool) = defaultToken != 0
+CONDITION TMP_168
+EXPRESSION:TMP_168(bool) = defaultToken != 0	NodeType.IF" -> "BlockID: 444
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 444
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 419
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 445
+Call context: 
+None
+amount(uint256) := TMP_173(uint256)
+TMP_174(bool) = amount > 0
+CONDITION TMP_174
+EXPRESSION:TMP_174(bool) = amount > 0	NodeType.IF" -> "BlockID: 446
+Call context: 
+True
+TMP_175(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 445
+Call context: 
+None
+amount(uint256) := TMP_173(uint256)
+TMP_174(bool) = amount > 0
+CONDITION TMP_174
+EXPRESSION:TMP_174(bool) = amount > 0	NodeType.IF" -> "BlockID: 447
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 447
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 426
+Call context: 
+True
+TMP_176(bool) = feePct > 0
+CONDITION TMP_176
+EXPRESSION:feePct > 0	NodeType.IF" [key=0];
+"BlockID: 448
+Call context: 
+None
+CONDITION TMP_179
+EXPRESSION:TMP_180(None) = SOLIDITY_CALL require(bool)(TMP_179)	NodeType.IF" -> "BlockID: 449
+Call context: 
+True
+TMP_180(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 448
+Call context: 
+None
+CONDITION TMP_179
+EXPRESSION:TMP_180(None) = SOLIDITY_CALL require(bool)(TMP_179)	NodeType.IF" -> "BlockID: 450
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 450
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 429
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

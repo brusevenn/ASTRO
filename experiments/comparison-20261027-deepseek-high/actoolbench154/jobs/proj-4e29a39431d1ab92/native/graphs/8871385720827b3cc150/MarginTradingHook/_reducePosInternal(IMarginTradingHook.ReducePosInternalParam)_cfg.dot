@@ -1,0 +1,622 @@
+digraph {
+"BlockID: 830
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 831
+Call context: 
+None
+REF_210(uint256) -> _param.initPosId
+REF_211(MarginPos) -> __marginPositions[REF_210]
+marginPos(MarginPos) := REF_211(MarginPos)
+REF_212(uint256) -> _param.collAmt
+TMP_524 = CONVERT POS_MANAGER to IPosManager
+REF_214(uint256) -> _param.initPosId
+REF_215(address) -> marginPos.collPool
+TMP_525(uint256) = HIGH_LEVEL_CALL, dest:TMP_524(IPosManager), function:getCollAmt, arguments:['REF_214', 'REF_215']  
+EXPRESSION:marginPos = __marginPositions[_param.initPosId]	NodeType.VARIABLE
+marginPos = __marginPositions[_param.initPosId]	NodeType.EXPRESSION
+_require(_param.collAmt <= IPosManager(POS_MANAGER).getCollAmt(_param.initPosId,marginPos.collPool),Errors.INPUT_TOO_HIGH)	NodeType.EXPRESSION";
+"BlockID: 832
+Call context: 
+None
+TMP_526(bool) = REF_212 <= TMP_525
+REF_216(uint32) -> Errors.INPUT_TOO_HIGH
+INTERNAL_CALL, _require(bool,uint32)(TMP_526,REF_216)
+EXPRESSION:_require(_param.collAmt <= IPosManager(POS_MANAGER).getCollAmt(_param.initPosId,marginPos.collPool),Errors.INPUT_TOO_HIGH)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 833
+Call context: 
+None
+REF_217(uint256) -> _param.repayShares
+TMP_528 = CONVERT POS_MANAGER to IPosManager
+REF_219(uint256) -> _param.initPosId
+REF_220(address) -> marginPos.borrPool
+TMP_529(uint256) = HIGH_LEVEL_CALL, dest:TMP_528(IPosManager), function:getPosDebtShares, arguments:['REF_219', 'REF_220']  
+EXPRESSION:_require(_param.collAmt <= IPosManager(POS_MANAGER).getCollAmt(_param.initPosId,marginPos.collPool),Errors.INPUT_TOO_HIGH)	NodeType.EXPRESSION
+_require(_param.repayShares <= IPosManager(POS_MANAGER).getPosDebtShares(_param.initPosId,marginPos.borrPool),Errors.INPUT_TOO_HIGH)	NodeType.EXPRESSION";
+"BlockID: 834
+Call context: 
+None
+TMP_530(bool) = REF_217 <= TMP_529
+REF_221(uint32) -> Errors.INPUT_TOO_HIGH
+INTERNAL_CALL, _require(bool,uint32)(TMP_530,REF_221)
+EXPRESSION:_require(_param.repayShares <= IPosManager(POS_MANAGER).getPosDebtShares(_param.initPosId,marginPos.borrPool),Errors.INPUT_TOO_HIGH)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 835
+Call context: 
+None
+REF_222(address) -> marginPos.collPool
+TMP_532 = CONVERT REF_222 to ILendingPool
+TMP_533(address) = HIGH_LEVEL_CALL, dest:TMP_532(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:_require(_param.repayShares <= IPosManager(POS_MANAGER).getPosDebtShares(_param.initPosId,marginPos.borrPool),Errors.INPUT_TOO_HIGH)	NodeType.EXPRESSION";
+"BlockID: 836
+Call context: 
+None
+collToken(address) := TMP_533(address)
+REF_224(address) -> marginPos.borrPool
+TMP_534 = CONVERT REF_224 to ILendingPool
+TMP_535(address) = HIGH_LEVEL_CALL, dest:TMP_534(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:collToken = ILendingPool(marginPos.collPool).underlyingToken()	NodeType.VARIABLE
+collToken = ILendingPool(marginPos.collPool).underlyingToken()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 837
+Call context: 
+None
+borrToken(address) := TMP_535(address)
+REF_226(address) -> _param.tokenOut
+TMP_536(bool) = REF_226 == collToken
+REF_227(address) -> _param.tokenOut
+TMP_537(bool) = REF_227 == borrToken
+TMP_538(bool) = TMP_536 || TMP_537
+REF_228(uint32) -> Errors.INVALID_INPUT
+INTERNAL_CALL, _require(bool,uint32)(TMP_538,REF_228)
+EXPRESSION:borrToken = ILendingPool(marginPos.borrPool).underlyingToken()	NodeType.VARIABLE
+borrToken = ILendingPool(marginPos.borrPool).underlyingToken()	NodeType.EXPRESSION
+_require(_param.tokenOut == collToken || _param.tokenOut == borrToken,Errors.INVALID_INPUT)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 838
+Call context: 
+None
+REF_229(address) -> marginPos.borrPool
+TMP_540 = CONVERT REF_229 to ILendingPool
+REF_231(uint256) -> _param.repayShares
+TMP_541(uint256) = HIGH_LEVEL_CALL, dest:TMP_540(ILendingPool), function:debtShareToAmtCurrent, arguments:['REF_231']  
+EXPRESSION:_require(_param.tokenOut == collToken || _param.tokenOut == borrToken,Errors.INVALID_INPUT)	NodeType.EXPRESSION";
+"BlockID: 839
+Call context: 
+None
+repayAmt(uint256) := TMP_541(uint256)
+INTERNAL_CALL, BaseMappingIdHook._ensureApprove(address,uint256)(borrToken,repayAmt)
+EXPRESSION:repayAmt = ILendingPool(marginPos.borrPool).debtShareToAmtCurrent(_param.repayShares)	NodeType.VARIABLE
+repayAmt = ILendingPool(marginPos.borrPool).debtShareToAmtCurrent(_param.repayShares)	NodeType.EXPRESSION
+_ensureApprove(borrToken,repayAmt)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 840
+Call context: 
+None
+TMP_544bytes[])  = new bytes[](4)
+multicallData(bytes[]) =  ['TMP_544(bytes[])']
+REF_232(bytes) -> multicallData[0]
+TMP_545 = CONVERT CORE to IInitCore
+REF_235(bytes4) (->None) := 1121524675(uint256)
+REF_236(uint256) -> _param.initPosId
+REF_237(address) -> marginPos.collPool
+REF_238(uint256) -> _param.collAmt
+REF_239(address) -> marginPos.collPool
+TMP_546(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_235,REF_236,REF_237,REF_238,REF_239)
+REF_232(bytes) (->multicallData) := TMP_546(bytes)
+REF_240(bytes) -> multicallData[1]
+TMP_547 = CONVERT CORE to IInitCore
+REF_243(bytes4) (->None) := 2145827901(uint256)
+REF_244(address) -> marginPos.collPool
+TMP_548 = CONVERT this to address
+TMP_549(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_243,REF_244,TMP_548)
+REF_240(bytes) (->multicallData) := TMP_549(bytes)
+REF_271(address) -> _param.tokenOut
+TMP_567(bool) = REF_271 == borrToken
+CONDITION TMP_567
+EXPRESSION:_ensureApprove(borrToken,repayAmt)	NodeType.EXPRESSION
+multicallData = new bytes[](4)	NodeType.VARIABLE
+multicallData = new bytes[](4)	NodeType.EXPRESSION
+multicallData[0] = abi.encodeWithSelector(IInitCore(CORE).decollateralize.selector,_param.initPosId,marginPos.collPool,_param.collAmt,marginPos.collPool)	NodeType.EXPRESSION
+multicallData[1] = abi.encodeWithSelector(IInitCore(CORE).burnTo.selector,marginPos.collPool,address(this))	NodeType.EXPRESSION
+_param.tokenOut == borrToken	NodeType.IF";
+"BlockID: 841
+Call context: 
+True
+REF_272(SwapType) -> SwapType.CloseExactIn
+swapType(SwapType) := REF_272(SwapType)
+EXPRESSION:swapType = SwapType.CloseExactIn	NodeType.EXPRESSION";
+"BlockID: 842
+Call context: 
+False
+REF_273(SwapType) -> SwapType.CloseExactOut
+swapType(SwapType) := REF_273(SwapType)
+EXPRESSION:swapType = SwapType.CloseExactOut	NodeType.EXPRESSION";
+"BlockID: 843
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 844
+Call context: 
+None
+REF_245(uint256) -> _param.initPosId
+REF_246(bytes) -> _param.data
+TMP_550(SwapInfo) = new SwapInfo(REF_245,swapType,collToken,borrToken,repayAmt,REF_246)
+swapInfo(SwapInfo) := TMP_550(SwapInfo)
+REF_247(bytes) -> multicallData[2]
+TMP_551 = CONVERT CORE to IInitCore
+REF_250(bytes4) (->None) := 2103493374(uint256)
+TMP_552 = CONVERT this to address
+TMP_553(bytes) = SOLIDITY_CALL abi.encode()(swapInfo)
+TMP_554(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_250,TMP_552,0,TMP_553)
+REF_247(bytes) (->multicallData) := TMP_554(bytes)
+REF_252(bytes) -> multicallData[3]
+TMP_555 = CONVERT CORE to IInitCore
+REF_255(bytes4) (->None) := 2362630343(uint256)
+REF_256(address) -> marginPos.borrPool
+REF_257(uint256) -> _param.repayShares
+REF_258(uint256) -> _param.initPosId
+TMP_556(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_255,REF_256,REF_257,REF_258)
+REF_252(bytes) (->multicallData) := TMP_556(bytes)
+TMP_557 = CONVERT CORE to IMulticall
+TMP_558(bytes[]) = HIGH_LEVEL_CALL, dest:TMP_557(IMulticall), function:multicall, arguments:['multicallData']  
+EXPRESSION:swapInfo = SwapInfo(_param.initPosId,swapType,collToken,borrToken,repayAmt,_param.data)	NodeType.VARIABLE
+swapInfo = SwapInfo(_param.initPosId,swapType,collToken,borrToken,repayAmt,_param.data)	NodeType.EXPRESSION
+multicallData[2] = abi.encodeWithSelector(IInitCore(CORE).callback.selector,address(this),0,abi.encode(swapInfo))	NodeType.EXPRESSION
+multicallData[3] = abi.encodeWithSelector(IInitCore(CORE).repay.selector,marginPos.borrPool,_param.repayShares,_param.initPosId)	NodeType.EXPRESSION
+IMulticall(CORE).multicall(multicallData)	NodeType.EXPRESSION";
+"BlockID: 845
+Call context: 
+None
+REF_260(address) -> _param.tokenOut
+TMP_559 = CONVERT REF_260 to IERC20
+TMP_560 = CONVERT this to address
+TMP_561(uint256) = HIGH_LEVEL_CALL, dest:TMP_559(IERC20), function:balanceOf, arguments:['TMP_560']  
+EXPRESSION:IMulticall(CORE).multicall(multicallData)	NodeType.EXPRESSION
+amtOut = IERC20(_param.tokenOut).balanceOf(address(this))	NodeType.EXPRESSION";
+"BlockID: 846
+Call context: 
+None
+amtOut(uint256) := TMP_561(uint256)
+REF_262(uint256) -> _param.minAmtOut
+TMP_562(bool) = amtOut >= REF_262
+REF_263(uint32) -> Errors.SLIPPAGE_CONTROL
+INTERNAL_CALL, _require(bool,uint32)(TMP_562,REF_263)
+EXPRESSION:amtOut = IERC20(_param.tokenOut).balanceOf(address(this))	NodeType.EXPRESSION
+_require(amtOut >= _param.minAmtOut,Errors.SLIPPAGE_CONTROL)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 847
+Call context: 
+None
+REF_264(address) -> _param.tokenOut
+REF_265(bool) -> _param.returnNative
+INTERNAL_CALL, MarginTradingHook._transmitTokenOut(address,uint256,bool)(REF_264,amtOut,REF_265)
+EXPRESSION:_require(amtOut >= _param.minAmtOut,Errors.SLIPPAGE_CONTROL)	NodeType.EXPRESSION
+_transmitTokenOut(_param.tokenOut,amtOut,_param.returnNative)	NodeType.EXPRESSION";
+"BlockID: 848
+Call context: 
+None
+REF_266(uint256) -> _param.initPosId
+REF_267(uint256) -> _param.minHealth_e18
+TMP_565(uint256) = INTERNAL_CALL, MarginTradingHook._validateHealth(uint256,uint256)(REF_266,REF_267)
+EXPRESSION:_transmitTokenOut(_param.tokenOut,amtOut,_param.returnNative)	NodeType.EXPRESSION
+health_e18 = _validateHealth(_param.initPosId,_param.minHealth_e18)	NodeType.EXPRESSION";
+"BlockID: 849
+Call context: 
+None
+health_e18(uint256) := TMP_565(uint256)
+EXPRESSION:health_e18 = _validateHealth(_param.initPosId,_param.minHealth_e18)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 830
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 831
+Call context: 
+None
+REF_210(uint256) -> _param.initPosId
+REF_211(MarginPos) -> __marginPositions[REF_210]
+marginPos(MarginPos) := REF_211(MarginPos)
+REF_212(uint256) -> _param.collAmt
+TMP_524 = CONVERT POS_MANAGER to IPosManager
+REF_214(uint256) -> _param.initPosId
+REF_215(address) -> marginPos.collPool
+TMP_525(uint256) = HIGH_LEVEL_CALL, dest:TMP_524(IPosManager), function:getCollAmt, arguments:['REF_214', 'REF_215']  
+EXPRESSION:marginPos = __marginPositions[_param.initPosId]	NodeType.VARIABLE
+marginPos = __marginPositions[_param.initPosId]	NodeType.EXPRESSION
+_require(_param.collAmt <= IPosManager(POS_MANAGER).getCollAmt(_param.initPosId,marginPos.collPool),Errors.INPUT_TOO_HIGH)	NodeType.EXPRESSION" [key=0];
+"BlockID: 831
+Call context: 
+None
+REF_210(uint256) -> _param.initPosId
+REF_211(MarginPos) -> __marginPositions[REF_210]
+marginPos(MarginPos) := REF_211(MarginPos)
+REF_212(uint256) -> _param.collAmt
+TMP_524 = CONVERT POS_MANAGER to IPosManager
+REF_214(uint256) -> _param.initPosId
+REF_215(address) -> marginPos.collPool
+TMP_525(uint256) = HIGH_LEVEL_CALL, dest:TMP_524(IPosManager), function:getCollAmt, arguments:['REF_214', 'REF_215']  
+EXPRESSION:marginPos = __marginPositions[_param.initPosId]	NodeType.VARIABLE
+marginPos = __marginPositions[_param.initPosId]	NodeType.EXPRESSION
+_require(_param.collAmt <= IPosManager(POS_MANAGER).getCollAmt(_param.initPosId,marginPos.collPool),Errors.INPUT_TOO_HIGH)	NodeType.EXPRESSION" -> "BlockID: 832
+Call context: 
+None
+TMP_526(bool) = REF_212 <= TMP_525
+REF_216(uint32) -> Errors.INPUT_TOO_HIGH
+INTERNAL_CALL, _require(bool,uint32)(TMP_526,REF_216)
+EXPRESSION:_require(_param.collAmt <= IPosManager(POS_MANAGER).getCollAmt(_param.initPosId,marginPos.collPool),Errors.INPUT_TOO_HIGH)	NodeType.EXPRESSION" [key=0];
+"BlockID: 832
+Call context: 
+None
+TMP_526(bool) = REF_212 <= TMP_525
+REF_216(uint32) -> Errors.INPUT_TOO_HIGH
+INTERNAL_CALL, _require(bool,uint32)(TMP_526,REF_216)
+EXPRESSION:_require(_param.collAmt <= IPosManager(POS_MANAGER).getCollAmt(_param.initPosId,marginPos.collPool),Errors.INPUT_TOO_HIGH)	NodeType.EXPRESSION" -> "BlockID: 833
+Call context: 
+None
+REF_217(uint256) -> _param.repayShares
+TMP_528 = CONVERT POS_MANAGER to IPosManager
+REF_219(uint256) -> _param.initPosId
+REF_220(address) -> marginPos.borrPool
+TMP_529(uint256) = HIGH_LEVEL_CALL, dest:TMP_528(IPosManager), function:getPosDebtShares, arguments:['REF_219', 'REF_220']  
+EXPRESSION:_require(_param.collAmt <= IPosManager(POS_MANAGER).getCollAmt(_param.initPosId,marginPos.collPool),Errors.INPUT_TOO_HIGH)	NodeType.EXPRESSION
+_require(_param.repayShares <= IPosManager(POS_MANAGER).getPosDebtShares(_param.initPosId,marginPos.borrPool),Errors.INPUT_TOO_HIGH)	NodeType.EXPRESSION" [key=0];
+"BlockID: 833
+Call context: 
+None
+REF_217(uint256) -> _param.repayShares
+TMP_528 = CONVERT POS_MANAGER to IPosManager
+REF_219(uint256) -> _param.initPosId
+REF_220(address) -> marginPos.borrPool
+TMP_529(uint256) = HIGH_LEVEL_CALL, dest:TMP_528(IPosManager), function:getPosDebtShares, arguments:['REF_219', 'REF_220']  
+EXPRESSION:_require(_param.collAmt <= IPosManager(POS_MANAGER).getCollAmt(_param.initPosId,marginPos.collPool),Errors.INPUT_TOO_HIGH)	NodeType.EXPRESSION
+_require(_param.repayShares <= IPosManager(POS_MANAGER).getPosDebtShares(_param.initPosId,marginPos.borrPool),Errors.INPUT_TOO_HIGH)	NodeType.EXPRESSION" -> "BlockID: 834
+Call context: 
+None
+TMP_530(bool) = REF_217 <= TMP_529
+REF_221(uint32) -> Errors.INPUT_TOO_HIGH
+INTERNAL_CALL, _require(bool,uint32)(TMP_530,REF_221)
+EXPRESSION:_require(_param.repayShares <= IPosManager(POS_MANAGER).getPosDebtShares(_param.initPosId,marginPos.borrPool),Errors.INPUT_TOO_HIGH)	NodeType.EXPRESSION" [key=0];
+"BlockID: 834
+Call context: 
+None
+TMP_530(bool) = REF_217 <= TMP_529
+REF_221(uint32) -> Errors.INPUT_TOO_HIGH
+INTERNAL_CALL, _require(bool,uint32)(TMP_530,REF_221)
+EXPRESSION:_require(_param.repayShares <= IPosManager(POS_MANAGER).getPosDebtShares(_param.initPosId,marginPos.borrPool),Errors.INPUT_TOO_HIGH)	NodeType.EXPRESSION" -> "BlockID: 835
+Call context: 
+None
+REF_222(address) -> marginPos.collPool
+TMP_532 = CONVERT REF_222 to ILendingPool
+TMP_533(address) = HIGH_LEVEL_CALL, dest:TMP_532(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:_require(_param.repayShares <= IPosManager(POS_MANAGER).getPosDebtShares(_param.initPosId,marginPos.borrPool),Errors.INPUT_TOO_HIGH)	NodeType.EXPRESSION" [key=0];
+"BlockID: 835
+Call context: 
+None
+REF_222(address) -> marginPos.collPool
+TMP_532 = CONVERT REF_222 to ILendingPool
+TMP_533(address) = HIGH_LEVEL_CALL, dest:TMP_532(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:_require(_param.repayShares <= IPosManager(POS_MANAGER).getPosDebtShares(_param.initPosId,marginPos.borrPool),Errors.INPUT_TOO_HIGH)	NodeType.EXPRESSION" -> "BlockID: 836
+Call context: 
+None
+collToken(address) := TMP_533(address)
+REF_224(address) -> marginPos.borrPool
+TMP_534 = CONVERT REF_224 to ILendingPool
+TMP_535(address) = HIGH_LEVEL_CALL, dest:TMP_534(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:collToken = ILendingPool(marginPos.collPool).underlyingToken()	NodeType.VARIABLE
+collToken = ILendingPool(marginPos.collPool).underlyingToken()	NodeType.EXPRESSION" [key=0];
+"BlockID: 836
+Call context: 
+None
+collToken(address) := TMP_533(address)
+REF_224(address) -> marginPos.borrPool
+TMP_534 = CONVERT REF_224 to ILendingPool
+TMP_535(address) = HIGH_LEVEL_CALL, dest:TMP_534(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:collToken = ILendingPool(marginPos.collPool).underlyingToken()	NodeType.VARIABLE
+collToken = ILendingPool(marginPos.collPool).underlyingToken()	NodeType.EXPRESSION" -> "BlockID: 837
+Call context: 
+None
+borrToken(address) := TMP_535(address)
+REF_226(address) -> _param.tokenOut
+TMP_536(bool) = REF_226 == collToken
+REF_227(address) -> _param.tokenOut
+TMP_537(bool) = REF_227 == borrToken
+TMP_538(bool) = TMP_536 || TMP_537
+REF_228(uint32) -> Errors.INVALID_INPUT
+INTERNAL_CALL, _require(bool,uint32)(TMP_538,REF_228)
+EXPRESSION:borrToken = ILendingPool(marginPos.borrPool).underlyingToken()	NodeType.VARIABLE
+borrToken = ILendingPool(marginPos.borrPool).underlyingToken()	NodeType.EXPRESSION
+_require(_param.tokenOut == collToken || _param.tokenOut == borrToken,Errors.INVALID_INPUT)	NodeType.EXPRESSION" [key=0];
+"BlockID: 837
+Call context: 
+None
+borrToken(address) := TMP_535(address)
+REF_226(address) -> _param.tokenOut
+TMP_536(bool) = REF_226 == collToken
+REF_227(address) -> _param.tokenOut
+TMP_537(bool) = REF_227 == borrToken
+TMP_538(bool) = TMP_536 || TMP_537
+REF_228(uint32) -> Errors.INVALID_INPUT
+INTERNAL_CALL, _require(bool,uint32)(TMP_538,REF_228)
+EXPRESSION:borrToken = ILendingPool(marginPos.borrPool).underlyingToken()	NodeType.VARIABLE
+borrToken = ILendingPool(marginPos.borrPool).underlyingToken()	NodeType.EXPRESSION
+_require(_param.tokenOut == collToken || _param.tokenOut == borrToken,Errors.INVALID_INPUT)	NodeType.EXPRESSION" -> "BlockID: 838
+Call context: 
+None
+REF_229(address) -> marginPos.borrPool
+TMP_540 = CONVERT REF_229 to ILendingPool
+REF_231(uint256) -> _param.repayShares
+TMP_541(uint256) = HIGH_LEVEL_CALL, dest:TMP_540(ILendingPool), function:debtShareToAmtCurrent, arguments:['REF_231']  
+EXPRESSION:_require(_param.tokenOut == collToken || _param.tokenOut == borrToken,Errors.INVALID_INPUT)	NodeType.EXPRESSION" [key=0];
+"BlockID: 838
+Call context: 
+None
+REF_229(address) -> marginPos.borrPool
+TMP_540 = CONVERT REF_229 to ILendingPool
+REF_231(uint256) -> _param.repayShares
+TMP_541(uint256) = HIGH_LEVEL_CALL, dest:TMP_540(ILendingPool), function:debtShareToAmtCurrent, arguments:['REF_231']  
+EXPRESSION:_require(_param.tokenOut == collToken || _param.tokenOut == borrToken,Errors.INVALID_INPUT)	NodeType.EXPRESSION" -> "BlockID: 839
+Call context: 
+None
+repayAmt(uint256) := TMP_541(uint256)
+INTERNAL_CALL, BaseMappingIdHook._ensureApprove(address,uint256)(borrToken,repayAmt)
+EXPRESSION:repayAmt = ILendingPool(marginPos.borrPool).debtShareToAmtCurrent(_param.repayShares)	NodeType.VARIABLE
+repayAmt = ILendingPool(marginPos.borrPool).debtShareToAmtCurrent(_param.repayShares)	NodeType.EXPRESSION
+_ensureApprove(borrToken,repayAmt)	NodeType.EXPRESSION" [key=0];
+"BlockID: 839
+Call context: 
+None
+repayAmt(uint256) := TMP_541(uint256)
+INTERNAL_CALL, BaseMappingIdHook._ensureApprove(address,uint256)(borrToken,repayAmt)
+EXPRESSION:repayAmt = ILendingPool(marginPos.borrPool).debtShareToAmtCurrent(_param.repayShares)	NodeType.VARIABLE
+repayAmt = ILendingPool(marginPos.borrPool).debtShareToAmtCurrent(_param.repayShares)	NodeType.EXPRESSION
+_ensureApprove(borrToken,repayAmt)	NodeType.EXPRESSION" -> "BlockID: 840
+Call context: 
+None
+TMP_544bytes[])  = new bytes[](4)
+multicallData(bytes[]) =  ['TMP_544(bytes[])']
+REF_232(bytes) -> multicallData[0]
+TMP_545 = CONVERT CORE to IInitCore
+REF_235(bytes4) (->None) := 1121524675(uint256)
+REF_236(uint256) -> _param.initPosId
+REF_237(address) -> marginPos.collPool
+REF_238(uint256) -> _param.collAmt
+REF_239(address) -> marginPos.collPool
+TMP_546(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_235,REF_236,REF_237,REF_238,REF_239)
+REF_232(bytes) (->multicallData) := TMP_546(bytes)
+REF_240(bytes) -> multicallData[1]
+TMP_547 = CONVERT CORE to IInitCore
+REF_243(bytes4) (->None) := 2145827901(uint256)
+REF_244(address) -> marginPos.collPool
+TMP_548 = CONVERT this to address
+TMP_549(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_243,REF_244,TMP_548)
+REF_240(bytes) (->multicallData) := TMP_549(bytes)
+REF_271(address) -> _param.tokenOut
+TMP_567(bool) = REF_271 == borrToken
+CONDITION TMP_567
+EXPRESSION:_ensureApprove(borrToken,repayAmt)	NodeType.EXPRESSION
+multicallData = new bytes[](4)	NodeType.VARIABLE
+multicallData = new bytes[](4)	NodeType.EXPRESSION
+multicallData[0] = abi.encodeWithSelector(IInitCore(CORE).decollateralize.selector,_param.initPosId,marginPos.collPool,_param.collAmt,marginPos.collPool)	NodeType.EXPRESSION
+multicallData[1] = abi.encodeWithSelector(IInitCore(CORE).burnTo.selector,marginPos.collPool,address(this))	NodeType.EXPRESSION
+_param.tokenOut == borrToken	NodeType.IF" [key=0];
+"BlockID: 840
+Call context: 
+None
+TMP_544bytes[])  = new bytes[](4)
+multicallData(bytes[]) =  ['TMP_544(bytes[])']
+REF_232(bytes) -> multicallData[0]
+TMP_545 = CONVERT CORE to IInitCore
+REF_235(bytes4) (->None) := 1121524675(uint256)
+REF_236(uint256) -> _param.initPosId
+REF_237(address) -> marginPos.collPool
+REF_238(uint256) -> _param.collAmt
+REF_239(address) -> marginPos.collPool
+TMP_546(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_235,REF_236,REF_237,REF_238,REF_239)
+REF_232(bytes) (->multicallData) := TMP_546(bytes)
+REF_240(bytes) -> multicallData[1]
+TMP_547 = CONVERT CORE to IInitCore
+REF_243(bytes4) (->None) := 2145827901(uint256)
+REF_244(address) -> marginPos.collPool
+TMP_548 = CONVERT this to address
+TMP_549(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_243,REF_244,TMP_548)
+REF_240(bytes) (->multicallData) := TMP_549(bytes)
+REF_271(address) -> _param.tokenOut
+TMP_567(bool) = REF_271 == borrToken
+CONDITION TMP_567
+EXPRESSION:_ensureApprove(borrToken,repayAmt)	NodeType.EXPRESSION
+multicallData = new bytes[](4)	NodeType.VARIABLE
+multicallData = new bytes[](4)	NodeType.EXPRESSION
+multicallData[0] = abi.encodeWithSelector(IInitCore(CORE).decollateralize.selector,_param.initPosId,marginPos.collPool,_param.collAmt,marginPos.collPool)	NodeType.EXPRESSION
+multicallData[1] = abi.encodeWithSelector(IInitCore(CORE).burnTo.selector,marginPos.collPool,address(this))	NodeType.EXPRESSION
+_param.tokenOut == borrToken	NodeType.IF" -> "BlockID: 841
+Call context: 
+True
+REF_272(SwapType) -> SwapType.CloseExactIn
+swapType(SwapType) := REF_272(SwapType)
+EXPRESSION:swapType = SwapType.CloseExactIn	NodeType.EXPRESSION" [key=0];
+"BlockID: 840
+Call context: 
+None
+TMP_544bytes[])  = new bytes[](4)
+multicallData(bytes[]) =  ['TMP_544(bytes[])']
+REF_232(bytes) -> multicallData[0]
+TMP_545 = CONVERT CORE to IInitCore
+REF_235(bytes4) (->None) := 1121524675(uint256)
+REF_236(uint256) -> _param.initPosId
+REF_237(address) -> marginPos.collPool
+REF_238(uint256) -> _param.collAmt
+REF_239(address) -> marginPos.collPool
+TMP_546(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_235,REF_236,REF_237,REF_238,REF_239)
+REF_232(bytes) (->multicallData) := TMP_546(bytes)
+REF_240(bytes) -> multicallData[1]
+TMP_547 = CONVERT CORE to IInitCore
+REF_243(bytes4) (->None) := 2145827901(uint256)
+REF_244(address) -> marginPos.collPool
+TMP_548 = CONVERT this to address
+TMP_549(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_243,REF_244,TMP_548)
+REF_240(bytes) (->multicallData) := TMP_549(bytes)
+REF_271(address) -> _param.tokenOut
+TMP_567(bool) = REF_271 == borrToken
+CONDITION TMP_567
+EXPRESSION:_ensureApprove(borrToken,repayAmt)	NodeType.EXPRESSION
+multicallData = new bytes[](4)	NodeType.VARIABLE
+multicallData = new bytes[](4)	NodeType.EXPRESSION
+multicallData[0] = abi.encodeWithSelector(IInitCore(CORE).decollateralize.selector,_param.initPosId,marginPos.collPool,_param.collAmt,marginPos.collPool)	NodeType.EXPRESSION
+multicallData[1] = abi.encodeWithSelector(IInitCore(CORE).burnTo.selector,marginPos.collPool,address(this))	NodeType.EXPRESSION
+_param.tokenOut == borrToken	NodeType.IF" -> "BlockID: 842
+Call context: 
+False
+REF_273(SwapType) -> SwapType.CloseExactOut
+swapType(SwapType) := REF_273(SwapType)
+EXPRESSION:swapType = SwapType.CloseExactOut	NodeType.EXPRESSION" [key=0];
+"BlockID: 841
+Call context: 
+True
+REF_272(SwapType) -> SwapType.CloseExactIn
+swapType(SwapType) := REF_272(SwapType)
+EXPRESSION:swapType = SwapType.CloseExactIn	NodeType.EXPRESSION" -> "BlockID: 843
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 842
+Call context: 
+False
+REF_273(SwapType) -> SwapType.CloseExactOut
+swapType(SwapType) := REF_273(SwapType)
+EXPRESSION:swapType = SwapType.CloseExactOut	NodeType.EXPRESSION" -> "BlockID: 843
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 843
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 844
+Call context: 
+None
+REF_245(uint256) -> _param.initPosId
+REF_246(bytes) -> _param.data
+TMP_550(SwapInfo) = new SwapInfo(REF_245,swapType,collToken,borrToken,repayAmt,REF_246)
+swapInfo(SwapInfo) := TMP_550(SwapInfo)
+REF_247(bytes) -> multicallData[2]
+TMP_551 = CONVERT CORE to IInitCore
+REF_250(bytes4) (->None) := 2103493374(uint256)
+TMP_552 = CONVERT this to address
+TMP_553(bytes) = SOLIDITY_CALL abi.encode()(swapInfo)
+TMP_554(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_250,TMP_552,0,TMP_553)
+REF_247(bytes) (->multicallData) := TMP_554(bytes)
+REF_252(bytes) -> multicallData[3]
+TMP_555 = CONVERT CORE to IInitCore
+REF_255(bytes4) (->None) := 2362630343(uint256)
+REF_256(address) -> marginPos.borrPool
+REF_257(uint256) -> _param.repayShares
+REF_258(uint256) -> _param.initPosId
+TMP_556(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_255,REF_256,REF_257,REF_258)
+REF_252(bytes) (->multicallData) := TMP_556(bytes)
+TMP_557 = CONVERT CORE to IMulticall
+TMP_558(bytes[]) = HIGH_LEVEL_CALL, dest:TMP_557(IMulticall), function:multicall, arguments:['multicallData']  
+EXPRESSION:swapInfo = SwapInfo(_param.initPosId,swapType,collToken,borrToken,repayAmt,_param.data)	NodeType.VARIABLE
+swapInfo = SwapInfo(_param.initPosId,swapType,collToken,borrToken,repayAmt,_param.data)	NodeType.EXPRESSION
+multicallData[2] = abi.encodeWithSelector(IInitCore(CORE).callback.selector,address(this),0,abi.encode(swapInfo))	NodeType.EXPRESSION
+multicallData[3] = abi.encodeWithSelector(IInitCore(CORE).repay.selector,marginPos.borrPool,_param.repayShares,_param.initPosId)	NodeType.EXPRESSION
+IMulticall(CORE).multicall(multicallData)	NodeType.EXPRESSION" [key=0];
+"BlockID: 844
+Call context: 
+None
+REF_245(uint256) -> _param.initPosId
+REF_246(bytes) -> _param.data
+TMP_550(SwapInfo) = new SwapInfo(REF_245,swapType,collToken,borrToken,repayAmt,REF_246)
+swapInfo(SwapInfo) := TMP_550(SwapInfo)
+REF_247(bytes) -> multicallData[2]
+TMP_551 = CONVERT CORE to IInitCore
+REF_250(bytes4) (->None) := 2103493374(uint256)
+TMP_552 = CONVERT this to address
+TMP_553(bytes) = SOLIDITY_CALL abi.encode()(swapInfo)
+TMP_554(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_250,TMP_552,0,TMP_553)
+REF_247(bytes) (->multicallData) := TMP_554(bytes)
+REF_252(bytes) -> multicallData[3]
+TMP_555 = CONVERT CORE to IInitCore
+REF_255(bytes4) (->None) := 2362630343(uint256)
+REF_256(address) -> marginPos.borrPool
+REF_257(uint256) -> _param.repayShares
+REF_258(uint256) -> _param.initPosId
+TMP_556(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_255,REF_256,REF_257,REF_258)
+REF_252(bytes) (->multicallData) := TMP_556(bytes)
+TMP_557 = CONVERT CORE to IMulticall
+TMP_558(bytes[]) = HIGH_LEVEL_CALL, dest:TMP_557(IMulticall), function:multicall, arguments:['multicallData']  
+EXPRESSION:swapInfo = SwapInfo(_param.initPosId,swapType,collToken,borrToken,repayAmt,_param.data)	NodeType.VARIABLE
+swapInfo = SwapInfo(_param.initPosId,swapType,collToken,borrToken,repayAmt,_param.data)	NodeType.EXPRESSION
+multicallData[2] = abi.encodeWithSelector(IInitCore(CORE).callback.selector,address(this),0,abi.encode(swapInfo))	NodeType.EXPRESSION
+multicallData[3] = abi.encodeWithSelector(IInitCore(CORE).repay.selector,marginPos.borrPool,_param.repayShares,_param.initPosId)	NodeType.EXPRESSION
+IMulticall(CORE).multicall(multicallData)	NodeType.EXPRESSION" -> "BlockID: 845
+Call context: 
+None
+REF_260(address) -> _param.tokenOut
+TMP_559 = CONVERT REF_260 to IERC20
+TMP_560 = CONVERT this to address
+TMP_561(uint256) = HIGH_LEVEL_CALL, dest:TMP_559(IERC20), function:balanceOf, arguments:['TMP_560']  
+EXPRESSION:IMulticall(CORE).multicall(multicallData)	NodeType.EXPRESSION
+amtOut = IERC20(_param.tokenOut).balanceOf(address(this))	NodeType.EXPRESSION" [key=0];
+"BlockID: 845
+Call context: 
+None
+REF_260(address) -> _param.tokenOut
+TMP_559 = CONVERT REF_260 to IERC20
+TMP_560 = CONVERT this to address
+TMP_561(uint256) = HIGH_LEVEL_CALL, dest:TMP_559(IERC20), function:balanceOf, arguments:['TMP_560']  
+EXPRESSION:IMulticall(CORE).multicall(multicallData)	NodeType.EXPRESSION
+amtOut = IERC20(_param.tokenOut).balanceOf(address(this))	NodeType.EXPRESSION" -> "BlockID: 846
+Call context: 
+None
+amtOut(uint256) := TMP_561(uint256)
+REF_262(uint256) -> _param.minAmtOut
+TMP_562(bool) = amtOut >= REF_262
+REF_263(uint32) -> Errors.SLIPPAGE_CONTROL
+INTERNAL_CALL, _require(bool,uint32)(TMP_562,REF_263)
+EXPRESSION:amtOut = IERC20(_param.tokenOut).balanceOf(address(this))	NodeType.EXPRESSION
+_require(amtOut >= _param.minAmtOut,Errors.SLIPPAGE_CONTROL)	NodeType.EXPRESSION" [key=0];
+"BlockID: 846
+Call context: 
+None
+amtOut(uint256) := TMP_561(uint256)
+REF_262(uint256) -> _param.minAmtOut
+TMP_562(bool) = amtOut >= REF_262
+REF_263(uint32) -> Errors.SLIPPAGE_CONTROL
+INTERNAL_CALL, _require(bool,uint32)(TMP_562,REF_263)
+EXPRESSION:amtOut = IERC20(_param.tokenOut).balanceOf(address(this))	NodeType.EXPRESSION
+_require(amtOut >= _param.minAmtOut,Errors.SLIPPAGE_CONTROL)	NodeType.EXPRESSION" -> "BlockID: 847
+Call context: 
+None
+REF_264(address) -> _param.tokenOut
+REF_265(bool) -> _param.returnNative
+INTERNAL_CALL, MarginTradingHook._transmitTokenOut(address,uint256,bool)(REF_264,amtOut,REF_265)
+EXPRESSION:_require(amtOut >= _param.minAmtOut,Errors.SLIPPAGE_CONTROL)	NodeType.EXPRESSION
+_transmitTokenOut(_param.tokenOut,amtOut,_param.returnNative)	NodeType.EXPRESSION" [key=0];
+"BlockID: 847
+Call context: 
+None
+REF_264(address) -> _param.tokenOut
+REF_265(bool) -> _param.returnNative
+INTERNAL_CALL, MarginTradingHook._transmitTokenOut(address,uint256,bool)(REF_264,amtOut,REF_265)
+EXPRESSION:_require(amtOut >= _param.minAmtOut,Errors.SLIPPAGE_CONTROL)	NodeType.EXPRESSION
+_transmitTokenOut(_param.tokenOut,amtOut,_param.returnNative)	NodeType.EXPRESSION" -> "BlockID: 848
+Call context: 
+None
+REF_266(uint256) -> _param.initPosId
+REF_267(uint256) -> _param.minHealth_e18
+TMP_565(uint256) = INTERNAL_CALL, MarginTradingHook._validateHealth(uint256,uint256)(REF_266,REF_267)
+EXPRESSION:_transmitTokenOut(_param.tokenOut,amtOut,_param.returnNative)	NodeType.EXPRESSION
+health_e18 = _validateHealth(_param.initPosId,_param.minHealth_e18)	NodeType.EXPRESSION" [key=0];
+"BlockID: 848
+Call context: 
+None
+REF_266(uint256) -> _param.initPosId
+REF_267(uint256) -> _param.minHealth_e18
+TMP_565(uint256) = INTERNAL_CALL, MarginTradingHook._validateHealth(uint256,uint256)(REF_266,REF_267)
+EXPRESSION:_transmitTokenOut(_param.tokenOut,amtOut,_param.returnNative)	NodeType.EXPRESSION
+health_e18 = _validateHealth(_param.initPosId,_param.minHealth_e18)	NodeType.EXPRESSION" -> "BlockID: 849
+Call context: 
+None
+health_e18(uint256) := TMP_565(uint256)
+EXPRESSION:health_e18 = _validateHealth(_param.initPosId,_param.minHealth_e18)	NodeType.EXPRESSION" [key=0];
+}

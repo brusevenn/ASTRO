@@ -1,0 +1,695 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+REF_87(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_88(Arbitrator) -> REF_87.arbitrator
+TMP_111 = CONVERT 0 to address
+TMP_112 = CONVERT TMP_111 to Arbitrator
+TMP_113(bool) = REF_88 != TMP_112
+CONDITION TMP_113
+EXPRESSION:appealDisputes[_disputeID].arbitrator != Arbitrator(address(0))	NodeType.IF";
+"BlockID: 13
+Call context: 
+None
+REF_87(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_88(Arbitrator) -> REF_87.arbitrator
+TMP_111 = CONVERT 0 to address
+TMP_112 = CONVERT TMP_111 to Arbitrator
+TMP_113(bool) = REF_88 != TMP_112
+CONDITION TMP_113
+EXPRESSION:requireAppealFee(_disputeID,_extraData)	NodeType.EXPRESSION
+appealDisputes[_disputeID].arbitrator != Arbitrator(address(0))	NodeType.IF";
+"BlockID: 25
+Call context: 
+None
+REF_45(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_46(Arbitrator) -> REF_45.arbitrator
+TMP_86 = CONVERT 0 to address
+TMP_87 = CONVERT TMP_86 to Arbitrator
+TMP_88(bool) = REF_46 != TMP_87
+CONDITION TMP_88
+EXPRESSION:super.appeal(_disputeID,_extraData)	NodeType.EXPRESSION
+appealDisputes[_disputeID].arbitrator != Arbitrator(address(0))	NodeType.IF";
+"BlockID: 26
+Call context: 
+True
+REF_47(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_48(Arbitrator) -> REF_47.arbitrator
+REF_51(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_52(uint256) -> REF_51.appealDisputeID
+TMP_14(uint256) = INTERNAL_CALL, Arbitrator.appealCost(uint256,bytes)(_disputeID,_extraData)
+EXPRESSION:require(bool,string)(msg.value >= appealCost(_disputeID,_extraData),Not enough ETH to cover appeal costs.)	NodeType.EXPRESSION";
+"BlockID: 27
+Call context: 
+False
+REF_53(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_54(Arbitrator) -> REF_53.arbitrator
+REF_54(Arbitrator) (->appealDisputes) := arbitrator(Arbitrator)
+REF_55(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_56(uint256) -> REF_55.appealDisputeID
+REF_59(CentralizedArbitrator.DisputeStruct) -> disputes[_disputeID]
+REF_60(uint256) -> REF_59.choices
+TMP_92(uint256) = HIGH_LEVEL_CALL, dest:arbitrator(Arbitrator), function:createDispute, arguments:['REF_60', '_extraData'] value:msg.value 
+EXPRESSION:appealDisputes[_disputeID].arbitrator = arbitrator	NodeType.EXPRESSION
+appealDisputes[_disputeID].appealDisputeID = arbitrator.createDispute.value(msg.value)(disputes[_disputeID].choices,_extraData)	NodeType.EXPRESSION";
+"BlockID: 29
+Call context: 
+None
+REF_56(uint256) (->appealDisputes) := TMP_92(uint256)
+REF_61(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_62(uint256) -> REF_61.appealDisputeID
+REF_63(uint256) -> appealDisputeIDsToDisputeIDs[REF_62]
+REF_63(uint256) (->appealDisputeIDsToDisputeIDs) := _disputeID(uint256)
+EXPRESSION:appealDisputes[_disputeID].appealDisputeID = arbitrator.createDispute.value(msg.value)(disputes[_disputeID].choices,_extraData)	NodeType.EXPRESSION
+appealDisputeIDsToDisputeIDs[appealDisputes[_disputeID].appealDisputeID] = _disputeID	NodeType.EXPRESSION" [shape=box];
+"BlockID: 32
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 11
+Call context: appeal
+True
+TMP_139(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 12
+Call context: appeal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2
+Call context: appeal,requireAppealFee
+True
+REF_89(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_90(Arbitrator) -> REF_89.arbitrator
+REF_92(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_93(uint256) -> REF_92.appealDisputeID
+TMP_114(uint256) = HIGH_LEVEL_CALL, dest:REF_90(Arbitrator), function:appealCost, arguments:['REF_93', '_extraData']  
+EXPRESSION:cost = appealDisputes[_disputeID].arbitrator.appealCost(appealDisputes[_disputeID].appealDisputeID,_extraData)	NodeType.EXPRESSION";
+"BlockID: 3
+Call context: appeal,requireAppealFee
+False
+REF_94(CentralizedArbitrator.DisputeStruct) -> disputes[_disputeID]
+REF_95(Arbitrator.DisputeStatus) -> REF_94.status
+REF_96(Arbitrator.DisputeStatus) -> DisputeStatus.Appealable
+TMP_115(bool) = REF_95 == REF_96
+CONDITION TMP_115
+EXPRESSION:disputes[_disputeID].status == DisputeStatus.Appealable	NodeType.IF";
+"BlockID: 5
+Call context: appeal,requireAppealFee
+True
+TMP_116(uint256) = HIGH_LEVEL_CALL, dest:arbitrator(Arbitrator), function:arbitrationCost, arguments:['_extraData']  
+EXPRESSION:cost = arbitrator.arbitrationCost(_extraData)	NodeType.EXPRESSION";
+"BlockID: 6
+Call context: appeal,requireAppealFee
+False
+cost(uint256) := NOT_PAYABLE_VALUE(uint256)
+EXPRESSION:cost = NOT_PAYABLE_VALUE	NodeType.EXPRESSION";
+"BlockID: 9
+Call context: appeal,requireAppealFee
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 7
+Call context: appeal,requireAppealFee
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 8
+Call context: appeal,requireAppealFee
+None
+cost(uint256) := TMP_116(uint256)
+EXPRESSION:cost = arbitrator.arbitrationCost(_extraData)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 4
+Call context: appeal,requireAppealFee
+None
+cost(uint256) := TMP_114(uint256)
+EXPRESSION:cost = appealDisputes[_disputeID].arbitrator.appealCost(appealDisputes[_disputeID].appealDisputeID,_extraData)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 10
+Call context: appeal
+None
+TMP_266(None) := cost(uint256)
+TMP_138(bool) = msg.value >= TMP_137
+CONDITION TMP_138
+EXPRESSION:TMP_138(bool) = msg.value >= TMP_137	NodeType.IF";
+"BlockID: 23
+Call context: appeal,appeal
+True
+TMP_139(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 24
+Call context: appeal,appeal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 14
+Call context: appeal,appeal,requireAppealFee
+True
+REF_89(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_90(Arbitrator) -> REF_89.arbitrator
+REF_92(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_93(uint256) -> REF_92.appealDisputeID
+TMP_114(uint256) = HIGH_LEVEL_CALL, dest:REF_90(Arbitrator), function:appealCost, arguments:['REF_93', '_extraData']  
+EXPRESSION:cost = appealDisputes[_disputeID].arbitrator.appealCost(appealDisputes[_disputeID].appealDisputeID,_extraData)	NodeType.EXPRESSION";
+"BlockID: 15
+Call context: appeal,appeal,requireAppealFee
+False
+REF_94(CentralizedArbitrator.DisputeStruct) -> disputes[_disputeID]
+REF_95(Arbitrator.DisputeStatus) -> REF_94.status
+REF_96(Arbitrator.DisputeStatus) -> DisputeStatus.Appealable
+TMP_115(bool) = REF_95 == REF_96
+CONDITION TMP_115
+EXPRESSION:disputes[_disputeID].status == DisputeStatus.Appealable	NodeType.IF";
+"BlockID: 17
+Call context: appeal,appeal,requireAppealFee
+True
+TMP_116(uint256) = HIGH_LEVEL_CALL, dest:arbitrator(Arbitrator), function:arbitrationCost, arguments:['_extraData']  
+EXPRESSION:cost = arbitrator.arbitrationCost(_extraData)	NodeType.EXPRESSION";
+"BlockID: 18
+Call context: appeal,appeal,requireAppealFee
+False
+cost(uint256) := NOT_PAYABLE_VALUE(uint256)
+EXPRESSION:cost = NOT_PAYABLE_VALUE	NodeType.EXPRESSION";
+"BlockID: 21
+Call context: appeal,appeal,requireAppealFee
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 19
+Call context: appeal,appeal,requireAppealFee
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 20
+Call context: appeal,appeal,requireAppealFee
+None
+cost(uint256) := TMP_116(uint256)
+EXPRESSION:cost = arbitrator.arbitrationCost(_extraData)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 16
+Call context: appeal,appeal,requireAppealFee
+None
+cost(uint256) := TMP_114(uint256)
+EXPRESSION:cost = appealDisputes[_disputeID].arbitrator.appealCost(appealDisputes[_disputeID].appealDisputeID,_extraData)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 22
+Call context: appeal,appeal
+None
+TMP_266(None) := cost(uint256)
+TMP_138(bool) = msg.value >= TMP_137
+CONDITION TMP_138
+EXPRESSION:TMP_138(bool) = msg.value >= TMP_137	NodeType.IF";
+"BlockID: 28
+Call context: appeal,appeal
+None
+TMP_15(bool) = msg.value >= TMP_14
+CONDITION TMP_15
+EXPRESSION:TMP_15(bool) = msg.value >= TMP_14	NodeType.IF";
+"BlockID: 30
+Call context: appeal,appeal
+True
+TMP_16(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 31
+Call context: appeal,appeal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+REF_87(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_88(Arbitrator) -> REF_87.arbitrator
+TMP_111 = CONVERT 0 to address
+TMP_112 = CONVERT TMP_111 to Arbitrator
+TMP_113(bool) = REF_88 != TMP_112
+CONDITION TMP_113
+EXPRESSION:appealDisputes[_disputeID].arbitrator != Arbitrator(address(0))	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+REF_87(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_88(Arbitrator) -> REF_87.arbitrator
+TMP_111 = CONVERT 0 to address
+TMP_112 = CONVERT TMP_111 to Arbitrator
+TMP_113(bool) = REF_88 != TMP_112
+CONDITION TMP_113
+EXPRESSION:appealDisputes[_disputeID].arbitrator != Arbitrator(address(0))	NodeType.IF" -> "BlockID: 2
+Call context: appeal,requireAppealFee
+True
+REF_89(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_90(Arbitrator) -> REF_89.arbitrator
+REF_92(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_93(uint256) -> REF_92.appealDisputeID
+TMP_114(uint256) = HIGH_LEVEL_CALL, dest:REF_90(Arbitrator), function:appealCost, arguments:['REF_93', '_extraData']  
+EXPRESSION:cost = appealDisputes[_disputeID].arbitrator.appealCost(appealDisputes[_disputeID].appealDisputeID,_extraData)	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+REF_87(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_88(Arbitrator) -> REF_87.arbitrator
+TMP_111 = CONVERT 0 to address
+TMP_112 = CONVERT TMP_111 to Arbitrator
+TMP_113(bool) = REF_88 != TMP_112
+CONDITION TMP_113
+EXPRESSION:appealDisputes[_disputeID].arbitrator != Arbitrator(address(0))	NodeType.IF" -> "BlockID: 3
+Call context: appeal,requireAppealFee
+False
+REF_94(CentralizedArbitrator.DisputeStruct) -> disputes[_disputeID]
+REF_95(Arbitrator.DisputeStatus) -> REF_94.status
+REF_96(Arbitrator.DisputeStatus) -> DisputeStatus.Appealable
+TMP_115(bool) = REF_95 == REF_96
+CONDITION TMP_115
+EXPRESSION:disputes[_disputeID].status == DisputeStatus.Appealable	NodeType.IF" [key="successor_5"];
+"BlockID: 13
+Call context: 
+None
+REF_87(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_88(Arbitrator) -> REF_87.arbitrator
+TMP_111 = CONVERT 0 to address
+TMP_112 = CONVERT TMP_111 to Arbitrator
+TMP_113(bool) = REF_88 != TMP_112
+CONDITION TMP_113
+EXPRESSION:requireAppealFee(_disputeID,_extraData)	NodeType.EXPRESSION
+appealDisputes[_disputeID].arbitrator != Arbitrator(address(0))	NodeType.IF" -> "BlockID: 14
+Call context: appeal,appeal,requireAppealFee
+True
+REF_89(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_90(Arbitrator) -> REF_89.arbitrator
+REF_92(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_93(uint256) -> REF_92.appealDisputeID
+TMP_114(uint256) = HIGH_LEVEL_CALL, dest:REF_90(Arbitrator), function:appealCost, arguments:['REF_93', '_extraData']  
+EXPRESSION:cost = appealDisputes[_disputeID].arbitrator.appealCost(appealDisputes[_disputeID].appealDisputeID,_extraData)	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 13
+Call context: 
+None
+REF_87(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_88(Arbitrator) -> REF_87.arbitrator
+TMP_111 = CONVERT 0 to address
+TMP_112 = CONVERT TMP_111 to Arbitrator
+TMP_113(bool) = REF_88 != TMP_112
+CONDITION TMP_113
+EXPRESSION:requireAppealFee(_disputeID,_extraData)	NodeType.EXPRESSION
+appealDisputes[_disputeID].arbitrator != Arbitrator(address(0))	NodeType.IF" -> "BlockID: 15
+Call context: appeal,appeal,requireAppealFee
+False
+REF_94(CentralizedArbitrator.DisputeStruct) -> disputes[_disputeID]
+REF_95(Arbitrator.DisputeStatus) -> REF_94.status
+REF_96(Arbitrator.DisputeStatus) -> DisputeStatus.Appealable
+TMP_115(bool) = REF_95 == REF_96
+CONDITION TMP_115
+EXPRESSION:disputes[_disputeID].status == DisputeStatus.Appealable	NodeType.IF" [key="successor_5"];
+"BlockID: 25
+Call context: 
+None
+REF_45(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_46(Arbitrator) -> REF_45.arbitrator
+TMP_86 = CONVERT 0 to address
+TMP_87 = CONVERT TMP_86 to Arbitrator
+TMP_88(bool) = REF_46 != TMP_87
+CONDITION TMP_88
+EXPRESSION:super.appeal(_disputeID,_extraData)	NodeType.EXPRESSION
+appealDisputes[_disputeID].arbitrator != Arbitrator(address(0))	NodeType.IF" -> "BlockID: 26
+Call context: 
+True
+REF_47(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_48(Arbitrator) -> REF_47.arbitrator
+REF_51(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_52(uint256) -> REF_51.appealDisputeID
+TMP_14(uint256) = INTERNAL_CALL, Arbitrator.appealCost(uint256,bytes)(_disputeID,_extraData)
+EXPRESSION:require(bool,string)(msg.value >= appealCost(_disputeID,_extraData),Not enough ETH to cover appeal costs.)	NodeType.EXPRESSION" [key=0];
+"BlockID: 25
+Call context: 
+None
+REF_45(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_46(Arbitrator) -> REF_45.arbitrator
+TMP_86 = CONVERT 0 to address
+TMP_87 = CONVERT TMP_86 to Arbitrator
+TMP_88(bool) = REF_46 != TMP_87
+CONDITION TMP_88
+EXPRESSION:super.appeal(_disputeID,_extraData)	NodeType.EXPRESSION
+appealDisputes[_disputeID].arbitrator != Arbitrator(address(0))	NodeType.IF" -> "BlockID: 27
+Call context: 
+False
+REF_53(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_54(Arbitrator) -> REF_53.arbitrator
+REF_54(Arbitrator) (->appealDisputes) := arbitrator(Arbitrator)
+REF_55(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_56(uint256) -> REF_55.appealDisputeID
+REF_59(CentralizedArbitrator.DisputeStruct) -> disputes[_disputeID]
+REF_60(uint256) -> REF_59.choices
+TMP_92(uint256) = HIGH_LEVEL_CALL, dest:arbitrator(Arbitrator), function:createDispute, arguments:['REF_60', '_extraData'] value:msg.value 
+EXPRESSION:appealDisputes[_disputeID].arbitrator = arbitrator	NodeType.EXPRESSION
+appealDisputes[_disputeID].appealDisputeID = arbitrator.createDispute.value(msg.value)(disputes[_disputeID].choices,_extraData)	NodeType.EXPRESSION" [key=0];
+"BlockID: 26
+Call context: 
+True
+REF_47(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_48(Arbitrator) -> REF_47.arbitrator
+REF_51(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_52(uint256) -> REF_51.appealDisputeID
+TMP_14(uint256) = INTERNAL_CALL, Arbitrator.appealCost(uint256,bytes)(_disputeID,_extraData)
+EXPRESSION:require(bool,string)(msg.value >= appealCost(_disputeID,_extraData),Not enough ETH to cover appeal costs.)	NodeType.EXPRESSION" -> "BlockID: 28
+Call context: appeal,appeal
+None
+TMP_15(bool) = msg.value >= TMP_14
+CONDITION TMP_15
+EXPRESSION:TMP_15(bool) = msg.value >= TMP_14	NodeType.IF" [key="successor_5"];
+"BlockID: 27
+Call context: 
+False
+REF_53(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_54(Arbitrator) -> REF_53.arbitrator
+REF_54(Arbitrator) (->appealDisputes) := arbitrator(Arbitrator)
+REF_55(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_56(uint256) -> REF_55.appealDisputeID
+REF_59(CentralizedArbitrator.DisputeStruct) -> disputes[_disputeID]
+REF_60(uint256) -> REF_59.choices
+TMP_92(uint256) = HIGH_LEVEL_CALL, dest:arbitrator(Arbitrator), function:createDispute, arguments:['REF_60', '_extraData'] value:msg.value 
+EXPRESSION:appealDisputes[_disputeID].arbitrator = arbitrator	NodeType.EXPRESSION
+appealDisputes[_disputeID].appealDisputeID = arbitrator.createDispute.value(msg.value)(disputes[_disputeID].choices,_extraData)	NodeType.EXPRESSION" -> "BlockID: 29
+Call context: 
+None
+REF_56(uint256) (->appealDisputes) := TMP_92(uint256)
+REF_61(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_62(uint256) -> REF_61.appealDisputeID
+REF_63(uint256) -> appealDisputeIDsToDisputeIDs[REF_62]
+REF_63(uint256) (->appealDisputeIDsToDisputeIDs) := _disputeID(uint256)
+EXPRESSION:appealDisputes[_disputeID].appealDisputeID = arbitrator.createDispute.value(msg.value)(disputes[_disputeID].choices,_extraData)	NodeType.EXPRESSION
+appealDisputeIDsToDisputeIDs[appealDisputes[_disputeID].appealDisputeID] = _disputeID	NodeType.EXPRESSION" [key=0];
+"BlockID: 29
+Call context: 
+None
+REF_56(uint256) (->appealDisputes) := TMP_92(uint256)
+REF_61(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_62(uint256) -> REF_61.appealDisputeID
+REF_63(uint256) -> appealDisputeIDsToDisputeIDs[REF_62]
+REF_63(uint256) (->appealDisputeIDsToDisputeIDs) := _disputeID(uint256)
+EXPRESSION:appealDisputes[_disputeID].appealDisputeID = arbitrator.createDispute.value(msg.value)(disputes[_disputeID].choices,_extraData)	NodeType.EXPRESSION
+appealDisputeIDsToDisputeIDs[appealDisputes[_disputeID].appealDisputeID] = _disputeID	NodeType.EXPRESSION" -> "BlockID: 32
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 12
+Call context: appeal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 13
+Call context: 
+None
+REF_87(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_88(Arbitrator) -> REF_87.arbitrator
+TMP_111 = CONVERT 0 to address
+TMP_112 = CONVERT TMP_111 to Arbitrator
+TMP_113(bool) = REF_88 != TMP_112
+CONDITION TMP_113
+EXPRESSION:requireAppealFee(_disputeID,_extraData)	NodeType.EXPRESSION
+appealDisputes[_disputeID].arbitrator != Arbitrator(address(0))	NodeType.IF" [key="Exit: requireAppealFee", ref="AppealableArbitrator.requireAppealFee"];
+"BlockID: 2
+Call context: appeal,requireAppealFee
+True
+REF_89(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_90(Arbitrator) -> REF_89.arbitrator
+REF_92(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_93(uint256) -> REF_92.appealDisputeID
+TMP_114(uint256) = HIGH_LEVEL_CALL, dest:REF_90(Arbitrator), function:appealCost, arguments:['REF_93', '_extraData']  
+EXPRESSION:cost = appealDisputes[_disputeID].arbitrator.appealCost(appealDisputes[_disputeID].appealDisputeID,_extraData)	NodeType.EXPRESSION" -> "BlockID: 4
+Call context: appeal,requireAppealFee
+None
+cost(uint256) := TMP_114(uint256)
+EXPRESSION:cost = appealDisputes[_disputeID].arbitrator.appealCost(appealDisputes[_disputeID].appealDisputeID,_extraData)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3
+Call context: appeal,requireAppealFee
+False
+REF_94(CentralizedArbitrator.DisputeStruct) -> disputes[_disputeID]
+REF_95(Arbitrator.DisputeStatus) -> REF_94.status
+REF_96(Arbitrator.DisputeStatus) -> DisputeStatus.Appealable
+TMP_115(bool) = REF_95 == REF_96
+CONDITION TMP_115
+EXPRESSION:disputes[_disputeID].status == DisputeStatus.Appealable	NodeType.IF" -> "BlockID: 5
+Call context: appeal,requireAppealFee
+True
+TMP_116(uint256) = HIGH_LEVEL_CALL, dest:arbitrator(Arbitrator), function:arbitrationCost, arguments:['_extraData']  
+EXPRESSION:cost = arbitrator.arbitrationCost(_extraData)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3
+Call context: appeal,requireAppealFee
+False
+REF_94(CentralizedArbitrator.DisputeStruct) -> disputes[_disputeID]
+REF_95(Arbitrator.DisputeStatus) -> REF_94.status
+REF_96(Arbitrator.DisputeStatus) -> DisputeStatus.Appealable
+TMP_115(bool) = REF_95 == REF_96
+CONDITION TMP_115
+EXPRESSION:disputes[_disputeID].status == DisputeStatus.Appealable	NodeType.IF" -> "BlockID: 6
+Call context: appeal,requireAppealFee
+False
+cost(uint256) := NOT_PAYABLE_VALUE(uint256)
+EXPRESSION:cost = NOT_PAYABLE_VALUE	NodeType.EXPRESSION" [key=0];
+"BlockID: 5
+Call context: appeal,requireAppealFee
+True
+TMP_116(uint256) = HIGH_LEVEL_CALL, dest:arbitrator(Arbitrator), function:arbitrationCost, arguments:['_extraData']  
+EXPRESSION:cost = arbitrator.arbitrationCost(_extraData)	NodeType.EXPRESSION" -> "BlockID: 8
+Call context: appeal,requireAppealFee
+None
+cost(uint256) := TMP_116(uint256)
+EXPRESSION:cost = arbitrator.arbitrationCost(_extraData)	NodeType.EXPRESSION" [key=0];
+"BlockID: 6
+Call context: appeal,requireAppealFee
+False
+cost(uint256) := NOT_PAYABLE_VALUE(uint256)
+EXPRESSION:cost = NOT_PAYABLE_VALUE	NodeType.EXPRESSION" -> "BlockID: 9
+Call context: appeal,requireAppealFee
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 9
+Call context: appeal,requireAppealFee
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 7
+Call context: appeal,requireAppealFee
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 7
+Call context: appeal,requireAppealFee
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 10
+Call context: appeal
+None
+TMP_266(None) := cost(uint256)
+TMP_138(bool) = msg.value >= TMP_137
+CONDITION TMP_138
+EXPRESSION:TMP_138(bool) = msg.value >= TMP_137	NodeType.IF" [key=N, ref=N];
+"BlockID: 8
+Call context: appeal,requireAppealFee
+None
+cost(uint256) := TMP_116(uint256)
+EXPRESSION:cost = arbitrator.arbitrationCost(_extraData)	NodeType.EXPRESSION" -> "BlockID: 9
+Call context: appeal,requireAppealFee
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 4
+Call context: appeal,requireAppealFee
+None
+cost(uint256) := TMP_114(uint256)
+EXPRESSION:cost = appealDisputes[_disputeID].arbitrator.appealCost(appealDisputes[_disputeID].appealDisputeID,_extraData)	NodeType.EXPRESSION" -> "BlockID: 7
+Call context: appeal,requireAppealFee
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 10
+Call context: appeal
+None
+TMP_266(None) := cost(uint256)
+TMP_138(bool) = msg.value >= TMP_137
+CONDITION TMP_138
+EXPRESSION:TMP_138(bool) = msg.value >= TMP_137	NodeType.IF" -> "BlockID: 11
+Call context: appeal
+True
+TMP_139(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_2"];
+"BlockID: 10
+Call context: appeal
+None
+TMP_266(None) := cost(uint256)
+TMP_138(bool) = msg.value >= TMP_137
+CONDITION TMP_138
+EXPRESSION:TMP_138(bool) = msg.value >= TMP_137	NodeType.IF" -> "BlockID: 12
+Call context: appeal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+"BlockID: 24
+Call context: appeal,appeal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 25
+Call context: 
+None
+REF_45(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_46(Arbitrator) -> REF_45.arbitrator
+TMP_86 = CONVERT 0 to address
+TMP_87 = CONVERT TMP_86 to Arbitrator
+TMP_88(bool) = REF_46 != TMP_87
+CONDITION TMP_88
+EXPRESSION:super.appeal(_disputeID,_extraData)	NodeType.EXPRESSION
+appealDisputes[_disputeID].arbitrator != Arbitrator(address(0))	NodeType.IF" [key="Exit: appeal", ref="AppealableArbitrator.appeal"];
+"BlockID: 14
+Call context: appeal,appeal,requireAppealFee
+True
+REF_89(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_90(Arbitrator) -> REF_89.arbitrator
+REF_92(AppealableArbitrator.AppealDispute) -> appealDisputes[_disputeID]
+REF_93(uint256) -> REF_92.appealDisputeID
+TMP_114(uint256) = HIGH_LEVEL_CALL, dest:REF_90(Arbitrator), function:appealCost, arguments:['REF_93', '_extraData']  
+EXPRESSION:cost = appealDisputes[_disputeID].arbitrator.appealCost(appealDisputes[_disputeID].appealDisputeID,_extraData)	NodeType.EXPRESSION" -> "BlockID: 16
+Call context: appeal,appeal,requireAppealFee
+None
+cost(uint256) := TMP_114(uint256)
+EXPRESSION:cost = appealDisputes[_disputeID].arbitrator.appealCost(appealDisputes[_disputeID].appealDisputeID,_extraData)	NodeType.EXPRESSION" [key=0];
+"BlockID: 15
+Call context: appeal,appeal,requireAppealFee
+False
+REF_94(CentralizedArbitrator.DisputeStruct) -> disputes[_disputeID]
+REF_95(Arbitrator.DisputeStatus) -> REF_94.status
+REF_96(Arbitrator.DisputeStatus) -> DisputeStatus.Appealable
+TMP_115(bool) = REF_95 == REF_96
+CONDITION TMP_115
+EXPRESSION:disputes[_disputeID].status == DisputeStatus.Appealable	NodeType.IF" -> "BlockID: 17
+Call context: appeal,appeal,requireAppealFee
+True
+TMP_116(uint256) = HIGH_LEVEL_CALL, dest:arbitrator(Arbitrator), function:arbitrationCost, arguments:['_extraData']  
+EXPRESSION:cost = arbitrator.arbitrationCost(_extraData)	NodeType.EXPRESSION" [key=0];
+"BlockID: 15
+Call context: appeal,appeal,requireAppealFee
+False
+REF_94(CentralizedArbitrator.DisputeStruct) -> disputes[_disputeID]
+REF_95(Arbitrator.DisputeStatus) -> REF_94.status
+REF_96(Arbitrator.DisputeStatus) -> DisputeStatus.Appealable
+TMP_115(bool) = REF_95 == REF_96
+CONDITION TMP_115
+EXPRESSION:disputes[_disputeID].status == DisputeStatus.Appealable	NodeType.IF" -> "BlockID: 18
+Call context: appeal,appeal,requireAppealFee
+False
+cost(uint256) := NOT_PAYABLE_VALUE(uint256)
+EXPRESSION:cost = NOT_PAYABLE_VALUE	NodeType.EXPRESSION" [key=0];
+"BlockID: 17
+Call context: appeal,appeal,requireAppealFee
+True
+TMP_116(uint256) = HIGH_LEVEL_CALL, dest:arbitrator(Arbitrator), function:arbitrationCost, arguments:['_extraData']  
+EXPRESSION:cost = arbitrator.arbitrationCost(_extraData)	NodeType.EXPRESSION" -> "BlockID: 20
+Call context: appeal,appeal,requireAppealFee
+None
+cost(uint256) := TMP_116(uint256)
+EXPRESSION:cost = arbitrator.arbitrationCost(_extraData)	NodeType.EXPRESSION" [key=0];
+"BlockID: 18
+Call context: appeal,appeal,requireAppealFee
+False
+cost(uint256) := NOT_PAYABLE_VALUE(uint256)
+EXPRESSION:cost = NOT_PAYABLE_VALUE	NodeType.EXPRESSION" -> "BlockID: 21
+Call context: appeal,appeal,requireAppealFee
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 21
+Call context: appeal,appeal,requireAppealFee
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 19
+Call context: appeal,appeal,requireAppealFee
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 19
+Call context: appeal,appeal,requireAppealFee
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 22
+Call context: appeal,appeal
+None
+TMP_266(None) := cost(uint256)
+TMP_138(bool) = msg.value >= TMP_137
+CONDITION TMP_138
+EXPRESSION:TMP_138(bool) = msg.value >= TMP_137	NodeType.IF" [key=N, ref=N];
+"BlockID: 20
+Call context: appeal,appeal,requireAppealFee
+None
+cost(uint256) := TMP_116(uint256)
+EXPRESSION:cost = arbitrator.arbitrationCost(_extraData)	NodeType.EXPRESSION" -> "BlockID: 21
+Call context: appeal,appeal,requireAppealFee
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 16
+Call context: appeal,appeal,requireAppealFee
+None
+cost(uint256) := TMP_114(uint256)
+EXPRESSION:cost = appealDisputes[_disputeID].arbitrator.appealCost(appealDisputes[_disputeID].appealDisputeID,_extraData)	NodeType.EXPRESSION" -> "BlockID: 19
+Call context: appeal,appeal,requireAppealFee
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 22
+Call context: appeal,appeal
+None
+TMP_266(None) := cost(uint256)
+TMP_138(bool) = msg.value >= TMP_137
+CONDITION TMP_138
+EXPRESSION:TMP_138(bool) = msg.value >= TMP_137	NodeType.IF" -> "BlockID: 23
+Call context: appeal,appeal
+True
+TMP_139(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_2"];
+"BlockID: 22
+Call context: appeal,appeal
+None
+TMP_266(None) := cost(uint256)
+TMP_138(bool) = msg.value >= TMP_137
+CONDITION TMP_138
+EXPRESSION:TMP_138(bool) = msg.value >= TMP_137	NodeType.IF" -> "BlockID: 24
+Call context: appeal,appeal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+"BlockID: 28
+Call context: appeal,appeal
+None
+TMP_15(bool) = msg.value >= TMP_14
+CONDITION TMP_15
+EXPRESSION:TMP_15(bool) = msg.value >= TMP_14	NodeType.IF" -> "BlockID: 30
+Call context: appeal,appeal
+True
+TMP_16(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 28
+Call context: appeal,appeal
+None
+TMP_15(bool) = msg.value >= TMP_14
+CONDITION TMP_15
+EXPRESSION:TMP_15(bool) = msg.value >= TMP_14	NodeType.IF" -> "BlockID: 31
+Call context: appeal,appeal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 31
+Call context: appeal,appeal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 32
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="Exit: appeal", ref="Arbitrator.appeal"];
+}

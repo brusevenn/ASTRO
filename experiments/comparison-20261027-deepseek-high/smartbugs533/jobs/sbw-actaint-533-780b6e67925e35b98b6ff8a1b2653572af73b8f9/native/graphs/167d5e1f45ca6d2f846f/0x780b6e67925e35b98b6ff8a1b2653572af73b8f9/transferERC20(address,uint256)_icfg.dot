@@ -1,0 +1,1033 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+TMP_261 = CONVERT _addr to uint256
+REF_144(uint256) -> m_ownerIndex[TMP_261]
+TMP_262(bool) = REF_144 > 0
+TMP_357(None) := TMP_262(bool)
+TMP_261 = CONVERT _addr to uint256
+REF_144(uint256) -> m_ownerIndex[TMP_261]
+TMP_262(bool) = REF_144 > 0
+TMP_357(None) := TMP_262(bool)
+TMP_208(uint256) = block.timestamp / 86400
+TMP_358(None) := TMP_208(uint256)
+TMP_200(bool) = TMP_199 > m_lastDay
+CONDITION TMP_200
+EXPRESSION:onlyowner()	NodeType.EXPRESSION
+onlyowner()	NodeType.EXPRESSION
+today() > m_lastDay	NodeType.IF";
+"BlockID: 7
+Call context: 
+None
+CONDITION TMP_322
+EXPRESSION:underLimit(_value)	NodeType.IF" [shape=box];
+"BlockID: 9
+Call context: 
+True
+REF_204(Wallet.Transaction) -> m_txs[_r]
+REF_205(address) -> REF_204.to
+REF_205(address) (->m_txs) := _to(address)
+REF_206(Wallet.Transaction) -> m_txs[_r]
+REF_207(uint256) -> REF_206.value
+REF_207(uint256) (->m_txs) := _value(uint256)
+REF_208(Wallet.Transaction) -> m_txs[_r]
+REF_209(address) -> REF_208.token
+REF_209(address) (->m_txs) := erc20(ERC20Basic)
+TMP_324(bool) = HIGH_LEVEL_CALL, dest:erc20(ERC20Basic), function:transfer, arguments:['_to', '_value']  
+EXPRESSION:m_txs[_r].to = _to	NodeType.EXPRESSION
+m_txs[_r].value = _value	NodeType.EXPRESSION
+m_txs[_r].token = erc20	NodeType.EXPRESSION
+erc20.transfer(_to,_value)	NodeType.EXPRESSION";
+"BlockID: 10
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 15
+Call context: 
+None
+TMP_325(bytes) = SOLIDITY_CALL abi.encodePacked()(msg.data,block.number)
+TMP_326(bytes32) = SOLIDITY_CALL keccak256()(TMP_325)
+_r(bytes32) := TMP_326(bytes32)
+TMP_268 = CONVERT msg.sender to uint256
+REF_148(uint256) -> m_ownerIndex[TMP_268]
+ownerIndex(uint256) := REF_148(uint256)
+TMP_269(bool) = ownerIndex == 0
+CONDITION TMP_269
+EXPRESSION:_r = keccak256()(abi.encodePacked(msg.data,block.number))	NodeType.EXPRESSION
+ownerIndex = m_ownerIndex[uint256(msg.sender)]	NodeType.VARIABLE
+ownerIndex = m_ownerIndex[uint256(msg.sender)]	NodeType.EXPRESSION
+ownerIndex == 0	NodeType.IF";
+"BlockID: 29
+Call context: 
+None
+TMP_328 = ! TMP_327 
+REF_202(Wallet.Transaction) -> m_txs[_r]
+REF_203(address) -> REF_202.to
+TMP_329(bool) = REF_203 == 0
+TMP_330(bool) = TMP_328 && TMP_329
+CONDITION TMP_330
+EXPRESSION:! confirmERC20(_r) && m_txs[_r].to == 0	NodeType.IF" [shape=box];
+"BlockID: 13
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 14
+Call context: 
+None
+RETURN 0
+EXPRESSION:erc20.transfer(_to,_value)	NodeType.EXPRESSION
+0	NodeType.RETURN";
+"BlockID: 2
+Call context: transferERC20
+True
+m_spentToday(uint256) := 0(uint256)
+TMP_208(uint256) = block.timestamp / 86400
+TMP_358(None) := TMP_208(uint256)
+m_lastDay(uint256) := TMP_201(uint256)
+EXPRESSION:m_spentToday = 0	NodeType.EXPRESSION
+m_lastDay = today()	NodeType.EXPRESSION";
+"BlockID: 3
+Call context: transferERC20
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 4
+Call context: transferERC20
+None
+TMP_202(uint256) = m_spentToday + _value
+TMP_203(bool) = TMP_202 >= m_spentToday
+TMP_204(uint256) = m_spentToday + _value
+TMP_205(bool) = TMP_204 <= m_dailyLimit
+TMP_206(bool) = TMP_203 && TMP_205
+CONDITION TMP_206
+EXPRESSION:m_spentToday + _value >= m_spentToday && m_spentToday + _value <= m_dailyLimit	NodeType.IF";
+"BlockID: 5
+Call context: transferERC20
+True
+m_spentToday(uint256) = m_spentToday + _value
+TMP_393(None) := True(bool)
+EXPRESSION:m_spentToday += _value	NodeType.EXPRESSION";
+"BlockID: 6
+Call context: transferERC20
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 16
+Call context: transferERC20
+None
+TMP_393(None) := False(bool)
+EXPRESSION:";
+"BlockID: 22
+Call context: transferERC20
+None
+REF_210(Wallet.Transaction) -> m_txs[_h]
+REF_211(address) -> REF_210.to
+TMP_333(bool) = REF_211 != 0
+CONDITION TMP_333
+EXPRESSION:onlymanyowners(_h)	NodeType.EXPRESSION
+m_txs[_h].to != 0	NodeType.IF";
+"BlockID: 24
+Call context: transferERC20
+True
+REF_212(Wallet.Transaction) -> m_txs[_h]
+REF_213(address) -> REF_212.token
+TMP_334 = CONVERT REF_213 to ERC20Basic
+token(ERC20Basic) := TMP_334(ERC20Basic)
+REF_215(Wallet.Transaction) -> m_txs[_h]
+REF_216(address) -> REF_215.to
+REF_217(Wallet.Transaction) -> m_txs[_h]
+REF_218(uint256) -> REF_217.value
+TMP_335(bool) = HIGH_LEVEL_CALL, dest:token(ERC20Basic), function:transfer, arguments:['REF_216', 'REF_218']  
+EXPRESSION:token = ERC20Basic(m_txs[_h].token)	NodeType.VARIABLE
+token = ERC20Basic(m_txs[_h].token)	NodeType.EXPRESSION
+token.transfer(m_txs[_h].to,m_txs[_h].value)	NodeType.EXPRESSION";
+"BlockID: 25
+Call context: transferERC20
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 28
+Call context: transferERC20
+None
+REF_223(Wallet.Transaction) -> m_txs[_h]
+m_txs = delete REF_223 
+TMP_413(None) := True(bool)
+EXPRESSION:token.transfer(m_txs[_h].to,m_txs[_h].value)	NodeType.EXPRESSION
+delete m_txs[_h]	NodeType.EXPRESSION";
+"BlockID: 18
+Call context: transferERC20,confirmERC20,onlymanyowners
+True
+RETURN
+EXPRESSION:None	NodeType.RETURN";
+"BlockID: 19
+Call context: transferERC20,confirmERC20,onlymanyowners
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 23
+Call context: transferERC20,confirmERC20,onlymanyowners
+None
+REF_149(multiowned.PendingState) -> m_pending[_operation]
+pending(multiowned.PendingState) := REF_149(multiowned.PendingState)
+REF_150(uint256) -> pending.yetNeeded
+TMP_270(bool) = REF_150 == 0
+CONDITION TMP_270
+EXPRESSION:pending = m_pending[_operation]	NodeType.VARIABLE
+pending = m_pending[_operation]	NodeType.EXPRESSION
+pending.yetNeeded == 0	NodeType.IF";
+"BlockID: 26
+Call context: transferERC20,confirmERC20,onlymanyowners
+True
+REF_151(uint256) -> pending.yetNeeded
+REF_151(uint256) (->pending) := m_required(uint256)
+REF_152(uint256) -> pending.ownersDone
+REF_152(uint256) (->pending) := 0(uint256)
+REF_153(uint256) -> pending.index
+REF_154 -> LENGTH m_pendingIndex
+TMP_271(uint256) := REF_154(uint256)
+REF_154(-> m_pendingIndex) = REF_154 + 1
+REF_153(uint256) (->pending) := TMP_271(uint256)
+REF_155(uint256) -> pending.index
+REF_156(bytes32) -> m_pendingIndex[REF_155]
+REF_156(bytes32) (->m_pendingIndex) := _operation(bytes32)
+EXPRESSION:pending.yetNeeded = m_required	NodeType.EXPRESSION
+pending.ownersDone = 0	NodeType.EXPRESSION
+pending.index = m_pendingIndex.length ++	NodeType.EXPRESSION
+m_pendingIndex[pending.index] = _operation	NodeType.EXPRESSION";
+"BlockID: 27
+Call context: transferERC20,confirmERC20,onlymanyowners
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 30
+Call context: transferERC20,confirmERC20,onlymanyowners
+None
+TMP_272(uint256) = 2 ** ownerIndex
+ownerIndexBit(uint256) := TMP_272(uint256)
+REF_157(uint256) -> pending.ownersDone
+TMP_273(uint256) = REF_157 & ownerIndexBit
+TMP_274(bool) = TMP_273 == 0
+CONDITION TMP_274
+EXPRESSION:ownerIndexBit = 2 ** ownerIndex	NodeType.VARIABLE
+ownerIndexBit = 2 ** ownerIndex	NodeType.EXPRESSION
+pending.ownersDone & ownerIndexBit == 0	NodeType.IF";
+"BlockID: 31
+Call context: transferERC20,confirmERC20,onlymanyowners
+None
+REF_158(uint256) -> pending.yetNeeded
+TMP_276(bool) = REF_158 <= 1
+CONDITION TMP_276
+EXPRESSION:pending.yetNeeded <= 1	NodeType.IF";
+"BlockID: 32
+Call context: transferERC20,confirmERC20,onlymanyowners
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 33
+Call context: transferERC20,confirmERC20,onlymanyowners
+True
+REF_159(multiowned.PendingState) -> m_pending[_operation]
+REF_160(uint256) -> REF_159.index
+REF_161(bytes32) -> m_pendingIndex[REF_160]
+m_pendingIndex = delete REF_161 
+REF_162(multiowned.PendingState) -> m_pending[_operation]
+m_pending = delete REF_162 
+TMP_360(None) := True(bool)
+EXPRESSION:delete m_pendingIndex[m_pending[_operation].index]	NodeType.EXPRESSION
+delete m_pending[_operation]	NodeType.EXPRESSION";
+"BlockID: 34
+Call context: transferERC20,confirmERC20,onlymanyowners
+False
+REF_163(uint256) -> pending.yetNeeded
+TMP_277(uint256) := REF_163(uint256)
+REF_163(-> pending) = REF_163 - 1
+REF_164(uint256) -> pending.ownersDone
+REF_164(-> pending) = REF_164 | ownerIndexBit
+EXPRESSION:pending.yetNeeded --	NodeType.EXPRESSION
+pending.ownersDone |= ownerIndexBit	NodeType.EXPRESSION";
+"BlockID: 35
+Call context: transferERC20,confirmERC20,onlymanyowners
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 17
+Call context: 
+None
+TMP_328 = ! TMP_327 
+REF_202(Wallet.Transaction) -> m_txs[_r]
+REF_203(address) -> REF_202.to
+TMP_329(bool) = REF_203 == 0
+TMP_330(bool) = TMP_328 && TMP_329
+CONDITION TMP_330
+EXPRESSION:! confirmERC20(_r) && m_txs[_r].to == 0	NodeType.IF";
+"BlockID: 20
+Call context: 
+True
+TMP_330(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 21
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 8
+Call context: 
+None
+TMP_202(uint256) = m_spentToday + _value
+TMP_203(bool) = TMP_202 >= m_spentToday
+TMP_204(uint256) = m_spentToday + _value
+TMP_205(bool) = TMP_204 <= m_dailyLimit
+TMP_206(bool) = TMP_203 && TMP_205
+CONDITION TMP_206
+EXPRESSION:m_spentToday + _value >= m_spentToday && m_spentToday + _value <= m_dailyLimit	NodeType.IF";
+"BlockID: 11
+Call context: 
+True
+TMP_206(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 12
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+TMP_261 = CONVERT _addr to uint256
+REF_144(uint256) -> m_ownerIndex[TMP_261]
+TMP_262(bool) = REF_144 > 0
+TMP_357(None) := TMP_262(bool)
+TMP_261 = CONVERT _addr to uint256
+REF_144(uint256) -> m_ownerIndex[TMP_261]
+TMP_262(bool) = REF_144 > 0
+TMP_357(None) := TMP_262(bool)
+TMP_208(uint256) = block.timestamp / 86400
+TMP_358(None) := TMP_208(uint256)
+TMP_200(bool) = TMP_199 > m_lastDay
+CONDITION TMP_200
+EXPRESSION:onlyowner()	NodeType.EXPRESSION
+onlyowner()	NodeType.EXPRESSION
+today() > m_lastDay	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_261 = CONVERT _addr to uint256
+REF_144(uint256) -> m_ownerIndex[TMP_261]
+TMP_262(bool) = REF_144 > 0
+TMP_357(None) := TMP_262(bool)
+TMP_261 = CONVERT _addr to uint256
+REF_144(uint256) -> m_ownerIndex[TMP_261]
+TMP_262(bool) = REF_144 > 0
+TMP_357(None) := TMP_262(bool)
+TMP_208(uint256) = block.timestamp / 86400
+TMP_358(None) := TMP_208(uint256)
+TMP_200(bool) = TMP_199 > m_lastDay
+CONDITION TMP_200
+EXPRESSION:onlyowner()	NodeType.EXPRESSION
+onlyowner()	NodeType.EXPRESSION
+today() > m_lastDay	NodeType.IF" -> "BlockID: 2
+Call context: transferERC20
+True
+m_spentToday(uint256) := 0(uint256)
+TMP_208(uint256) = block.timestamp / 86400
+TMP_358(None) := TMP_208(uint256)
+m_lastDay(uint256) := TMP_201(uint256)
+EXPRESSION:m_spentToday = 0	NodeType.EXPRESSION
+m_lastDay = today()	NodeType.EXPRESSION" [key="successor_1"];
+"BlockID: 1
+Call context: 
+None
+TMP_261 = CONVERT _addr to uint256
+REF_144(uint256) -> m_ownerIndex[TMP_261]
+TMP_262(bool) = REF_144 > 0
+TMP_357(None) := TMP_262(bool)
+TMP_261 = CONVERT _addr to uint256
+REF_144(uint256) -> m_ownerIndex[TMP_261]
+TMP_262(bool) = REF_144 > 0
+TMP_357(None) := TMP_262(bool)
+TMP_208(uint256) = block.timestamp / 86400
+TMP_358(None) := TMP_208(uint256)
+TMP_200(bool) = TMP_199 > m_lastDay
+CONDITION TMP_200
+EXPRESSION:onlyowner()	NodeType.EXPRESSION
+onlyowner()	NodeType.EXPRESSION
+today() > m_lastDay	NodeType.IF" -> "BlockID: 3
+Call context: transferERC20
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_1"];
+"BlockID: 7
+Call context: 
+None
+CONDITION TMP_322
+EXPRESSION:underLimit(_value)	NodeType.IF" -> "BlockID: 9
+Call context: 
+True
+REF_204(Wallet.Transaction) -> m_txs[_r]
+REF_205(address) -> REF_204.to
+REF_205(address) (->m_txs) := _to(address)
+REF_206(Wallet.Transaction) -> m_txs[_r]
+REF_207(uint256) -> REF_206.value
+REF_207(uint256) (->m_txs) := _value(uint256)
+REF_208(Wallet.Transaction) -> m_txs[_r]
+REF_209(address) -> REF_208.token
+REF_209(address) (->m_txs) := erc20(ERC20Basic)
+TMP_324(bool) = HIGH_LEVEL_CALL, dest:erc20(ERC20Basic), function:transfer, arguments:['_to', '_value']  
+EXPRESSION:m_txs[_r].to = _to	NodeType.EXPRESSION
+m_txs[_r].value = _value	NodeType.EXPRESSION
+m_txs[_r].token = erc20	NodeType.EXPRESSION
+erc20.transfer(_to,_value)	NodeType.EXPRESSION" [key=0];
+"BlockID: 7
+Call context: 
+None
+CONDITION TMP_322
+EXPRESSION:underLimit(_value)	NodeType.IF" -> "BlockID: 10
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 9
+Call context: 
+True
+REF_204(Wallet.Transaction) -> m_txs[_r]
+REF_205(address) -> REF_204.to
+REF_205(address) (->m_txs) := _to(address)
+REF_206(Wallet.Transaction) -> m_txs[_r]
+REF_207(uint256) -> REF_206.value
+REF_207(uint256) (->m_txs) := _value(uint256)
+REF_208(Wallet.Transaction) -> m_txs[_r]
+REF_209(address) -> REF_208.token
+REF_209(address) (->m_txs) := erc20(ERC20Basic)
+TMP_324(bool) = HIGH_LEVEL_CALL, dest:erc20(ERC20Basic), function:transfer, arguments:['_to', '_value']  
+EXPRESSION:m_txs[_r].to = _to	NodeType.EXPRESSION
+m_txs[_r].value = _value	NodeType.EXPRESSION
+m_txs[_r].token = erc20	NodeType.EXPRESSION
+erc20.transfer(_to,_value)	NodeType.EXPRESSION" -> "BlockID: 13
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 9
+Call context: 
+True
+REF_204(Wallet.Transaction) -> m_txs[_r]
+REF_205(address) -> REF_204.to
+REF_205(address) (->m_txs) := _to(address)
+REF_206(Wallet.Transaction) -> m_txs[_r]
+REF_207(uint256) -> REF_206.value
+REF_207(uint256) (->m_txs) := _value(uint256)
+REF_208(Wallet.Transaction) -> m_txs[_r]
+REF_209(address) -> REF_208.token
+REF_209(address) (->m_txs) := erc20(ERC20Basic)
+TMP_324(bool) = HIGH_LEVEL_CALL, dest:erc20(ERC20Basic), function:transfer, arguments:['_to', '_value']  
+EXPRESSION:m_txs[_r].to = _to	NodeType.EXPRESSION
+m_txs[_r].value = _value	NodeType.EXPRESSION
+m_txs[_r].token = erc20	NodeType.EXPRESSION
+erc20.transfer(_to,_value)	NodeType.EXPRESSION" -> "BlockID: 14
+Call context: 
+None
+RETURN 0
+EXPRESSION:erc20.transfer(_to,_value)	NodeType.EXPRESSION
+0	NodeType.RETURN" [key=0];
+"BlockID: 10
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 15
+Call context: 
+None
+TMP_325(bytes) = SOLIDITY_CALL abi.encodePacked()(msg.data,block.number)
+TMP_326(bytes32) = SOLIDITY_CALL keccak256()(TMP_325)
+_r(bytes32) := TMP_326(bytes32)
+TMP_268 = CONVERT msg.sender to uint256
+REF_148(uint256) -> m_ownerIndex[TMP_268]
+ownerIndex(uint256) := REF_148(uint256)
+TMP_269(bool) = ownerIndex == 0
+CONDITION TMP_269
+EXPRESSION:_r = keccak256()(abi.encodePacked(msg.data,block.number))	NodeType.EXPRESSION
+ownerIndex = m_ownerIndex[uint256(msg.sender)]	NodeType.VARIABLE
+ownerIndex = m_ownerIndex[uint256(msg.sender)]	NodeType.EXPRESSION
+ownerIndex == 0	NodeType.IF" [key=0];
+"BlockID: 15
+Call context: 
+None
+TMP_325(bytes) = SOLIDITY_CALL abi.encodePacked()(msg.data,block.number)
+TMP_326(bytes32) = SOLIDITY_CALL keccak256()(TMP_325)
+_r(bytes32) := TMP_326(bytes32)
+TMP_268 = CONVERT msg.sender to uint256
+REF_148(uint256) -> m_ownerIndex[TMP_268]
+ownerIndex(uint256) := REF_148(uint256)
+TMP_269(bool) = ownerIndex == 0
+CONDITION TMP_269
+EXPRESSION:_r = keccak256()(abi.encodePacked(msg.data,block.number))	NodeType.EXPRESSION
+ownerIndex = m_ownerIndex[uint256(msg.sender)]	NodeType.VARIABLE
+ownerIndex = m_ownerIndex[uint256(msg.sender)]	NodeType.EXPRESSION
+ownerIndex == 0	NodeType.IF" -> "BlockID: 18
+Call context: transferERC20,confirmERC20,onlymanyowners
+True
+RETURN
+EXPRESSION:None	NodeType.RETURN" [key="successor_5"];
+"BlockID: 15
+Call context: 
+None
+TMP_325(bytes) = SOLIDITY_CALL abi.encodePacked()(msg.data,block.number)
+TMP_326(bytes32) = SOLIDITY_CALL keccak256()(TMP_325)
+_r(bytes32) := TMP_326(bytes32)
+TMP_268 = CONVERT msg.sender to uint256
+REF_148(uint256) -> m_ownerIndex[TMP_268]
+ownerIndex(uint256) := REF_148(uint256)
+TMP_269(bool) = ownerIndex == 0
+CONDITION TMP_269
+EXPRESSION:_r = keccak256()(abi.encodePacked(msg.data,block.number))	NodeType.EXPRESSION
+ownerIndex = m_ownerIndex[uint256(msg.sender)]	NodeType.VARIABLE
+ownerIndex = m_ownerIndex[uint256(msg.sender)]	NodeType.EXPRESSION
+ownerIndex == 0	NodeType.IF" -> "BlockID: 19
+Call context: transferERC20,confirmERC20,onlymanyowners
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 29
+Call context: 
+None
+TMP_328 = ! TMP_327 
+REF_202(Wallet.Transaction) -> m_txs[_r]
+REF_203(address) -> REF_202.to
+TMP_329(bool) = REF_203 == 0
+TMP_330(bool) = TMP_328 && TMP_329
+CONDITION TMP_330
+EXPRESSION:! confirmERC20(_r) && m_txs[_r].to == 0	NodeType.IF" -> "BlockID: 9
+Call context: 
+True
+REF_204(Wallet.Transaction) -> m_txs[_r]
+REF_205(address) -> REF_204.to
+REF_205(address) (->m_txs) := _to(address)
+REF_206(Wallet.Transaction) -> m_txs[_r]
+REF_207(uint256) -> REF_206.value
+REF_207(uint256) (->m_txs) := _value(uint256)
+REF_208(Wallet.Transaction) -> m_txs[_r]
+REF_209(address) -> REF_208.token
+REF_209(address) (->m_txs) := erc20(ERC20Basic)
+TMP_324(bool) = HIGH_LEVEL_CALL, dest:erc20(ERC20Basic), function:transfer, arguments:['_to', '_value']  
+EXPRESSION:m_txs[_r].to = _to	NodeType.EXPRESSION
+m_txs[_r].value = _value	NodeType.EXPRESSION
+m_txs[_r].token = erc20	NodeType.EXPRESSION
+erc20.transfer(_to,_value)	NodeType.EXPRESSION" [key=0];
+"BlockID: 29
+Call context: 
+None
+TMP_328 = ! TMP_327 
+REF_202(Wallet.Transaction) -> m_txs[_r]
+REF_203(address) -> REF_202.to
+TMP_329(bool) = REF_203 == 0
+TMP_330(bool) = TMP_328 && TMP_329
+CONDITION TMP_330
+EXPRESSION:! confirmERC20(_r) && m_txs[_r].to == 0	NodeType.IF" -> "BlockID: 13
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 13
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 17
+Call context: 
+None
+TMP_328 = ! TMP_327 
+REF_202(Wallet.Transaction) -> m_txs[_r]
+REF_203(address) -> REF_202.to
+TMP_329(bool) = REF_203 == 0
+TMP_330(bool) = TMP_328 && TMP_329
+CONDITION TMP_330
+EXPRESSION:! confirmERC20(_r) && m_txs[_r].to == 0	NodeType.IF" [key=0];
+"BlockID: 2
+Call context: transferERC20
+True
+m_spentToday(uint256) := 0(uint256)
+TMP_208(uint256) = block.timestamp / 86400
+TMP_358(None) := TMP_208(uint256)
+m_lastDay(uint256) := TMP_201(uint256)
+EXPRESSION:m_spentToday = 0	NodeType.EXPRESSION
+m_lastDay = today()	NodeType.EXPRESSION" -> "BlockID: 3
+Call context: transferERC20
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_3"];
+"BlockID: 3
+Call context: transferERC20
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: transferERC20
+None
+TMP_202(uint256) = m_spentToday + _value
+TMP_203(bool) = TMP_202 >= m_spentToday
+TMP_204(uint256) = m_spentToday + _value
+TMP_205(bool) = TMP_204 <= m_dailyLimit
+TMP_206(bool) = TMP_203 && TMP_205
+CONDITION TMP_206
+EXPRESSION:m_spentToday + _value >= m_spentToday && m_spentToday + _value <= m_dailyLimit	NodeType.IF" [key=0];
+"BlockID: 4
+Call context: transferERC20
+None
+TMP_202(uint256) = m_spentToday + _value
+TMP_203(bool) = TMP_202 >= m_spentToday
+TMP_204(uint256) = m_spentToday + _value
+TMP_205(bool) = TMP_204 <= m_dailyLimit
+TMP_206(bool) = TMP_203 && TMP_205
+CONDITION TMP_206
+EXPRESSION:m_spentToday + _value >= m_spentToday && m_spentToday + _value <= m_dailyLimit	NodeType.IF" -> "BlockID: 5
+Call context: transferERC20
+True
+m_spentToday(uint256) = m_spentToday + _value
+TMP_393(None) := True(bool)
+EXPRESSION:m_spentToday += _value	NodeType.EXPRESSION" [key=0];
+"BlockID: 4
+Call context: transferERC20
+None
+TMP_202(uint256) = m_spentToday + _value
+TMP_203(bool) = TMP_202 >= m_spentToday
+TMP_204(uint256) = m_spentToday + _value
+TMP_205(bool) = TMP_204 <= m_dailyLimit
+TMP_206(bool) = TMP_203 && TMP_205
+CONDITION TMP_206
+EXPRESSION:m_spentToday + _value >= m_spentToday && m_spentToday + _value <= m_dailyLimit	NodeType.IF" -> "BlockID: 6
+Call context: transferERC20
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 5
+Call context: transferERC20
+True
+m_spentToday(uint256) = m_spentToday + _value
+TMP_393(None) := True(bool)
+EXPRESSION:m_spentToday += _value	NodeType.EXPRESSION" -> "BlockID: 7
+Call context: 
+None
+CONDITION TMP_322
+EXPRESSION:underLimit(_value)	NodeType.IF" [key="successor_5", ref="Wallet.underLimit"];
+"BlockID: 6
+Call context: transferERC20
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 8
+Call context: 
+None
+TMP_202(uint256) = m_spentToday + _value
+TMP_203(bool) = TMP_202 >= m_spentToday
+TMP_204(uint256) = m_spentToday + _value
+TMP_205(bool) = TMP_204 <= m_dailyLimit
+TMP_206(bool) = TMP_203 && TMP_205
+CONDITION TMP_206
+EXPRESSION:m_spentToday + _value >= m_spentToday && m_spentToday + _value <= m_dailyLimit	NodeType.IF" [key=0];
+"BlockID: 16
+Call context: transferERC20
+None
+TMP_393(None) := False(bool)
+EXPRESSION:" -> "BlockID: 7
+Call context: 
+None
+CONDITION TMP_322
+EXPRESSION:underLimit(_value)	NodeType.IF" [key="successor_5", ref="Wallet.underLimit"];
+"BlockID: 22
+Call context: transferERC20
+None
+REF_210(Wallet.Transaction) -> m_txs[_h]
+REF_211(address) -> REF_210.to
+TMP_333(bool) = REF_211 != 0
+CONDITION TMP_333
+EXPRESSION:onlymanyowners(_h)	NodeType.EXPRESSION
+m_txs[_h].to != 0	NodeType.IF" -> "BlockID: 24
+Call context: transferERC20
+True
+REF_212(Wallet.Transaction) -> m_txs[_h]
+REF_213(address) -> REF_212.token
+TMP_334 = CONVERT REF_213 to ERC20Basic
+token(ERC20Basic) := TMP_334(ERC20Basic)
+REF_215(Wallet.Transaction) -> m_txs[_h]
+REF_216(address) -> REF_215.to
+REF_217(Wallet.Transaction) -> m_txs[_h]
+REF_218(uint256) -> REF_217.value
+TMP_335(bool) = HIGH_LEVEL_CALL, dest:token(ERC20Basic), function:transfer, arguments:['REF_216', 'REF_218']  
+EXPRESSION:token = ERC20Basic(m_txs[_h].token)	NodeType.VARIABLE
+token = ERC20Basic(m_txs[_h].token)	NodeType.EXPRESSION
+token.transfer(m_txs[_h].to,m_txs[_h].value)	NodeType.EXPRESSION" [key=0];
+"BlockID: 22
+Call context: transferERC20
+None
+REF_210(Wallet.Transaction) -> m_txs[_h]
+REF_211(address) -> REF_210.to
+TMP_333(bool) = REF_211 != 0
+CONDITION TMP_333
+EXPRESSION:onlymanyowners(_h)	NodeType.EXPRESSION
+m_txs[_h].to != 0	NodeType.IF" -> "BlockID: 25
+Call context: transferERC20
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 24
+Call context: transferERC20
+True
+REF_212(Wallet.Transaction) -> m_txs[_h]
+REF_213(address) -> REF_212.token
+TMP_334 = CONVERT REF_213 to ERC20Basic
+token(ERC20Basic) := TMP_334(ERC20Basic)
+REF_215(Wallet.Transaction) -> m_txs[_h]
+REF_216(address) -> REF_215.to
+REF_217(Wallet.Transaction) -> m_txs[_h]
+REF_218(uint256) -> REF_217.value
+TMP_335(bool) = HIGH_LEVEL_CALL, dest:token(ERC20Basic), function:transfer, arguments:['REF_216', 'REF_218']  
+EXPRESSION:token = ERC20Basic(m_txs[_h].token)	NodeType.VARIABLE
+token = ERC20Basic(m_txs[_h].token)	NodeType.EXPRESSION
+token.transfer(m_txs[_h].to,m_txs[_h].value)	NodeType.EXPRESSION" -> "BlockID: 28
+Call context: transferERC20
+None
+REF_223(Wallet.Transaction) -> m_txs[_h]
+m_txs = delete REF_223 
+TMP_413(None) := True(bool)
+EXPRESSION:token.transfer(m_txs[_h].to,m_txs[_h].value)	NodeType.EXPRESSION
+delete m_txs[_h]	NodeType.EXPRESSION" [key=0];
+"BlockID: 25
+Call context: transferERC20
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 29
+Call context: 
+None
+TMP_328 = ! TMP_327 
+REF_202(Wallet.Transaction) -> m_txs[_r]
+REF_203(address) -> REF_202.to
+TMP_329(bool) = REF_203 == 0
+TMP_330(bool) = TMP_328 && TMP_329
+CONDITION TMP_330
+EXPRESSION:! confirmERC20(_r) && m_txs[_r].to == 0	NodeType.IF" [key="successor_5", ref="Wallet.confirmERC20"];
+"BlockID: 28
+Call context: transferERC20
+None
+REF_223(Wallet.Transaction) -> m_txs[_h]
+m_txs = delete REF_223 
+TMP_413(None) := True(bool)
+EXPRESSION:token.transfer(m_txs[_h].to,m_txs[_h].value)	NodeType.EXPRESSION
+delete m_txs[_h]	NodeType.EXPRESSION" -> "BlockID: 29
+Call context: 
+None
+TMP_328 = ! TMP_327 
+REF_202(Wallet.Transaction) -> m_txs[_r]
+REF_203(address) -> REF_202.to
+TMP_329(bool) = REF_203 == 0
+TMP_330(bool) = TMP_328 && TMP_329
+CONDITION TMP_330
+EXPRESSION:! confirmERC20(_r) && m_txs[_r].to == 0	NodeType.IF" [key="successor_5", ref="Wallet.confirmERC20"];
+"BlockID: 18
+Call context: transferERC20,confirmERC20,onlymanyowners
+True
+RETURN
+EXPRESSION:None	NodeType.RETURN" -> "BlockID: 22
+Call context: transferERC20
+None
+REF_210(Wallet.Transaction) -> m_txs[_h]
+REF_211(address) -> REF_210.to
+TMP_333(bool) = REF_211 != 0
+CONDITION TMP_333
+EXPRESSION:onlymanyowners(_h)	NodeType.EXPRESSION
+m_txs[_h].to != 0	NodeType.IF" [key="successor_5", ref="Wallet.onlymanyowners"];
+"BlockID: 19
+Call context: transferERC20,confirmERC20,onlymanyowners
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 23
+Call context: transferERC20,confirmERC20,onlymanyowners
+None
+REF_149(multiowned.PendingState) -> m_pending[_operation]
+pending(multiowned.PendingState) := REF_149(multiowned.PendingState)
+REF_150(uint256) -> pending.yetNeeded
+TMP_270(bool) = REF_150 == 0
+CONDITION TMP_270
+EXPRESSION:pending = m_pending[_operation]	NodeType.VARIABLE
+pending = m_pending[_operation]	NodeType.EXPRESSION
+pending.yetNeeded == 0	NodeType.IF" [key=0];
+"BlockID: 23
+Call context: transferERC20,confirmERC20,onlymanyowners
+None
+REF_149(multiowned.PendingState) -> m_pending[_operation]
+pending(multiowned.PendingState) := REF_149(multiowned.PendingState)
+REF_150(uint256) -> pending.yetNeeded
+TMP_270(bool) = REF_150 == 0
+CONDITION TMP_270
+EXPRESSION:pending = m_pending[_operation]	NodeType.VARIABLE
+pending = m_pending[_operation]	NodeType.EXPRESSION
+pending.yetNeeded == 0	NodeType.IF" -> "BlockID: 26
+Call context: transferERC20,confirmERC20,onlymanyowners
+True
+REF_151(uint256) -> pending.yetNeeded
+REF_151(uint256) (->pending) := m_required(uint256)
+REF_152(uint256) -> pending.ownersDone
+REF_152(uint256) (->pending) := 0(uint256)
+REF_153(uint256) -> pending.index
+REF_154 -> LENGTH m_pendingIndex
+TMP_271(uint256) := REF_154(uint256)
+REF_154(-> m_pendingIndex) = REF_154 + 1
+REF_153(uint256) (->pending) := TMP_271(uint256)
+REF_155(uint256) -> pending.index
+REF_156(bytes32) -> m_pendingIndex[REF_155]
+REF_156(bytes32) (->m_pendingIndex) := _operation(bytes32)
+EXPRESSION:pending.yetNeeded = m_required	NodeType.EXPRESSION
+pending.ownersDone = 0	NodeType.EXPRESSION
+pending.index = m_pendingIndex.length ++	NodeType.EXPRESSION
+m_pendingIndex[pending.index] = _operation	NodeType.EXPRESSION" [key=0];
+"BlockID: 23
+Call context: transferERC20,confirmERC20,onlymanyowners
+None
+REF_149(multiowned.PendingState) -> m_pending[_operation]
+pending(multiowned.PendingState) := REF_149(multiowned.PendingState)
+REF_150(uint256) -> pending.yetNeeded
+TMP_270(bool) = REF_150 == 0
+CONDITION TMP_270
+EXPRESSION:pending = m_pending[_operation]	NodeType.VARIABLE
+pending = m_pending[_operation]	NodeType.EXPRESSION
+pending.yetNeeded == 0	NodeType.IF" -> "BlockID: 27
+Call context: transferERC20,confirmERC20,onlymanyowners
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 26
+Call context: transferERC20,confirmERC20,onlymanyowners
+True
+REF_151(uint256) -> pending.yetNeeded
+REF_151(uint256) (->pending) := m_required(uint256)
+REF_152(uint256) -> pending.ownersDone
+REF_152(uint256) (->pending) := 0(uint256)
+REF_153(uint256) -> pending.index
+REF_154 -> LENGTH m_pendingIndex
+TMP_271(uint256) := REF_154(uint256)
+REF_154(-> m_pendingIndex) = REF_154 + 1
+REF_153(uint256) (->pending) := TMP_271(uint256)
+REF_155(uint256) -> pending.index
+REF_156(bytes32) -> m_pendingIndex[REF_155]
+REF_156(bytes32) (->m_pendingIndex) := _operation(bytes32)
+EXPRESSION:pending.yetNeeded = m_required	NodeType.EXPRESSION
+pending.ownersDone = 0	NodeType.EXPRESSION
+pending.index = m_pendingIndex.length ++	NodeType.EXPRESSION
+m_pendingIndex[pending.index] = _operation	NodeType.EXPRESSION" -> "BlockID: 27
+Call context: transferERC20,confirmERC20,onlymanyowners
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 27
+Call context: transferERC20,confirmERC20,onlymanyowners
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 30
+Call context: transferERC20,confirmERC20,onlymanyowners
+None
+TMP_272(uint256) = 2 ** ownerIndex
+ownerIndexBit(uint256) := TMP_272(uint256)
+REF_157(uint256) -> pending.ownersDone
+TMP_273(uint256) = REF_157 & ownerIndexBit
+TMP_274(bool) = TMP_273 == 0
+CONDITION TMP_274
+EXPRESSION:ownerIndexBit = 2 ** ownerIndex	NodeType.VARIABLE
+ownerIndexBit = 2 ** ownerIndex	NodeType.EXPRESSION
+pending.ownersDone & ownerIndexBit == 0	NodeType.IF" [key=0];
+"BlockID: 30
+Call context: transferERC20,confirmERC20,onlymanyowners
+None
+TMP_272(uint256) = 2 ** ownerIndex
+ownerIndexBit(uint256) := TMP_272(uint256)
+REF_157(uint256) -> pending.ownersDone
+TMP_273(uint256) = REF_157 & ownerIndexBit
+TMP_274(bool) = TMP_273 == 0
+CONDITION TMP_274
+EXPRESSION:ownerIndexBit = 2 ** ownerIndex	NodeType.VARIABLE
+ownerIndexBit = 2 ** ownerIndex	NodeType.EXPRESSION
+pending.ownersDone & ownerIndexBit == 0	NodeType.IF" -> "BlockID: 31
+Call context: transferERC20,confirmERC20,onlymanyowners
+None
+REF_158(uint256) -> pending.yetNeeded
+TMP_276(bool) = REF_158 <= 1
+CONDITION TMP_276
+EXPRESSION:pending.yetNeeded <= 1	NodeType.IF" [key=0];
+"BlockID: 30
+Call context: transferERC20,confirmERC20,onlymanyowners
+None
+TMP_272(uint256) = 2 ** ownerIndex
+ownerIndexBit(uint256) := TMP_272(uint256)
+REF_157(uint256) -> pending.ownersDone
+TMP_273(uint256) = REF_157 & ownerIndexBit
+TMP_274(bool) = TMP_273 == 0
+CONDITION TMP_274
+EXPRESSION:ownerIndexBit = 2 ** ownerIndex	NodeType.VARIABLE
+ownerIndexBit = 2 ** ownerIndex	NodeType.EXPRESSION
+pending.ownersDone & ownerIndexBit == 0	NodeType.IF" -> "BlockID: 32
+Call context: transferERC20,confirmERC20,onlymanyowners
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 31
+Call context: transferERC20,confirmERC20,onlymanyowners
+None
+REF_158(uint256) -> pending.yetNeeded
+TMP_276(bool) = REF_158 <= 1
+CONDITION TMP_276
+EXPRESSION:pending.yetNeeded <= 1	NodeType.IF" -> "BlockID: 33
+Call context: transferERC20,confirmERC20,onlymanyowners
+True
+REF_159(multiowned.PendingState) -> m_pending[_operation]
+REF_160(uint256) -> REF_159.index
+REF_161(bytes32) -> m_pendingIndex[REF_160]
+m_pendingIndex = delete REF_161 
+REF_162(multiowned.PendingState) -> m_pending[_operation]
+m_pending = delete REF_162 
+TMP_360(None) := True(bool)
+EXPRESSION:delete m_pendingIndex[m_pending[_operation].index]	NodeType.EXPRESSION
+delete m_pending[_operation]	NodeType.EXPRESSION" [key=0];
+"BlockID: 31
+Call context: transferERC20,confirmERC20,onlymanyowners
+None
+REF_158(uint256) -> pending.yetNeeded
+TMP_276(bool) = REF_158 <= 1
+CONDITION TMP_276
+EXPRESSION:pending.yetNeeded <= 1	NodeType.IF" -> "BlockID: 34
+Call context: transferERC20,confirmERC20,onlymanyowners
+False
+REF_163(uint256) -> pending.yetNeeded
+TMP_277(uint256) := REF_163(uint256)
+REF_163(-> pending) = REF_163 - 1
+REF_164(uint256) -> pending.ownersDone
+REF_164(-> pending) = REF_164 | ownerIndexBit
+EXPRESSION:pending.yetNeeded --	NodeType.EXPRESSION
+pending.ownersDone |= ownerIndexBit	NodeType.EXPRESSION" [key=0];
+"BlockID: 32
+Call context: transferERC20,confirmERC20,onlymanyowners
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 22
+Call context: transferERC20
+None
+REF_210(Wallet.Transaction) -> m_txs[_h]
+REF_211(address) -> REF_210.to
+TMP_333(bool) = REF_211 != 0
+CONDITION TMP_333
+EXPRESSION:onlymanyowners(_h)	NodeType.EXPRESSION
+m_txs[_h].to != 0	NodeType.IF" [key="successor_5", ref="Wallet.onlymanyowners"];
+"BlockID: 33
+Call context: transferERC20,confirmERC20,onlymanyowners
+True
+REF_159(multiowned.PendingState) -> m_pending[_operation]
+REF_160(uint256) -> REF_159.index
+REF_161(bytes32) -> m_pendingIndex[REF_160]
+m_pendingIndex = delete REF_161 
+REF_162(multiowned.PendingState) -> m_pending[_operation]
+m_pending = delete REF_162 
+TMP_360(None) := True(bool)
+EXPRESSION:delete m_pendingIndex[m_pending[_operation].index]	NodeType.EXPRESSION
+delete m_pending[_operation]	NodeType.EXPRESSION" -> "BlockID: 22
+Call context: transferERC20
+None
+REF_210(Wallet.Transaction) -> m_txs[_h]
+REF_211(address) -> REF_210.to
+TMP_333(bool) = REF_211 != 0
+CONDITION TMP_333
+EXPRESSION:onlymanyowners(_h)	NodeType.EXPRESSION
+m_txs[_h].to != 0	NodeType.IF" [key="successor_5", ref="Wallet.onlymanyowners"];
+"BlockID: 34
+Call context: transferERC20,confirmERC20,onlymanyowners
+False
+REF_163(uint256) -> pending.yetNeeded
+TMP_277(uint256) := REF_163(uint256)
+REF_163(-> pending) = REF_163 - 1
+REF_164(uint256) -> pending.ownersDone
+REF_164(-> pending) = REF_164 | ownerIndexBit
+EXPRESSION:pending.yetNeeded --	NodeType.EXPRESSION
+pending.ownersDone |= ownerIndexBit	NodeType.EXPRESSION" -> "BlockID: 35
+Call context: transferERC20,confirmERC20,onlymanyowners
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 35
+Call context: transferERC20,confirmERC20,onlymanyowners
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 32
+Call context: transferERC20,confirmERC20,onlymanyowners
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 17
+Call context: 
+None
+TMP_328 = ! TMP_327 
+REF_202(Wallet.Transaction) -> m_txs[_r]
+REF_203(address) -> REF_202.to
+TMP_329(bool) = REF_203 == 0
+TMP_330(bool) = TMP_328 && TMP_329
+CONDITION TMP_330
+EXPRESSION:! confirmERC20(_r) && m_txs[_r].to == 0	NodeType.IF" -> "BlockID: 20
+Call context: 
+True
+TMP_330(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 17
+Call context: 
+None
+TMP_328 = ! TMP_327 
+REF_202(Wallet.Transaction) -> m_txs[_r]
+REF_203(address) -> REF_202.to
+TMP_329(bool) = REF_203 == 0
+TMP_330(bool) = TMP_328 && TMP_329
+CONDITION TMP_330
+EXPRESSION:! confirmERC20(_r) && m_txs[_r].to == 0	NodeType.IF" -> "BlockID: 21
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 8
+Call context: 
+None
+TMP_202(uint256) = m_spentToday + _value
+TMP_203(bool) = TMP_202 >= m_spentToday
+TMP_204(uint256) = m_spentToday + _value
+TMP_205(bool) = TMP_204 <= m_dailyLimit
+TMP_206(bool) = TMP_203 && TMP_205
+CONDITION TMP_206
+EXPRESSION:m_spentToday + _value >= m_spentToday && m_spentToday + _value <= m_dailyLimit	NodeType.IF" -> "BlockID: 11
+Call context: 
+True
+TMP_206(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 8
+Call context: 
+None
+TMP_202(uint256) = m_spentToday + _value
+TMP_203(bool) = TMP_202 >= m_spentToday
+TMP_204(uint256) = m_spentToday + _value
+TMP_205(bool) = TMP_204 <= m_dailyLimit
+TMP_206(bool) = TMP_203 && TMP_205
+CONDITION TMP_206
+EXPRESSION:m_spentToday + _value >= m_spentToday && m_spentToday + _value <= m_dailyLimit	NodeType.IF" -> "BlockID: 12
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 12
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 16
+Call context: transferERC20
+None
+TMP_393(None) := False(bool)
+EXPRESSION:" [key=0];
+}

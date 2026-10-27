@@ -1,0 +1,321 @@
+digraph {
+"BlockID: 811
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 812
+Call context: 
+None
+MODIFIER_CALL, MarginTradingHook.depositNative()()
+EXPRESSION:depositNative()	NodeType.EXPRESSION";
+"BlockID: 813
+Call context: 
+None
+MODIFIER_CALL, MarginTradingHook.refundNative()()
+EXPRESSION:depositNative()	NodeType.EXPRESSION
+refundNative()	NodeType.EXPRESSION";
+"BlockID: 814
+Call context: 
+None
+REF_198(mapping(uint256 => uint256)) -> initPosIds[msg.sender]
+REF_199(uint256) -> REF_198[_posId]
+initPosId(uint256) := REF_199(uint256)
+TMP_505(bool) = initPosId != 0
+REF_200(uint32) -> Errors.POSITION_NOT_FOUND
+INTERNAL_CALL, _require(bool,uint32)(TMP_505,REF_200)
+EXPRESSION:refundNative()	NodeType.EXPRESSION
+initPosId = initPosIds[msg.sender][_posId]	NodeType.VARIABLE
+initPosId = initPosIds[msg.sender][_posId]	NodeType.EXPRESSION
+_require(initPosId != 0,Errors.POSITION_NOT_FOUND)	NodeType.EXPRESSION";
+"BlockID: 815
+Call context: 
+None
+REF_201(MarginPos) -> __marginPositions[initPosId]
+marginPos(MarginPos) := REF_201(MarginPos)
+REF_202(address) -> marginPos.borrPool
+borrPool(address) := REF_202(address)
+TMP_507 = CONVERT POS_MANAGER to IPosManager
+TMP_508(uint256) = HIGH_LEVEL_CALL, dest:TMP_507(IPosManager), function:getPosDebtShares, arguments:['initPosId', 'borrPool']  
+EXPRESSION:_require(initPosId != 0,Errors.POSITION_NOT_FOUND)	NodeType.EXPRESSION
+marginPos = __marginPositions[initPosId]	NodeType.VARIABLE
+marginPos = __marginPositions[initPosId]	NodeType.EXPRESSION
+borrPool = marginPos.borrPool	NodeType.VARIABLE
+borrPool = marginPos.borrPool	NodeType.EXPRESSION";
+"BlockID: 816
+Call context: 
+None
+debtShares(uint256) := TMP_508(uint256)
+TMP_509(bool) = _repayShares > debtShares
+CONDITION TMP_509
+EXPRESSION:debtShares = IPosManager(POS_MANAGER).getPosDebtShares(initPosId,borrPool)	NodeType.VARIABLE
+debtShares = IPosManager(POS_MANAGER).getPosDebtShares(initPosId,borrPool)	NodeType.EXPRESSION
+_repayShares > debtShares	NodeType.IF" [shape=box];
+"BlockID: 817
+Call context: 
+True
+_repayShares(uint256) := debtShares(uint256)
+EXPRESSION:_repayShares = debtShares	NodeType.EXPRESSION";
+"BlockID: 818
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 819
+Call context: 
+None
+TMP_510 = CONVERT borrPool to ILendingPool
+TMP_511(address) = HIGH_LEVEL_CALL, dest:TMP_510(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:";
+"BlockID: 820
+Call context: 
+None
+borrToken(address) := TMP_511(address)
+TMP_512 = CONVERT borrPool to ILendingPool
+TMP_513(uint256) = HIGH_LEVEL_CALL, dest:TMP_512(ILendingPool), function:debtShareToAmtCurrent, arguments:['_repayShares']  
+EXPRESSION:borrToken = ILendingPool(borrPool).underlyingToken()	NodeType.VARIABLE
+borrToken = ILendingPool(borrPool).underlyingToken()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 821
+Call context: 
+None
+amtToRepay(uint256) := TMP_513(uint256)
+INTERNAL_CALL, MarginTradingHook._transmitTokenIn(address,uint256)(borrToken,amtToRepay)
+EXPRESSION:amtToRepay = ILendingPool(borrPool).debtShareToAmtCurrent(_repayShares)	NodeType.VARIABLE
+amtToRepay = ILendingPool(borrPool).debtShareToAmtCurrent(_repayShares)	NodeType.EXPRESSION
+_transmitTokenIn(borrToken,amtToRepay)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 822
+Call context: 
+None
+INTERNAL_CALL, BaseMappingIdHook._ensureApprove(address,uint256)(borrToken,amtToRepay)
+EXPRESSION:_transmitTokenIn(borrToken,amtToRepay)	NodeType.EXPRESSION
+_ensureApprove(borrToken,amtToRepay)	NodeType.EXPRESSION";
+"BlockID: 823
+Call context: 
+None
+TMP_516 = CONVERT CORE to IInitCore
+TMP_517(uint256) = HIGH_LEVEL_CALL, dest:TMP_516(IInitCore), function:repay, arguments:['borrPool', '_repayShares', 'initPosId']  
+EXPRESSION:_ensureApprove(borrToken,amtToRepay)	NodeType.EXPRESSION
+repayAmt = IInitCore(CORE).repay(borrPool,_repayShares,initPosId)	NodeType.EXPRESSION";
+"BlockID: 824
+Call context: 
+None
+repayAmt(uint256) := TMP_517(uint256)
+TMP_518 = CONVERT CORE to IInitCore
+TMP_519(uint256) = HIGH_LEVEL_CALL, dest:TMP_518(IInitCore), function:getPosHealthCurrent_e18, arguments:['initPosId']  
+EXPRESSION:repayAmt = IInitCore(CORE).repay(borrPool,_repayShares,initPosId)	NodeType.EXPRESSION
+health_e18 = IInitCore(CORE).getPosHealthCurrent_e18(initPosId)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 825
+Call context: 
+None
+health_e18(uint256) := TMP_519(uint256)
+EXPRESSION:health_e18 = IInitCore(CORE).getPosHealthCurrent_e18(initPosId)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 811
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 812
+Call context: 
+None
+MODIFIER_CALL, MarginTradingHook.depositNative()()
+EXPRESSION:depositNative()	NodeType.EXPRESSION" [key=0];
+"BlockID: 812
+Call context: 
+None
+MODIFIER_CALL, MarginTradingHook.depositNative()()
+EXPRESSION:depositNative()	NodeType.EXPRESSION" -> "BlockID: 813
+Call context: 
+None
+MODIFIER_CALL, MarginTradingHook.refundNative()()
+EXPRESSION:depositNative()	NodeType.EXPRESSION
+refundNative()	NodeType.EXPRESSION" [key=0];
+"BlockID: 813
+Call context: 
+None
+MODIFIER_CALL, MarginTradingHook.refundNative()()
+EXPRESSION:depositNative()	NodeType.EXPRESSION
+refundNative()	NodeType.EXPRESSION" -> "BlockID: 814
+Call context: 
+None
+REF_198(mapping(uint256 => uint256)) -> initPosIds[msg.sender]
+REF_199(uint256) -> REF_198[_posId]
+initPosId(uint256) := REF_199(uint256)
+TMP_505(bool) = initPosId != 0
+REF_200(uint32) -> Errors.POSITION_NOT_FOUND
+INTERNAL_CALL, _require(bool,uint32)(TMP_505,REF_200)
+EXPRESSION:refundNative()	NodeType.EXPRESSION
+initPosId = initPosIds[msg.sender][_posId]	NodeType.VARIABLE
+initPosId = initPosIds[msg.sender][_posId]	NodeType.EXPRESSION
+_require(initPosId != 0,Errors.POSITION_NOT_FOUND)	NodeType.EXPRESSION" [key=0];
+"BlockID: 814
+Call context: 
+None
+REF_198(mapping(uint256 => uint256)) -> initPosIds[msg.sender]
+REF_199(uint256) -> REF_198[_posId]
+initPosId(uint256) := REF_199(uint256)
+TMP_505(bool) = initPosId != 0
+REF_200(uint32) -> Errors.POSITION_NOT_FOUND
+INTERNAL_CALL, _require(bool,uint32)(TMP_505,REF_200)
+EXPRESSION:refundNative()	NodeType.EXPRESSION
+initPosId = initPosIds[msg.sender][_posId]	NodeType.VARIABLE
+initPosId = initPosIds[msg.sender][_posId]	NodeType.EXPRESSION
+_require(initPosId != 0,Errors.POSITION_NOT_FOUND)	NodeType.EXPRESSION" -> "BlockID: 815
+Call context: 
+None
+REF_201(MarginPos) -> __marginPositions[initPosId]
+marginPos(MarginPos) := REF_201(MarginPos)
+REF_202(address) -> marginPos.borrPool
+borrPool(address) := REF_202(address)
+TMP_507 = CONVERT POS_MANAGER to IPosManager
+TMP_508(uint256) = HIGH_LEVEL_CALL, dest:TMP_507(IPosManager), function:getPosDebtShares, arguments:['initPosId', 'borrPool']  
+EXPRESSION:_require(initPosId != 0,Errors.POSITION_NOT_FOUND)	NodeType.EXPRESSION
+marginPos = __marginPositions[initPosId]	NodeType.VARIABLE
+marginPos = __marginPositions[initPosId]	NodeType.EXPRESSION
+borrPool = marginPos.borrPool	NodeType.VARIABLE
+borrPool = marginPos.borrPool	NodeType.EXPRESSION" [key=0];
+"BlockID: 815
+Call context: 
+None
+REF_201(MarginPos) -> __marginPositions[initPosId]
+marginPos(MarginPos) := REF_201(MarginPos)
+REF_202(address) -> marginPos.borrPool
+borrPool(address) := REF_202(address)
+TMP_507 = CONVERT POS_MANAGER to IPosManager
+TMP_508(uint256) = HIGH_LEVEL_CALL, dest:TMP_507(IPosManager), function:getPosDebtShares, arguments:['initPosId', 'borrPool']  
+EXPRESSION:_require(initPosId != 0,Errors.POSITION_NOT_FOUND)	NodeType.EXPRESSION
+marginPos = __marginPositions[initPosId]	NodeType.VARIABLE
+marginPos = __marginPositions[initPosId]	NodeType.EXPRESSION
+borrPool = marginPos.borrPool	NodeType.VARIABLE
+borrPool = marginPos.borrPool	NodeType.EXPRESSION" -> "BlockID: 816
+Call context: 
+None
+debtShares(uint256) := TMP_508(uint256)
+TMP_509(bool) = _repayShares > debtShares
+CONDITION TMP_509
+EXPRESSION:debtShares = IPosManager(POS_MANAGER).getPosDebtShares(initPosId,borrPool)	NodeType.VARIABLE
+debtShares = IPosManager(POS_MANAGER).getPosDebtShares(initPosId,borrPool)	NodeType.EXPRESSION
+_repayShares > debtShares	NodeType.IF" [key=0];
+"BlockID: 816
+Call context: 
+None
+debtShares(uint256) := TMP_508(uint256)
+TMP_509(bool) = _repayShares > debtShares
+CONDITION TMP_509
+EXPRESSION:debtShares = IPosManager(POS_MANAGER).getPosDebtShares(initPosId,borrPool)	NodeType.VARIABLE
+debtShares = IPosManager(POS_MANAGER).getPosDebtShares(initPosId,borrPool)	NodeType.EXPRESSION
+_repayShares > debtShares	NodeType.IF" -> "BlockID: 817
+Call context: 
+True
+_repayShares(uint256) := debtShares(uint256)
+EXPRESSION:_repayShares = debtShares	NodeType.EXPRESSION" [key=0];
+"BlockID: 816
+Call context: 
+None
+debtShares(uint256) := TMP_508(uint256)
+TMP_509(bool) = _repayShares > debtShares
+CONDITION TMP_509
+EXPRESSION:debtShares = IPosManager(POS_MANAGER).getPosDebtShares(initPosId,borrPool)	NodeType.VARIABLE
+debtShares = IPosManager(POS_MANAGER).getPosDebtShares(initPosId,borrPool)	NodeType.EXPRESSION
+_repayShares > debtShares	NodeType.IF" -> "BlockID: 818
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 817
+Call context: 
+True
+_repayShares(uint256) := debtShares(uint256)
+EXPRESSION:_repayShares = debtShares	NodeType.EXPRESSION" -> "BlockID: 818
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 818
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 819
+Call context: 
+None
+TMP_510 = CONVERT borrPool to ILendingPool
+TMP_511(address) = HIGH_LEVEL_CALL, dest:TMP_510(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:" [key=0];
+"BlockID: 819
+Call context: 
+None
+TMP_510 = CONVERT borrPool to ILendingPool
+TMP_511(address) = HIGH_LEVEL_CALL, dest:TMP_510(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:" -> "BlockID: 820
+Call context: 
+None
+borrToken(address) := TMP_511(address)
+TMP_512 = CONVERT borrPool to ILendingPool
+TMP_513(uint256) = HIGH_LEVEL_CALL, dest:TMP_512(ILendingPool), function:debtShareToAmtCurrent, arguments:['_repayShares']  
+EXPRESSION:borrToken = ILendingPool(borrPool).underlyingToken()	NodeType.VARIABLE
+borrToken = ILendingPool(borrPool).underlyingToken()	NodeType.EXPRESSION" [key=0];
+"BlockID: 820
+Call context: 
+None
+borrToken(address) := TMP_511(address)
+TMP_512 = CONVERT borrPool to ILendingPool
+TMP_513(uint256) = HIGH_LEVEL_CALL, dest:TMP_512(ILendingPool), function:debtShareToAmtCurrent, arguments:['_repayShares']  
+EXPRESSION:borrToken = ILendingPool(borrPool).underlyingToken()	NodeType.VARIABLE
+borrToken = ILendingPool(borrPool).underlyingToken()	NodeType.EXPRESSION" -> "BlockID: 821
+Call context: 
+None
+amtToRepay(uint256) := TMP_513(uint256)
+INTERNAL_CALL, MarginTradingHook._transmitTokenIn(address,uint256)(borrToken,amtToRepay)
+EXPRESSION:amtToRepay = ILendingPool(borrPool).debtShareToAmtCurrent(_repayShares)	NodeType.VARIABLE
+amtToRepay = ILendingPool(borrPool).debtShareToAmtCurrent(_repayShares)	NodeType.EXPRESSION
+_transmitTokenIn(borrToken,amtToRepay)	NodeType.EXPRESSION" [key=0];
+"BlockID: 821
+Call context: 
+None
+amtToRepay(uint256) := TMP_513(uint256)
+INTERNAL_CALL, MarginTradingHook._transmitTokenIn(address,uint256)(borrToken,amtToRepay)
+EXPRESSION:amtToRepay = ILendingPool(borrPool).debtShareToAmtCurrent(_repayShares)	NodeType.VARIABLE
+amtToRepay = ILendingPool(borrPool).debtShareToAmtCurrent(_repayShares)	NodeType.EXPRESSION
+_transmitTokenIn(borrToken,amtToRepay)	NodeType.EXPRESSION" -> "BlockID: 822
+Call context: 
+None
+INTERNAL_CALL, BaseMappingIdHook._ensureApprove(address,uint256)(borrToken,amtToRepay)
+EXPRESSION:_transmitTokenIn(borrToken,amtToRepay)	NodeType.EXPRESSION
+_ensureApprove(borrToken,amtToRepay)	NodeType.EXPRESSION" [key=0];
+"BlockID: 822
+Call context: 
+None
+INTERNAL_CALL, BaseMappingIdHook._ensureApprove(address,uint256)(borrToken,amtToRepay)
+EXPRESSION:_transmitTokenIn(borrToken,amtToRepay)	NodeType.EXPRESSION
+_ensureApprove(borrToken,amtToRepay)	NodeType.EXPRESSION" -> "BlockID: 823
+Call context: 
+None
+TMP_516 = CONVERT CORE to IInitCore
+TMP_517(uint256) = HIGH_LEVEL_CALL, dest:TMP_516(IInitCore), function:repay, arguments:['borrPool', '_repayShares', 'initPosId']  
+EXPRESSION:_ensureApprove(borrToken,amtToRepay)	NodeType.EXPRESSION
+repayAmt = IInitCore(CORE).repay(borrPool,_repayShares,initPosId)	NodeType.EXPRESSION" [key=0];
+"BlockID: 823
+Call context: 
+None
+TMP_516 = CONVERT CORE to IInitCore
+TMP_517(uint256) = HIGH_LEVEL_CALL, dest:TMP_516(IInitCore), function:repay, arguments:['borrPool', '_repayShares', 'initPosId']  
+EXPRESSION:_ensureApprove(borrToken,amtToRepay)	NodeType.EXPRESSION
+repayAmt = IInitCore(CORE).repay(borrPool,_repayShares,initPosId)	NodeType.EXPRESSION" -> "BlockID: 824
+Call context: 
+None
+repayAmt(uint256) := TMP_517(uint256)
+TMP_518 = CONVERT CORE to IInitCore
+TMP_519(uint256) = HIGH_LEVEL_CALL, dest:TMP_518(IInitCore), function:getPosHealthCurrent_e18, arguments:['initPosId']  
+EXPRESSION:repayAmt = IInitCore(CORE).repay(borrPool,_repayShares,initPosId)	NodeType.EXPRESSION
+health_e18 = IInitCore(CORE).getPosHealthCurrent_e18(initPosId)	NodeType.EXPRESSION" [key=0];
+"BlockID: 824
+Call context: 
+None
+repayAmt(uint256) := TMP_517(uint256)
+TMP_518 = CONVERT CORE to IInitCore
+TMP_519(uint256) = HIGH_LEVEL_CALL, dest:TMP_518(IInitCore), function:getPosHealthCurrent_e18, arguments:['initPosId']  
+EXPRESSION:repayAmt = IInitCore(CORE).repay(borrPool,_repayShares,initPosId)	NodeType.EXPRESSION
+health_e18 = IInitCore(CORE).getPosHealthCurrent_e18(initPosId)	NodeType.EXPRESSION" -> "BlockID: 825
+Call context: 
+None
+health_e18(uint256) := TMP_519(uint256)
+EXPRESSION:health_e18 = IInitCore(CORE).getPosHealthCurrent_e18(initPosId)	NodeType.EXPRESSION" [key=0];
+}

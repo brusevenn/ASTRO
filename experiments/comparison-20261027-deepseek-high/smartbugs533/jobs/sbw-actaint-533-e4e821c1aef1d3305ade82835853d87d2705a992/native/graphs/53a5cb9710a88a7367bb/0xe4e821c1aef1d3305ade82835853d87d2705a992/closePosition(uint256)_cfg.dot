@@ -1,0 +1,577 @@
+digraph {
+"BlockID: 963
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 965
+Call context: 
+True
+REF_138(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_139(uint256) -> REF_138.tokenAmount
+tokenAmount(uint256) := REF_139(uint256)
+REF_140(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_141(address) -> REF_140.borrower
+TMP_413(bool) = REF_141 == 0
+CONDITION TMP_413
+EXPRESSION:tokenAmount = agreements[_index].tokenAmount	NodeType.VARIABLE
+tokenAmount = agreements[_index].tokenAmount	NodeType.EXPRESSION
+agreements[_index].borrower == 0	NodeType.IF";
+"BlockID: 967
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 968
+Call context: 
+None
+REF_149(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_150(uint256) -> REF_149.collateralAmount
+collateralAmount(uint256) := REF_150(uint256)
+REF_151(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_152(uint32) -> REF_151.collateralRatio
+TMP_417(bool) = INTERNAL_CALL, BancorLender.isCollateralWithinMargin(uint256,uint256,uint32)(tokenAmount,collateralAmount,REF_152)
+EXPRESSION:collateralAmount = agreements[_index].collateralAmount	NodeType.VARIABLE
+collateralAmount = agreements[_index].collateralAmount	NodeType.EXPRESSION";
+"BlockID: 969
+Call context: 
+None
+TMP_418 = ! TMP_417 
+canMarginCall(bool) := TMP_418(bool)
+REF_153(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_154(uint256) -> REF_153.expiration
+TMP_419(bool) = now > REF_154
+TMP_420(bool) = canMarginCall || TMP_419
+CONDITION TMP_420
+EXPRESSION:canMarginCall = ! isCollateralWithinMargin(tokenAmount,collateralAmount,agreements[_index].collateralRatio)	NodeType.VARIABLE
+canMarginCall = ! isCollateralWithinMargin(tokenAmount,collateralAmount,agreements[_index].collateralRatio)	NodeType.EXPRESSION
+canMarginCall || now > agreements[_index].expiration	NodeType.IF" [shape=box];
+"BlockID: 970
+Call context: 
+True
+TMP_422(uint256) = HIGH_LEVEL_CALL, dest:bancorChanger(BancorChanger), function:quickBuy, arguments:['1'] value:collateralAmount 
+EXPRESSION:";
+"BlockID: 972
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 971
+Call context: 
+None
+tokenRecoveredAmount(uint256) := TMP_422(uint256)
+TMP_423(bool) = tokenRecoveredAmount >= tokenAmount
+CONDITION TMP_423
+EXPRESSION:tokenRecoveredAmount = bancorChanger.quickBuy.value(collateralAmount)(1)	NodeType.VARIABLE
+tokenRecoveredAmount = bancorChanger.quickBuy.value(collateralAmount)(1)	NodeType.EXPRESSION
+tokenRecoveredAmount >= tokenAmount	NodeType.IF" [shape=box];
+"BlockID: 974
+Call context: 
+True
+REF_158(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_159(address) -> REF_158.lender
+TMP_424(bool) = HIGH_LEVEL_CALL, dest:bancorToken(IERC20Token), function:transfer, arguments:['REF_159', 'tokenAmount']  
+EXPRESSION:assert(bool)(bancorToken.transfer(agreements[_index].lender,tokenAmount))	NodeType.EXPRESSION";
+"BlockID: 976
+Call context: 
+False
+REF_165(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_166(address) -> REF_165.lender
+TMP_429(bool) = HIGH_LEVEL_CALL, dest:bancorToken(IERC20Token), function:transfer, arguments:['REF_166', 'tokenRecoveredAmount']  
+EXPRESSION:assert(bool)(bancorToken.transfer(agreements[_index].lender,tokenRecoveredAmount))	NodeType.EXPRESSION";
+"BlockID: 978
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 979
+Call context: 
+None
+REF_167(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_168(uint256) -> REF_167.tokenAmount
+REF_168(uint256) (->agreements) := 0(uint256)
+EXPRESSION:agreements[_index].tokenAmount = 0	NodeType.EXPRESSION";
+"BlockID: 980
+Call context: 
+True
+TMP_426(uint256) = tokenRecoveredAmount - tokenAmount
+TMP_427(uint256) = HIGH_LEVEL_CALL, dest:bancorChanger(BancorChanger), function:sell, arguments:['etherToken', 'TMP_426', '1']  
+EXPRESSION:";
+"BlockID: 981
+Call context: 
+None
+remainingCollateral(uint256) := TMP_427(uint256)
+REF_162(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_163(address) -> REF_162.borrower
+HIGH_LEVEL_CALL, dest:etherToken(IEtherToken), function:withdrawTo, arguments:['REF_163', 'remainingCollateral']  
+EXPRESSION:remainingCollateral = bancorChanger.sell(etherToken,tokenRecoveredAmount - tokenAmount,1)	NodeType.VARIABLE
+remainingCollateral = bancorChanger.sell(etherToken,tokenRecoveredAmount - tokenAmount,1)	NodeType.EXPRESSION
+etherToken.withdrawTo(agreements[_index].borrower,remainingCollateral)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 983
+Call context: 
+True
+REF_145(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_146(address) -> REF_145.lender
+TMP_416(bool) = HIGH_LEVEL_CALL, dest:bancorToken(IERC20Token), function:transfer, arguments:['REF_146', 'tokenAmount']  
+EXPRESSION:bancorToken.transfer(agreements[_index].lender,tokenAmount)	NodeType.EXPRESSION";
+"BlockID: 984
+Call context: 
+None
+REF_147(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_148(uint256) -> REF_147.tokenAmount
+REF_148(uint256) (->agreements) := 0(uint256)
+RETURN
+EXPRESSION:bancorToken.transfer(agreements[_index].lender,tokenAmount)	NodeType.EXPRESSION
+agreements[_index].tokenAmount = 0	NodeType.EXPRESSION
+None	NodeType.RETURN";
+"BlockID: 985
+Call context: 
+None
+REF_136(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_137(uint256) -> REF_136.tokenAmount
+TMP_411(bool) = REF_137 > 0
+CONDITION TMP_411
+EXPRESSION:TMP_411(bool) = REF_137 > 0	NodeType.IF";
+"BlockID: 986
+Call context: 
+True
+TMP_412(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 987
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 988
+Call context: 
+None
+REF_142(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_143(address) -> REF_142.lender
+TMP_414(bool) = msg.sender == REF_143
+CONDITION TMP_414
+EXPRESSION:TMP_414(bool) = msg.sender == REF_143	NodeType.IF";
+"BlockID: 989
+Call context: 
+True
+TMP_415(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 990
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 991
+Call context: 
+None
+CONDITION TMP_429
+EXPRESSION:TMP_430(None) = SOLIDITY_CALL assert(bool)(TMP_429)	NodeType.IF";
+"BlockID: 992
+Call context: 
+True
+TMP_430(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 993
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 994
+Call context: 
+None
+CONDITION TMP_424
+EXPRESSION:TMP_425(None) = SOLIDITY_CALL assert(bool)(TMP_424)	NodeType.IF";
+"BlockID: 995
+Call context: 
+True
+TMP_425(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 996
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 963
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 985
+Call context: 
+None
+REF_136(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_137(uint256) -> REF_136.tokenAmount
+TMP_411(bool) = REF_137 > 0
+CONDITION TMP_411
+EXPRESSION:TMP_411(bool) = REF_137 > 0	NodeType.IF" [key=0];
+"BlockID: 965
+Call context: 
+True
+REF_138(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_139(uint256) -> REF_138.tokenAmount
+tokenAmount(uint256) := REF_139(uint256)
+REF_140(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_141(address) -> REF_140.borrower
+TMP_413(bool) = REF_141 == 0
+CONDITION TMP_413
+EXPRESSION:tokenAmount = agreements[_index].tokenAmount	NodeType.VARIABLE
+tokenAmount = agreements[_index].tokenAmount	NodeType.EXPRESSION
+agreements[_index].borrower == 0	NodeType.IF" -> "BlockID: 967
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 965
+Call context: 
+True
+REF_138(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_139(uint256) -> REF_138.tokenAmount
+tokenAmount(uint256) := REF_139(uint256)
+REF_140(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_141(address) -> REF_140.borrower
+TMP_413(bool) = REF_141 == 0
+CONDITION TMP_413
+EXPRESSION:tokenAmount = agreements[_index].tokenAmount	NodeType.VARIABLE
+tokenAmount = agreements[_index].tokenAmount	NodeType.EXPRESSION
+agreements[_index].borrower == 0	NodeType.IF" -> "BlockID: 988
+Call context: 
+None
+REF_142(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_143(address) -> REF_142.lender
+TMP_414(bool) = msg.sender == REF_143
+CONDITION TMP_414
+EXPRESSION:TMP_414(bool) = msg.sender == REF_143	NodeType.IF" [key=0];
+"BlockID: 967
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 968
+Call context: 
+None
+REF_149(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_150(uint256) -> REF_149.collateralAmount
+collateralAmount(uint256) := REF_150(uint256)
+REF_151(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_152(uint32) -> REF_151.collateralRatio
+TMP_417(bool) = INTERNAL_CALL, BancorLender.isCollateralWithinMargin(uint256,uint256,uint32)(tokenAmount,collateralAmount,REF_152)
+EXPRESSION:collateralAmount = agreements[_index].collateralAmount	NodeType.VARIABLE
+collateralAmount = agreements[_index].collateralAmount	NodeType.EXPRESSION" [key=0];
+"BlockID: 968
+Call context: 
+None
+REF_149(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_150(uint256) -> REF_149.collateralAmount
+collateralAmount(uint256) := REF_150(uint256)
+REF_151(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_152(uint32) -> REF_151.collateralRatio
+TMP_417(bool) = INTERNAL_CALL, BancorLender.isCollateralWithinMargin(uint256,uint256,uint32)(tokenAmount,collateralAmount,REF_152)
+EXPRESSION:collateralAmount = agreements[_index].collateralAmount	NodeType.VARIABLE
+collateralAmount = agreements[_index].collateralAmount	NodeType.EXPRESSION" -> "BlockID: 969
+Call context: 
+None
+TMP_418 = ! TMP_417 
+canMarginCall(bool) := TMP_418(bool)
+REF_153(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_154(uint256) -> REF_153.expiration
+TMP_419(bool) = now > REF_154
+TMP_420(bool) = canMarginCall || TMP_419
+CONDITION TMP_420
+EXPRESSION:canMarginCall = ! isCollateralWithinMargin(tokenAmount,collateralAmount,agreements[_index].collateralRatio)	NodeType.VARIABLE
+canMarginCall = ! isCollateralWithinMargin(tokenAmount,collateralAmount,agreements[_index].collateralRatio)	NodeType.EXPRESSION
+canMarginCall || now > agreements[_index].expiration	NodeType.IF" [key=0];
+"BlockID: 969
+Call context: 
+None
+TMP_418 = ! TMP_417 
+canMarginCall(bool) := TMP_418(bool)
+REF_153(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_154(uint256) -> REF_153.expiration
+TMP_419(bool) = now > REF_154
+TMP_420(bool) = canMarginCall || TMP_419
+CONDITION TMP_420
+EXPRESSION:canMarginCall = ! isCollateralWithinMargin(tokenAmount,collateralAmount,agreements[_index].collateralRatio)	NodeType.VARIABLE
+canMarginCall = ! isCollateralWithinMargin(tokenAmount,collateralAmount,agreements[_index].collateralRatio)	NodeType.EXPRESSION
+canMarginCall || now > agreements[_index].expiration	NodeType.IF" -> "BlockID: 970
+Call context: 
+True
+TMP_422(uint256) = HIGH_LEVEL_CALL, dest:bancorChanger(BancorChanger), function:quickBuy, arguments:['1'] value:collateralAmount 
+EXPRESSION:" [key=0];
+"BlockID: 969
+Call context: 
+None
+TMP_418 = ! TMP_417 
+canMarginCall(bool) := TMP_418(bool)
+REF_153(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_154(uint256) -> REF_153.expiration
+TMP_419(bool) = now > REF_154
+TMP_420(bool) = canMarginCall || TMP_419
+CONDITION TMP_420
+EXPRESSION:canMarginCall = ! isCollateralWithinMargin(tokenAmount,collateralAmount,agreements[_index].collateralRatio)	NodeType.VARIABLE
+canMarginCall = ! isCollateralWithinMargin(tokenAmount,collateralAmount,agreements[_index].collateralRatio)	NodeType.EXPRESSION
+canMarginCall || now > agreements[_index].expiration	NodeType.IF" -> "BlockID: 972
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 970
+Call context: 
+True
+TMP_422(uint256) = HIGH_LEVEL_CALL, dest:bancorChanger(BancorChanger), function:quickBuy, arguments:['1'] value:collateralAmount 
+EXPRESSION:" -> "BlockID: 971
+Call context: 
+None
+tokenRecoveredAmount(uint256) := TMP_422(uint256)
+TMP_423(bool) = tokenRecoveredAmount >= tokenAmount
+CONDITION TMP_423
+EXPRESSION:tokenRecoveredAmount = bancorChanger.quickBuy.value(collateralAmount)(1)	NodeType.VARIABLE
+tokenRecoveredAmount = bancorChanger.quickBuy.value(collateralAmount)(1)	NodeType.EXPRESSION
+tokenRecoveredAmount >= tokenAmount	NodeType.IF" [key=0];
+"BlockID: 971
+Call context: 
+None
+tokenRecoveredAmount(uint256) := TMP_422(uint256)
+TMP_423(bool) = tokenRecoveredAmount >= tokenAmount
+CONDITION TMP_423
+EXPRESSION:tokenRecoveredAmount = bancorChanger.quickBuy.value(collateralAmount)(1)	NodeType.VARIABLE
+tokenRecoveredAmount = bancorChanger.quickBuy.value(collateralAmount)(1)	NodeType.EXPRESSION
+tokenRecoveredAmount >= tokenAmount	NodeType.IF" -> "BlockID: 974
+Call context: 
+True
+REF_158(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_159(address) -> REF_158.lender
+TMP_424(bool) = HIGH_LEVEL_CALL, dest:bancorToken(IERC20Token), function:transfer, arguments:['REF_159', 'tokenAmount']  
+EXPRESSION:assert(bool)(bancorToken.transfer(agreements[_index].lender,tokenAmount))	NodeType.EXPRESSION" [key=0];
+"BlockID: 971
+Call context: 
+None
+tokenRecoveredAmount(uint256) := TMP_422(uint256)
+TMP_423(bool) = tokenRecoveredAmount >= tokenAmount
+CONDITION TMP_423
+EXPRESSION:tokenRecoveredAmount = bancorChanger.quickBuy.value(collateralAmount)(1)	NodeType.VARIABLE
+tokenRecoveredAmount = bancorChanger.quickBuy.value(collateralAmount)(1)	NodeType.EXPRESSION
+tokenRecoveredAmount >= tokenAmount	NodeType.IF" -> "BlockID: 976
+Call context: 
+False
+REF_165(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_166(address) -> REF_165.lender
+TMP_429(bool) = HIGH_LEVEL_CALL, dest:bancorToken(IERC20Token), function:transfer, arguments:['REF_166', 'tokenRecoveredAmount']  
+EXPRESSION:assert(bool)(bancorToken.transfer(agreements[_index].lender,tokenRecoveredAmount))	NodeType.EXPRESSION" [key=0];
+"BlockID: 974
+Call context: 
+True
+REF_158(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_159(address) -> REF_158.lender
+TMP_424(bool) = HIGH_LEVEL_CALL, dest:bancorToken(IERC20Token), function:transfer, arguments:['REF_159', 'tokenAmount']  
+EXPRESSION:assert(bool)(bancorToken.transfer(agreements[_index].lender,tokenAmount))	NodeType.EXPRESSION" -> "BlockID: 994
+Call context: 
+None
+CONDITION TMP_424
+EXPRESSION:TMP_425(None) = SOLIDITY_CALL assert(bool)(TMP_424)	NodeType.IF" [key=0];
+"BlockID: 976
+Call context: 
+False
+REF_165(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_166(address) -> REF_165.lender
+TMP_429(bool) = HIGH_LEVEL_CALL, dest:bancorToken(IERC20Token), function:transfer, arguments:['REF_166', 'tokenRecoveredAmount']  
+EXPRESSION:assert(bool)(bancorToken.transfer(agreements[_index].lender,tokenRecoveredAmount))	NodeType.EXPRESSION" -> "BlockID: 991
+Call context: 
+None
+CONDITION TMP_429
+EXPRESSION:TMP_430(None) = SOLIDITY_CALL assert(bool)(TMP_429)	NodeType.IF" [key=0];
+"BlockID: 978
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 979
+Call context: 
+None
+REF_167(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_168(uint256) -> REF_167.tokenAmount
+REF_168(uint256) (->agreements) := 0(uint256)
+EXPRESSION:agreements[_index].tokenAmount = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 979
+Call context: 
+None
+REF_167(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_168(uint256) -> REF_167.tokenAmount
+REF_168(uint256) (->agreements) := 0(uint256)
+EXPRESSION:agreements[_index].tokenAmount = 0	NodeType.EXPRESSION" -> "BlockID: 972
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 980
+Call context: 
+True
+TMP_426(uint256) = tokenRecoveredAmount - tokenAmount
+TMP_427(uint256) = HIGH_LEVEL_CALL, dest:bancorChanger(BancorChanger), function:sell, arguments:['etherToken', 'TMP_426', '1']  
+EXPRESSION:" -> "BlockID: 981
+Call context: 
+None
+remainingCollateral(uint256) := TMP_427(uint256)
+REF_162(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_163(address) -> REF_162.borrower
+HIGH_LEVEL_CALL, dest:etherToken(IEtherToken), function:withdrawTo, arguments:['REF_163', 'remainingCollateral']  
+EXPRESSION:remainingCollateral = bancorChanger.sell(etherToken,tokenRecoveredAmount - tokenAmount,1)	NodeType.VARIABLE
+remainingCollateral = bancorChanger.sell(etherToken,tokenRecoveredAmount - tokenAmount,1)	NodeType.EXPRESSION
+etherToken.withdrawTo(agreements[_index].borrower,remainingCollateral)	NodeType.EXPRESSION" [key=0];
+"BlockID: 981
+Call context: 
+None
+remainingCollateral(uint256) := TMP_427(uint256)
+REF_162(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_163(address) -> REF_162.borrower
+HIGH_LEVEL_CALL, dest:etherToken(IEtherToken), function:withdrawTo, arguments:['REF_163', 'remainingCollateral']  
+EXPRESSION:remainingCollateral = bancorChanger.sell(etherToken,tokenRecoveredAmount - tokenAmount,1)	NodeType.VARIABLE
+remainingCollateral = bancorChanger.sell(etherToken,tokenRecoveredAmount - tokenAmount,1)	NodeType.EXPRESSION
+etherToken.withdrawTo(agreements[_index].borrower,remainingCollateral)	NodeType.EXPRESSION" -> "BlockID: 978
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 983
+Call context: 
+True
+REF_145(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_146(address) -> REF_145.lender
+TMP_416(bool) = HIGH_LEVEL_CALL, dest:bancorToken(IERC20Token), function:transfer, arguments:['REF_146', 'tokenAmount']  
+EXPRESSION:bancorToken.transfer(agreements[_index].lender,tokenAmount)	NodeType.EXPRESSION" -> "BlockID: 984
+Call context: 
+None
+REF_147(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_148(uint256) -> REF_147.tokenAmount
+REF_148(uint256) (->agreements) := 0(uint256)
+RETURN
+EXPRESSION:bancorToken.transfer(agreements[_index].lender,tokenAmount)	NodeType.EXPRESSION
+agreements[_index].tokenAmount = 0	NodeType.EXPRESSION
+None	NodeType.RETURN" [key=0];
+"BlockID: 985
+Call context: 
+None
+REF_136(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_137(uint256) -> REF_136.tokenAmount
+TMP_411(bool) = REF_137 > 0
+CONDITION TMP_411
+EXPRESSION:TMP_411(bool) = REF_137 > 0	NodeType.IF" -> "BlockID: 986
+Call context: 
+True
+TMP_412(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 985
+Call context: 
+None
+REF_136(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_137(uint256) -> REF_136.tokenAmount
+TMP_411(bool) = REF_137 > 0
+CONDITION TMP_411
+EXPRESSION:TMP_411(bool) = REF_137 > 0	NodeType.IF" -> "BlockID: 987
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 987
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 965
+Call context: 
+True
+REF_138(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_139(uint256) -> REF_138.tokenAmount
+tokenAmount(uint256) := REF_139(uint256)
+REF_140(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_141(address) -> REF_140.borrower
+TMP_413(bool) = REF_141 == 0
+CONDITION TMP_413
+EXPRESSION:tokenAmount = agreements[_index].tokenAmount	NodeType.VARIABLE
+tokenAmount = agreements[_index].tokenAmount	NodeType.EXPRESSION
+agreements[_index].borrower == 0	NodeType.IF" [key=0];
+"BlockID: 988
+Call context: 
+None
+REF_142(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_143(address) -> REF_142.lender
+TMP_414(bool) = msg.sender == REF_143
+CONDITION TMP_414
+EXPRESSION:TMP_414(bool) = msg.sender == REF_143	NodeType.IF" -> "BlockID: 989
+Call context: 
+True
+TMP_415(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 988
+Call context: 
+None
+REF_142(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_143(address) -> REF_142.lender
+TMP_414(bool) = msg.sender == REF_143
+CONDITION TMP_414
+EXPRESSION:TMP_414(bool) = msg.sender == REF_143	NodeType.IF" -> "BlockID: 990
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 990
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 983
+Call context: 
+True
+REF_145(BancorLender.BorrowAgreement) -> agreements[_index]
+REF_146(address) -> REF_145.lender
+TMP_416(bool) = HIGH_LEVEL_CALL, dest:bancorToken(IERC20Token), function:transfer, arguments:['REF_146', 'tokenAmount']  
+EXPRESSION:bancorToken.transfer(agreements[_index].lender,tokenAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 991
+Call context: 
+None
+CONDITION TMP_429
+EXPRESSION:TMP_430(None) = SOLIDITY_CALL assert(bool)(TMP_429)	NodeType.IF" -> "BlockID: 992
+Call context: 
+True
+TMP_430(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 991
+Call context: 
+None
+CONDITION TMP_429
+EXPRESSION:TMP_430(None) = SOLIDITY_CALL assert(bool)(TMP_429)	NodeType.IF" -> "BlockID: 993
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 993
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 978
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 994
+Call context: 
+None
+CONDITION TMP_424
+EXPRESSION:TMP_425(None) = SOLIDITY_CALL assert(bool)(TMP_424)	NodeType.IF" -> "BlockID: 995
+Call context: 
+True
+TMP_425(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 994
+Call context: 
+None
+CONDITION TMP_424
+EXPRESSION:TMP_425(None) = SOLIDITY_CALL assert(bool)(TMP_424)	NodeType.IF" -> "BlockID: 996
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 996
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 980
+Call context: 
+True
+TMP_426(uint256) = tokenRecoveredAmount - tokenAmount
+TMP_427(uint256) = HIGH_LEVEL_CALL, dest:bancorChanger(BancorChanger), function:sell, arguments:['etherToken', 'TMP_426', '1']  
+EXPRESSION:" [key=0];
+}

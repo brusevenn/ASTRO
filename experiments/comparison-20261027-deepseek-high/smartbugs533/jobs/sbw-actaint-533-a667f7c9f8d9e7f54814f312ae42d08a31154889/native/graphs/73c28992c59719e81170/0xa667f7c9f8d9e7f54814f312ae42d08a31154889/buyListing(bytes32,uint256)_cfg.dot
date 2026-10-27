@@ -1,0 +1,696 @@
+digraph {
+"BlockID: 127
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 128
+Call context: 
+None
+REF_13(ListingsERC20.Listing) -> listings[listingId]
+listing(ListingsERC20.Listing) := REF_13(ListingsERC20.Listing)
+REF_14(address) -> listing.seller
+seller(address) := REF_14(address)
+REF_15(address) -> listing.tokenContractAddress
+contractAddress(address) := REF_15(address)
+REF_16(uint256) -> listing.price
+price(uint256) := REF_16(uint256)
+REF_17(address) -> listing.tokenContractAddress
+TMP_58(uint256) = INTERNAL_CALL, ListingsERC20.getDecimals(address)(REF_17)
+EXPRESSION:listing = listings[listingId]	NodeType.VARIABLE
+listing = listings[listingId]	NodeType.EXPRESSION
+seller = listing.seller	NodeType.VARIABLE
+seller = listing.seller	NodeType.EXPRESSION
+contractAddress = listing.tokenContractAddress	NodeType.VARIABLE
+contractAddress = listing.tokenContractAddress	NodeType.EXPRESSION
+price = listing.price	NodeType.VARIABLE
+price = listing.price	NodeType.EXPRESSION";
+"BlockID: 129
+Call context: 
+None
+decimals(uint256) := TMP_58(uint256)
+TMP_59(uint256) = 10 ** decimals
+factor(uint256) := TMP_59(uint256)
+NEW VARIABLE sale
+TMP_60(bool) = decimals > 0
+CONDITION TMP_60
+EXPRESSION:decimals = getDecimals(listing.tokenContractAddress)	NodeType.VARIABLE
+decimals = getDecimals(listing.tokenContractAddress)	NodeType.EXPRESSION
+factor = 10 ** decimals	NodeType.VARIABLE
+factor = 10 ** decimals	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+decimals > 0	NodeType.IF" [shape=box];
+"BlockID: 130
+Call context: 
+True
+TMP_61(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['price', 'amount'] 
+EXPRESSION:sale = price.mul(amount).div(factor)	NodeType.EXPRESSION";
+"BlockID: 133
+Call context: 
+False
+TMP_63(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['price', 'amount'] 
+EXPRESSION:sale = price.mul(amount)	NodeType.EXPRESSION";
+"BlockID: 134
+Call context: 
+None
+sale(uint256) := TMP_63(uint256)
+EXPRESSION:sale = price.mul(amount)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 135
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 138
+Call context: 
+True
+TMP_69(uint256) = INTERNAL_CALL, ListingsERC20.getBalance(address,address)(contractAddress,seller)
+EXPRESSION:require(bool)(getBalance(contractAddress,seller) >= amount)	NodeType.EXPRESSION";
+"BlockID: 140
+Call context: 
+True
+TMP_72(uint256) = INTERNAL_CALL, ListingsERC20.getAllowance(address,address,address)(contractAddress,seller,this)
+EXPRESSION:require(bool)(getAllowance(contractAddress,seller,this) >= amount)	NodeType.EXPRESSION";
+"BlockID: 143
+Call context: 
+True
+TMP_77 = CONVERT contractAddress to ERC20
+tokenContract(ERC20) := TMP_77(ERC20)
+TMP_78(bool) = HIGH_LEVEL_CALL, dest:tokenContract(ERC20), function:transferFrom, arguments:['seller', 'msg.sender', 'amount']  
+EXPRESSION:tokenContract = ERC20(contractAddress)	NodeType.VARIABLE
+tokenContract = ERC20(contractAddress)	NodeType.EXPRESSION
+require(bool)(tokenContract.transferFrom(seller,msg.sender,amount))	NodeType.EXPRESSION";
+"BlockID: 145
+Call context: 
+True
+TMP_80(bool) = ownerPercentage > 0
+CONDITION TMP_80
+EXPRESSION:ownerPercentage > 0	NodeType.IF";
+"BlockID: 146
+Call context: 
+True
+TMP_81(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['sale', 'ownerPercentage'] 
+EXPRESSION:seller.transfer(sale - (sale.mul(ownerPercentage).div(10000)))	NodeType.EXPRESSION";
+"BlockID: 150
+Call context: 
+False
+Transfer dest:seller value:sale
+EXPRESSION:seller.transfer(sale)	NodeType.EXPRESSION";
+"BlockID: 152
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 153
+Call context: 
+None
+REF_29(uint256) -> sold[listingId]
+REF_30(uint256) -> sold[listingId]
+TMP_86(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['REF_30', 'amount'] 
+EXPRESSION:sold[listingId] = sold[listingId].add(amount)	NodeType.EXPRESSION";
+"BlockID: 154
+Call context: 
+None
+REF_29(uint256) (->sold) := TMP_86(uint256)
+EXPRESSION:sold[listingId] = sold[listingId].add(amount)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 147
+Call context: 
+None
+TMP_82(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_81', '10000'] 
+EXPRESSION:seller.transfer(sale - (sale.mul(ownerPercentage).div(10000)))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 148
+Call context: 
+None
+TMP_83(uint256) = sale - TMP_82
+Transfer dest:seller value:TMP_83
+EXPRESSION:seller.transfer(sale - (sale.mul(ownerPercentage).div(10000)))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 131
+Call context: 
+None
+TMP_62(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_61', 'factor'] 
+EXPRESSION:sale = price.mul(amount).div(factor)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 132
+Call context: 
+None
+sale(uint256) := TMP_62(uint256)
+EXPRESSION:sale = price.mul(amount).div(factor)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 155
+Call context: 
+None
+REF_21(uint256) -> listing.allowance
+allowance(uint256) := REF_21(uint256)
+REF_22(uint256) -> listing.dateEnds
+TMP_64(bool) = now <= REF_22
+CONDITION TMP_64
+EXPRESSION:TMP_64(bool) = now <= REF_22	NodeType.IF";
+"BlockID: 156
+Call context: 
+True
+TMP_65(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 157
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 158
+Call context: 
+None
+REF_23(uint256) -> sold[listingId]
+TMP_66(uint256) = allowance - REF_23
+TMP_67(bool) = TMP_66 >= amount
+CONDITION TMP_67
+EXPRESSION:TMP_67(bool) = TMP_66 >= amount	NodeType.IF";
+"BlockID: 159
+Call context: 
+True
+TMP_68(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 160
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 161
+Call context: 
+None
+TMP_70(bool) = TMP_69 >= amount
+CONDITION TMP_70
+EXPRESSION:TMP_70(bool) = TMP_69 >= amount	NodeType.IF";
+"BlockID: 162
+Call context: 
+True
+TMP_71(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 163
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 164
+Call context: 
+None
+TMP_73(bool) = TMP_72 >= amount
+CONDITION TMP_73
+EXPRESSION:TMP_73(bool) = TMP_72 >= amount	NodeType.IF";
+"BlockID: 165
+Call context: 
+True
+TMP_74(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 166
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 167
+Call context: 
+None
+TMP_75(bool) = msg.value == sale
+CONDITION TMP_75
+EXPRESSION:TMP_75(bool) = msg.value == sale	NodeType.IF";
+"BlockID: 168
+Call context: 
+True
+TMP_76(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 169
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 170
+Call context: 
+None
+CONDITION TMP_78
+EXPRESSION:TMP_79(None) = SOLIDITY_CALL require(bool)(TMP_78)	NodeType.IF";
+"BlockID: 171
+Call context: 
+True
+TMP_79(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 172
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 127
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 128
+Call context: 
+None
+REF_13(ListingsERC20.Listing) -> listings[listingId]
+listing(ListingsERC20.Listing) := REF_13(ListingsERC20.Listing)
+REF_14(address) -> listing.seller
+seller(address) := REF_14(address)
+REF_15(address) -> listing.tokenContractAddress
+contractAddress(address) := REF_15(address)
+REF_16(uint256) -> listing.price
+price(uint256) := REF_16(uint256)
+REF_17(address) -> listing.tokenContractAddress
+TMP_58(uint256) = INTERNAL_CALL, ListingsERC20.getDecimals(address)(REF_17)
+EXPRESSION:listing = listings[listingId]	NodeType.VARIABLE
+listing = listings[listingId]	NodeType.EXPRESSION
+seller = listing.seller	NodeType.VARIABLE
+seller = listing.seller	NodeType.EXPRESSION
+contractAddress = listing.tokenContractAddress	NodeType.VARIABLE
+contractAddress = listing.tokenContractAddress	NodeType.EXPRESSION
+price = listing.price	NodeType.VARIABLE
+price = listing.price	NodeType.EXPRESSION" [key=0];
+"BlockID: 128
+Call context: 
+None
+REF_13(ListingsERC20.Listing) -> listings[listingId]
+listing(ListingsERC20.Listing) := REF_13(ListingsERC20.Listing)
+REF_14(address) -> listing.seller
+seller(address) := REF_14(address)
+REF_15(address) -> listing.tokenContractAddress
+contractAddress(address) := REF_15(address)
+REF_16(uint256) -> listing.price
+price(uint256) := REF_16(uint256)
+REF_17(address) -> listing.tokenContractAddress
+TMP_58(uint256) = INTERNAL_CALL, ListingsERC20.getDecimals(address)(REF_17)
+EXPRESSION:listing = listings[listingId]	NodeType.VARIABLE
+listing = listings[listingId]	NodeType.EXPRESSION
+seller = listing.seller	NodeType.VARIABLE
+seller = listing.seller	NodeType.EXPRESSION
+contractAddress = listing.tokenContractAddress	NodeType.VARIABLE
+contractAddress = listing.tokenContractAddress	NodeType.EXPRESSION
+price = listing.price	NodeType.VARIABLE
+price = listing.price	NodeType.EXPRESSION" -> "BlockID: 129
+Call context: 
+None
+decimals(uint256) := TMP_58(uint256)
+TMP_59(uint256) = 10 ** decimals
+factor(uint256) := TMP_59(uint256)
+NEW VARIABLE sale
+TMP_60(bool) = decimals > 0
+CONDITION TMP_60
+EXPRESSION:decimals = getDecimals(listing.tokenContractAddress)	NodeType.VARIABLE
+decimals = getDecimals(listing.tokenContractAddress)	NodeType.EXPRESSION
+factor = 10 ** decimals	NodeType.VARIABLE
+factor = 10 ** decimals	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+decimals > 0	NodeType.IF" [key=0];
+"BlockID: 129
+Call context: 
+None
+decimals(uint256) := TMP_58(uint256)
+TMP_59(uint256) = 10 ** decimals
+factor(uint256) := TMP_59(uint256)
+NEW VARIABLE sale
+TMP_60(bool) = decimals > 0
+CONDITION TMP_60
+EXPRESSION:decimals = getDecimals(listing.tokenContractAddress)	NodeType.VARIABLE
+decimals = getDecimals(listing.tokenContractAddress)	NodeType.EXPRESSION
+factor = 10 ** decimals	NodeType.VARIABLE
+factor = 10 ** decimals	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+decimals > 0	NodeType.IF" -> "BlockID: 130
+Call context: 
+True
+TMP_61(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['price', 'amount'] 
+EXPRESSION:sale = price.mul(amount).div(factor)	NodeType.EXPRESSION" [key=0];
+"BlockID: 129
+Call context: 
+None
+decimals(uint256) := TMP_58(uint256)
+TMP_59(uint256) = 10 ** decimals
+factor(uint256) := TMP_59(uint256)
+NEW VARIABLE sale
+TMP_60(bool) = decimals > 0
+CONDITION TMP_60
+EXPRESSION:decimals = getDecimals(listing.tokenContractAddress)	NodeType.VARIABLE
+decimals = getDecimals(listing.tokenContractAddress)	NodeType.EXPRESSION
+factor = 10 ** decimals	NodeType.VARIABLE
+factor = 10 ** decimals	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+decimals > 0	NodeType.IF" -> "BlockID: 133
+Call context: 
+False
+TMP_63(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['price', 'amount'] 
+EXPRESSION:sale = price.mul(amount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 130
+Call context: 
+True
+TMP_61(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['price', 'amount'] 
+EXPRESSION:sale = price.mul(amount).div(factor)	NodeType.EXPRESSION" -> "BlockID: 131
+Call context: 
+None
+TMP_62(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_61', 'factor'] 
+EXPRESSION:sale = price.mul(amount).div(factor)	NodeType.EXPRESSION" [key=0];
+"BlockID: 133
+Call context: 
+False
+TMP_63(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['price', 'amount'] 
+EXPRESSION:sale = price.mul(amount)	NodeType.EXPRESSION" -> "BlockID: 134
+Call context: 
+None
+sale(uint256) := TMP_63(uint256)
+EXPRESSION:sale = price.mul(amount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 134
+Call context: 
+None
+sale(uint256) := TMP_63(uint256)
+EXPRESSION:sale = price.mul(amount)	NodeType.EXPRESSION" -> "BlockID: 135
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 135
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 155
+Call context: 
+None
+REF_21(uint256) -> listing.allowance
+allowance(uint256) := REF_21(uint256)
+REF_22(uint256) -> listing.dateEnds
+TMP_64(bool) = now <= REF_22
+CONDITION TMP_64
+EXPRESSION:TMP_64(bool) = now <= REF_22	NodeType.IF" [key=0];
+"BlockID: 138
+Call context: 
+True
+TMP_69(uint256) = INTERNAL_CALL, ListingsERC20.getBalance(address,address)(contractAddress,seller)
+EXPRESSION:require(bool)(getBalance(contractAddress,seller) >= amount)	NodeType.EXPRESSION" -> "BlockID: 161
+Call context: 
+None
+TMP_70(bool) = TMP_69 >= amount
+CONDITION TMP_70
+EXPRESSION:TMP_70(bool) = TMP_69 >= amount	NodeType.IF" [key=0];
+"BlockID: 140
+Call context: 
+True
+TMP_72(uint256) = INTERNAL_CALL, ListingsERC20.getAllowance(address,address,address)(contractAddress,seller,this)
+EXPRESSION:require(bool)(getAllowance(contractAddress,seller,this) >= amount)	NodeType.EXPRESSION" -> "BlockID: 164
+Call context: 
+None
+TMP_73(bool) = TMP_72 >= amount
+CONDITION TMP_73
+EXPRESSION:TMP_73(bool) = TMP_72 >= amount	NodeType.IF" [key=0];
+"BlockID: 143
+Call context: 
+True
+TMP_77 = CONVERT contractAddress to ERC20
+tokenContract(ERC20) := TMP_77(ERC20)
+TMP_78(bool) = HIGH_LEVEL_CALL, dest:tokenContract(ERC20), function:transferFrom, arguments:['seller', 'msg.sender', 'amount']  
+EXPRESSION:tokenContract = ERC20(contractAddress)	NodeType.VARIABLE
+tokenContract = ERC20(contractAddress)	NodeType.EXPRESSION
+require(bool)(tokenContract.transferFrom(seller,msg.sender,amount))	NodeType.EXPRESSION" -> "BlockID: 170
+Call context: 
+None
+CONDITION TMP_78
+EXPRESSION:TMP_79(None) = SOLIDITY_CALL require(bool)(TMP_78)	NodeType.IF" [key=0];
+"BlockID: 145
+Call context: 
+True
+TMP_80(bool) = ownerPercentage > 0
+CONDITION TMP_80
+EXPRESSION:ownerPercentage > 0	NodeType.IF" -> "BlockID: 146
+Call context: 
+True
+TMP_81(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['sale', 'ownerPercentage'] 
+EXPRESSION:seller.transfer(sale - (sale.mul(ownerPercentage).div(10000)))	NodeType.EXPRESSION" [key=0];
+"BlockID: 145
+Call context: 
+True
+TMP_80(bool) = ownerPercentage > 0
+CONDITION TMP_80
+EXPRESSION:ownerPercentage > 0	NodeType.IF" -> "BlockID: 150
+Call context: 
+False
+Transfer dest:seller value:sale
+EXPRESSION:seller.transfer(sale)	NodeType.EXPRESSION" [key=0];
+"BlockID: 146
+Call context: 
+True
+TMP_81(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['sale', 'ownerPercentage'] 
+EXPRESSION:seller.transfer(sale - (sale.mul(ownerPercentage).div(10000)))	NodeType.EXPRESSION" -> "BlockID: 147
+Call context: 
+None
+TMP_82(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_81', '10000'] 
+EXPRESSION:seller.transfer(sale - (sale.mul(ownerPercentage).div(10000)))	NodeType.EXPRESSION" [key=0];
+"BlockID: 150
+Call context: 
+False
+Transfer dest:seller value:sale
+EXPRESSION:seller.transfer(sale)	NodeType.EXPRESSION" -> "BlockID: 152
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 152
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 153
+Call context: 
+None
+REF_29(uint256) -> sold[listingId]
+REF_30(uint256) -> sold[listingId]
+TMP_86(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['REF_30', 'amount'] 
+EXPRESSION:sold[listingId] = sold[listingId].add(amount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 153
+Call context: 
+None
+REF_29(uint256) -> sold[listingId]
+REF_30(uint256) -> sold[listingId]
+TMP_86(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['REF_30', 'amount'] 
+EXPRESSION:sold[listingId] = sold[listingId].add(amount)	NodeType.EXPRESSION" -> "BlockID: 154
+Call context: 
+None
+REF_29(uint256) (->sold) := TMP_86(uint256)
+EXPRESSION:sold[listingId] = sold[listingId].add(amount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 147
+Call context: 
+None
+TMP_82(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_81', '10000'] 
+EXPRESSION:seller.transfer(sale - (sale.mul(ownerPercentage).div(10000)))	NodeType.EXPRESSION" -> "BlockID: 148
+Call context: 
+None
+TMP_83(uint256) = sale - TMP_82
+Transfer dest:seller value:TMP_83
+EXPRESSION:seller.transfer(sale - (sale.mul(ownerPercentage).div(10000)))	NodeType.EXPRESSION" [key=0];
+"BlockID: 148
+Call context: 
+None
+TMP_83(uint256) = sale - TMP_82
+Transfer dest:seller value:TMP_83
+EXPRESSION:seller.transfer(sale - (sale.mul(ownerPercentage).div(10000)))	NodeType.EXPRESSION" -> "BlockID: 152
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 131
+Call context: 
+None
+TMP_62(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_61', 'factor'] 
+EXPRESSION:sale = price.mul(amount).div(factor)	NodeType.EXPRESSION" -> "BlockID: 132
+Call context: 
+None
+sale(uint256) := TMP_62(uint256)
+EXPRESSION:sale = price.mul(amount).div(factor)	NodeType.EXPRESSION" [key=0];
+"BlockID: 132
+Call context: 
+None
+sale(uint256) := TMP_62(uint256)
+EXPRESSION:sale = price.mul(amount).div(factor)	NodeType.EXPRESSION" -> "BlockID: 135
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 155
+Call context: 
+None
+REF_21(uint256) -> listing.allowance
+allowance(uint256) := REF_21(uint256)
+REF_22(uint256) -> listing.dateEnds
+TMP_64(bool) = now <= REF_22
+CONDITION TMP_64
+EXPRESSION:TMP_64(bool) = now <= REF_22	NodeType.IF" -> "BlockID: 156
+Call context: 
+True
+TMP_65(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 155
+Call context: 
+None
+REF_21(uint256) -> listing.allowance
+allowance(uint256) := REF_21(uint256)
+REF_22(uint256) -> listing.dateEnds
+TMP_64(bool) = now <= REF_22
+CONDITION TMP_64
+EXPRESSION:TMP_64(bool) = now <= REF_22	NodeType.IF" -> "BlockID: 157
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 157
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 158
+Call context: 
+None
+REF_23(uint256) -> sold[listingId]
+TMP_66(uint256) = allowance - REF_23
+TMP_67(bool) = TMP_66 >= amount
+CONDITION TMP_67
+EXPRESSION:TMP_67(bool) = TMP_66 >= amount	NodeType.IF" [key=0];
+"BlockID: 158
+Call context: 
+None
+REF_23(uint256) -> sold[listingId]
+TMP_66(uint256) = allowance - REF_23
+TMP_67(bool) = TMP_66 >= amount
+CONDITION TMP_67
+EXPRESSION:TMP_67(bool) = TMP_66 >= amount	NodeType.IF" -> "BlockID: 159
+Call context: 
+True
+TMP_68(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 158
+Call context: 
+None
+REF_23(uint256) -> sold[listingId]
+TMP_66(uint256) = allowance - REF_23
+TMP_67(bool) = TMP_66 >= amount
+CONDITION TMP_67
+EXPRESSION:TMP_67(bool) = TMP_66 >= amount	NodeType.IF" -> "BlockID: 160
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 160
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 138
+Call context: 
+True
+TMP_69(uint256) = INTERNAL_CALL, ListingsERC20.getBalance(address,address)(contractAddress,seller)
+EXPRESSION:require(bool)(getBalance(contractAddress,seller) >= amount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 161
+Call context: 
+None
+TMP_70(bool) = TMP_69 >= amount
+CONDITION TMP_70
+EXPRESSION:TMP_70(bool) = TMP_69 >= amount	NodeType.IF" -> "BlockID: 162
+Call context: 
+True
+TMP_71(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 161
+Call context: 
+None
+TMP_70(bool) = TMP_69 >= amount
+CONDITION TMP_70
+EXPRESSION:TMP_70(bool) = TMP_69 >= amount	NodeType.IF" -> "BlockID: 163
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 163
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 140
+Call context: 
+True
+TMP_72(uint256) = INTERNAL_CALL, ListingsERC20.getAllowance(address,address,address)(contractAddress,seller,this)
+EXPRESSION:require(bool)(getAllowance(contractAddress,seller,this) >= amount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 164
+Call context: 
+None
+TMP_73(bool) = TMP_72 >= amount
+CONDITION TMP_73
+EXPRESSION:TMP_73(bool) = TMP_72 >= amount	NodeType.IF" -> "BlockID: 165
+Call context: 
+True
+TMP_74(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 164
+Call context: 
+None
+TMP_73(bool) = TMP_72 >= amount
+CONDITION TMP_73
+EXPRESSION:TMP_73(bool) = TMP_72 >= amount	NodeType.IF" -> "BlockID: 166
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 166
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 167
+Call context: 
+None
+TMP_75(bool) = msg.value == sale
+CONDITION TMP_75
+EXPRESSION:TMP_75(bool) = msg.value == sale	NodeType.IF" [key=0];
+"BlockID: 167
+Call context: 
+None
+TMP_75(bool) = msg.value == sale
+CONDITION TMP_75
+EXPRESSION:TMP_75(bool) = msg.value == sale	NodeType.IF" -> "BlockID: 168
+Call context: 
+True
+TMP_76(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 167
+Call context: 
+None
+TMP_75(bool) = msg.value == sale
+CONDITION TMP_75
+EXPRESSION:TMP_75(bool) = msg.value == sale	NodeType.IF" -> "BlockID: 169
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 169
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 143
+Call context: 
+True
+TMP_77 = CONVERT contractAddress to ERC20
+tokenContract(ERC20) := TMP_77(ERC20)
+TMP_78(bool) = HIGH_LEVEL_CALL, dest:tokenContract(ERC20), function:transferFrom, arguments:['seller', 'msg.sender', 'amount']  
+EXPRESSION:tokenContract = ERC20(contractAddress)	NodeType.VARIABLE
+tokenContract = ERC20(contractAddress)	NodeType.EXPRESSION
+require(bool)(tokenContract.transferFrom(seller,msg.sender,amount))	NodeType.EXPRESSION" [key=0];
+"BlockID: 170
+Call context: 
+None
+CONDITION TMP_78
+EXPRESSION:TMP_79(None) = SOLIDITY_CALL require(bool)(TMP_78)	NodeType.IF" -> "BlockID: 171
+Call context: 
+True
+TMP_79(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 170
+Call context: 
+None
+CONDITION TMP_78
+EXPRESSION:TMP_79(None) = SOLIDITY_CALL require(bool)(TMP_78)	NodeType.IF" -> "BlockID: 172
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 172
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 145
+Call context: 
+True
+TMP_80(bool) = ownerPercentage > 0
+CONDITION TMP_80
+EXPRESSION:ownerPercentage > 0	NodeType.IF" [key=0];
+}

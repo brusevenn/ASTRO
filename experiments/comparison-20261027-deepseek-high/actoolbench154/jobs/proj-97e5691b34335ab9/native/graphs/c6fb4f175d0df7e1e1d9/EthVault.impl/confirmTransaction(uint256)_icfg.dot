@@ -1,0 +1,616 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+REF_102(bool) -> isOwner[owner]
+TMP_216 = ! REF_102 
+CONDITION TMP_216
+EXPRESSION:! isOwner[owner]	NodeType.IF";
+"BlockID: 4
+Call context: 
+None
+REF_103(MultiSigWallet.Transaction) -> transactions[transactionId]
+REF_104(address) -> REF_103.destination
+TMP_218 = CONVERT 0 to address
+TMP_219(bool) = REF_104 == TMP_218
+CONDITION TMP_219
+EXPRESSION:ownerExists(msg.sender)	NodeType.EXPRESSION
+transactions[transactionId].destination == address(0)	NodeType.IF";
+"BlockID: 7
+Call context: 
+None
+REF_107(mapping(address => bool)) -> confirmations[transactionId]
+REF_108(bool) -> REF_107[owner]
+CONDITION REF_108
+EXPRESSION:transactionExists(transactionId)	NodeType.EXPRESSION
+confirmations[transactionId][owner]	NodeType.IF";
+"BlockID: 10
+Call context: 
+None
+REF_29(mapping(address => bool)) -> confirmations[transactionId]
+REF_30(bool) -> REF_29[msg.sender]
+REF_30(bool) (->confirmations) := True(bool)
+REF_109(MultiSigWallet.Transaction) -> transactions[transactionId]
+REF_110(bool) -> REF_109.executed
+CONDITION REF_110
+EXPRESSION:notConfirmed(transactionId,msg.sender)	NodeType.EXPRESSION
+confirmations[transactionId][msg.sender] = true	NodeType.EXPRESSION
+transactions[transactionId].executed	NodeType.IF";
+"BlockID: 2
+Call context: submitTransaction,confirmTransaction
+True
+TMP_217(None) = SOLIDITY_CALL revert(string)(Unauthorized.)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 3
+Call context: submitTransaction,confirmTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 5
+Call context: submitTransaction,confirmTransaction
+True
+TMP_220(None) = SOLIDITY_CALL revert(string)(Existed transaction id.)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 6
+Call context: submitTransaction,confirmTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 8
+Call context: submitTransaction,confirmTransaction
+True
+TMP_223(None) = SOLIDITY_CALL revert(string)(Confirmed transaction.)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 9
+Call context: submitTransaction,confirmTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 13
+Call context: submitTransaction,confirmTransaction
+None
+count(uint256) := 0(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:notExecuted(transactionId)	NodeType.EXPRESSION
+count = 0	NodeType.VARIABLE
+count = 0	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION";
+"BlockID: 19
+Call context: submitTransaction,confirmTransaction
+None
+CONDITION TMP_85
+EXPRESSION:isConfirmed(transactionId)	NodeType.IF" [shape=box];
+"BlockID: 21
+Call context: submitTransaction,confirmTransaction
+True
+REF_33(MultiSigWallet.Transaction) -> transactions[transactionId]
+txn(MultiSigWallet.Transaction) := REF_33(MultiSigWallet.Transaction)
+REF_34(bool) -> txn.executed
+REF_34(bool) (->txn) := True(bool)
+NEW VARIABLE result
+REF_35(address) -> txn.destination
+REF_38(uint256) -> txn.value
+REF_39(bytes) -> txn.data
+TUPLE_0(bool,bytes) = LOW_LEVEL_CALL, dest:REF_35, function:call, arguments:['REF_39'] value:REF_38 
+EXPRESSION:txn = transactions[transactionId]	NodeType.VARIABLE
+txn = transactions[transactionId]	NodeType.EXPRESSION
+txn.executed = true	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+(result) = txn.destination.call.value(txn.value)(txn.data)	NodeType.EXPRESSION";
+"BlockID: 22
+Call context: submitTransaction,confirmTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 25
+Call context: submitTransaction,confirmTransaction
+None
+result(bool)= UNPACK TUPLE_0 index: 0 
+CONDITION result
+EXPRESSION:(result) = txn.destination.call.value(txn.value)(txn.data)	NodeType.EXPRESSION
+result	NodeType.IF" [shape=box];
+"BlockID: 27
+Call context: submitTransaction,confirmTransaction
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 28
+Call context: submitTransaction,confirmTransaction
+None
+REF_40(bool) -> txn.executed
+REF_40(bool) (->txn) := False(bool)
+EXPRESSION:ExecutionFailure(transactionId)	NodeType.EXPRESSION
+txn.executed = false	NodeType.EXPRESSION";
+"BlockID: 11
+Call context: submitTransaction,confirmTransaction,executeTransaction
+True
+TMP_224(None) = SOLIDITY_CALL revert(string)(Executed transaction.)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 12
+Call context: submitTransaction,confirmTransaction,executeTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 14
+Call context: submitTransaction,confirmTransaction,executeTransaction
+None
+BEGIN_LOOP
+REF_41 -> LENGTH owners
+TMP_90(bool) = i < REF_41
+CONDITION TMP_90
+EXPRESSION:None	NodeType.STARTLOOP
+i < owners.length	NodeType.IFLOOP";
+"BlockID: 15
+Call context: submitTransaction,confirmTransaction,executeTransaction
+True
+REF_42(mapping(address => bool)) -> confirmations[transactionId]
+REF_43(address) -> owners[i]
+REF_44(bool) -> REF_42[REF_43]
+CONDITION REF_44
+EXPRESSION:confirmations[transactionId][owners[i]]	NodeType.IF";
+"BlockID: 16
+Call context: submitTransaction,confirmTransaction,executeTransaction
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 17
+Call context: submitTransaction,confirmTransaction,executeTransaction
+True
+count(uint256) = count + 1
+EXPRESSION:count += 1	NodeType.EXPRESSION";
+"BlockID: 18
+Call context: submitTransaction,confirmTransaction,executeTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 20
+Call context: submitTransaction,confirmTransaction,executeTransaction
+None
+TMP_91(bool) = count == required
+CONDITION TMP_91
+EXPRESSION:count == required	NodeType.IF";
+"BlockID: 23
+Call context: submitTransaction,confirmTransaction,executeTransaction
+True
+TMP_549(None) := True(bool)
+EXPRESSION:";
+"BlockID: 24
+Call context: submitTransaction,confirmTransaction,executeTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 26
+Call context: submitTransaction,confirmTransaction,executeTransaction
+None
+TMP_92(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:i ++	NodeType.EXPRESSION";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+REF_102(bool) -> isOwner[owner]
+TMP_216 = ! REF_102 
+CONDITION TMP_216
+EXPRESSION:! isOwner[owner]	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+REF_102(bool) -> isOwner[owner]
+TMP_216 = ! REF_102 
+CONDITION TMP_216
+EXPRESSION:! isOwner[owner]	NodeType.IF" -> "BlockID: 2
+Call context: submitTransaction,confirmTransaction
+True
+TMP_217(None) = SOLIDITY_CALL revert(string)(Unauthorized.)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+REF_102(bool) -> isOwner[owner]
+TMP_216 = ! REF_102 
+CONDITION TMP_216
+EXPRESSION:! isOwner[owner]	NodeType.IF" -> "BlockID: 3
+Call context: submitTransaction,confirmTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 4
+Call context: 
+None
+REF_103(MultiSigWallet.Transaction) -> transactions[transactionId]
+REF_104(address) -> REF_103.destination
+TMP_218 = CONVERT 0 to address
+TMP_219(bool) = REF_104 == TMP_218
+CONDITION TMP_219
+EXPRESSION:ownerExists(msg.sender)	NodeType.EXPRESSION
+transactions[transactionId].destination == address(0)	NodeType.IF" -> "BlockID: 5
+Call context: submitTransaction,confirmTransaction
+True
+TMP_220(None) = SOLIDITY_CALL revert(string)(Existed transaction id.)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 4
+Call context: 
+None
+REF_103(MultiSigWallet.Transaction) -> transactions[transactionId]
+REF_104(address) -> REF_103.destination
+TMP_218 = CONVERT 0 to address
+TMP_219(bool) = REF_104 == TMP_218
+CONDITION TMP_219
+EXPRESSION:ownerExists(msg.sender)	NodeType.EXPRESSION
+transactions[transactionId].destination == address(0)	NodeType.IF" -> "BlockID: 6
+Call context: submitTransaction,confirmTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 7
+Call context: 
+None
+REF_107(mapping(address => bool)) -> confirmations[transactionId]
+REF_108(bool) -> REF_107[owner]
+CONDITION REF_108
+EXPRESSION:transactionExists(transactionId)	NodeType.EXPRESSION
+confirmations[transactionId][owner]	NodeType.IF" -> "BlockID: 8
+Call context: submitTransaction,confirmTransaction
+True
+TMP_223(None) = SOLIDITY_CALL revert(string)(Confirmed transaction.)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 7
+Call context: 
+None
+REF_107(mapping(address => bool)) -> confirmations[transactionId]
+REF_108(bool) -> REF_107[owner]
+CONDITION REF_108
+EXPRESSION:transactionExists(transactionId)	NodeType.EXPRESSION
+confirmations[transactionId][owner]	NodeType.IF" -> "BlockID: 9
+Call context: submitTransaction,confirmTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 10
+Call context: 
+None
+REF_29(mapping(address => bool)) -> confirmations[transactionId]
+REF_30(bool) -> REF_29[msg.sender]
+REF_30(bool) (->confirmations) := True(bool)
+REF_109(MultiSigWallet.Transaction) -> transactions[transactionId]
+REF_110(bool) -> REF_109.executed
+CONDITION REF_110
+EXPRESSION:notConfirmed(transactionId,msg.sender)	NodeType.EXPRESSION
+confirmations[transactionId][msg.sender] = true	NodeType.EXPRESSION
+transactions[transactionId].executed	NodeType.IF" -> "BlockID: 11
+Call context: submitTransaction,confirmTransaction,executeTransaction
+True
+TMP_224(None) = SOLIDITY_CALL revert(string)(Executed transaction.)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 10
+Call context: 
+None
+REF_29(mapping(address => bool)) -> confirmations[transactionId]
+REF_30(bool) -> REF_29[msg.sender]
+REF_30(bool) (->confirmations) := True(bool)
+REF_109(MultiSigWallet.Transaction) -> transactions[transactionId]
+REF_110(bool) -> REF_109.executed
+CONDITION REF_110
+EXPRESSION:notConfirmed(transactionId,msg.sender)	NodeType.EXPRESSION
+confirmations[transactionId][msg.sender] = true	NodeType.EXPRESSION
+transactions[transactionId].executed	NodeType.IF" -> "BlockID: 12
+Call context: submitTransaction,confirmTransaction,executeTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 3
+Call context: submitTransaction,confirmTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: 
+None
+REF_103(MultiSigWallet.Transaction) -> transactions[transactionId]
+REF_104(address) -> REF_103.destination
+TMP_218 = CONVERT 0 to address
+TMP_219(bool) = REF_104 == TMP_218
+CONDITION TMP_219
+EXPRESSION:ownerExists(msg.sender)	NodeType.EXPRESSION
+transactions[transactionId].destination == address(0)	NodeType.IF" [key="Exit: ownerExists", ref="EthVaultImpl.ownerExists"];
+"BlockID: 6
+Call context: submitTransaction,confirmTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 7
+Call context: 
+None
+REF_107(mapping(address => bool)) -> confirmations[transactionId]
+REF_108(bool) -> REF_107[owner]
+CONDITION REF_108
+EXPRESSION:transactionExists(transactionId)	NodeType.EXPRESSION
+confirmations[transactionId][owner]	NodeType.IF" [key="Exit: transactionExists", ref="EthVaultImpl.transactionExists"];
+"BlockID: 9
+Call context: submitTransaction,confirmTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 10
+Call context: 
+None
+REF_29(mapping(address => bool)) -> confirmations[transactionId]
+REF_30(bool) -> REF_29[msg.sender]
+REF_30(bool) (->confirmations) := True(bool)
+REF_109(MultiSigWallet.Transaction) -> transactions[transactionId]
+REF_110(bool) -> REF_109.executed
+CONDITION REF_110
+EXPRESSION:notConfirmed(transactionId,msg.sender)	NodeType.EXPRESSION
+confirmations[transactionId][msg.sender] = true	NodeType.EXPRESSION
+transactions[transactionId].executed	NodeType.IF" [key="Exit: notConfirmed", ref="EthVaultImpl.notConfirmed"];
+"BlockID: 13
+Call context: submitTransaction,confirmTransaction
+None
+count(uint256) := 0(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:notExecuted(transactionId)	NodeType.EXPRESSION
+count = 0	NodeType.VARIABLE
+count = 0	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" -> "BlockID: 14
+Call context: submitTransaction,confirmTransaction,executeTransaction
+None
+BEGIN_LOOP
+REF_41 -> LENGTH owners
+TMP_90(bool) = i < REF_41
+CONDITION TMP_90
+EXPRESSION:None	NodeType.STARTLOOP
+i < owners.length	NodeType.IFLOOP" [key="successor_5"];
+"BlockID: 19
+Call context: submitTransaction,confirmTransaction
+None
+CONDITION TMP_85
+EXPRESSION:isConfirmed(transactionId)	NodeType.IF" -> "BlockID: 21
+Call context: submitTransaction,confirmTransaction
+True
+REF_33(MultiSigWallet.Transaction) -> transactions[transactionId]
+txn(MultiSigWallet.Transaction) := REF_33(MultiSigWallet.Transaction)
+REF_34(bool) -> txn.executed
+REF_34(bool) (->txn) := True(bool)
+NEW VARIABLE result
+REF_35(address) -> txn.destination
+REF_38(uint256) -> txn.value
+REF_39(bytes) -> txn.data
+TUPLE_0(bool,bytes) = LOW_LEVEL_CALL, dest:REF_35, function:call, arguments:['REF_39'] value:REF_38 
+EXPRESSION:txn = transactions[transactionId]	NodeType.VARIABLE
+txn = transactions[transactionId]	NodeType.EXPRESSION
+txn.executed = true	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+(result) = txn.destination.call.value(txn.value)(txn.data)	NodeType.EXPRESSION" [key=0];
+"BlockID: 19
+Call context: submitTransaction,confirmTransaction
+None
+CONDITION TMP_85
+EXPRESSION:isConfirmed(transactionId)	NodeType.IF" -> "BlockID: 22
+Call context: submitTransaction,confirmTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 21
+Call context: submitTransaction,confirmTransaction
+True
+REF_33(MultiSigWallet.Transaction) -> transactions[transactionId]
+txn(MultiSigWallet.Transaction) := REF_33(MultiSigWallet.Transaction)
+REF_34(bool) -> txn.executed
+REF_34(bool) (->txn) := True(bool)
+NEW VARIABLE result
+REF_35(address) -> txn.destination
+REF_38(uint256) -> txn.value
+REF_39(bytes) -> txn.data
+TUPLE_0(bool,bytes) = LOW_LEVEL_CALL, dest:REF_35, function:call, arguments:['REF_39'] value:REF_38 
+EXPRESSION:txn = transactions[transactionId]	NodeType.VARIABLE
+txn = transactions[transactionId]	NodeType.EXPRESSION
+txn.executed = true	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+(result) = txn.destination.call.value(txn.value)(txn.data)	NodeType.EXPRESSION" -> "BlockID: 25
+Call context: submitTransaction,confirmTransaction
+None
+result(bool)= UNPACK TUPLE_0 index: 0 
+CONDITION result
+EXPRESSION:(result) = txn.destination.call.value(txn.value)(txn.data)	NodeType.EXPRESSION
+result	NodeType.IF" [key=0];
+"BlockID: 25
+Call context: submitTransaction,confirmTransaction
+None
+result(bool)= UNPACK TUPLE_0 index: 0 
+CONDITION result
+EXPRESSION:(result) = txn.destination.call.value(txn.value)(txn.data)	NodeType.EXPRESSION
+result	NodeType.IF" -> "BlockID: 27
+Call context: submitTransaction,confirmTransaction
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 25
+Call context: submitTransaction,confirmTransaction
+None
+result(bool)= UNPACK TUPLE_0 index: 0 
+CONDITION result
+EXPRESSION:(result) = txn.destination.call.value(txn.value)(txn.data)	NodeType.EXPRESSION
+result	NodeType.IF" -> "BlockID: 28
+Call context: submitTransaction,confirmTransaction
+None
+REF_40(bool) -> txn.executed
+REF_40(bool) (->txn) := False(bool)
+EXPRESSION:ExecutionFailure(transactionId)	NodeType.EXPRESSION
+txn.executed = false	NodeType.EXPRESSION" [key=0];
+"BlockID: 27
+Call context: submitTransaction,confirmTransaction
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 22
+Call context: submitTransaction,confirmTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 28
+Call context: submitTransaction,confirmTransaction
+None
+REF_40(bool) -> txn.executed
+REF_40(bool) (->txn) := False(bool)
+EXPRESSION:ExecutionFailure(transactionId)	NodeType.EXPRESSION
+txn.executed = false	NodeType.EXPRESSION" -> "BlockID: 27
+Call context: submitTransaction,confirmTransaction
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 12
+Call context: submitTransaction,confirmTransaction,executeTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 13
+Call context: submitTransaction,confirmTransaction
+None
+count(uint256) := 0(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:notExecuted(transactionId)	NodeType.EXPRESSION
+count = 0	NodeType.VARIABLE
+count = 0	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" [key="Exit: notExecuted", ref="EthVaultImpl.notExecuted"];
+"BlockID: 14
+Call context: submitTransaction,confirmTransaction,executeTransaction
+None
+BEGIN_LOOP
+REF_41 -> LENGTH owners
+TMP_90(bool) = i < REF_41
+CONDITION TMP_90
+EXPRESSION:None	NodeType.STARTLOOP
+i < owners.length	NodeType.IFLOOP" -> "BlockID: 15
+Call context: submitTransaction,confirmTransaction,executeTransaction
+True
+REF_42(mapping(address => bool)) -> confirmations[transactionId]
+REF_43(address) -> owners[i]
+REF_44(bool) -> REF_42[REF_43]
+CONDITION REF_44
+EXPRESSION:confirmations[transactionId][owners[i]]	NodeType.IF" [key=0];
+"BlockID: 14
+Call context: submitTransaction,confirmTransaction,executeTransaction
+None
+BEGIN_LOOP
+REF_41 -> LENGTH owners
+TMP_90(bool) = i < REF_41
+CONDITION TMP_90
+EXPRESSION:None	NodeType.STARTLOOP
+i < owners.length	NodeType.IFLOOP" -> "BlockID: 16
+Call context: submitTransaction,confirmTransaction,executeTransaction
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 15
+Call context: submitTransaction,confirmTransaction,executeTransaction
+True
+REF_42(mapping(address => bool)) -> confirmations[transactionId]
+REF_43(address) -> owners[i]
+REF_44(bool) -> REF_42[REF_43]
+CONDITION REF_44
+EXPRESSION:confirmations[transactionId][owners[i]]	NodeType.IF" -> "BlockID: 17
+Call context: submitTransaction,confirmTransaction,executeTransaction
+True
+count(uint256) = count + 1
+EXPRESSION:count += 1	NodeType.EXPRESSION" [key=0];
+"BlockID: 15
+Call context: submitTransaction,confirmTransaction,executeTransaction
+True
+REF_42(mapping(address => bool)) -> confirmations[transactionId]
+REF_43(address) -> owners[i]
+REF_44(bool) -> REF_42[REF_43]
+CONDITION REF_44
+EXPRESSION:confirmations[transactionId][owners[i]]	NodeType.IF" -> "BlockID: 18
+Call context: submitTransaction,confirmTransaction,executeTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 16
+Call context: submitTransaction,confirmTransaction,executeTransaction
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 19
+Call context: submitTransaction,confirmTransaction
+None
+CONDITION TMP_85
+EXPRESSION:isConfirmed(transactionId)	NodeType.IF" [key="successor_5", ref="EthVaultImpl.isConfirmed"];
+"BlockID: 17
+Call context: submitTransaction,confirmTransaction,executeTransaction
+True
+count(uint256) = count + 1
+EXPRESSION:count += 1	NodeType.EXPRESSION" -> "BlockID: 18
+Call context: submitTransaction,confirmTransaction,executeTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 18
+Call context: submitTransaction,confirmTransaction,executeTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 20
+Call context: submitTransaction,confirmTransaction,executeTransaction
+None
+TMP_91(bool) = count == required
+CONDITION TMP_91
+EXPRESSION:count == required	NodeType.IF" [key=0];
+"BlockID: 20
+Call context: submitTransaction,confirmTransaction,executeTransaction
+None
+TMP_91(bool) = count == required
+CONDITION TMP_91
+EXPRESSION:count == required	NodeType.IF" -> "BlockID: 23
+Call context: submitTransaction,confirmTransaction,executeTransaction
+True
+TMP_549(None) := True(bool)
+EXPRESSION:" [key=0];
+"BlockID: 20
+Call context: submitTransaction,confirmTransaction,executeTransaction
+None
+TMP_91(bool) = count == required
+CONDITION TMP_91
+EXPRESSION:count == required	NodeType.IF" -> "BlockID: 24
+Call context: submitTransaction,confirmTransaction,executeTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 23
+Call context: submitTransaction,confirmTransaction,executeTransaction
+True
+TMP_549(None) := True(bool)
+EXPRESSION:" -> "BlockID: 19
+Call context: submitTransaction,confirmTransaction
+None
+CONDITION TMP_85
+EXPRESSION:isConfirmed(transactionId)	NodeType.IF" [key="successor_5", ref="EthVaultImpl.isConfirmed"];
+"BlockID: 24
+Call context: submitTransaction,confirmTransaction,executeTransaction
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 26
+Call context: submitTransaction,confirmTransaction,executeTransaction
+None
+TMP_92(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:i ++	NodeType.EXPRESSION" [key=0];
+"BlockID: 26
+Call context: submitTransaction,confirmTransaction,executeTransaction
+None
+TMP_92(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:i ++	NodeType.EXPRESSION" -> "BlockID: 14
+Call context: submitTransaction,confirmTransaction,executeTransaction
+None
+BEGIN_LOOP
+REF_41 -> LENGTH owners
+TMP_90(bool) = i < REF_41
+CONDITION TMP_90
+EXPRESSION:None	NodeType.STARTLOOP
+i < owners.length	NodeType.IFLOOP" [key=0];
+}

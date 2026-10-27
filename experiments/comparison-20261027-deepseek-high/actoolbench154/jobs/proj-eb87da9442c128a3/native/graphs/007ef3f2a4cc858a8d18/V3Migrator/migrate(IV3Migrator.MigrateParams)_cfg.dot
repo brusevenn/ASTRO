@@ -1,0 +1,660 @@
+digraph {
+"BlockID: 229
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 230
+Call context: 
+None
+REF_71(address) -> params.pair
+TMP_168 = CONVERT REF_71 to IBiswapPair
+REF_73(address) -> params.recipient
+REF_74(address) -> params.pair
+REF_75(uint256) -> params.liquidityToMigrate
+TMP_169(bool) = HIGH_LEVEL_CALL, dest:TMP_168(IBiswapPair), function:transferFrom, arguments:['REF_73', 'REF_74', 'REF_75']  
+EXPRESSION:IBiswapPair(params.pair).transferFrom(params.recipient,params.pair,params.liquidityToMigrate)	NodeType.EXPRESSION";
+"BlockID: 231
+Call context: 
+None
+NEW VARIABLE amount0V2
+NEW VARIABLE amount1V2
+REF_76(address) -> params.pair
+TMP_170 = CONVERT REF_76 to IBiswapPair
+TMP_171 = CONVERT this to address
+TUPLE_11(uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_170(IBiswapPair), function:burn, arguments:['TMP_171']  
+EXPRESSION:IBiswapPair(params.pair).transferFrom(params.recipient,params.pair,params.liquidityToMigrate)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0V2,amount1V2) = IBiswapPair(params.pair).burn(address(this))	NodeType.EXPRESSION";
+"BlockID: 232
+Call context: 
+None
+amount0V2(uint256)= UNPACK TUPLE_11 index: 0 
+amount1V2(uint256)= UNPACK TUPLE_11 index: 1 
+TMP_172 = CONVERT amount0V2 to uint128
+amount0V2ToMigrate(uint128) := TMP_172(uint128)
+TMP_173 = CONVERT amount1V2 to uint128
+amount1V2ToMigrate(uint128) := TMP_173(uint128)
+REF_78(address) -> params.token0
+INTERNAL_CALL, Base.safeApprove(address,address,uint256)(REF_78,liquidityManager,amount0V2ToMigrate)
+EXPRESSION:(amount0V2,amount1V2) = IBiswapPair(params.pair).burn(address(this))	NodeType.EXPRESSION
+amount0V2ToMigrate = uint128(amount0V2)	NodeType.VARIABLE
+amount0V2ToMigrate = uint128(amount0V2)	NodeType.EXPRESSION
+amount1V2ToMigrate = uint128(amount1V2)	NodeType.VARIABLE
+amount1V2ToMigrate = uint128(amount1V2)	NodeType.EXPRESSION
+safeApprove(params.token0,liquidityManager,amount0V2ToMigrate)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 233
+Call context: 
+None
+REF_79(address) -> params.token1
+INTERNAL_CALL, Base.safeApprove(address,address,uint256)(REF_79,liquidityManager,amount1V2ToMigrate)
+EXPRESSION:safeApprove(params.token0,liquidityManager,amount0V2ToMigrate)	NodeType.EXPRESSION
+safeApprove(params.token1,liquidityManager,amount1V2ToMigrate)	NodeType.EXPRESSION";
+"BlockID: 234
+Call context: 
+None
+NEW VARIABLE amount0V3
+NEW VARIABLE amount1V3
+TMP_176 = CONVERT liquidityManager to ILiquidityManager
+REF_82(address) -> params.recipient
+REF_83(address) -> params.token0
+REF_84(address) -> params.token1
+REF_85(uint16) -> params.fee
+REF_86(int24) -> params.tickLower
+REF_87(int24) -> params.tickUpper
+REF_88(uint128) -> params.amount0Min
+REF_89(uint128) -> params.amount1Min
+REF_90(uint256) -> params.deadline
+TMP_177(ILiquidityManager.MintParam) = new MintParam(REF_82,REF_83,REF_84,REF_85,REF_86,REF_87,amount0V2ToMigrate,amount1V2ToMigrate,REF_88,REF_89,REF_90)
+TUPLE_12(uint256,uint128,uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_176(ILiquidityManager), function:mint, arguments:['TMP_177']  
+EXPRESSION:safeApprove(params.token1,liquidityManager,amount1V2ToMigrate)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0V3,amount1V3) = ILiquidityManager(liquidityManager).mint(ILiquidityManager.MintParam(params.recipient,params.token0,params.token1,params.fee,params.tickLower,params.tickUpper,amount0V2ToMigrate,amount1V2ToMigrate,params.amount0Min,params.amount1Min,params.deadline))	NodeType.EXPRESSION";
+"BlockID: 235
+Call context: 
+None
+amount0V3(uint256)= UNPACK TUPLE_12 index: 2 
+amount1V3(uint256)= UNPACK TUPLE_12 index: 3 
+TMP_178(bool) = amount0V3 < amount0V2
+CONDITION TMP_178
+EXPRESSION:(amount0V3,amount1V3) = ILiquidityManager(liquidityManager).mint(ILiquidityManager.MintParam(params.recipient,params.token0,params.token1,params.fee,params.tickLower,params.tickUpper,amount0V2ToMigrate,amount1V2ToMigrate,params.amount0Min,params.amount1Min,params.deadline))	NodeType.EXPRESSION
+amount0V3 < amount0V2	NodeType.IF" [shape=box];
+"BlockID: 236
+Call context: 
+True
+TMP_179(bool) = amount0V3 < amount0V2ToMigrate
+CONDITION TMP_179
+EXPRESSION:amount0V3 < amount0V2ToMigrate	NodeType.IF";
+"BlockID: 237
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 238
+Call context: 
+None
+TMP_188(bool) = amount1V3 < amount1V2
+CONDITION TMP_188
+EXPRESSION:amount1V3 < amount1V2	NodeType.IF";
+"BlockID: 239
+Call context: 
+True
+TMP_189(bool) = amount1V3 < amount1V2ToMigrate
+CONDITION TMP_189
+EXPRESSION:amount1V3 < amount1V2ToMigrate	NodeType.IF";
+"BlockID: 240
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 242
+Call context: 
+True
+REF_98(address) -> params.token1
+INTERNAL_CALL, Base.safeApprove(address,address,uint256)(REF_98,liquidityManager,0)
+EXPRESSION:safeApprove(params.token1,liquidityManager,0)	NodeType.EXPRESSION";
+"BlockID: 244
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 245
+Call context: 
+None
+TMP_191(uint256) = amount1V2 (c)- amount1V3
+refund1(uint256) := TMP_191(uint256)
+REF_99(bool) -> params.refundAsETH
+REF_100(address) -> params.token1
+TMP_192(bool) = REF_100 == WETH9
+TMP_193(bool) = REF_99 && TMP_192
+CONDITION TMP_193
+EXPRESSION:refund1 = amount1V2 - amount1V3	NodeType.EXPRESSION
+params.refundAsETH && params.token1 == WETH9	NodeType.IF";
+"BlockID: 246
+Call context: 
+True
+TMP_194 = CONVERT WETH9 to IWETH9
+HIGH_LEVEL_CALL, dest:TMP_194(IWETH9), function:withdraw, arguments:['refund1']  
+EXPRESSION:IWETH9(WETH9).withdraw(refund1)	NodeType.EXPRESSION";
+"BlockID: 248
+Call context: 
+False
+REF_103(address) -> params.token1
+REF_104(address) -> params.recipient
+INTERNAL_CALL, Base.safeTransfer(address,address,uint256)(REF_103,REF_104,refund1)
+EXPRESSION:safeTransfer(params.token1,params.recipient,refund1)	NodeType.EXPRESSION";
+"BlockID: 250
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 247
+Call context: 
+None
+REF_102(address) -> params.recipient
+INTERNAL_CALL, Base.safeTransferETH(address,uint256)(REF_102,refund1)
+EXPRESSION:IWETH9(WETH9).withdraw(refund1)	NodeType.EXPRESSION
+safeTransferETH(params.recipient,refund1)	NodeType.EXPRESSION";
+"BlockID: 253
+Call context: 
+True
+REF_91(address) -> params.token0
+INTERNAL_CALL, Base.safeApprove(address,address,uint256)(REF_91,liquidityManager,0)
+EXPRESSION:safeApprove(params.token0,liquidityManager,0)	NodeType.EXPRESSION";
+"BlockID: 255
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 256
+Call context: 
+None
+TMP_181(uint256) = amount0V2 (c)- amount0V3
+refund0(uint256) := TMP_181(uint256)
+REF_92(bool) -> params.refundAsETH
+REF_93(address) -> params.token0
+TMP_182(bool) = REF_93 == WETH9
+TMP_183(bool) = REF_92 && TMP_182
+CONDITION TMP_183
+EXPRESSION:refund0 = amount0V2 - amount0V3	NodeType.EXPRESSION
+params.refundAsETH && params.token0 == WETH9	NodeType.IF";
+"BlockID: 257
+Call context: 
+True
+TMP_184 = CONVERT WETH9 to IWETH9
+HIGH_LEVEL_CALL, dest:TMP_184(IWETH9), function:withdraw, arguments:['refund0']  
+EXPRESSION:IWETH9(WETH9).withdraw(refund0)	NodeType.EXPRESSION";
+"BlockID: 259
+Call context: 
+False
+REF_96(address) -> params.token0
+REF_97(address) -> params.recipient
+INTERNAL_CALL, Base.safeTransfer(address,address,uint256)(REF_96,REF_97,refund0)
+EXPRESSION:safeTransfer(params.token0,params.recipient,refund0)	NodeType.EXPRESSION";
+"BlockID: 261
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 258
+Call context: 
+None
+REF_95(address) -> params.recipient
+INTERNAL_CALL, Base.safeTransferETH(address,uint256)(REF_95,refund0)
+EXPRESSION:IWETH9(WETH9).withdraw(refund0)	NodeType.EXPRESSION
+safeTransferETH(params.recipient,refund0)	NodeType.EXPRESSION";
+"BlockID: 229
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 230
+Call context: 
+None
+REF_71(address) -> params.pair
+TMP_168 = CONVERT REF_71 to IBiswapPair
+REF_73(address) -> params.recipient
+REF_74(address) -> params.pair
+REF_75(uint256) -> params.liquidityToMigrate
+TMP_169(bool) = HIGH_LEVEL_CALL, dest:TMP_168(IBiswapPair), function:transferFrom, arguments:['REF_73', 'REF_74', 'REF_75']  
+EXPRESSION:IBiswapPair(params.pair).transferFrom(params.recipient,params.pair,params.liquidityToMigrate)	NodeType.EXPRESSION" [key=0];
+"BlockID: 230
+Call context: 
+None
+REF_71(address) -> params.pair
+TMP_168 = CONVERT REF_71 to IBiswapPair
+REF_73(address) -> params.recipient
+REF_74(address) -> params.pair
+REF_75(uint256) -> params.liquidityToMigrate
+TMP_169(bool) = HIGH_LEVEL_CALL, dest:TMP_168(IBiswapPair), function:transferFrom, arguments:['REF_73', 'REF_74', 'REF_75']  
+EXPRESSION:IBiswapPair(params.pair).transferFrom(params.recipient,params.pair,params.liquidityToMigrate)	NodeType.EXPRESSION" -> "BlockID: 231
+Call context: 
+None
+NEW VARIABLE amount0V2
+NEW VARIABLE amount1V2
+REF_76(address) -> params.pair
+TMP_170 = CONVERT REF_76 to IBiswapPair
+TMP_171 = CONVERT this to address
+TUPLE_11(uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_170(IBiswapPair), function:burn, arguments:['TMP_171']  
+EXPRESSION:IBiswapPair(params.pair).transferFrom(params.recipient,params.pair,params.liquidityToMigrate)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0V2,amount1V2) = IBiswapPair(params.pair).burn(address(this))	NodeType.EXPRESSION" [key=0];
+"BlockID: 231
+Call context: 
+None
+NEW VARIABLE amount0V2
+NEW VARIABLE amount1V2
+REF_76(address) -> params.pair
+TMP_170 = CONVERT REF_76 to IBiswapPair
+TMP_171 = CONVERT this to address
+TUPLE_11(uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_170(IBiswapPair), function:burn, arguments:['TMP_171']  
+EXPRESSION:IBiswapPair(params.pair).transferFrom(params.recipient,params.pair,params.liquidityToMigrate)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0V2,amount1V2) = IBiswapPair(params.pair).burn(address(this))	NodeType.EXPRESSION" -> "BlockID: 232
+Call context: 
+None
+amount0V2(uint256)= UNPACK TUPLE_11 index: 0 
+amount1V2(uint256)= UNPACK TUPLE_11 index: 1 
+TMP_172 = CONVERT amount0V2 to uint128
+amount0V2ToMigrate(uint128) := TMP_172(uint128)
+TMP_173 = CONVERT amount1V2 to uint128
+amount1V2ToMigrate(uint128) := TMP_173(uint128)
+REF_78(address) -> params.token0
+INTERNAL_CALL, Base.safeApprove(address,address,uint256)(REF_78,liquidityManager,amount0V2ToMigrate)
+EXPRESSION:(amount0V2,amount1V2) = IBiswapPair(params.pair).burn(address(this))	NodeType.EXPRESSION
+amount0V2ToMigrate = uint128(amount0V2)	NodeType.VARIABLE
+amount0V2ToMigrate = uint128(amount0V2)	NodeType.EXPRESSION
+amount1V2ToMigrate = uint128(amount1V2)	NodeType.VARIABLE
+amount1V2ToMigrate = uint128(amount1V2)	NodeType.EXPRESSION
+safeApprove(params.token0,liquidityManager,amount0V2ToMigrate)	NodeType.EXPRESSION" [key=0];
+"BlockID: 232
+Call context: 
+None
+amount0V2(uint256)= UNPACK TUPLE_11 index: 0 
+amount1V2(uint256)= UNPACK TUPLE_11 index: 1 
+TMP_172 = CONVERT amount0V2 to uint128
+amount0V2ToMigrate(uint128) := TMP_172(uint128)
+TMP_173 = CONVERT amount1V2 to uint128
+amount1V2ToMigrate(uint128) := TMP_173(uint128)
+REF_78(address) -> params.token0
+INTERNAL_CALL, Base.safeApprove(address,address,uint256)(REF_78,liquidityManager,amount0V2ToMigrate)
+EXPRESSION:(amount0V2,amount1V2) = IBiswapPair(params.pair).burn(address(this))	NodeType.EXPRESSION
+amount0V2ToMigrate = uint128(amount0V2)	NodeType.VARIABLE
+amount0V2ToMigrate = uint128(amount0V2)	NodeType.EXPRESSION
+amount1V2ToMigrate = uint128(amount1V2)	NodeType.VARIABLE
+amount1V2ToMigrate = uint128(amount1V2)	NodeType.EXPRESSION
+safeApprove(params.token0,liquidityManager,amount0V2ToMigrate)	NodeType.EXPRESSION" -> "BlockID: 233
+Call context: 
+None
+REF_79(address) -> params.token1
+INTERNAL_CALL, Base.safeApprove(address,address,uint256)(REF_79,liquidityManager,amount1V2ToMigrate)
+EXPRESSION:safeApprove(params.token0,liquidityManager,amount0V2ToMigrate)	NodeType.EXPRESSION
+safeApprove(params.token1,liquidityManager,amount1V2ToMigrate)	NodeType.EXPRESSION" [key=0];
+"BlockID: 233
+Call context: 
+None
+REF_79(address) -> params.token1
+INTERNAL_CALL, Base.safeApprove(address,address,uint256)(REF_79,liquidityManager,amount1V2ToMigrate)
+EXPRESSION:safeApprove(params.token0,liquidityManager,amount0V2ToMigrate)	NodeType.EXPRESSION
+safeApprove(params.token1,liquidityManager,amount1V2ToMigrate)	NodeType.EXPRESSION" -> "BlockID: 234
+Call context: 
+None
+NEW VARIABLE amount0V3
+NEW VARIABLE amount1V3
+TMP_176 = CONVERT liquidityManager to ILiquidityManager
+REF_82(address) -> params.recipient
+REF_83(address) -> params.token0
+REF_84(address) -> params.token1
+REF_85(uint16) -> params.fee
+REF_86(int24) -> params.tickLower
+REF_87(int24) -> params.tickUpper
+REF_88(uint128) -> params.amount0Min
+REF_89(uint128) -> params.amount1Min
+REF_90(uint256) -> params.deadline
+TMP_177(ILiquidityManager.MintParam) = new MintParam(REF_82,REF_83,REF_84,REF_85,REF_86,REF_87,amount0V2ToMigrate,amount1V2ToMigrate,REF_88,REF_89,REF_90)
+TUPLE_12(uint256,uint128,uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_176(ILiquidityManager), function:mint, arguments:['TMP_177']  
+EXPRESSION:safeApprove(params.token1,liquidityManager,amount1V2ToMigrate)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0V3,amount1V3) = ILiquidityManager(liquidityManager).mint(ILiquidityManager.MintParam(params.recipient,params.token0,params.token1,params.fee,params.tickLower,params.tickUpper,amount0V2ToMigrate,amount1V2ToMigrate,params.amount0Min,params.amount1Min,params.deadline))	NodeType.EXPRESSION" [key=0];
+"BlockID: 234
+Call context: 
+None
+NEW VARIABLE amount0V3
+NEW VARIABLE amount1V3
+TMP_176 = CONVERT liquidityManager to ILiquidityManager
+REF_82(address) -> params.recipient
+REF_83(address) -> params.token0
+REF_84(address) -> params.token1
+REF_85(uint16) -> params.fee
+REF_86(int24) -> params.tickLower
+REF_87(int24) -> params.tickUpper
+REF_88(uint128) -> params.amount0Min
+REF_89(uint128) -> params.amount1Min
+REF_90(uint256) -> params.deadline
+TMP_177(ILiquidityManager.MintParam) = new MintParam(REF_82,REF_83,REF_84,REF_85,REF_86,REF_87,amount0V2ToMigrate,amount1V2ToMigrate,REF_88,REF_89,REF_90)
+TUPLE_12(uint256,uint128,uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_176(ILiquidityManager), function:mint, arguments:['TMP_177']  
+EXPRESSION:safeApprove(params.token1,liquidityManager,amount1V2ToMigrate)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0V3,amount1V3) = ILiquidityManager(liquidityManager).mint(ILiquidityManager.MintParam(params.recipient,params.token0,params.token1,params.fee,params.tickLower,params.tickUpper,amount0V2ToMigrate,amount1V2ToMigrate,params.amount0Min,params.amount1Min,params.deadline))	NodeType.EXPRESSION" -> "BlockID: 235
+Call context: 
+None
+amount0V3(uint256)= UNPACK TUPLE_12 index: 2 
+amount1V3(uint256)= UNPACK TUPLE_12 index: 3 
+TMP_178(bool) = amount0V3 < amount0V2
+CONDITION TMP_178
+EXPRESSION:(amount0V3,amount1V3) = ILiquidityManager(liquidityManager).mint(ILiquidityManager.MintParam(params.recipient,params.token0,params.token1,params.fee,params.tickLower,params.tickUpper,amount0V2ToMigrate,amount1V2ToMigrate,params.amount0Min,params.amount1Min,params.deadline))	NodeType.EXPRESSION
+amount0V3 < amount0V2	NodeType.IF" [key=0];
+"BlockID: 235
+Call context: 
+None
+amount0V3(uint256)= UNPACK TUPLE_12 index: 2 
+amount1V3(uint256)= UNPACK TUPLE_12 index: 3 
+TMP_178(bool) = amount0V3 < amount0V2
+CONDITION TMP_178
+EXPRESSION:(amount0V3,amount1V3) = ILiquidityManager(liquidityManager).mint(ILiquidityManager.MintParam(params.recipient,params.token0,params.token1,params.fee,params.tickLower,params.tickUpper,amount0V2ToMigrate,amount1V2ToMigrate,params.amount0Min,params.amount1Min,params.deadline))	NodeType.EXPRESSION
+amount0V3 < amount0V2	NodeType.IF" -> "BlockID: 236
+Call context: 
+True
+TMP_179(bool) = amount0V3 < amount0V2ToMigrate
+CONDITION TMP_179
+EXPRESSION:amount0V3 < amount0V2ToMigrate	NodeType.IF" [key=0];
+"BlockID: 235
+Call context: 
+None
+amount0V3(uint256)= UNPACK TUPLE_12 index: 2 
+amount1V3(uint256)= UNPACK TUPLE_12 index: 3 
+TMP_178(bool) = amount0V3 < amount0V2
+CONDITION TMP_178
+EXPRESSION:(amount0V3,amount1V3) = ILiquidityManager(liquidityManager).mint(ILiquidityManager.MintParam(params.recipient,params.token0,params.token1,params.fee,params.tickLower,params.tickUpper,amount0V2ToMigrate,amount1V2ToMigrate,params.amount0Min,params.amount1Min,params.deadline))	NodeType.EXPRESSION
+amount0V3 < amount0V2	NodeType.IF" -> "BlockID: 237
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 236
+Call context: 
+True
+TMP_179(bool) = amount0V3 < amount0V2ToMigrate
+CONDITION TMP_179
+EXPRESSION:amount0V3 < amount0V2ToMigrate	NodeType.IF" -> "BlockID: 253
+Call context: 
+True
+REF_91(address) -> params.token0
+INTERNAL_CALL, Base.safeApprove(address,address,uint256)(REF_91,liquidityManager,0)
+EXPRESSION:safeApprove(params.token0,liquidityManager,0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 236
+Call context: 
+True
+TMP_179(bool) = amount0V3 < amount0V2ToMigrate
+CONDITION TMP_179
+EXPRESSION:amount0V3 < amount0V2ToMigrate	NodeType.IF" -> "BlockID: 255
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 237
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 238
+Call context: 
+None
+TMP_188(bool) = amount1V3 < amount1V2
+CONDITION TMP_188
+EXPRESSION:amount1V3 < amount1V2	NodeType.IF" [key=0];
+"BlockID: 238
+Call context: 
+None
+TMP_188(bool) = amount1V3 < amount1V2
+CONDITION TMP_188
+EXPRESSION:amount1V3 < amount1V2	NodeType.IF" -> "BlockID: 239
+Call context: 
+True
+TMP_189(bool) = amount1V3 < amount1V2ToMigrate
+CONDITION TMP_189
+EXPRESSION:amount1V3 < amount1V2ToMigrate	NodeType.IF" [key=0];
+"BlockID: 238
+Call context: 
+None
+TMP_188(bool) = amount1V3 < amount1V2
+CONDITION TMP_188
+EXPRESSION:amount1V3 < amount1V2	NodeType.IF" -> "BlockID: 240
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 239
+Call context: 
+True
+TMP_189(bool) = amount1V3 < amount1V2ToMigrate
+CONDITION TMP_189
+EXPRESSION:amount1V3 < amount1V2ToMigrate	NodeType.IF" -> "BlockID: 242
+Call context: 
+True
+REF_98(address) -> params.token1
+INTERNAL_CALL, Base.safeApprove(address,address,uint256)(REF_98,liquidityManager,0)
+EXPRESSION:safeApprove(params.token1,liquidityManager,0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 239
+Call context: 
+True
+TMP_189(bool) = amount1V3 < amount1V2ToMigrate
+CONDITION TMP_189
+EXPRESSION:amount1V3 < amount1V2ToMigrate	NodeType.IF" -> "BlockID: 244
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 242
+Call context: 
+True
+REF_98(address) -> params.token1
+INTERNAL_CALL, Base.safeApprove(address,address,uint256)(REF_98,liquidityManager,0)
+EXPRESSION:safeApprove(params.token1,liquidityManager,0)	NodeType.EXPRESSION" -> "BlockID: 244
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 244
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 245
+Call context: 
+None
+TMP_191(uint256) = amount1V2 (c)- amount1V3
+refund1(uint256) := TMP_191(uint256)
+REF_99(bool) -> params.refundAsETH
+REF_100(address) -> params.token1
+TMP_192(bool) = REF_100 == WETH9
+TMP_193(bool) = REF_99 && TMP_192
+CONDITION TMP_193
+EXPRESSION:refund1 = amount1V2 - amount1V3	NodeType.EXPRESSION
+params.refundAsETH && params.token1 == WETH9	NodeType.IF" [key=0];
+"BlockID: 245
+Call context: 
+None
+TMP_191(uint256) = amount1V2 (c)- amount1V3
+refund1(uint256) := TMP_191(uint256)
+REF_99(bool) -> params.refundAsETH
+REF_100(address) -> params.token1
+TMP_192(bool) = REF_100 == WETH9
+TMP_193(bool) = REF_99 && TMP_192
+CONDITION TMP_193
+EXPRESSION:refund1 = amount1V2 - amount1V3	NodeType.EXPRESSION
+params.refundAsETH && params.token1 == WETH9	NodeType.IF" -> "BlockID: 246
+Call context: 
+True
+TMP_194 = CONVERT WETH9 to IWETH9
+HIGH_LEVEL_CALL, dest:TMP_194(IWETH9), function:withdraw, arguments:['refund1']  
+EXPRESSION:IWETH9(WETH9).withdraw(refund1)	NodeType.EXPRESSION" [key=0];
+"BlockID: 245
+Call context: 
+None
+TMP_191(uint256) = amount1V2 (c)- amount1V3
+refund1(uint256) := TMP_191(uint256)
+REF_99(bool) -> params.refundAsETH
+REF_100(address) -> params.token1
+TMP_192(bool) = REF_100 == WETH9
+TMP_193(bool) = REF_99 && TMP_192
+CONDITION TMP_193
+EXPRESSION:refund1 = amount1V2 - amount1V3	NodeType.EXPRESSION
+params.refundAsETH && params.token1 == WETH9	NodeType.IF" -> "BlockID: 248
+Call context: 
+False
+REF_103(address) -> params.token1
+REF_104(address) -> params.recipient
+INTERNAL_CALL, Base.safeTransfer(address,address,uint256)(REF_103,REF_104,refund1)
+EXPRESSION:safeTransfer(params.token1,params.recipient,refund1)	NodeType.EXPRESSION" [key=0];
+"BlockID: 246
+Call context: 
+True
+TMP_194 = CONVERT WETH9 to IWETH9
+HIGH_LEVEL_CALL, dest:TMP_194(IWETH9), function:withdraw, arguments:['refund1']  
+EXPRESSION:IWETH9(WETH9).withdraw(refund1)	NodeType.EXPRESSION" -> "BlockID: 247
+Call context: 
+None
+REF_102(address) -> params.recipient
+INTERNAL_CALL, Base.safeTransferETH(address,uint256)(REF_102,refund1)
+EXPRESSION:IWETH9(WETH9).withdraw(refund1)	NodeType.EXPRESSION
+safeTransferETH(params.recipient,refund1)	NodeType.EXPRESSION" [key=0];
+"BlockID: 248
+Call context: 
+False
+REF_103(address) -> params.token1
+REF_104(address) -> params.recipient
+INTERNAL_CALL, Base.safeTransfer(address,address,uint256)(REF_103,REF_104,refund1)
+EXPRESSION:safeTransfer(params.token1,params.recipient,refund1)	NodeType.EXPRESSION" -> "BlockID: 250
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 250
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 240
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 247
+Call context: 
+None
+REF_102(address) -> params.recipient
+INTERNAL_CALL, Base.safeTransferETH(address,uint256)(REF_102,refund1)
+EXPRESSION:IWETH9(WETH9).withdraw(refund1)	NodeType.EXPRESSION
+safeTransferETH(params.recipient,refund1)	NodeType.EXPRESSION" -> "BlockID: 250
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 253
+Call context: 
+True
+REF_91(address) -> params.token0
+INTERNAL_CALL, Base.safeApprove(address,address,uint256)(REF_91,liquidityManager,0)
+EXPRESSION:safeApprove(params.token0,liquidityManager,0)	NodeType.EXPRESSION" -> "BlockID: 255
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 255
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 256
+Call context: 
+None
+TMP_181(uint256) = amount0V2 (c)- amount0V3
+refund0(uint256) := TMP_181(uint256)
+REF_92(bool) -> params.refundAsETH
+REF_93(address) -> params.token0
+TMP_182(bool) = REF_93 == WETH9
+TMP_183(bool) = REF_92 && TMP_182
+CONDITION TMP_183
+EXPRESSION:refund0 = amount0V2 - amount0V3	NodeType.EXPRESSION
+params.refundAsETH && params.token0 == WETH9	NodeType.IF" [key=0];
+"BlockID: 256
+Call context: 
+None
+TMP_181(uint256) = amount0V2 (c)- amount0V3
+refund0(uint256) := TMP_181(uint256)
+REF_92(bool) -> params.refundAsETH
+REF_93(address) -> params.token0
+TMP_182(bool) = REF_93 == WETH9
+TMP_183(bool) = REF_92 && TMP_182
+CONDITION TMP_183
+EXPRESSION:refund0 = amount0V2 - amount0V3	NodeType.EXPRESSION
+params.refundAsETH && params.token0 == WETH9	NodeType.IF" -> "BlockID: 257
+Call context: 
+True
+TMP_184 = CONVERT WETH9 to IWETH9
+HIGH_LEVEL_CALL, dest:TMP_184(IWETH9), function:withdraw, arguments:['refund0']  
+EXPRESSION:IWETH9(WETH9).withdraw(refund0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 256
+Call context: 
+None
+TMP_181(uint256) = amount0V2 (c)- amount0V3
+refund0(uint256) := TMP_181(uint256)
+REF_92(bool) -> params.refundAsETH
+REF_93(address) -> params.token0
+TMP_182(bool) = REF_93 == WETH9
+TMP_183(bool) = REF_92 && TMP_182
+CONDITION TMP_183
+EXPRESSION:refund0 = amount0V2 - amount0V3	NodeType.EXPRESSION
+params.refundAsETH && params.token0 == WETH9	NodeType.IF" -> "BlockID: 259
+Call context: 
+False
+REF_96(address) -> params.token0
+REF_97(address) -> params.recipient
+INTERNAL_CALL, Base.safeTransfer(address,address,uint256)(REF_96,REF_97,refund0)
+EXPRESSION:safeTransfer(params.token0,params.recipient,refund0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 257
+Call context: 
+True
+TMP_184 = CONVERT WETH9 to IWETH9
+HIGH_LEVEL_CALL, dest:TMP_184(IWETH9), function:withdraw, arguments:['refund0']  
+EXPRESSION:IWETH9(WETH9).withdraw(refund0)	NodeType.EXPRESSION" -> "BlockID: 258
+Call context: 
+None
+REF_95(address) -> params.recipient
+INTERNAL_CALL, Base.safeTransferETH(address,uint256)(REF_95,refund0)
+EXPRESSION:IWETH9(WETH9).withdraw(refund0)	NodeType.EXPRESSION
+safeTransferETH(params.recipient,refund0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 259
+Call context: 
+False
+REF_96(address) -> params.token0
+REF_97(address) -> params.recipient
+INTERNAL_CALL, Base.safeTransfer(address,address,uint256)(REF_96,REF_97,refund0)
+EXPRESSION:safeTransfer(params.token0,params.recipient,refund0)	NodeType.EXPRESSION" -> "BlockID: 261
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 261
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 237
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 258
+Call context: 
+None
+REF_95(address) -> params.recipient
+INTERNAL_CALL, Base.safeTransferETH(address,uint256)(REF_95,refund0)
+EXPRESSION:IWETH9(WETH9).withdraw(refund0)	NodeType.EXPRESSION
+safeTransferETH(params.recipient,refund0)	NodeType.EXPRESSION" -> "BlockID: 261
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

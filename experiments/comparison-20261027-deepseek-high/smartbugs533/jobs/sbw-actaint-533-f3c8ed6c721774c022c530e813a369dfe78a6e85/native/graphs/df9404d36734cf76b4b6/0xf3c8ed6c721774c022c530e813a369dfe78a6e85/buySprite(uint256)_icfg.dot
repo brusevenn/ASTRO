@@ -1,0 +1,773 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+NEW VARIABLE _ownerCut
+NEW VARIABLE _charityCut
+REF_25(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_26(bool) -> REF_25.forSale
+TMP_55(bool) = REF_26 == True
+CONDITION TMP_55
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+broughtSprites[spriteId].forSale == true	NodeType.IF";
+"BlockID: 15
+Call context: 
+True
+TMP_75 = CONVERT SaleClockAuctionAddress to SaleClockAuction
+TMP_76(uint256) = HIGH_LEVEL_CALL, dest:TMP_75(SaleClockAuction), function:getCurrentPrice, arguments:['spriteId']  
+EXPRESSION:";
+"BlockID: 24
+Call context: 
+True
+NEW VARIABLE kittyOwner
+TMP_93 = CONVERT SaleClockAuctionAddress to SaleClockAuction
+TUPLE_1(address,uint256,uint256,uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_93(SaleClockAuction), function:getAuction, arguments:['spriteId']  
+EXPRESSION:None	NodeType.VARIABLE
+(kittyOwner) = SaleClockAuction(SaleClockAuctionAddress).getAuction(spriteId)	NodeType.EXPRESSION";
+"BlockID: 25
+Call context: 
+None
+kittyOwner(address)= UNPACK TUPLE_1 index: 0 
+TMP_94(uint256) = priceIfAny * priceMultiplier
+TMP_95(uint256) = TMP_94 / priceDivider
+Transfer dest:kittyOwner value:TMP_95
+EXPRESSION:(kittyOwner) = SaleClockAuction(SaleClockAuctionAddress).getAuction(spriteId)	NodeType.EXPRESSION
+kittyOwner.transfer(priceIfAny * priceMultiplier / priceDivider)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 26
+Call context: 
+None
+REF_56 -> LENGTH allPurchasedSprites
+TMP_98(uint256) := REF_56(uint256)
+TMP_99(uint256) = TMP_98 + 1
+REF_56(uint256) (->allPurchasedSprites) := TMP_99(uint256)
+REF_57(uint256) -> allPurchasedSprites[TMP_98]
+REF_57(uint256) (->allPurchasedSprites) := spriteId(uint256)
+REF_58(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_59(uint256) -> REF_58.spriteImageID
+TMP_100(uint256) = block.number - 1
+TMP_101(uint256) = SOLIDITY_CALL blockhash(uint256)(TMP_100)
+TMP_102 = CONVERT TMP_101 to uint256
+TMP_103(uint256) = TMP_102 % 360
+TMP_104(uint256) = TMP_103 + 1
+REF_59(uint256) (->broughtSprites) := TMP_104(uint256)
+EXPRESSION:kittyOwner.transfer(priceIfAny * priceMultiplier / priceDivider)	NodeType.EXPRESSION
+allPurchasedSprites.push(spriteId)	NodeType.EXPRESSION
+broughtSprites[spriteId].spriteImageID = uint256(block.blockhash(block.number - 1)) % 360 + 1	NodeType.EXPRESSION";
+"BlockID: 16
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 18
+Call context: 
+None
+TMP_106(uint256) := totalBuys(uint256)
+totalBuys(uint256) = totalBuys + 1
+REF_60(uint256[]) -> spriteOwningHistory[msg.sender]
+REF_62 -> LENGTH REF_60
+TMP_108(uint256) := REF_62(uint256)
+TMP_109(uint256) = TMP_108 + 1
+REF_62(uint256) (->spriteOwningHistory) := TMP_109(uint256)
+REF_63(uint256) -> REF_60[TMP_108]
+REF_63(uint256) (->spriteOwningHistory) := spriteId(uint256)
+REF_64(uint256) -> numberOfSpritesOwnedByUser[msg.sender]
+TMP_110(uint256) := REF_64(uint256)
+REF_64(-> numberOfSpritesOwnedByUser) = REF_64 + 1
+REF_65(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_66(address) -> REF_65.owner
+REF_66(address) (->broughtSprites) := msg.sender(address)
+REF_67(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_68(bool) -> REF_67.forSale
+REF_68(bool) (->broughtSprites) := False(bool)
+REF_69(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_70(uint256) -> REF_69.timesTraded
+TMP_111(uint256) := REF_70(uint256)
+REF_70(-> broughtSprites) = REF_70 + 1
+REF_71(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_72(bool) -> REF_71.featured
+REF_72(bool) (->broughtSprites) := False(bool)
+etherForOwner(uint256) = etherForOwner + _ownerCut
+etherForCharity(uint256) = etherForCharity + _charityCut
+EXPRESSION:totalBuys ++	NodeType.EXPRESSION
+spriteOwningHistory[msg.sender].push(spriteId)	NodeType.EXPRESSION
+numberOfSpritesOwnedByUser[msg.sender] ++	NodeType.EXPRESSION
+broughtSprites[spriteId].owner = msg.sender	NodeType.EXPRESSION
+broughtSprites[spriteId].forSale = false	NodeType.EXPRESSION
+broughtSprites[spriteId].timesTraded ++	NodeType.EXPRESSION
+broughtSprites[spriteId].featured = false	NodeType.EXPRESSION
+etherForOwner += _ownerCut	NodeType.EXPRESSION
+etherForCharity += _charityCut	NodeType.EXPRESSION";
+"BlockID: 8
+Call context: 
+True
+REF_33(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_34(address) -> REF_33.owner
+REF_36(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_37(uint256) -> REF_36.price
+Transfer dest:REF_34 value:REF_37
+EXPRESSION:broughtSprites[spriteId].owner.transfer(broughtSprites[spriteId].price)	NodeType.EXPRESSION";
+"BlockID: 10
+Call context: 
+None
+REF_38(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_39(address) -> REF_38.owner
+REF_40(uint256) -> numberOfSpritesOwnedByUser[REF_39]
+TMP_65(uint256) := REF_40(uint256)
+REF_40(-> numberOfSpritesOwnedByUser) = REF_40 - 1
+REF_41(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_42(uint256) -> REF_41.timesTraded
+TMP_66(bool) = REF_42 == 0
+CONDITION TMP_66
+EXPRESSION:broughtSprites[spriteId].owner.transfer(broughtSprites[spriteId].price)	NodeType.EXPRESSION
+numberOfSpritesOwnedByUser[broughtSprites[spriteId].owner] --	NodeType.EXPRESSION
+broughtSprites[spriteId].timesTraded == 0	NodeType.IF";
+"BlockID: 13
+Call context: 
+True
+REF_44 -> LENGTH allPurchasedSprites
+TMP_68(uint256) := REF_44(uint256)
+TMP_69(uint256) = TMP_68 + 1
+REF_44(uint256) (->allPurchasedSprites) := TMP_69(uint256)
+REF_45(uint256) -> allPurchasedSprites[TMP_68]
+REF_45(uint256) (->allPurchasedSprites) := spriteId(uint256)
+EXPRESSION:allPurchasedSprites.push(spriteId)	NodeType.EXPRESSION";
+"BlockID: 14
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2
+Call context: 
+None
+REF_27(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_28(uint256) -> REF_27.price
+TMP_56(uint256) = REF_28 / 1000
+TMP_57(uint256) = TMP_56 * ownerCut
+_ownerCut(uint256) := TMP_57(uint256)
+REF_29(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_30(uint256) -> REF_29.price
+TMP_58(uint256) = REF_30 / 1000
+TMP_59(uint256) = TMP_58 * charityCut
+_charityCut(uint256) := TMP_59(uint256)
+REF_31(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_32(uint256) -> REF_31.price
+TMP_60(uint256) = REF_32 + _ownerCut
+TMP_61(uint256) = TMP_60 + _charityCut
+TMP_62(bool) = msg.value == TMP_61
+CONDITION TMP_62
+EXPRESSION:TMP_62(bool) = msg.value == TMP_61	NodeType.IF";
+"BlockID: 4
+Call context: 
+True
+TMP_63(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 5
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3
+Call context: 
+None
+REF_48(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_49(uint256) -> REF_48.timesTraded
+TMP_71(bool) = REF_49 == 0
+CONDITION TMP_71
+EXPRESSION:TMP_71(bool) = REF_49 == 0	NodeType.IF";
+"BlockID: 6
+Call context: 
+True
+TMP_72(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 7
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 9
+Call context: 
+None
+REF_50(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_51(uint256) -> REF_50.price
+TMP_73(bool) = REF_51 == 0
+CONDITION TMP_73
+EXPRESSION:TMP_73(bool) = REF_51 == 0	NodeType.IF";
+"BlockID: 11
+Call context: 
+True
+TMP_74(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 12
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 17
+Call context: 
+None
+priceIfAny(uint256) := TMP_76(uint256)
+TMP_77(bool) = priceIfAny > 0
+CONDITION TMP_77
+EXPRESSION:TMP_77(bool) = priceIfAny > 0	NodeType.IF";
+"BlockID: 19
+Call context: 
+True
+TMP_78(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 20
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 21
+Call context: 
+None
+TMP_79(uint256) = priceIfAny / 1000
+TMP_80(uint256) = TMP_79 * ownerCut
+TMP_81(uint256) = TMP_80 * priceMultiplier
+TMP_82(uint256) = TMP_81 / priceDivider
+_ownerCut(uint256) := TMP_82(uint256)
+TMP_83(uint256) = priceIfAny / 1000
+TMP_84(uint256) = TMP_83 * charityCut
+TMP_85(uint256) = TMP_84 * priceMultiplier
+TMP_86(uint256) = TMP_85 / priceDivider
+_charityCut(uint256) := TMP_86(uint256)
+TMP_87(uint256) = priceIfAny * priceMultiplier
+TMP_88(uint256) = TMP_87 / priceDivider
+TMP_89(uint256) = TMP_88 + _ownerCut
+TMP_90(uint256) = TMP_89 + _charityCut
+TMP_91(bool) = msg.value >= TMP_90
+CONDITION TMP_91
+EXPRESSION:TMP_91(bool) = msg.value >= TMP_90	NodeType.IF";
+"BlockID: 22
+Call context: 
+True
+TMP_92(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 23
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+NEW VARIABLE _ownerCut
+NEW VARIABLE _charityCut
+REF_25(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_26(bool) -> REF_25.forSale
+TMP_55(bool) = REF_26 == True
+CONDITION TMP_55
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+broughtSprites[spriteId].forSale == true	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+NEW VARIABLE _ownerCut
+NEW VARIABLE _charityCut
+REF_25(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_26(bool) -> REF_25.forSale
+TMP_55(bool) = REF_26 == True
+CONDITION TMP_55
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+broughtSprites[spriteId].forSale == true	NodeType.IF" -> "BlockID: 2
+Call context: 
+None
+REF_27(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_28(uint256) -> REF_27.price
+TMP_56(uint256) = REF_28 / 1000
+TMP_57(uint256) = TMP_56 * ownerCut
+_ownerCut(uint256) := TMP_57(uint256)
+REF_29(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_30(uint256) -> REF_29.price
+TMP_58(uint256) = REF_30 / 1000
+TMP_59(uint256) = TMP_58 * charityCut
+_charityCut(uint256) := TMP_59(uint256)
+REF_31(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_32(uint256) -> REF_31.price
+TMP_60(uint256) = REF_32 + _ownerCut
+TMP_61(uint256) = TMP_60 + _charityCut
+TMP_62(bool) = msg.value == TMP_61
+CONDITION TMP_62
+EXPRESSION:TMP_62(bool) = msg.value == TMP_61	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+NEW VARIABLE _ownerCut
+NEW VARIABLE _charityCut
+REF_25(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_26(bool) -> REF_25.forSale
+TMP_55(bool) = REF_26 == True
+CONDITION TMP_55
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+broughtSprites[spriteId].forSale == true	NodeType.IF" -> "BlockID: 3
+Call context: 
+None
+REF_48(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_49(uint256) -> REF_48.timesTraded
+TMP_71(bool) = REF_49 == 0
+CONDITION TMP_71
+EXPRESSION:TMP_71(bool) = REF_49 == 0	NodeType.IF" [key=0];
+"BlockID: 15
+Call context: 
+True
+TMP_75 = CONVERT SaleClockAuctionAddress to SaleClockAuction
+TMP_76(uint256) = HIGH_LEVEL_CALL, dest:TMP_75(SaleClockAuction), function:getCurrentPrice, arguments:['spriteId']  
+EXPRESSION:" -> "BlockID: 17
+Call context: 
+None
+priceIfAny(uint256) := TMP_76(uint256)
+TMP_77(bool) = priceIfAny > 0
+CONDITION TMP_77
+EXPRESSION:TMP_77(bool) = priceIfAny > 0	NodeType.IF" [key=0];
+"BlockID: 24
+Call context: 
+True
+NEW VARIABLE kittyOwner
+TMP_93 = CONVERT SaleClockAuctionAddress to SaleClockAuction
+TUPLE_1(address,uint256,uint256,uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_93(SaleClockAuction), function:getAuction, arguments:['spriteId']  
+EXPRESSION:None	NodeType.VARIABLE
+(kittyOwner) = SaleClockAuction(SaleClockAuctionAddress).getAuction(spriteId)	NodeType.EXPRESSION" -> "BlockID: 25
+Call context: 
+None
+kittyOwner(address)= UNPACK TUPLE_1 index: 0 
+TMP_94(uint256) = priceIfAny * priceMultiplier
+TMP_95(uint256) = TMP_94 / priceDivider
+Transfer dest:kittyOwner value:TMP_95
+EXPRESSION:(kittyOwner) = SaleClockAuction(SaleClockAuctionAddress).getAuction(spriteId)	NodeType.EXPRESSION
+kittyOwner.transfer(priceIfAny * priceMultiplier / priceDivider)	NodeType.EXPRESSION" [key=0];
+"BlockID: 25
+Call context: 
+None
+kittyOwner(address)= UNPACK TUPLE_1 index: 0 
+TMP_94(uint256) = priceIfAny * priceMultiplier
+TMP_95(uint256) = TMP_94 / priceDivider
+Transfer dest:kittyOwner value:TMP_95
+EXPRESSION:(kittyOwner) = SaleClockAuction(SaleClockAuctionAddress).getAuction(spriteId)	NodeType.EXPRESSION
+kittyOwner.transfer(priceIfAny * priceMultiplier / priceDivider)	NodeType.EXPRESSION" -> "BlockID: 26
+Call context: 
+None
+REF_56 -> LENGTH allPurchasedSprites
+TMP_98(uint256) := REF_56(uint256)
+TMP_99(uint256) = TMP_98 + 1
+REF_56(uint256) (->allPurchasedSprites) := TMP_99(uint256)
+REF_57(uint256) -> allPurchasedSprites[TMP_98]
+REF_57(uint256) (->allPurchasedSprites) := spriteId(uint256)
+REF_58(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_59(uint256) -> REF_58.spriteImageID
+TMP_100(uint256) = block.number - 1
+TMP_101(uint256) = SOLIDITY_CALL blockhash(uint256)(TMP_100)
+TMP_102 = CONVERT TMP_101 to uint256
+TMP_103(uint256) = TMP_102 % 360
+TMP_104(uint256) = TMP_103 + 1
+REF_59(uint256) (->broughtSprites) := TMP_104(uint256)
+EXPRESSION:kittyOwner.transfer(priceIfAny * priceMultiplier / priceDivider)	NodeType.EXPRESSION
+allPurchasedSprites.push(spriteId)	NodeType.EXPRESSION
+broughtSprites[spriteId].spriteImageID = uint256(block.blockhash(block.number - 1)) % 360 + 1	NodeType.EXPRESSION" [key=0];
+"BlockID: 26
+Call context: 
+None
+REF_56 -> LENGTH allPurchasedSprites
+TMP_98(uint256) := REF_56(uint256)
+TMP_99(uint256) = TMP_98 + 1
+REF_56(uint256) (->allPurchasedSprites) := TMP_99(uint256)
+REF_57(uint256) -> allPurchasedSprites[TMP_98]
+REF_57(uint256) (->allPurchasedSprites) := spriteId(uint256)
+REF_58(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_59(uint256) -> REF_58.spriteImageID
+TMP_100(uint256) = block.number - 1
+TMP_101(uint256) = SOLIDITY_CALL blockhash(uint256)(TMP_100)
+TMP_102 = CONVERT TMP_101 to uint256
+TMP_103(uint256) = TMP_102 % 360
+TMP_104(uint256) = TMP_103 + 1
+REF_59(uint256) (->broughtSprites) := TMP_104(uint256)
+EXPRESSION:kittyOwner.transfer(priceIfAny * priceMultiplier / priceDivider)	NodeType.EXPRESSION
+allPurchasedSprites.push(spriteId)	NodeType.EXPRESSION
+broughtSprites[spriteId].spriteImageID = uint256(block.blockhash(block.number - 1)) % 360 + 1	NodeType.EXPRESSION" -> "BlockID: 16
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 16
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 18
+Call context: 
+None
+TMP_106(uint256) := totalBuys(uint256)
+totalBuys(uint256) = totalBuys + 1
+REF_60(uint256[]) -> spriteOwningHistory[msg.sender]
+REF_62 -> LENGTH REF_60
+TMP_108(uint256) := REF_62(uint256)
+TMP_109(uint256) = TMP_108 + 1
+REF_62(uint256) (->spriteOwningHistory) := TMP_109(uint256)
+REF_63(uint256) -> REF_60[TMP_108]
+REF_63(uint256) (->spriteOwningHistory) := spriteId(uint256)
+REF_64(uint256) -> numberOfSpritesOwnedByUser[msg.sender]
+TMP_110(uint256) := REF_64(uint256)
+REF_64(-> numberOfSpritesOwnedByUser) = REF_64 + 1
+REF_65(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_66(address) -> REF_65.owner
+REF_66(address) (->broughtSprites) := msg.sender(address)
+REF_67(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_68(bool) -> REF_67.forSale
+REF_68(bool) (->broughtSprites) := False(bool)
+REF_69(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_70(uint256) -> REF_69.timesTraded
+TMP_111(uint256) := REF_70(uint256)
+REF_70(-> broughtSprites) = REF_70 + 1
+REF_71(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_72(bool) -> REF_71.featured
+REF_72(bool) (->broughtSprites) := False(bool)
+etherForOwner(uint256) = etherForOwner + _ownerCut
+etherForCharity(uint256) = etherForCharity + _charityCut
+EXPRESSION:totalBuys ++	NodeType.EXPRESSION
+spriteOwningHistory[msg.sender].push(spriteId)	NodeType.EXPRESSION
+numberOfSpritesOwnedByUser[msg.sender] ++	NodeType.EXPRESSION
+broughtSprites[spriteId].owner = msg.sender	NodeType.EXPRESSION
+broughtSprites[spriteId].forSale = false	NodeType.EXPRESSION
+broughtSprites[spriteId].timesTraded ++	NodeType.EXPRESSION
+broughtSprites[spriteId].featured = false	NodeType.EXPRESSION
+etherForOwner += _ownerCut	NodeType.EXPRESSION
+etherForCharity += _charityCut	NodeType.EXPRESSION" [key=0];
+"BlockID: 8
+Call context: 
+True
+REF_33(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_34(address) -> REF_33.owner
+REF_36(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_37(uint256) -> REF_36.price
+Transfer dest:REF_34 value:REF_37
+EXPRESSION:broughtSprites[spriteId].owner.transfer(broughtSprites[spriteId].price)	NodeType.EXPRESSION" -> "BlockID: 10
+Call context: 
+None
+REF_38(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_39(address) -> REF_38.owner
+REF_40(uint256) -> numberOfSpritesOwnedByUser[REF_39]
+TMP_65(uint256) := REF_40(uint256)
+REF_40(-> numberOfSpritesOwnedByUser) = REF_40 - 1
+REF_41(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_42(uint256) -> REF_41.timesTraded
+TMP_66(bool) = REF_42 == 0
+CONDITION TMP_66
+EXPRESSION:broughtSprites[spriteId].owner.transfer(broughtSprites[spriteId].price)	NodeType.EXPRESSION
+numberOfSpritesOwnedByUser[broughtSprites[spriteId].owner] --	NodeType.EXPRESSION
+broughtSprites[spriteId].timesTraded == 0	NodeType.IF" [key=0];
+"BlockID: 10
+Call context: 
+None
+REF_38(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_39(address) -> REF_38.owner
+REF_40(uint256) -> numberOfSpritesOwnedByUser[REF_39]
+TMP_65(uint256) := REF_40(uint256)
+REF_40(-> numberOfSpritesOwnedByUser) = REF_40 - 1
+REF_41(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_42(uint256) -> REF_41.timesTraded
+TMP_66(bool) = REF_42 == 0
+CONDITION TMP_66
+EXPRESSION:broughtSprites[spriteId].owner.transfer(broughtSprites[spriteId].price)	NodeType.EXPRESSION
+numberOfSpritesOwnedByUser[broughtSprites[spriteId].owner] --	NodeType.EXPRESSION
+broughtSprites[spriteId].timesTraded == 0	NodeType.IF" -> "BlockID: 13
+Call context: 
+True
+REF_44 -> LENGTH allPurchasedSprites
+TMP_68(uint256) := REF_44(uint256)
+TMP_69(uint256) = TMP_68 + 1
+REF_44(uint256) (->allPurchasedSprites) := TMP_69(uint256)
+REF_45(uint256) -> allPurchasedSprites[TMP_68]
+REF_45(uint256) (->allPurchasedSprites) := spriteId(uint256)
+EXPRESSION:allPurchasedSprites.push(spriteId)	NodeType.EXPRESSION" [key=0];
+"BlockID: 10
+Call context: 
+None
+REF_38(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_39(address) -> REF_38.owner
+REF_40(uint256) -> numberOfSpritesOwnedByUser[REF_39]
+TMP_65(uint256) := REF_40(uint256)
+REF_40(-> numberOfSpritesOwnedByUser) = REF_40 - 1
+REF_41(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_42(uint256) -> REF_41.timesTraded
+TMP_66(bool) = REF_42 == 0
+CONDITION TMP_66
+EXPRESSION:broughtSprites[spriteId].owner.transfer(broughtSprites[spriteId].price)	NodeType.EXPRESSION
+numberOfSpritesOwnedByUser[broughtSprites[spriteId].owner] --	NodeType.EXPRESSION
+broughtSprites[spriteId].timesTraded == 0	NodeType.IF" -> "BlockID: 14
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 13
+Call context: 
+True
+REF_44 -> LENGTH allPurchasedSprites
+TMP_68(uint256) := REF_44(uint256)
+TMP_69(uint256) = TMP_68 + 1
+REF_44(uint256) (->allPurchasedSprites) := TMP_69(uint256)
+REF_45(uint256) -> allPurchasedSprites[TMP_68]
+REF_45(uint256) (->allPurchasedSprites) := spriteId(uint256)
+EXPRESSION:allPurchasedSprites.push(spriteId)	NodeType.EXPRESSION" -> "BlockID: 14
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 14
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 16
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2
+Call context: 
+None
+REF_27(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_28(uint256) -> REF_27.price
+TMP_56(uint256) = REF_28 / 1000
+TMP_57(uint256) = TMP_56 * ownerCut
+_ownerCut(uint256) := TMP_57(uint256)
+REF_29(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_30(uint256) -> REF_29.price
+TMP_58(uint256) = REF_30 / 1000
+TMP_59(uint256) = TMP_58 * charityCut
+_charityCut(uint256) := TMP_59(uint256)
+REF_31(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_32(uint256) -> REF_31.price
+TMP_60(uint256) = REF_32 + _ownerCut
+TMP_61(uint256) = TMP_60 + _charityCut
+TMP_62(bool) = msg.value == TMP_61
+CONDITION TMP_62
+EXPRESSION:TMP_62(bool) = msg.value == TMP_61	NodeType.IF" -> "BlockID: 4
+Call context: 
+True
+TMP_63(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 2
+Call context: 
+None
+REF_27(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_28(uint256) -> REF_27.price
+TMP_56(uint256) = REF_28 / 1000
+TMP_57(uint256) = TMP_56 * ownerCut
+_ownerCut(uint256) := TMP_57(uint256)
+REF_29(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_30(uint256) -> REF_29.price
+TMP_58(uint256) = REF_30 / 1000
+TMP_59(uint256) = TMP_58 * charityCut
+_charityCut(uint256) := TMP_59(uint256)
+REF_31(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_32(uint256) -> REF_31.price
+TMP_60(uint256) = REF_32 + _ownerCut
+TMP_61(uint256) = TMP_60 + _charityCut
+TMP_62(bool) = msg.value == TMP_61
+CONDITION TMP_62
+EXPRESSION:TMP_62(bool) = msg.value == TMP_61	NodeType.IF" -> "BlockID: 5
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 5
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 8
+Call context: 
+True
+REF_33(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_34(address) -> REF_33.owner
+REF_36(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_37(uint256) -> REF_36.price
+Transfer dest:REF_34 value:REF_37
+EXPRESSION:broughtSprites[spriteId].owner.transfer(broughtSprites[spriteId].price)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3
+Call context: 
+None
+REF_48(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_49(uint256) -> REF_48.timesTraded
+TMP_71(bool) = REF_49 == 0
+CONDITION TMP_71
+EXPRESSION:TMP_71(bool) = REF_49 == 0	NodeType.IF" -> "BlockID: 6
+Call context: 
+True
+TMP_72(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 3
+Call context: 
+None
+REF_48(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_49(uint256) -> REF_48.timesTraded
+TMP_71(bool) = REF_49 == 0
+CONDITION TMP_71
+EXPRESSION:TMP_71(bool) = REF_49 == 0	NodeType.IF" -> "BlockID: 7
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 7
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 9
+Call context: 
+None
+REF_50(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_51(uint256) -> REF_50.price
+TMP_73(bool) = REF_51 == 0
+CONDITION TMP_73
+EXPRESSION:TMP_73(bool) = REF_51 == 0	NodeType.IF" [key=0];
+"BlockID: 9
+Call context: 
+None
+REF_50(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_51(uint256) -> REF_50.price
+TMP_73(bool) = REF_51 == 0
+CONDITION TMP_73
+EXPRESSION:TMP_73(bool) = REF_51 == 0	NodeType.IF" -> "BlockID: 11
+Call context: 
+True
+TMP_74(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 9
+Call context: 
+None
+REF_50(CryptoSprites.BroughtSprites) -> broughtSprites[spriteId]
+REF_51(uint256) -> REF_50.price
+TMP_73(bool) = REF_51 == 0
+CONDITION TMP_73
+EXPRESSION:TMP_73(bool) = REF_51 == 0	NodeType.IF" -> "BlockID: 12
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 12
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 15
+Call context: 
+True
+TMP_75 = CONVERT SaleClockAuctionAddress to SaleClockAuction
+TMP_76(uint256) = HIGH_LEVEL_CALL, dest:TMP_75(SaleClockAuction), function:getCurrentPrice, arguments:['spriteId']  
+EXPRESSION:" [key=0];
+"BlockID: 17
+Call context: 
+None
+priceIfAny(uint256) := TMP_76(uint256)
+TMP_77(bool) = priceIfAny > 0
+CONDITION TMP_77
+EXPRESSION:TMP_77(bool) = priceIfAny > 0	NodeType.IF" -> "BlockID: 19
+Call context: 
+True
+TMP_78(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 17
+Call context: 
+None
+priceIfAny(uint256) := TMP_76(uint256)
+TMP_77(bool) = priceIfAny > 0
+CONDITION TMP_77
+EXPRESSION:TMP_77(bool) = priceIfAny > 0	NodeType.IF" -> "BlockID: 20
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 20
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 21
+Call context: 
+None
+TMP_79(uint256) = priceIfAny / 1000
+TMP_80(uint256) = TMP_79 * ownerCut
+TMP_81(uint256) = TMP_80 * priceMultiplier
+TMP_82(uint256) = TMP_81 / priceDivider
+_ownerCut(uint256) := TMP_82(uint256)
+TMP_83(uint256) = priceIfAny / 1000
+TMP_84(uint256) = TMP_83 * charityCut
+TMP_85(uint256) = TMP_84 * priceMultiplier
+TMP_86(uint256) = TMP_85 / priceDivider
+_charityCut(uint256) := TMP_86(uint256)
+TMP_87(uint256) = priceIfAny * priceMultiplier
+TMP_88(uint256) = TMP_87 / priceDivider
+TMP_89(uint256) = TMP_88 + _ownerCut
+TMP_90(uint256) = TMP_89 + _charityCut
+TMP_91(bool) = msg.value >= TMP_90
+CONDITION TMP_91
+EXPRESSION:TMP_91(bool) = msg.value >= TMP_90	NodeType.IF" [key=0];
+"BlockID: 21
+Call context: 
+None
+TMP_79(uint256) = priceIfAny / 1000
+TMP_80(uint256) = TMP_79 * ownerCut
+TMP_81(uint256) = TMP_80 * priceMultiplier
+TMP_82(uint256) = TMP_81 / priceDivider
+_ownerCut(uint256) := TMP_82(uint256)
+TMP_83(uint256) = priceIfAny / 1000
+TMP_84(uint256) = TMP_83 * charityCut
+TMP_85(uint256) = TMP_84 * priceMultiplier
+TMP_86(uint256) = TMP_85 / priceDivider
+_charityCut(uint256) := TMP_86(uint256)
+TMP_87(uint256) = priceIfAny * priceMultiplier
+TMP_88(uint256) = TMP_87 / priceDivider
+TMP_89(uint256) = TMP_88 + _ownerCut
+TMP_90(uint256) = TMP_89 + _charityCut
+TMP_91(bool) = msg.value >= TMP_90
+CONDITION TMP_91
+EXPRESSION:TMP_91(bool) = msg.value >= TMP_90	NodeType.IF" -> "BlockID: 22
+Call context: 
+True
+TMP_92(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 21
+Call context: 
+None
+TMP_79(uint256) = priceIfAny / 1000
+TMP_80(uint256) = TMP_79 * ownerCut
+TMP_81(uint256) = TMP_80 * priceMultiplier
+TMP_82(uint256) = TMP_81 / priceDivider
+_ownerCut(uint256) := TMP_82(uint256)
+TMP_83(uint256) = priceIfAny / 1000
+TMP_84(uint256) = TMP_83 * charityCut
+TMP_85(uint256) = TMP_84 * priceMultiplier
+TMP_86(uint256) = TMP_85 / priceDivider
+_charityCut(uint256) := TMP_86(uint256)
+TMP_87(uint256) = priceIfAny * priceMultiplier
+TMP_88(uint256) = TMP_87 / priceDivider
+TMP_89(uint256) = TMP_88 + _ownerCut
+TMP_90(uint256) = TMP_89 + _charityCut
+TMP_91(bool) = msg.value >= TMP_90
+CONDITION TMP_91
+EXPRESSION:TMP_91(bool) = msg.value >= TMP_90	NodeType.IF" -> "BlockID: 23
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 23
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 24
+Call context: 
+True
+NEW VARIABLE kittyOwner
+TMP_93 = CONVERT SaleClockAuctionAddress to SaleClockAuction
+TUPLE_1(address,uint256,uint256,uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_93(SaleClockAuction), function:getAuction, arguments:['spriteId']  
+EXPRESSION:None	NodeType.VARIABLE
+(kittyOwner) = SaleClockAuction(SaleClockAuctionAddress).getAuction(spriteId)	NodeType.EXPRESSION" [key=0];
+}

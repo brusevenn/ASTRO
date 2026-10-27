@@ -1,0 +1,1737 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+TMP_751(bool) = msg.value != 0
+CONDITION TMP_751
+EXPRESSION:msg.value != 0	NodeType.IF";
+"BlockID: 4
+Call context: 
+None
+TMP_754 = CONVERT WNATIVE to IERC20
+TMP_755 = CONVERT this to address
+TMP_756(uint256) = HIGH_LEVEL_CALL, dest:TMP_754(IERC20), function:balanceOf, arguments:['TMP_755']  
+EXPRESSION:depositNative()	NodeType.EXPRESSION";
+"BlockID: 12
+Call context: 
+None
+TMP_427 = CONVERT CORE to IInitCore
+TMP_428(uint256) = HIGH_LEVEL_CALL, dest:TMP_427(IInitCore), function:createPos, arguments:['_mode', '_viewer']  
+EXPRESSION:refundNative()	NodeType.EXPRESSION
+initPosId = IInitCore(CORE).createPos(_mode,_viewer)	NodeType.EXPRESSION";
+"BlockID: 15
+Call context: 
+None
+initPosId(uint256) := TMP_428(uint256)
+TMP_429 = CONVERT _borrPool to ILendingPool
+TMP_430(address) = HIGH_LEVEL_CALL, dest:TMP_429(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:initPosId = IInitCore(CORE).createPos(_mode,_viewer)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 16
+Call context: 
+None
+borrToken(address) := TMP_430(address)
+NEW VARIABLE baseToken
+NEW VARIABLE quoteToken
+TMP_431 = CONVERT _collPool to ILendingPool
+TMP_432(address) = HIGH_LEVEL_CALL, dest:TMP_431(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:borrToken = ILendingPool(_borrPool).underlyingToken()	NodeType.VARIABLE
+borrToken = ILendingPool(_borrPool).underlyingToken()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(baseToken,quoteToken) = getBaseAssetAndQuoteAsset(ILendingPool(_collPool).underlyingToken(),ILendingPool(_borrPool).underlyingToken())	NodeType.EXPRESSION" [shape=box];
+"BlockID: 17
+Call context: 
+None
+TMP_433 = CONVERT _borrPool to ILendingPool
+TMP_434(address) = HIGH_LEVEL_CALL, dest:TMP_433(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:(baseToken,quoteToken) = getBaseAssetAndQuoteAsset(ILendingPool(_collPool).underlyingToken(),ILendingPool(_borrPool).underlyingToken())	NodeType.EXPRESSION" [shape=box];
+"BlockID: 18
+Call context: 
+None
+NEW VARIABLE token0
+NEW VARIABLE token1
+TMP_647(bool) = _tokenA < _tokenB
+CONDITION TMP_647
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+_tokenA < _tokenB	NodeType.IF" [shape=box];
+"BlockID: 2
+Call context: openPos
+True
+TMP_752 = CONVERT WNATIVE to IWNative
+HIGH_LEVEL_CALL, dest:TMP_752(IWNative), function:deposit, arguments:[] value:msg.value 
+EXPRESSION:IWNative(WNATIVE).deposit{value: msg.value}()	NodeType.EXPRESSION";
+"BlockID: 3
+Call context: openPos
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 5
+Call context: openPos
+None
+wNativeBal(uint256) := TMP_756(uint256)
+TMP_757(bool) = wNativeBal != 0
+CONDITION TMP_757
+EXPRESSION:wNativeBal = IERC20(WNATIVE).balanceOf(address(this))	NodeType.VARIABLE
+wNativeBal = IERC20(WNATIVE).balanceOf(address(this))	NodeType.EXPRESSION
+wNativeBal != 0	NodeType.IF" [shape=box];
+"BlockID: 6
+Call context: openPos
+True
+TMP_758 = CONVERT WNATIVE to IWNative
+HIGH_LEVEL_CALL, dest:TMP_758(IWNative), function:withdraw, arguments:['wNativeBal']  
+EXPRESSION:IWNative(WNATIVE).withdraw(wNativeBal)	NodeType.EXPRESSION";
+"BlockID: 7
+Call context: openPos
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 8
+Call context: openPos
+None
+TMP_760 = CONVERT this to address
+TMP_761(uint256) = SOLIDITY_CALL balance(address)(TMP_760)
+nativeBal(uint256) := TMP_761(uint256)
+TMP_762(bool) = nativeBal != 0
+CONDITION TMP_762
+EXPRESSION:nativeBal = address(this).balance	NodeType.VARIABLE
+nativeBal = address(this).balance	NodeType.EXPRESSION
+nativeBal != 0	NodeType.IF";
+"BlockID: 9
+Call context: openPos
+True
+NEW VARIABLE success
+TMP_763 = CONVERT msg.sender to address
+TUPLE_13(bool,bytes) = LOW_LEVEL_CALL, dest:TMP_763, function:call, arguments:[''] value:nativeBal 
+EXPRESSION:None	NodeType.VARIABLE
+(success) = address(msg.sender).call{value: nativeBal}()	NodeType.EXPRESSION";
+"BlockID: 10
+Call context: openPos
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 11
+Call context: openPos
+None
+success(bool)= UNPACK TUPLE_13 index: 0 
+REF_444(uint32) -> Errors.CALL_FAILED
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:(success) = address(msg.sender).call{value: nativeBal}()	NodeType.EXPRESSION
+! _condition	NodeType.IF" [shape=box];
+"BlockID: 13
+Call context: openPos,refundNative
+True
+TMP_766(bytes) = SOLIDITY_CALL abi.encodePacked()(_errorCode)
+TMP_767 = CONVERT TMP_766 to string
+TMP_768(None) = SOLIDITY_CALL revert(string)(TMP_767)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 14
+Call context: openPos,refundNative
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 19
+Call context: openPos
+True
+token0(address) := _tokenA(address)
+token1(address) := _tokenB(address)
+EXPRESSION:(token0,token1) = (_tokenA,_tokenB)	NodeType.EXPRESSION";
+"BlockID: 20
+Call context: openPos
+False
+token0(address) := _tokenB(address)
+token1(address) := _tokenA(address)
+EXPRESSION:(token0,token1) = (_tokenB,_tokenA)	NodeType.EXPRESSION";
+"BlockID: 21
+Call context: openPos
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 22
+Call context: openPos
+None
+REF_356(mapping(address => address)) -> __quoteAssets[token0]
+REF_357(address) -> REF_356[token1]
+quoteAsset(address) := REF_357(address)
+TMP_644 = CONVERT 0 to address
+TMP_645(bool) = quoteAsset != TMP_644
+REF_358(uint32) -> Errors.ZERO_VALUE
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:quoteAsset = __quoteAssets[token0][token1]	NodeType.EXPRESSION
+! _condition	NodeType.IF";
+"BlockID: 25
+Call context: openPos
+None
+TMP_648(bool) = quoteAsset == token0
+CONDITION TMP_648
+EXPRESSION:_require(quoteAsset != address(0),Errors.ZERO_VALUE)	NodeType.EXPRESSION
+quoteAsset == token0	NodeType.IF";
+"BlockID: 26
+Call context: openPos
+True
+baseAsset(address) := token1(address)
+EXPRESSION:baseAsset = token1	NodeType.EXPRESSION";
+"BlockID: 27
+Call context: openPos
+False
+baseAsset(address) := token0(address)
+EXPRESSION:baseAsset = token0	NodeType.EXPRESSION";
+"BlockID: 28
+Call context: openPos
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 23
+Call context: openPos,getBaseAssetAndQuoteAsset
+True
+TMP_766(bytes) = SOLIDITY_CALL abi.encodePacked()(_errorCode)
+TMP_767 = CONVERT TMP_766 to string
+TMP_768(None) = SOLIDITY_CALL revert(string)(TMP_767)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 24
+Call context: openPos,getBaseAssetAndQuoteAsset
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 29
+Call context: 
+None
+TMP_903(None) := quoteAsset(address)
+TMP_903(None) := baseAsset(address)
+baseToken(address)= UNPACK TUPLE_9 index: 0 
+quoteToken(address)= UNPACK TUPLE_9 index: 1 
+TMP_435(bool) = baseToken != borrToken
+isLongBaseAsset(bool) := TMP_435(bool)
+REF_120(MarginPos) -> __marginPositions[initPosId]
+TMP_436(MarginPos) = new MarginPos(_collPool,_borrPool,baseToken,quoteToken,isLongBaseAsset)
+REF_120(MarginPos) (->__marginPositions) := TMP_436(MarginPos)
+REF_121(uint256) -> lastPosIds[msg.sender]
+REF_121(-> lastPosIds) = REF_121 (c)+ 1
+posId(uint256) := REF_121(uint256)
+REF_122(mapping(uint256 => uint256)) -> initPosIds[msg.sender]
+REF_123(uint256) -> REF_122[posId]
+REF_123(uint256) (->initPosIds) := initPosId(uint256)
+TMP_437(IMarginTradingHook.IncreasePosInternalParam) = new IncreasePosInternalParam(initPosId,_tokenIn,_amtIn,_borrPool,_borrAmt,_collPool,_data,_minHealth_e18)
+REF_130(address) -> _param.tokenIn
+REF_131(uint256) -> _param.amtIn
+amtToTransfer(uint256) := _amt(uint256)
+TMP_714(bool) = msg.value != 0
+CONDITION TMP_714
+EXPRESSION:(baseToken,quoteToken) = getBaseAssetAndQuoteAsset(ILendingPool(_collPool).underlyingToken(),ILendingPool(_borrPool).underlyingToken())	NodeType.EXPRESSION
+isLongBaseAsset = baseToken != borrToken	NodeType.VARIABLE
+isLongBaseAsset = baseToken != borrToken	NodeType.EXPRESSION
+__marginPositions[initPosId] = MarginPos(_collPool,_borrPool,baseToken,quoteToken,isLongBaseAsset)	NodeType.EXPRESSION
+posId = ++ lastPosIds[msg.sender]	NodeType.EXPRESSION
+initPosIds[msg.sender][posId] = initPosId	NodeType.EXPRESSION
+amtToTransfer = _amt	NodeType.VARIABLE
+amtToTransfer = _amt	NodeType.EXPRESSION
+msg.value != 0	NodeType.IF";
+"BlockID: 42
+Call context: openPos
+None
+TMP_449bytes[])  = new bytes[](4)
+multicallData(bytes[]) =  ['TMP_449(bytes[])']
+REF_132(bytes) -> multicallData[0]
+TMP_450 = CONVERT CORE to IInitCore
+REF_135(bytes4) (->None) := 585716652(uint256)
+REF_136(address) -> _param.borrPool
+REF_137(uint256) -> _param.borrAmt
+REF_138(uint256) -> _param.initPosId
+TMP_451 = CONVERT this to address
+TMP_452(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_135,REF_136,REF_137,REF_138,TMP_451)
+REF_132(bytes) (->multicallData) := TMP_452(bytes)
+REF_139(address) -> _param.collPool
+TMP_453 = CONVERT REF_139 to ILendingPool
+TMP_454(address) = HIGH_LEVEL_CALL, dest:TMP_453(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:_transmitTokenIn(_param.tokenIn,_param.amtIn)	NodeType.EXPRESSION
+multicallData = new bytes[](4)	NodeType.VARIABLE
+multicallData = new bytes[](4)	NodeType.EXPRESSION
+multicallData[0] = abi.encodeWithSelector(IInitCore(CORE).borrow.selector,_param.borrPool,_param.borrAmt,_param.initPosId,address(this))	NodeType.EXPRESSION";
+"BlockID: 45
+Call context: openPos
+None
+collToken(address) := TMP_454(address)
+REF_141(address) -> _param.borrPool
+TMP_455 = CONVERT REF_141 to ILendingPool
+TMP_456(address) = HIGH_LEVEL_CALL, dest:TMP_455(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:collToken = ILendingPool(_param.collPool).underlyingToken()	NodeType.VARIABLE
+collToken = ILendingPool(_param.collPool).underlyingToken()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 47
+Call context: openPos
+None
+borrToken(address) := TMP_456(address)
+REF_143(address) -> _param.tokenIn
+TMP_457(bool) = REF_143 == collToken
+REF_144(address) -> _param.tokenIn
+TMP_458(bool) = REF_144 == borrToken
+TMP_459(bool) = TMP_457 || TMP_458
+REF_145(uint32) -> Errors.INVALID_INPUT
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:borrToken = ILendingPool(_param.borrPool).underlyingToken()	NodeType.VARIABLE
+borrToken = ILendingPool(_param.borrPool).underlyingToken()	NodeType.EXPRESSION
+! _condition	NodeType.IF" [shape=box];
+"BlockID: 56
+Call context: openPos
+None
+REF_146(uint256) -> _param.initPosId
+REF_147(SwapType) -> SwapType.OpenExactIn
+REF_148(bytes) -> _param.data
+TMP_461(SwapInfo) = new SwapInfo(REF_146,REF_147,borrToken,collToken,0,REF_148)
+swapInfo(SwapInfo) := TMP_461(SwapInfo)
+REF_149(bytes) -> multicallData[1]
+TMP_462 = CONVERT CORE to IInitCore
+REF_152(bytes4) (->None) := 2103493374(uint256)
+TMP_463 = CONVERT this to address
+TMP_464(bytes) = SOLIDITY_CALL abi.encode()(swapInfo)
+TMP_465(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_152,TMP_463,0,TMP_464)
+REF_149(bytes) (->multicallData) := TMP_465(bytes)
+REF_154(bytes) -> multicallData[2]
+TMP_466 = CONVERT CORE to IInitCore
+REF_157(bytes4) (->None) := 2501602306(uint256)
+REF_158(address) -> _param.collPool
+TMP_467(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_157,REF_158,POS_MANAGER)
+REF_154(bytes) (->multicallData) := TMP_467(bytes)
+REF_159(bytes) -> multicallData[3]
+TMP_468 = CONVERT CORE to IInitCore
+REF_162(bytes4) (->None) := 2884951353(uint256)
+REF_163(uint256) -> _param.initPosId
+REF_164(address) -> _param.collPool
+TMP_469(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_162,REF_163,REF_164)
+REF_159(bytes) (->multicallData) := TMP_469(bytes)
+TMP_470 = CONVERT CORE to IMulticall
+TMP_471(bytes[]) = HIGH_LEVEL_CALL, dest:TMP_470(IMulticall), function:multicall, arguments:['multicallData']  
+EXPRESSION:_require(_param.tokenIn == collToken || _param.tokenIn == borrToken,Errors.INVALID_INPUT)	NodeType.EXPRESSION
+swapInfo = SwapInfo(_param.initPosId,SwapType.OpenExactIn,borrToken,collToken,0,_param.data)	NodeType.VARIABLE
+swapInfo = SwapInfo(_param.initPosId,SwapType.OpenExactIn,borrToken,collToken,0,_param.data)	NodeType.EXPRESSION
+multicallData[1] = abi.encodeWithSelector(IInitCore(CORE).callback.selector,address(this),0,abi.encode(swapInfo))	NodeType.EXPRESSION
+multicallData[2] = abi.encodeWithSelector(IInitCore(CORE).mintTo.selector,_param.collPool,POS_MANAGER)	NodeType.EXPRESSION
+multicallData[3] = abi.encodeWithSelector(IInitCore(CORE).collateralize.selector,_param.initPosId,_param.collPool)	NodeType.EXPRESSION
+IMulticall(CORE).multicall(multicallData)	NodeType.EXPRESSION";
+"BlockID: 60
+Call context: openPos
+None
+REF_166(uint256) -> _param.initPosId
+REF_167(uint256) -> _param.minHealth_e18
+TMP_728 = CONVERT CORE to IInitCore
+TMP_729(uint256) = HIGH_LEVEL_CALL, dest:TMP_728(IInitCore), function:getPosHealthCurrent_e18, arguments:['_initPosId']  
+EXPRESSION:IMulticall(CORE).multicall(multicallData)	NodeType.EXPRESSION
+health_e18 = IInitCore(CORE).getPosHealthCurrent_e18(_initPosId)	NodeType.EXPRESSION";
+"BlockID: 30
+Call context: openPos,_increasePosInternal
+True
+TMP_715(bool) = _tokenIn == WNATIVE
+REF_432(uint32) -> Errors.NOT_WNATIVE
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:! _condition	NodeType.IF";
+"BlockID: 31
+Call context: openPos,_increasePosInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 34
+Call context: openPos,_increasePosInternal
+None
+TMP_717(bool) = amtToTransfer != 0
+CONDITION TMP_717
+EXPRESSION:amtToTransfer != 0	NodeType.IF";
+"BlockID: 36
+Call context: openPos,_increasePosInternal
+True
+TMP_718 = CONVERT _tokenIn to IERC20
+TMP_719 = CONVERT this to address
+REF_75(bytes4) (->None) := 599290589(uint256)
+TMP_289(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_75,from,to,value)
+TMP_323 = CONVERT token to address
+TMP_10 = CONVERT this to address
+TMP_11(uint256) = SOLIDITY_CALL balance(address)(TMP_10)
+TMP_12(bool) = TMP_11 >= value
+CONDITION TMP_12
+EXPRESSION:TMP_12(bool) = TMP_11 >= value	NodeType.IF";
+"BlockID: 37
+Call context: openPos,_increasePosInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 35
+Call context: openPos,_increasePosInternal
+None
+TMP_721(bool) = _amt > msg.value
+CONDITION TMP_721
+EXPRESSION:_require(_tokenIn == WNATIVE,Errors.NOT_WNATIVE)	NodeType.EXPRESSION
+_amt > msg.value	NodeType.IF";
+"BlockID: 38
+Call context: openPos,_increasePosInternal
+True
+TMP_722(uint256) = amtToTransfer (c)- msg.value
+amtToTransfer(uint256) := TMP_722(uint256)
+EXPRESSION:amtToTransfer = amtToTransfer - msg.value	NodeType.EXPRESSION";
+"BlockID: 39
+Call context: openPos,_increasePosInternal
+False
+amtToTransfer(uint256) := 0(uint256)
+EXPRESSION:amtToTransfer = 0	NodeType.EXPRESSION";
+"BlockID: 43
+Call context: openPos,_increasePosInternal
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 32
+Call context: openPos,_increasePosInternal,_transmitTokenIn
+True
+TMP_766(bytes) = SOLIDITY_CALL abi.encodePacked()(_errorCode)
+TMP_767 = CONVERT TMP_766 to string
+TMP_768(None) = SOLIDITY_CALL revert(string)(TMP_767)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 33
+Call context: openPos,_increasePosInternal,_transmitTokenIn
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 61
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom
+True
+TMP_328(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 62
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 44
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_1(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:value 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION";
+"BlockID: 46
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_1 index: 0 
+returndata(bytes)= UNPACK TUPLE_1 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION
+success	NodeType.IF" [shape=box];
+"BlockID: 40
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall
+True
+TMP_13(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 41
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 48
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+REF_5 -> LENGTH returndata
+TMP_19(bool) = REF_5 == 0
+CONDITION TMP_19
+EXPRESSION:returndata.length == 0	NodeType.IF";
+"BlockID: 49
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+False
+REF_6 -> LENGTH returndata
+TMP_24(bool) = REF_6 > 0
+CONDITION TMP_24
+END_IF
+EXPRESSION:returndata.length > 0	NodeType.IF
+None	NodeType.ENDIF";
+"BlockID: 52
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+TMP_0(bytes) = SOLIDITY_CALL code(address)(account)
+REF_0 -> LENGTH TMP_0
+TMP_1(bool) = REF_0 > 0
+TMP_787(None) := TMP_1(bool)
+CONDITION TMP_20
+EXPRESSION:qiantao require	NodeType.IF";
+"BlockID: 53
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 59
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+None
+TMP_797(None) := returndata(bytes)
+TMP_792(None) := TMP_14(bytes)
+TMP_790(None) := TMP_8(bytes)
+returndata(bytes) := TMP_324(bytes)
+REF_98 -> LENGTH returndata
+TMP_325(bool) = REF_98 == 0
+TMP_326(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+TMP_327(bool) = TMP_325 || TMP_326
+CONDITION TMP_327
+EXPRESSION:TMP_327(bool) = TMP_325 || TMP_326	NodeType.IF";
+"BlockID: 57
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+TMP_21(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 58
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 54
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue,verifyCallResultFromTarget
+True
+INLINE ASM
+NEW VARIABLE returndata_size__revert_asm_0
+TMP_25(uint256) = SOLIDITY_CALL mload(uint256)(returndata)
+returndata_size__revert_asm_0(uint256) := TMP_25(uint256)
+TMP_26(uint256) = 32 + returndata
+TMP_27(None) = SOLIDITY_CALL revert(uint256,uint256)(TMP_26,returndata_size__revert_asm_0)
+EXPRESSION:None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+returndata_size__revert_asm_0 = mload(uint256)(returndata)	NodeType.EXPRESSION
+revert(uint256,uint256)(32 + returndata,returndata_size__revert_asm_0)	NodeType.EXPRESSION";
+"BlockID: 55
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue,verifyCallResultFromTarget
+False
+TMP_28(None) = SOLIDITY_CALL revert(string)(errorMessage)
+EXPRESSION:revert(string)(errorMessage)	NodeType.EXPRESSION";
+"BlockID: 50
+Call context: openPos,_increasePosInternal
+True
+TMP_766(bytes) = SOLIDITY_CALL abi.encodePacked()(_errorCode)
+TMP_767 = CONVERT TMP_766 to string
+TMP_768(None) = SOLIDITY_CALL revert(string)(TMP_767)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 51
+Call context: openPos,_increasePosInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 63
+Call context: openPos,_increasePosInternal
+None
+health_e18(uint256) := TMP_729(uint256)
+TMP_730(bool) = health_e18 >= _minHealth_e18
+REF_436(uint32) -> Errors.SLIPPAGE_CONTROL
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:health_e18 = IInitCore(CORE).getPosHealthCurrent_e18(_initPosId)	NodeType.EXPRESSION
+! _condition	NodeType.IF" [shape=box];
+"BlockID: 64
+Call context: openPos,_increasePosInternal,_validateHealth
+True
+TMP_766(bytes) = SOLIDITY_CALL abi.encodePacked()(_errorCode)
+TMP_767 = CONVERT TMP_766 to string
+TMP_768(None) = SOLIDITY_CALL revert(string)(TMP_767)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 65
+Call context: openPos,_increasePosInternal,_validateHealth
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 66
+Call context: openPos
+None
+TMP_914(None) := health_e18(uint256)
+health_e18(uint256) := TMP_472(uint256)
+TMP_891(None) := health_e18(uint256)
+health_e18(uint256) := TMP_438(uint256)
+EXPRESSION:health_e18 = _validateHealth(_param.initPosId,_param.minHealth_e18)	NodeType.EXPRESSION
+health_e18 = _increasePosInternal(IncreasePosInternalParam(initPosId,_tokenIn,_amtIn,_borrPool,_borrAmt,_collPool,_data,_minHealth_e18))	NodeType.EXPRESSION";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+TMP_751(bool) = msg.value != 0
+CONDITION TMP_751
+EXPRESSION:msg.value != 0	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_751(bool) = msg.value != 0
+CONDITION TMP_751
+EXPRESSION:msg.value != 0	NodeType.IF" -> "BlockID: 2
+Call context: openPos
+True
+TMP_752 = CONVERT WNATIVE to IWNative
+HIGH_LEVEL_CALL, dest:TMP_752(IWNative), function:deposit, arguments:[] value:msg.value 
+EXPRESSION:IWNative(WNATIVE).deposit{value: msg.value}()	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+TMP_751(bool) = msg.value != 0
+CONDITION TMP_751
+EXPRESSION:msg.value != 0	NodeType.IF" -> "BlockID: 3
+Call context: openPos
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 4
+Call context: 
+None
+TMP_754 = CONVERT WNATIVE to IERC20
+TMP_755 = CONVERT this to address
+TMP_756(uint256) = HIGH_LEVEL_CALL, dest:TMP_754(IERC20), function:balanceOf, arguments:['TMP_755']  
+EXPRESSION:depositNative()	NodeType.EXPRESSION" -> "BlockID: 5
+Call context: openPos
+None
+wNativeBal(uint256) := TMP_756(uint256)
+TMP_757(bool) = wNativeBal != 0
+CONDITION TMP_757
+EXPRESSION:wNativeBal = IERC20(WNATIVE).balanceOf(address(this))	NodeType.VARIABLE
+wNativeBal = IERC20(WNATIVE).balanceOf(address(this))	NodeType.EXPRESSION
+wNativeBal != 0	NodeType.IF" [key="successor_5"];
+"BlockID: 12
+Call context: 
+None
+TMP_427 = CONVERT CORE to IInitCore
+TMP_428(uint256) = HIGH_LEVEL_CALL, dest:TMP_427(IInitCore), function:createPos, arguments:['_mode', '_viewer']  
+EXPRESSION:refundNative()	NodeType.EXPRESSION
+initPosId = IInitCore(CORE).createPos(_mode,_viewer)	NodeType.EXPRESSION" -> "BlockID: 15
+Call context: 
+None
+initPosId(uint256) := TMP_428(uint256)
+TMP_429 = CONVERT _borrPool to ILendingPool
+TMP_430(address) = HIGH_LEVEL_CALL, dest:TMP_429(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:initPosId = IInitCore(CORE).createPos(_mode,_viewer)	NodeType.EXPRESSION" [key=0];
+"BlockID: 15
+Call context: 
+None
+initPosId(uint256) := TMP_428(uint256)
+TMP_429 = CONVERT _borrPool to ILendingPool
+TMP_430(address) = HIGH_LEVEL_CALL, dest:TMP_429(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:initPosId = IInitCore(CORE).createPos(_mode,_viewer)	NodeType.EXPRESSION" -> "BlockID: 16
+Call context: 
+None
+borrToken(address) := TMP_430(address)
+NEW VARIABLE baseToken
+NEW VARIABLE quoteToken
+TMP_431 = CONVERT _collPool to ILendingPool
+TMP_432(address) = HIGH_LEVEL_CALL, dest:TMP_431(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:borrToken = ILendingPool(_borrPool).underlyingToken()	NodeType.VARIABLE
+borrToken = ILendingPool(_borrPool).underlyingToken()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(baseToken,quoteToken) = getBaseAssetAndQuoteAsset(ILendingPool(_collPool).underlyingToken(),ILendingPool(_borrPool).underlyingToken())	NodeType.EXPRESSION" [key=0];
+"BlockID: 16
+Call context: 
+None
+borrToken(address) := TMP_430(address)
+NEW VARIABLE baseToken
+NEW VARIABLE quoteToken
+TMP_431 = CONVERT _collPool to ILendingPool
+TMP_432(address) = HIGH_LEVEL_CALL, dest:TMP_431(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:borrToken = ILendingPool(_borrPool).underlyingToken()	NodeType.VARIABLE
+borrToken = ILendingPool(_borrPool).underlyingToken()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(baseToken,quoteToken) = getBaseAssetAndQuoteAsset(ILendingPool(_collPool).underlyingToken(),ILendingPool(_borrPool).underlyingToken())	NodeType.EXPRESSION" -> "BlockID: 17
+Call context: 
+None
+TMP_433 = CONVERT _borrPool to ILendingPool
+TMP_434(address) = HIGH_LEVEL_CALL, dest:TMP_433(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:(baseToken,quoteToken) = getBaseAssetAndQuoteAsset(ILendingPool(_collPool).underlyingToken(),ILendingPool(_borrPool).underlyingToken())	NodeType.EXPRESSION" [key=0];
+"BlockID: 17
+Call context: 
+None
+TMP_433 = CONVERT _borrPool to ILendingPool
+TMP_434(address) = HIGH_LEVEL_CALL, dest:TMP_433(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:(baseToken,quoteToken) = getBaseAssetAndQuoteAsset(ILendingPool(_collPool).underlyingToken(),ILendingPool(_borrPool).underlyingToken())	NodeType.EXPRESSION" -> "BlockID: 18
+Call context: 
+None
+NEW VARIABLE token0
+NEW VARIABLE token1
+TMP_647(bool) = _tokenA < _tokenB
+CONDITION TMP_647
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+_tokenA < _tokenB	NodeType.IF" [key=0];
+"BlockID: 18
+Call context: 
+None
+NEW VARIABLE token0
+NEW VARIABLE token1
+TMP_647(bool) = _tokenA < _tokenB
+CONDITION TMP_647
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+_tokenA < _tokenB	NodeType.IF" -> "BlockID: 19
+Call context: openPos
+True
+token0(address) := _tokenA(address)
+token1(address) := _tokenB(address)
+EXPRESSION:(token0,token1) = (_tokenA,_tokenB)	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 18
+Call context: 
+None
+NEW VARIABLE token0
+NEW VARIABLE token1
+TMP_647(bool) = _tokenA < _tokenB
+CONDITION TMP_647
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+_tokenA < _tokenB	NodeType.IF" -> "BlockID: 20
+Call context: openPos
+False
+token0(address) := _tokenB(address)
+token1(address) := _tokenA(address)
+EXPRESSION:(token0,token1) = (_tokenB,_tokenA)	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 2
+Call context: openPos
+True
+TMP_752 = CONVERT WNATIVE to IWNative
+HIGH_LEVEL_CALL, dest:TMP_752(IWNative), function:deposit, arguments:[] value:msg.value 
+EXPRESSION:IWNative(WNATIVE).deposit{value: msg.value}()	NodeType.EXPRESSION" -> "BlockID: 3
+Call context: openPos
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3
+Call context: openPos
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: 
+None
+TMP_754 = CONVERT WNATIVE to IERC20
+TMP_755 = CONVERT this to address
+TMP_756(uint256) = HIGH_LEVEL_CALL, dest:TMP_754(IERC20), function:balanceOf, arguments:['TMP_755']  
+EXPRESSION:depositNative()	NodeType.EXPRESSION" [key="Exit: depositNative", ref="MarginTradingHook.depositNative"];
+"BlockID: 5
+Call context: openPos
+None
+wNativeBal(uint256) := TMP_756(uint256)
+TMP_757(bool) = wNativeBal != 0
+CONDITION TMP_757
+EXPRESSION:wNativeBal = IERC20(WNATIVE).balanceOf(address(this))	NodeType.VARIABLE
+wNativeBal = IERC20(WNATIVE).balanceOf(address(this))	NodeType.EXPRESSION
+wNativeBal != 0	NodeType.IF" -> "BlockID: 6
+Call context: openPos
+True
+TMP_758 = CONVERT WNATIVE to IWNative
+HIGH_LEVEL_CALL, dest:TMP_758(IWNative), function:withdraw, arguments:['wNativeBal']  
+EXPRESSION:IWNative(WNATIVE).withdraw(wNativeBal)	NodeType.EXPRESSION" [key=0];
+"BlockID: 5
+Call context: openPos
+None
+wNativeBal(uint256) := TMP_756(uint256)
+TMP_757(bool) = wNativeBal != 0
+CONDITION TMP_757
+EXPRESSION:wNativeBal = IERC20(WNATIVE).balanceOf(address(this))	NodeType.VARIABLE
+wNativeBal = IERC20(WNATIVE).balanceOf(address(this))	NodeType.EXPRESSION
+wNativeBal != 0	NodeType.IF" -> "BlockID: 7
+Call context: openPos
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 6
+Call context: openPos
+True
+TMP_758 = CONVERT WNATIVE to IWNative
+HIGH_LEVEL_CALL, dest:TMP_758(IWNative), function:withdraw, arguments:['wNativeBal']  
+EXPRESSION:IWNative(WNATIVE).withdraw(wNativeBal)	NodeType.EXPRESSION" -> "BlockID: 7
+Call context: openPos
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 7
+Call context: openPos
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 8
+Call context: openPos
+None
+TMP_760 = CONVERT this to address
+TMP_761(uint256) = SOLIDITY_CALL balance(address)(TMP_760)
+nativeBal(uint256) := TMP_761(uint256)
+TMP_762(bool) = nativeBal != 0
+CONDITION TMP_762
+EXPRESSION:nativeBal = address(this).balance	NodeType.VARIABLE
+nativeBal = address(this).balance	NodeType.EXPRESSION
+nativeBal != 0	NodeType.IF" [key=0];
+"BlockID: 8
+Call context: openPos
+None
+TMP_760 = CONVERT this to address
+TMP_761(uint256) = SOLIDITY_CALL balance(address)(TMP_760)
+nativeBal(uint256) := TMP_761(uint256)
+TMP_762(bool) = nativeBal != 0
+CONDITION TMP_762
+EXPRESSION:nativeBal = address(this).balance	NodeType.VARIABLE
+nativeBal = address(this).balance	NodeType.EXPRESSION
+nativeBal != 0	NodeType.IF" -> "BlockID: 9
+Call context: openPos
+True
+NEW VARIABLE success
+TMP_763 = CONVERT msg.sender to address
+TUPLE_13(bool,bytes) = LOW_LEVEL_CALL, dest:TMP_763, function:call, arguments:[''] value:nativeBal 
+EXPRESSION:None	NodeType.VARIABLE
+(success) = address(msg.sender).call{value: nativeBal}()	NodeType.EXPRESSION" [key=0];
+"BlockID: 8
+Call context: openPos
+None
+TMP_760 = CONVERT this to address
+TMP_761(uint256) = SOLIDITY_CALL balance(address)(TMP_760)
+nativeBal(uint256) := TMP_761(uint256)
+TMP_762(bool) = nativeBal != 0
+CONDITION TMP_762
+EXPRESSION:nativeBal = address(this).balance	NodeType.VARIABLE
+nativeBal = address(this).balance	NodeType.EXPRESSION
+nativeBal != 0	NodeType.IF" -> "BlockID: 10
+Call context: openPos
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 9
+Call context: openPos
+True
+NEW VARIABLE success
+TMP_763 = CONVERT msg.sender to address
+TUPLE_13(bool,bytes) = LOW_LEVEL_CALL, dest:TMP_763, function:call, arguments:[''] value:nativeBal 
+EXPRESSION:None	NodeType.VARIABLE
+(success) = address(msg.sender).call{value: nativeBal}()	NodeType.EXPRESSION" -> "BlockID: 11
+Call context: openPos
+None
+success(bool)= UNPACK TUPLE_13 index: 0 
+REF_444(uint32) -> Errors.CALL_FAILED
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:(success) = address(msg.sender).call{value: nativeBal}()	NodeType.EXPRESSION
+! _condition	NodeType.IF" [key=0];
+"BlockID: 10
+Call context: openPos
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 12
+Call context: 
+None
+TMP_427 = CONVERT CORE to IInitCore
+TMP_428(uint256) = HIGH_LEVEL_CALL, dest:TMP_427(IInitCore), function:createPos, arguments:['_mode', '_viewer']  
+EXPRESSION:refundNative()	NodeType.EXPRESSION
+initPosId = IInitCore(CORE).createPos(_mode,_viewer)	NodeType.EXPRESSION" [key="Exit: refundNative", ref="MarginTradingHook.refundNative"];
+"BlockID: 11
+Call context: openPos
+None
+success(bool)= UNPACK TUPLE_13 index: 0 
+REF_444(uint32) -> Errors.CALL_FAILED
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:(success) = address(msg.sender).call{value: nativeBal}()	NodeType.EXPRESSION
+! _condition	NodeType.IF" -> "BlockID: 13
+Call context: openPos,refundNative
+True
+TMP_766(bytes) = SOLIDITY_CALL abi.encodePacked()(_errorCode)
+TMP_767 = CONVERT TMP_766 to string
+TMP_768(None) = SOLIDITY_CALL revert(string)(TMP_767)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 11
+Call context: openPos
+None
+success(bool)= UNPACK TUPLE_13 index: 0 
+REF_444(uint32) -> Errors.CALL_FAILED
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:(success) = address(msg.sender).call{value: nativeBal}()	NodeType.EXPRESSION
+! _condition	NodeType.IF" -> "BlockID: 14
+Call context: openPos,refundNative
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 14
+Call context: openPos,refundNative
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 10
+Call context: openPos
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="Exit: _require", ref="TopLevel._require"];
+"BlockID: 19
+Call context: openPos
+True
+token0(address) := _tokenA(address)
+token1(address) := _tokenB(address)
+EXPRESSION:(token0,token1) = (_tokenA,_tokenB)	NodeType.EXPRESSION" -> "BlockID: 21
+Call context: openPos
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 20
+Call context: openPos
+False
+token0(address) := _tokenB(address)
+token1(address) := _tokenA(address)
+EXPRESSION:(token0,token1) = (_tokenB,_tokenA)	NodeType.EXPRESSION" -> "BlockID: 21
+Call context: openPos
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 21
+Call context: openPos
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 22
+Call context: openPos
+None
+REF_356(mapping(address => address)) -> __quoteAssets[token0]
+REF_357(address) -> REF_356[token1]
+quoteAsset(address) := REF_357(address)
+TMP_644 = CONVERT 0 to address
+TMP_645(bool) = quoteAsset != TMP_644
+REF_358(uint32) -> Errors.ZERO_VALUE
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:quoteAsset = __quoteAssets[token0][token1]	NodeType.EXPRESSION
+! _condition	NodeType.IF" [key=0];
+"BlockID: 22
+Call context: openPos
+None
+REF_356(mapping(address => address)) -> __quoteAssets[token0]
+REF_357(address) -> REF_356[token1]
+quoteAsset(address) := REF_357(address)
+TMP_644 = CONVERT 0 to address
+TMP_645(bool) = quoteAsset != TMP_644
+REF_358(uint32) -> Errors.ZERO_VALUE
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:quoteAsset = __quoteAssets[token0][token1]	NodeType.EXPRESSION
+! _condition	NodeType.IF" -> "BlockID: 23
+Call context: openPos,getBaseAssetAndQuoteAsset
+True
+TMP_766(bytes) = SOLIDITY_CALL abi.encodePacked()(_errorCode)
+TMP_767 = CONVERT TMP_766 to string
+TMP_768(None) = SOLIDITY_CALL revert(string)(TMP_767)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 22
+Call context: openPos
+None
+REF_356(mapping(address => address)) -> __quoteAssets[token0]
+REF_357(address) -> REF_356[token1]
+quoteAsset(address) := REF_357(address)
+TMP_644 = CONVERT 0 to address
+TMP_645(bool) = quoteAsset != TMP_644
+REF_358(uint32) -> Errors.ZERO_VALUE
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:quoteAsset = __quoteAssets[token0][token1]	NodeType.EXPRESSION
+! _condition	NodeType.IF" -> "BlockID: 24
+Call context: openPos,getBaseAssetAndQuoteAsset
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 25
+Call context: openPos
+None
+TMP_648(bool) = quoteAsset == token0
+CONDITION TMP_648
+EXPRESSION:_require(quoteAsset != address(0),Errors.ZERO_VALUE)	NodeType.EXPRESSION
+quoteAsset == token0	NodeType.IF" -> "BlockID: 26
+Call context: openPos
+True
+baseAsset(address) := token1(address)
+EXPRESSION:baseAsset = token1	NodeType.EXPRESSION" [key=0];
+"BlockID: 25
+Call context: openPos
+None
+TMP_648(bool) = quoteAsset == token0
+CONDITION TMP_648
+EXPRESSION:_require(quoteAsset != address(0),Errors.ZERO_VALUE)	NodeType.EXPRESSION
+quoteAsset == token0	NodeType.IF" -> "BlockID: 27
+Call context: openPos
+False
+baseAsset(address) := token0(address)
+EXPRESSION:baseAsset = token0	NodeType.EXPRESSION" [key=0];
+"BlockID: 26
+Call context: openPos
+True
+baseAsset(address) := token1(address)
+EXPRESSION:baseAsset = token1	NodeType.EXPRESSION" -> "BlockID: 28
+Call context: openPos
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 27
+Call context: openPos
+False
+baseAsset(address) := token0(address)
+EXPRESSION:baseAsset = token0	NodeType.EXPRESSION" -> "BlockID: 28
+Call context: openPos
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 28
+Call context: openPos
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 29
+Call context: 
+None
+TMP_903(None) := quoteAsset(address)
+TMP_903(None) := baseAsset(address)
+baseToken(address)= UNPACK TUPLE_9 index: 0 
+quoteToken(address)= UNPACK TUPLE_9 index: 1 
+TMP_435(bool) = baseToken != borrToken
+isLongBaseAsset(bool) := TMP_435(bool)
+REF_120(MarginPos) -> __marginPositions[initPosId]
+TMP_436(MarginPos) = new MarginPos(_collPool,_borrPool,baseToken,quoteToken,isLongBaseAsset)
+REF_120(MarginPos) (->__marginPositions) := TMP_436(MarginPos)
+REF_121(uint256) -> lastPosIds[msg.sender]
+REF_121(-> lastPosIds) = REF_121 (c)+ 1
+posId(uint256) := REF_121(uint256)
+REF_122(mapping(uint256 => uint256)) -> initPosIds[msg.sender]
+REF_123(uint256) -> REF_122[posId]
+REF_123(uint256) (->initPosIds) := initPosId(uint256)
+TMP_437(IMarginTradingHook.IncreasePosInternalParam) = new IncreasePosInternalParam(initPosId,_tokenIn,_amtIn,_borrPool,_borrAmt,_collPool,_data,_minHealth_e18)
+REF_130(address) -> _param.tokenIn
+REF_131(uint256) -> _param.amtIn
+amtToTransfer(uint256) := _amt(uint256)
+TMP_714(bool) = msg.value != 0
+CONDITION TMP_714
+EXPRESSION:(baseToken,quoteToken) = getBaseAssetAndQuoteAsset(ILendingPool(_collPool).underlyingToken(),ILendingPool(_borrPool).underlyingToken())	NodeType.EXPRESSION
+isLongBaseAsset = baseToken != borrToken	NodeType.VARIABLE
+isLongBaseAsset = baseToken != borrToken	NodeType.EXPRESSION
+__marginPositions[initPosId] = MarginPos(_collPool,_borrPool,baseToken,quoteToken,isLongBaseAsset)	NodeType.EXPRESSION
+posId = ++ lastPosIds[msg.sender]	NodeType.EXPRESSION
+initPosIds[msg.sender][posId] = initPosId	NodeType.EXPRESSION
+amtToTransfer = _amt	NodeType.VARIABLE
+amtToTransfer = _amt	NodeType.EXPRESSION
+msg.value != 0	NodeType.IF" [key=N, ref=N];
+"BlockID: 24
+Call context: openPos,getBaseAssetAndQuoteAsset
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 25
+Call context: openPos
+None
+TMP_648(bool) = quoteAsset == token0
+CONDITION TMP_648
+EXPRESSION:_require(quoteAsset != address(0),Errors.ZERO_VALUE)	NodeType.EXPRESSION
+quoteAsset == token0	NodeType.IF" [key="Exit: _require", ref="TopLevel._require"];
+"BlockID: 29
+Call context: 
+None
+TMP_903(None) := quoteAsset(address)
+TMP_903(None) := baseAsset(address)
+baseToken(address)= UNPACK TUPLE_9 index: 0 
+quoteToken(address)= UNPACK TUPLE_9 index: 1 
+TMP_435(bool) = baseToken != borrToken
+isLongBaseAsset(bool) := TMP_435(bool)
+REF_120(MarginPos) -> __marginPositions[initPosId]
+TMP_436(MarginPos) = new MarginPos(_collPool,_borrPool,baseToken,quoteToken,isLongBaseAsset)
+REF_120(MarginPos) (->__marginPositions) := TMP_436(MarginPos)
+REF_121(uint256) -> lastPosIds[msg.sender]
+REF_121(-> lastPosIds) = REF_121 (c)+ 1
+posId(uint256) := REF_121(uint256)
+REF_122(mapping(uint256 => uint256)) -> initPosIds[msg.sender]
+REF_123(uint256) -> REF_122[posId]
+REF_123(uint256) (->initPosIds) := initPosId(uint256)
+TMP_437(IMarginTradingHook.IncreasePosInternalParam) = new IncreasePosInternalParam(initPosId,_tokenIn,_amtIn,_borrPool,_borrAmt,_collPool,_data,_minHealth_e18)
+REF_130(address) -> _param.tokenIn
+REF_131(uint256) -> _param.amtIn
+amtToTransfer(uint256) := _amt(uint256)
+TMP_714(bool) = msg.value != 0
+CONDITION TMP_714
+EXPRESSION:(baseToken,quoteToken) = getBaseAssetAndQuoteAsset(ILendingPool(_collPool).underlyingToken(),ILendingPool(_borrPool).underlyingToken())	NodeType.EXPRESSION
+isLongBaseAsset = baseToken != borrToken	NodeType.VARIABLE
+isLongBaseAsset = baseToken != borrToken	NodeType.EXPRESSION
+__marginPositions[initPosId] = MarginPos(_collPool,_borrPool,baseToken,quoteToken,isLongBaseAsset)	NodeType.EXPRESSION
+posId = ++ lastPosIds[msg.sender]	NodeType.EXPRESSION
+initPosIds[msg.sender][posId] = initPosId	NodeType.EXPRESSION
+amtToTransfer = _amt	NodeType.VARIABLE
+amtToTransfer = _amt	NodeType.EXPRESSION
+msg.value != 0	NodeType.IF" -> "BlockID: 30
+Call context: openPos,_increasePosInternal
+True
+TMP_715(bool) = _tokenIn == WNATIVE
+REF_432(uint32) -> Errors.NOT_WNATIVE
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:! _condition	NodeType.IF" [key="successor_1"];
+"BlockID: 29
+Call context: 
+None
+TMP_903(None) := quoteAsset(address)
+TMP_903(None) := baseAsset(address)
+baseToken(address)= UNPACK TUPLE_9 index: 0 
+quoteToken(address)= UNPACK TUPLE_9 index: 1 
+TMP_435(bool) = baseToken != borrToken
+isLongBaseAsset(bool) := TMP_435(bool)
+REF_120(MarginPos) -> __marginPositions[initPosId]
+TMP_436(MarginPos) = new MarginPos(_collPool,_borrPool,baseToken,quoteToken,isLongBaseAsset)
+REF_120(MarginPos) (->__marginPositions) := TMP_436(MarginPos)
+REF_121(uint256) -> lastPosIds[msg.sender]
+REF_121(-> lastPosIds) = REF_121 (c)+ 1
+posId(uint256) := REF_121(uint256)
+REF_122(mapping(uint256 => uint256)) -> initPosIds[msg.sender]
+REF_123(uint256) -> REF_122[posId]
+REF_123(uint256) (->initPosIds) := initPosId(uint256)
+TMP_437(IMarginTradingHook.IncreasePosInternalParam) = new IncreasePosInternalParam(initPosId,_tokenIn,_amtIn,_borrPool,_borrAmt,_collPool,_data,_minHealth_e18)
+REF_130(address) -> _param.tokenIn
+REF_131(uint256) -> _param.amtIn
+amtToTransfer(uint256) := _amt(uint256)
+TMP_714(bool) = msg.value != 0
+CONDITION TMP_714
+EXPRESSION:(baseToken,quoteToken) = getBaseAssetAndQuoteAsset(ILendingPool(_collPool).underlyingToken(),ILendingPool(_borrPool).underlyingToken())	NodeType.EXPRESSION
+isLongBaseAsset = baseToken != borrToken	NodeType.VARIABLE
+isLongBaseAsset = baseToken != borrToken	NodeType.EXPRESSION
+__marginPositions[initPosId] = MarginPos(_collPool,_borrPool,baseToken,quoteToken,isLongBaseAsset)	NodeType.EXPRESSION
+posId = ++ lastPosIds[msg.sender]	NodeType.EXPRESSION
+initPosIds[msg.sender][posId] = initPosId	NodeType.EXPRESSION
+amtToTransfer = _amt	NodeType.VARIABLE
+amtToTransfer = _amt	NodeType.EXPRESSION
+msg.value != 0	NodeType.IF" -> "BlockID: 31
+Call context: openPos,_increasePosInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_1"];
+"BlockID: 42
+Call context: openPos
+None
+TMP_449bytes[])  = new bytes[](4)
+multicallData(bytes[]) =  ['TMP_449(bytes[])']
+REF_132(bytes) -> multicallData[0]
+TMP_450 = CONVERT CORE to IInitCore
+REF_135(bytes4) (->None) := 585716652(uint256)
+REF_136(address) -> _param.borrPool
+REF_137(uint256) -> _param.borrAmt
+REF_138(uint256) -> _param.initPosId
+TMP_451 = CONVERT this to address
+TMP_452(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_135,REF_136,REF_137,REF_138,TMP_451)
+REF_132(bytes) (->multicallData) := TMP_452(bytes)
+REF_139(address) -> _param.collPool
+TMP_453 = CONVERT REF_139 to ILendingPool
+TMP_454(address) = HIGH_LEVEL_CALL, dest:TMP_453(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:_transmitTokenIn(_param.tokenIn,_param.amtIn)	NodeType.EXPRESSION
+multicallData = new bytes[](4)	NodeType.VARIABLE
+multicallData = new bytes[](4)	NodeType.EXPRESSION
+multicallData[0] = abi.encodeWithSelector(IInitCore(CORE).borrow.selector,_param.borrPool,_param.borrAmt,_param.initPosId,address(this))	NodeType.EXPRESSION" -> "BlockID: 45
+Call context: openPos
+None
+collToken(address) := TMP_454(address)
+REF_141(address) -> _param.borrPool
+TMP_455 = CONVERT REF_141 to ILendingPool
+TMP_456(address) = HIGH_LEVEL_CALL, dest:TMP_455(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:collToken = ILendingPool(_param.collPool).underlyingToken()	NodeType.VARIABLE
+collToken = ILendingPool(_param.collPool).underlyingToken()	NodeType.EXPRESSION" [key=0];
+"BlockID: 45
+Call context: openPos
+None
+collToken(address) := TMP_454(address)
+REF_141(address) -> _param.borrPool
+TMP_455 = CONVERT REF_141 to ILendingPool
+TMP_456(address) = HIGH_LEVEL_CALL, dest:TMP_455(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:collToken = ILendingPool(_param.collPool).underlyingToken()	NodeType.VARIABLE
+collToken = ILendingPool(_param.collPool).underlyingToken()	NodeType.EXPRESSION" -> "BlockID: 47
+Call context: openPos
+None
+borrToken(address) := TMP_456(address)
+REF_143(address) -> _param.tokenIn
+TMP_457(bool) = REF_143 == collToken
+REF_144(address) -> _param.tokenIn
+TMP_458(bool) = REF_144 == borrToken
+TMP_459(bool) = TMP_457 || TMP_458
+REF_145(uint32) -> Errors.INVALID_INPUT
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:borrToken = ILendingPool(_param.borrPool).underlyingToken()	NodeType.VARIABLE
+borrToken = ILendingPool(_param.borrPool).underlyingToken()	NodeType.EXPRESSION
+! _condition	NodeType.IF" [key=0];
+"BlockID: 47
+Call context: openPos
+None
+borrToken(address) := TMP_456(address)
+REF_143(address) -> _param.tokenIn
+TMP_457(bool) = REF_143 == collToken
+REF_144(address) -> _param.tokenIn
+TMP_458(bool) = REF_144 == borrToken
+TMP_459(bool) = TMP_457 || TMP_458
+REF_145(uint32) -> Errors.INVALID_INPUT
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:borrToken = ILendingPool(_param.borrPool).underlyingToken()	NodeType.VARIABLE
+borrToken = ILendingPool(_param.borrPool).underlyingToken()	NodeType.EXPRESSION
+! _condition	NodeType.IF" -> "BlockID: 50
+Call context: openPos,_increasePosInternal
+True
+TMP_766(bytes) = SOLIDITY_CALL abi.encodePacked()(_errorCode)
+TMP_767 = CONVERT TMP_766 to string
+TMP_768(None) = SOLIDITY_CALL revert(string)(TMP_767)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 47
+Call context: openPos
+None
+borrToken(address) := TMP_456(address)
+REF_143(address) -> _param.tokenIn
+TMP_457(bool) = REF_143 == collToken
+REF_144(address) -> _param.tokenIn
+TMP_458(bool) = REF_144 == borrToken
+TMP_459(bool) = TMP_457 || TMP_458
+REF_145(uint32) -> Errors.INVALID_INPUT
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:borrToken = ILendingPool(_param.borrPool).underlyingToken()	NodeType.VARIABLE
+borrToken = ILendingPool(_param.borrPool).underlyingToken()	NodeType.EXPRESSION
+! _condition	NodeType.IF" -> "BlockID: 51
+Call context: openPos,_increasePosInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 56
+Call context: openPos
+None
+REF_146(uint256) -> _param.initPosId
+REF_147(SwapType) -> SwapType.OpenExactIn
+REF_148(bytes) -> _param.data
+TMP_461(SwapInfo) = new SwapInfo(REF_146,REF_147,borrToken,collToken,0,REF_148)
+swapInfo(SwapInfo) := TMP_461(SwapInfo)
+REF_149(bytes) -> multicallData[1]
+TMP_462 = CONVERT CORE to IInitCore
+REF_152(bytes4) (->None) := 2103493374(uint256)
+TMP_463 = CONVERT this to address
+TMP_464(bytes) = SOLIDITY_CALL abi.encode()(swapInfo)
+TMP_465(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_152,TMP_463,0,TMP_464)
+REF_149(bytes) (->multicallData) := TMP_465(bytes)
+REF_154(bytes) -> multicallData[2]
+TMP_466 = CONVERT CORE to IInitCore
+REF_157(bytes4) (->None) := 2501602306(uint256)
+REF_158(address) -> _param.collPool
+TMP_467(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_157,REF_158,POS_MANAGER)
+REF_154(bytes) (->multicallData) := TMP_467(bytes)
+REF_159(bytes) -> multicallData[3]
+TMP_468 = CONVERT CORE to IInitCore
+REF_162(bytes4) (->None) := 2884951353(uint256)
+REF_163(uint256) -> _param.initPosId
+REF_164(address) -> _param.collPool
+TMP_469(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_162,REF_163,REF_164)
+REF_159(bytes) (->multicallData) := TMP_469(bytes)
+TMP_470 = CONVERT CORE to IMulticall
+TMP_471(bytes[]) = HIGH_LEVEL_CALL, dest:TMP_470(IMulticall), function:multicall, arguments:['multicallData']  
+EXPRESSION:_require(_param.tokenIn == collToken || _param.tokenIn == borrToken,Errors.INVALID_INPUT)	NodeType.EXPRESSION
+swapInfo = SwapInfo(_param.initPosId,SwapType.OpenExactIn,borrToken,collToken,0,_param.data)	NodeType.VARIABLE
+swapInfo = SwapInfo(_param.initPosId,SwapType.OpenExactIn,borrToken,collToken,0,_param.data)	NodeType.EXPRESSION
+multicallData[1] = abi.encodeWithSelector(IInitCore(CORE).callback.selector,address(this),0,abi.encode(swapInfo))	NodeType.EXPRESSION
+multicallData[2] = abi.encodeWithSelector(IInitCore(CORE).mintTo.selector,_param.collPool,POS_MANAGER)	NodeType.EXPRESSION
+multicallData[3] = abi.encodeWithSelector(IInitCore(CORE).collateralize.selector,_param.initPosId,_param.collPool)	NodeType.EXPRESSION
+IMulticall(CORE).multicall(multicallData)	NodeType.EXPRESSION" -> "BlockID: 60
+Call context: openPos
+None
+REF_166(uint256) -> _param.initPosId
+REF_167(uint256) -> _param.minHealth_e18
+TMP_728 = CONVERT CORE to IInitCore
+TMP_729(uint256) = HIGH_LEVEL_CALL, dest:TMP_728(IInitCore), function:getPosHealthCurrent_e18, arguments:['_initPosId']  
+EXPRESSION:IMulticall(CORE).multicall(multicallData)	NodeType.EXPRESSION
+health_e18 = IInitCore(CORE).getPosHealthCurrent_e18(_initPosId)	NodeType.EXPRESSION" [key=0];
+"BlockID: 60
+Call context: openPos
+None
+REF_166(uint256) -> _param.initPosId
+REF_167(uint256) -> _param.minHealth_e18
+TMP_728 = CONVERT CORE to IInitCore
+TMP_729(uint256) = HIGH_LEVEL_CALL, dest:TMP_728(IInitCore), function:getPosHealthCurrent_e18, arguments:['_initPosId']  
+EXPRESSION:IMulticall(CORE).multicall(multicallData)	NodeType.EXPRESSION
+health_e18 = IInitCore(CORE).getPosHealthCurrent_e18(_initPosId)	NodeType.EXPRESSION" -> "BlockID: 63
+Call context: openPos,_increasePosInternal
+None
+health_e18(uint256) := TMP_729(uint256)
+TMP_730(bool) = health_e18 >= _minHealth_e18
+REF_436(uint32) -> Errors.SLIPPAGE_CONTROL
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:health_e18 = IInitCore(CORE).getPosHealthCurrent_e18(_initPosId)	NodeType.EXPRESSION
+! _condition	NodeType.IF" [key="successor_5"];
+"BlockID: 30
+Call context: openPos,_increasePosInternal
+True
+TMP_715(bool) = _tokenIn == WNATIVE
+REF_432(uint32) -> Errors.NOT_WNATIVE
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:! _condition	NodeType.IF" -> "BlockID: 32
+Call context: openPos,_increasePosInternal,_transmitTokenIn
+True
+TMP_766(bytes) = SOLIDITY_CALL abi.encodePacked()(_errorCode)
+TMP_767 = CONVERT TMP_766 to string
+TMP_768(None) = SOLIDITY_CALL revert(string)(TMP_767)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 30
+Call context: openPos,_increasePosInternal
+True
+TMP_715(bool) = _tokenIn == WNATIVE
+REF_432(uint32) -> Errors.NOT_WNATIVE
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:! _condition	NodeType.IF" -> "BlockID: 33
+Call context: openPos,_increasePosInternal,_transmitTokenIn
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 31
+Call context: openPos,_increasePosInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 34
+Call context: openPos,_increasePosInternal
+None
+TMP_717(bool) = amtToTransfer != 0
+CONDITION TMP_717
+EXPRESSION:amtToTransfer != 0	NodeType.IF" [key=0];
+"BlockID: 34
+Call context: openPos,_increasePosInternal
+None
+TMP_717(bool) = amtToTransfer != 0
+CONDITION TMP_717
+EXPRESSION:amtToTransfer != 0	NodeType.IF" -> "BlockID: 36
+Call context: openPos,_increasePosInternal
+True
+TMP_718 = CONVERT _tokenIn to IERC20
+TMP_719 = CONVERT this to address
+REF_75(bytes4) (->None) := 599290589(uint256)
+TMP_289(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_75,from,to,value)
+TMP_323 = CONVERT token to address
+TMP_10 = CONVERT this to address
+TMP_11(uint256) = SOLIDITY_CALL balance(address)(TMP_10)
+TMP_12(bool) = TMP_11 >= value
+CONDITION TMP_12
+EXPRESSION:TMP_12(bool) = TMP_11 >= value	NodeType.IF" [key=0];
+"BlockID: 34
+Call context: openPos,_increasePosInternal
+None
+TMP_717(bool) = amtToTransfer != 0
+CONDITION TMP_717
+EXPRESSION:amtToTransfer != 0	NodeType.IF" -> "BlockID: 37
+Call context: openPos,_increasePosInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 36
+Call context: openPos,_increasePosInternal
+True
+TMP_718 = CONVERT _tokenIn to IERC20
+TMP_719 = CONVERT this to address
+REF_75(bytes4) (->None) := 599290589(uint256)
+TMP_289(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_75,from,to,value)
+TMP_323 = CONVERT token to address
+TMP_10 = CONVERT this to address
+TMP_11(uint256) = SOLIDITY_CALL balance(address)(TMP_10)
+TMP_12(bool) = TMP_11 >= value
+CONDITION TMP_12
+EXPRESSION:TMP_12(bool) = TMP_11 >= value	NodeType.IF" -> "BlockID: 40
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall
+True
+TMP_13(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 36
+Call context: openPos,_increasePosInternal
+True
+TMP_718 = CONVERT _tokenIn to IERC20
+TMP_719 = CONVERT this to address
+REF_75(bytes4) (->None) := 599290589(uint256)
+TMP_289(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_75,from,to,value)
+TMP_323 = CONVERT token to address
+TMP_10 = CONVERT this to address
+TMP_11(uint256) = SOLIDITY_CALL balance(address)(TMP_10)
+TMP_12(bool) = TMP_11 >= value
+CONDITION TMP_12
+EXPRESSION:TMP_12(bool) = TMP_11 >= value	NodeType.IF" -> "BlockID: 41
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 37
+Call context: openPos,_increasePosInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 42
+Call context: openPos
+None
+TMP_449bytes[])  = new bytes[](4)
+multicallData(bytes[]) =  ['TMP_449(bytes[])']
+REF_132(bytes) -> multicallData[0]
+TMP_450 = CONVERT CORE to IInitCore
+REF_135(bytes4) (->None) := 585716652(uint256)
+REF_136(address) -> _param.borrPool
+REF_137(uint256) -> _param.borrAmt
+REF_138(uint256) -> _param.initPosId
+TMP_451 = CONVERT this to address
+TMP_452(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_135,REF_136,REF_137,REF_138,TMP_451)
+REF_132(bytes) (->multicallData) := TMP_452(bytes)
+REF_139(address) -> _param.collPool
+TMP_453 = CONVERT REF_139 to ILendingPool
+TMP_454(address) = HIGH_LEVEL_CALL, dest:TMP_453(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:_transmitTokenIn(_param.tokenIn,_param.amtIn)	NodeType.EXPRESSION
+multicallData = new bytes[](4)	NodeType.VARIABLE
+multicallData = new bytes[](4)	NodeType.EXPRESSION
+multicallData[0] = abi.encodeWithSelector(IInitCore(CORE).borrow.selector,_param.borrPool,_param.borrAmt,_param.initPosId,address(this))	NodeType.EXPRESSION" [key="Exit: _transmitTokenIn", ref="MarginTradingHook._transmitTokenIn"];
+"BlockID: 35
+Call context: openPos,_increasePosInternal
+None
+TMP_721(bool) = _amt > msg.value
+CONDITION TMP_721
+EXPRESSION:_require(_tokenIn == WNATIVE,Errors.NOT_WNATIVE)	NodeType.EXPRESSION
+_amt > msg.value	NodeType.IF" -> "BlockID: 38
+Call context: openPos,_increasePosInternal
+True
+TMP_722(uint256) = amtToTransfer (c)- msg.value
+amtToTransfer(uint256) := TMP_722(uint256)
+EXPRESSION:amtToTransfer = amtToTransfer - msg.value	NodeType.EXPRESSION" [key=0];
+"BlockID: 35
+Call context: openPos,_increasePosInternal
+None
+TMP_721(bool) = _amt > msg.value
+CONDITION TMP_721
+EXPRESSION:_require(_tokenIn == WNATIVE,Errors.NOT_WNATIVE)	NodeType.EXPRESSION
+_amt > msg.value	NodeType.IF" -> "BlockID: 39
+Call context: openPos,_increasePosInternal
+False
+amtToTransfer(uint256) := 0(uint256)
+EXPRESSION:amtToTransfer = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 38
+Call context: openPos,_increasePosInternal
+True
+TMP_722(uint256) = amtToTransfer (c)- msg.value
+amtToTransfer(uint256) := TMP_722(uint256)
+EXPRESSION:amtToTransfer = amtToTransfer - msg.value	NodeType.EXPRESSION" -> "BlockID: 43
+Call context: openPos,_increasePosInternal
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 39
+Call context: openPos,_increasePosInternal
+False
+amtToTransfer(uint256) := 0(uint256)
+EXPRESSION:amtToTransfer = 0	NodeType.EXPRESSION" -> "BlockID: 43
+Call context: openPos,_increasePosInternal
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 43
+Call context: openPos,_increasePosInternal
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 31
+Call context: openPos,_increasePosInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 33
+Call context: openPos,_increasePosInternal,_transmitTokenIn
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 35
+Call context: openPos,_increasePosInternal
+None
+TMP_721(bool) = _amt > msg.value
+CONDITION TMP_721
+EXPRESSION:_require(_tokenIn == WNATIVE,Errors.NOT_WNATIVE)	NodeType.EXPRESSION
+_amt > msg.value	NodeType.IF" [key="Exit: _require", ref="TopLevel._require"];
+"BlockID: 62
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 37
+Call context: openPos,_increasePosInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="Exit: safeTransferFrom", ref="SafeERC20.safeTransferFrom"];
+"BlockID: 44
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_1(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:value 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION" -> "BlockID: 46
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_1 index: 0 
+returndata(bytes)= UNPACK TUPLE_1 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION
+success	NodeType.IF" [key=0];
+"BlockID: 46
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_1 index: 0 
+returndata(bytes)= UNPACK TUPLE_1 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION
+success	NodeType.IF" -> "BlockID: 48
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+REF_5 -> LENGTH returndata
+TMP_19(bool) = REF_5 == 0
+CONDITION TMP_19
+EXPRESSION:returndata.length == 0	NodeType.IF" [key="successor_5"];
+"BlockID: 46
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_1 index: 0 
+returndata(bytes)= UNPACK TUPLE_1 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION
+success	NodeType.IF" -> "BlockID: 49
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+False
+REF_6 -> LENGTH returndata
+TMP_24(bool) = REF_6 > 0
+CONDITION TMP_24
+END_IF
+EXPRESSION:returndata.length > 0	NodeType.IF
+None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 41
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 44
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_1(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:value 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION" [key=0];
+"BlockID: 48
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+REF_5 -> LENGTH returndata
+TMP_19(bool) = REF_5 == 0
+CONDITION TMP_19
+EXPRESSION:returndata.length == 0	NodeType.IF" -> "BlockID: 52
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+TMP_0(bytes) = SOLIDITY_CALL code(address)(account)
+REF_0 -> LENGTH TMP_0
+TMP_1(bool) = REF_0 > 0
+TMP_787(None) := TMP_1(bool)
+CONDITION TMP_20
+EXPRESSION:qiantao require	NodeType.IF" [key=0];
+"BlockID: 48
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+REF_5 -> LENGTH returndata
+TMP_19(bool) = REF_5 == 0
+CONDITION TMP_19
+EXPRESSION:returndata.length == 0	NodeType.IF" -> "BlockID: 53
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 49
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+False
+REF_6 -> LENGTH returndata
+TMP_24(bool) = REF_6 > 0
+CONDITION TMP_24
+END_IF
+EXPRESSION:returndata.length > 0	NodeType.IF
+None	NodeType.ENDIF" -> "BlockID: 54
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue,verifyCallResultFromTarget
+True
+INLINE ASM
+NEW VARIABLE returndata_size__revert_asm_0
+TMP_25(uint256) = SOLIDITY_CALL mload(uint256)(returndata)
+returndata_size__revert_asm_0(uint256) := TMP_25(uint256)
+TMP_26(uint256) = 32 + returndata
+TMP_27(None) = SOLIDITY_CALL revert(uint256,uint256)(TMP_26,returndata_size__revert_asm_0)
+EXPRESSION:None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+returndata_size__revert_asm_0 = mload(uint256)(returndata)	NodeType.EXPRESSION
+revert(uint256,uint256)(32 + returndata,returndata_size__revert_asm_0)	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 49
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+False
+REF_6 -> LENGTH returndata
+TMP_24(bool) = REF_6 > 0
+CONDITION TMP_24
+END_IF
+EXPRESSION:returndata.length > 0	NodeType.IF
+None	NodeType.ENDIF" -> "BlockID: 55
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue,verifyCallResultFromTarget
+False
+TMP_28(None) = SOLIDITY_CALL revert(string)(errorMessage)
+EXPRESSION:revert(string)(errorMessage)	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 52
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+TMP_0(bytes) = SOLIDITY_CALL code(address)(account)
+REF_0 -> LENGTH TMP_0
+TMP_1(bool) = REF_0 > 0
+TMP_787(None) := TMP_1(bool)
+CONDITION TMP_20
+EXPRESSION:qiantao require	NodeType.IF" -> "BlockID: 57
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+TMP_21(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_3"];
+"BlockID: 52
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+TMP_0(bytes) = SOLIDITY_CALL code(address)(account)
+REF_0 -> LENGTH TMP_0
+TMP_1(bool) = REF_0 > 0
+TMP_787(None) := TMP_1(bool)
+CONDITION TMP_20
+EXPRESSION:qiantao require	NodeType.IF" -> "BlockID: 58
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_3"];
+"BlockID: 53
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 59
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+None
+TMP_797(None) := returndata(bytes)
+TMP_792(None) := TMP_14(bytes)
+TMP_790(None) := TMP_8(bytes)
+returndata(bytes) := TMP_324(bytes)
+REF_98 -> LENGTH returndata
+TMP_325(bool) = REF_98 == 0
+TMP_326(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+TMP_327(bool) = TMP_325 || TMP_326
+CONDITION TMP_327
+EXPRESSION:TMP_327(bool) = TMP_325 || TMP_326	NodeType.IF" [key=0];
+"BlockID: 59
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+None
+TMP_797(None) := returndata(bytes)
+TMP_792(None) := TMP_14(bytes)
+TMP_790(None) := TMP_8(bytes)
+returndata(bytes) := TMP_324(bytes)
+REF_98 -> LENGTH returndata
+TMP_325(bool) = REF_98 == 0
+TMP_326(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+TMP_327(bool) = TMP_325 || TMP_326
+CONDITION TMP_327
+EXPRESSION:TMP_327(bool) = TMP_325 || TMP_326	NodeType.IF" -> "BlockID: 61
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom
+True
+TMP_328(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_2"];
+"BlockID: 59
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+None
+TMP_797(None) := returndata(bytes)
+TMP_792(None) := TMP_14(bytes)
+TMP_790(None) := TMP_8(bytes)
+returndata(bytes) := TMP_324(bytes)
+REF_98 -> LENGTH returndata
+TMP_325(bool) = REF_98 == 0
+TMP_326(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+TMP_327(bool) = TMP_325 || TMP_326
+CONDITION TMP_327
+EXPRESSION:TMP_327(bool) = TMP_325 || TMP_326	NodeType.IF" -> "BlockID: 62
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+"BlockID: 58
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 53
+Call context: openPos,_increasePosInternal,_transmitTokenIn,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 51
+Call context: openPos,_increasePosInternal
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 56
+Call context: openPos
+None
+REF_146(uint256) -> _param.initPosId
+REF_147(SwapType) -> SwapType.OpenExactIn
+REF_148(bytes) -> _param.data
+TMP_461(SwapInfo) = new SwapInfo(REF_146,REF_147,borrToken,collToken,0,REF_148)
+swapInfo(SwapInfo) := TMP_461(SwapInfo)
+REF_149(bytes) -> multicallData[1]
+TMP_462 = CONVERT CORE to IInitCore
+REF_152(bytes4) (->None) := 2103493374(uint256)
+TMP_463 = CONVERT this to address
+TMP_464(bytes) = SOLIDITY_CALL abi.encode()(swapInfo)
+TMP_465(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_152,TMP_463,0,TMP_464)
+REF_149(bytes) (->multicallData) := TMP_465(bytes)
+REF_154(bytes) -> multicallData[2]
+TMP_466 = CONVERT CORE to IInitCore
+REF_157(bytes4) (->None) := 2501602306(uint256)
+REF_158(address) -> _param.collPool
+TMP_467(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_157,REF_158,POS_MANAGER)
+REF_154(bytes) (->multicallData) := TMP_467(bytes)
+REF_159(bytes) -> multicallData[3]
+TMP_468 = CONVERT CORE to IInitCore
+REF_162(bytes4) (->None) := 2884951353(uint256)
+REF_163(uint256) -> _param.initPosId
+REF_164(address) -> _param.collPool
+TMP_469(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_162,REF_163,REF_164)
+REF_159(bytes) (->multicallData) := TMP_469(bytes)
+TMP_470 = CONVERT CORE to IMulticall
+TMP_471(bytes[]) = HIGH_LEVEL_CALL, dest:TMP_470(IMulticall), function:multicall, arguments:['multicallData']  
+EXPRESSION:_require(_param.tokenIn == collToken || _param.tokenIn == borrToken,Errors.INVALID_INPUT)	NodeType.EXPRESSION
+swapInfo = SwapInfo(_param.initPosId,SwapType.OpenExactIn,borrToken,collToken,0,_param.data)	NodeType.VARIABLE
+swapInfo = SwapInfo(_param.initPosId,SwapType.OpenExactIn,borrToken,collToken,0,_param.data)	NodeType.EXPRESSION
+multicallData[1] = abi.encodeWithSelector(IInitCore(CORE).callback.selector,address(this),0,abi.encode(swapInfo))	NodeType.EXPRESSION
+multicallData[2] = abi.encodeWithSelector(IInitCore(CORE).mintTo.selector,_param.collPool,POS_MANAGER)	NodeType.EXPRESSION
+multicallData[3] = abi.encodeWithSelector(IInitCore(CORE).collateralize.selector,_param.initPosId,_param.collPool)	NodeType.EXPRESSION
+IMulticall(CORE).multicall(multicallData)	NodeType.EXPRESSION" [key="Exit: _require", ref="TopLevel._require"];
+"BlockID: 63
+Call context: openPos,_increasePosInternal
+None
+health_e18(uint256) := TMP_729(uint256)
+TMP_730(bool) = health_e18 >= _minHealth_e18
+REF_436(uint32) -> Errors.SLIPPAGE_CONTROL
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:health_e18 = IInitCore(CORE).getPosHealthCurrent_e18(_initPosId)	NodeType.EXPRESSION
+! _condition	NodeType.IF" -> "BlockID: 64
+Call context: openPos,_increasePosInternal,_validateHealth
+True
+TMP_766(bytes) = SOLIDITY_CALL abi.encodePacked()(_errorCode)
+TMP_767 = CONVERT TMP_766 to string
+TMP_768(None) = SOLIDITY_CALL revert(string)(TMP_767)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 63
+Call context: openPos,_increasePosInternal
+None
+health_e18(uint256) := TMP_729(uint256)
+TMP_730(bool) = health_e18 >= _minHealth_e18
+REF_436(uint32) -> Errors.SLIPPAGE_CONTROL
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:health_e18 = IInitCore(CORE).getPosHealthCurrent_e18(_initPosId)	NodeType.EXPRESSION
+! _condition	NodeType.IF" -> "BlockID: 65
+Call context: openPos,_increasePosInternal,_validateHealth
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 65
+Call context: openPos,_increasePosInternal,_validateHealth
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 66
+Call context: openPos
+None
+TMP_914(None) := health_e18(uint256)
+health_e18(uint256) := TMP_472(uint256)
+TMP_891(None) := health_e18(uint256)
+health_e18(uint256) := TMP_438(uint256)
+EXPRESSION:health_e18 = _validateHealth(_param.initPosId,_param.minHealth_e18)	NodeType.EXPRESSION
+health_e18 = _increasePosInternal(IncreasePosInternalParam(initPosId,_tokenIn,_amtIn,_borrPool,_borrAmt,_collPool,_data,_minHealth_e18))	NodeType.EXPRESSION" [key=N, ref=N];
+}

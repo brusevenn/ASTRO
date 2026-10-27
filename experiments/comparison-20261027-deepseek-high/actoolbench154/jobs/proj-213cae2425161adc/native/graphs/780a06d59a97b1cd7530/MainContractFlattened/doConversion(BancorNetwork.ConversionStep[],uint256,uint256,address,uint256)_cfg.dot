@@ -1,0 +1,771 @@
+digraph {
+"BlockID: 932
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 933
+Call context: 
+None
+NEW VARIABLE toAmount
+fromAmount(uint256) := _amount(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:None	NodeType.VARIABLE
+fromAmount = _amount	NodeType.VARIABLE
+fromAmount = _amount	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION";
+"BlockID: 934
+Call context: 
+None
+BEGIN_LOOP
+REF_59 -> LENGTH _data
+TMP_294(bool) = i < REF_59
+CONDITION TMP_294
+EXPRESSION:None	NodeType.STARTLOOP
+i < _data.length	NodeType.IFLOOP";
+"BlockID: 935
+Call context: 
+True
+REF_60(BancorNetwork.ConversionStep) -> _data[i]
+stepData(BancorNetwork.ConversionStep) := REF_60(BancorNetwork.ConversionStep)
+REF_61(bool) -> stepData.isV28OrHigherConverter
+CONDITION REF_61
+EXPRESSION:stepData = _data[i]	NodeType.VARIABLE
+stepData = _data[i]	NodeType.EXPRESSION
+stepData.isV28OrHigherConverter	NodeType.IF";
+"BlockID: 936
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 938
+Call context: 
+True
+RETURN toAmount
+EXPRESSION:toAmount	NodeType.RETURN";
+"BlockID: 939
+Call context: 
+True
+TMP_295(bool) = i != 0
+TMP_296(uint256) = i - 1
+REF_62(BancorNetwork.ConversionStep) -> _data[TMP_296]
+REF_63(address) -> REF_62.beneficiary
+TMP_297 = CONVERT this to address
+TMP_298(bool) = REF_63 == TMP_297
+TMP_299(bool) = TMP_295 && TMP_298
+REF_64(IERC20Token) -> stepData.sourceToken
+REF_65(bool) -> etherTokens[REF_64]
+TMP_300 = ! REF_65 
+TMP_301(bool) = TMP_299 && TMP_300
+CONDITION TMP_301
+EXPRESSION:i != 0 && _data[i - 1].beneficiary == address(this) && ! etherTokens[stepData.sourceToken]	NodeType.IF";
+"BlockID: 940
+Call context: 
+False
+REF_68(IERC20Token) -> stepData.sourceToken
+REF_69(IConverterAnchor) -> stepData.anchor
+TMP_303 = CONVERT REF_69 to ISmartToken
+TMP_304(bool) = REF_68 != TMP_303
+CONDITION TMP_304
+EXPRESSION:stepData.sourceToken != ISmartToken(stepData.anchor)	NodeType.IF";
+"BlockID: 941
+Call context: 
+True
+REF_70(IERC20Token) -> stepData.sourceToken
+REF_71(IConverter) -> stepData.converter
+INTERNAL_CALL, BancorNetwork.ensureAllowance(IERC20Token,address,uint256)(REF_70,REF_71,fromAmount)
+EXPRESSION:ensureAllowance(stepData.sourceToken,stepData.converter,fromAmount)	NodeType.EXPRESSION";
+"BlockID: 943
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 945
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 946
+Call context: 
+None
+REF_72(bool) -> stepData.isV28OrHigherConverter
+TMP_306 = ! REF_72 
+CONDITION TMP_306
+EXPRESSION:! stepData.isV28OrHigherConverter	NodeType.IF";
+"BlockID: 947
+Call context: 
+True
+REF_73(IConverter) -> stepData.converter
+TMP_307 = CONVERT REF_73 to ILegacyConverter
+REF_75(IERC20Token) -> stepData.sourceToken
+REF_76(IERC20Token) -> stepData.targetToken
+TMP_308(uint256) = HIGH_LEVEL_CALL, dest:TMP_307(ILegacyConverter), function:change, arguments:['REF_75', 'REF_76', 'fromAmount', '1']  
+EXPRESSION:toAmount = ILegacyConverter(stepData.converter).change(stepData.sourceToken,stepData.targetToken,fromAmount,1)	NodeType.EXPRESSION";
+"BlockID: 949
+Call context: 
+False
+REF_77(IERC20Token) -> stepData.sourceToken
+REF_78(bool) -> etherTokens[REF_77]
+CONDITION REF_78
+EXPRESSION:etherTokens[stepData.sourceToken]	NodeType.IF";
+"BlockID: 950
+Call context: 
+True
+REF_79(IConverter) -> stepData.converter
+REF_82(IERC20Token) -> stepData.sourceToken
+REF_83(IERC20Token) -> stepData.targetToken
+REF_84(address) -> stepData.beneficiary
+TMP_310(uint256) = HIGH_LEVEL_CALL, dest:REF_79(IConverter), function:convert, arguments:['REF_82', 'REF_83', 'fromAmount', 'msg.sender', 'REF_84'] value:msg.value 
+EXPRESSION:toAmount = stepData.converter.convert.value(msg.value)(stepData.sourceToken,stepData.targetToken,fromAmount,msg.sender,stepData.beneficiary)	NodeType.EXPRESSION";
+"BlockID: 952
+Call context: 
+False
+REF_85(IConverter) -> stepData.converter
+REF_87(IERC20Token) -> stepData.sourceToken
+REF_88(IERC20Token) -> stepData.targetToken
+REF_89(address) -> stepData.beneficiary
+TMP_311(uint256) = HIGH_LEVEL_CALL, dest:REF_85(IConverter), function:convert, arguments:['REF_87', 'REF_88', 'fromAmount', 'msg.sender', 'REF_89']  
+EXPRESSION:toAmount = stepData.converter.convert(stepData.sourceToken,stepData.targetToken,fromAmount,msg.sender,stepData.beneficiary)	NodeType.EXPRESSION";
+"BlockID: 953
+Call context: 
+None
+toAmount(uint256) := TMP_311(uint256)
+EXPRESSION:toAmount = stepData.converter.convert(stepData.sourceToken,stepData.targetToken,fromAmount,msg.sender,stepData.beneficiary)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 954
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 956
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 957
+Call context: 
+None
+REF_90(bool) -> stepData.processAffiliateFee
+CONDITION REF_90
+EXPRESSION:stepData.processAffiliateFee	NodeType.IF";
+"BlockID: 958
+Call context: 
+True
+TMP_312(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['toAmount', '_affiliateFee'] 
+EXPRESSION:";
+"BlockID: 961
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 962
+Call context: 
+None
+fromAmount(uint256) := toAmount(uint256)
+TMP_317(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:fromAmount = toAmount	NodeType.EXPRESSION
+i ++	NodeType.EXPRESSION";
+"BlockID: 959
+Call context: 
+None
+TMP_313(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_312', 'AFFILIATE_FEE_RESOLUTION'] 
+EXPRESSION:" [shape=box];
+"BlockID: 960
+Call context: 
+None
+affiliateAmount(uint256) := TMP_313(uint256)
+REF_93(IERC20Token) -> stepData.targetToken
+TMP_314(bool) = HIGH_LEVEL_CALL, dest:REF_93(IERC20Token), function:transfer, arguments:['_affiliateAccount', 'affiliateAmount']  
+EXPRESSION:affiliateAmount = toAmount.mul(_affiliateFee).div(AFFILIATE_FEE_RESOLUTION)	NodeType.VARIABLE
+affiliateAmount = toAmount.mul(_affiliateFee).div(AFFILIATE_FEE_RESOLUTION)	NodeType.EXPRESSION
+require(bool,string)(stepData.targetToken.transfer(_affiliateAccount,affiliateAmount),ERR_FEE_TRANSFER_FAILED)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 964
+Call context: 
+True
+toAmount(uint256) = toAmount - affiliateAmount
+EXPRESSION:toAmount -= affiliateAmount	NodeType.EXPRESSION";
+"BlockID: 951
+Call context: 
+None
+toAmount(uint256) := TMP_310(uint256)
+EXPRESSION:toAmount = stepData.converter.convert.value(msg.value)(stepData.sourceToken,stepData.targetToken,fromAmount,msg.sender,stepData.beneficiary)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 948
+Call context: 
+None
+toAmount(uint256) := TMP_308(uint256)
+EXPRESSION:toAmount = ILegacyConverter(stepData.converter).change(stepData.sourceToken,stepData.targetToken,fromAmount,1)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 965
+Call context: 
+True
+REF_66(IERC20Token) -> stepData.sourceToken
+REF_67(IConverter) -> stepData.converter
+INTERNAL_CALL, TokenHandler.safeTransfer(IERC20Token,address,uint256)(REF_66,REF_67,fromAmount)
+EXPRESSION:safeTransfer(stepData.sourceToken,stepData.converter,fromAmount)	NodeType.EXPRESSION";
+"BlockID: 967
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 969
+Call context: 
+None
+TMP_318(bool) = toAmount >= _minReturn
+CONDITION TMP_318
+EXPRESSION:TMP_318(bool) = toAmount >= _minReturn	NodeType.IF";
+"BlockID: 970
+Call context: 
+True
+TMP_319(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 971
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 972
+Call context: 
+None
+CONDITION TMP_314
+EXPRESSION:qiantao require	NodeType.IF";
+"BlockID: 973
+Call context: 
+True
+TMP_315(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 974
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 932
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 933
+Call context: 
+None
+NEW VARIABLE toAmount
+fromAmount(uint256) := _amount(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:None	NodeType.VARIABLE
+fromAmount = _amount	NodeType.VARIABLE
+fromAmount = _amount	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 933
+Call context: 
+None
+NEW VARIABLE toAmount
+fromAmount(uint256) := _amount(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:None	NodeType.VARIABLE
+fromAmount = _amount	NodeType.VARIABLE
+fromAmount = _amount	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" -> "BlockID: 934
+Call context: 
+None
+BEGIN_LOOP
+REF_59 -> LENGTH _data
+TMP_294(bool) = i < REF_59
+CONDITION TMP_294
+EXPRESSION:None	NodeType.STARTLOOP
+i < _data.length	NodeType.IFLOOP" [key=0];
+"BlockID: 934
+Call context: 
+None
+BEGIN_LOOP
+REF_59 -> LENGTH _data
+TMP_294(bool) = i < REF_59
+CONDITION TMP_294
+EXPRESSION:None	NodeType.STARTLOOP
+i < _data.length	NodeType.IFLOOP" -> "BlockID: 935
+Call context: 
+True
+REF_60(BancorNetwork.ConversionStep) -> _data[i]
+stepData(BancorNetwork.ConversionStep) := REF_60(BancorNetwork.ConversionStep)
+REF_61(bool) -> stepData.isV28OrHigherConverter
+CONDITION REF_61
+EXPRESSION:stepData = _data[i]	NodeType.VARIABLE
+stepData = _data[i]	NodeType.EXPRESSION
+stepData.isV28OrHigherConverter	NodeType.IF" [key=0];
+"BlockID: 934
+Call context: 
+None
+BEGIN_LOOP
+REF_59 -> LENGTH _data
+TMP_294(bool) = i < REF_59
+CONDITION TMP_294
+EXPRESSION:None	NodeType.STARTLOOP
+i < _data.length	NodeType.IFLOOP" -> "BlockID: 936
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 935
+Call context: 
+True
+REF_60(BancorNetwork.ConversionStep) -> _data[i]
+stepData(BancorNetwork.ConversionStep) := REF_60(BancorNetwork.ConversionStep)
+REF_61(bool) -> stepData.isV28OrHigherConverter
+CONDITION REF_61
+EXPRESSION:stepData = _data[i]	NodeType.VARIABLE
+stepData = _data[i]	NodeType.EXPRESSION
+stepData.isV28OrHigherConverter	NodeType.IF" -> "BlockID: 939
+Call context: 
+True
+TMP_295(bool) = i != 0
+TMP_296(uint256) = i - 1
+REF_62(BancorNetwork.ConversionStep) -> _data[TMP_296]
+REF_63(address) -> REF_62.beneficiary
+TMP_297 = CONVERT this to address
+TMP_298(bool) = REF_63 == TMP_297
+TMP_299(bool) = TMP_295 && TMP_298
+REF_64(IERC20Token) -> stepData.sourceToken
+REF_65(bool) -> etherTokens[REF_64]
+TMP_300 = ! REF_65 
+TMP_301(bool) = TMP_299 && TMP_300
+CONDITION TMP_301
+EXPRESSION:i != 0 && _data[i - 1].beneficiary == address(this) && ! etherTokens[stepData.sourceToken]	NodeType.IF" [key=0];
+"BlockID: 935
+Call context: 
+True
+REF_60(BancorNetwork.ConversionStep) -> _data[i]
+stepData(BancorNetwork.ConversionStep) := REF_60(BancorNetwork.ConversionStep)
+REF_61(bool) -> stepData.isV28OrHigherConverter
+CONDITION REF_61
+EXPRESSION:stepData = _data[i]	NodeType.VARIABLE
+stepData = _data[i]	NodeType.EXPRESSION
+stepData.isV28OrHigherConverter	NodeType.IF" -> "BlockID: 940
+Call context: 
+False
+REF_68(IERC20Token) -> stepData.sourceToken
+REF_69(IConverterAnchor) -> stepData.anchor
+TMP_303 = CONVERT REF_69 to ISmartToken
+TMP_304(bool) = REF_68 != TMP_303
+CONDITION TMP_304
+EXPRESSION:stepData.sourceToken != ISmartToken(stepData.anchor)	NodeType.IF" [key=0];
+"BlockID: 936
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 969
+Call context: 
+None
+TMP_318(bool) = toAmount >= _minReturn
+CONDITION TMP_318
+EXPRESSION:TMP_318(bool) = toAmount >= _minReturn	NodeType.IF" [key=0];
+"BlockID: 939
+Call context: 
+True
+TMP_295(bool) = i != 0
+TMP_296(uint256) = i - 1
+REF_62(BancorNetwork.ConversionStep) -> _data[TMP_296]
+REF_63(address) -> REF_62.beneficiary
+TMP_297 = CONVERT this to address
+TMP_298(bool) = REF_63 == TMP_297
+TMP_299(bool) = TMP_295 && TMP_298
+REF_64(IERC20Token) -> stepData.sourceToken
+REF_65(bool) -> etherTokens[REF_64]
+TMP_300 = ! REF_65 
+TMP_301(bool) = TMP_299 && TMP_300
+CONDITION TMP_301
+EXPRESSION:i != 0 && _data[i - 1].beneficiary == address(this) && ! etherTokens[stepData.sourceToken]	NodeType.IF" -> "BlockID: 965
+Call context: 
+True
+REF_66(IERC20Token) -> stepData.sourceToken
+REF_67(IConverter) -> stepData.converter
+INTERNAL_CALL, TokenHandler.safeTransfer(IERC20Token,address,uint256)(REF_66,REF_67,fromAmount)
+EXPRESSION:safeTransfer(stepData.sourceToken,stepData.converter,fromAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 939
+Call context: 
+True
+TMP_295(bool) = i != 0
+TMP_296(uint256) = i - 1
+REF_62(BancorNetwork.ConversionStep) -> _data[TMP_296]
+REF_63(address) -> REF_62.beneficiary
+TMP_297 = CONVERT this to address
+TMP_298(bool) = REF_63 == TMP_297
+TMP_299(bool) = TMP_295 && TMP_298
+REF_64(IERC20Token) -> stepData.sourceToken
+REF_65(bool) -> etherTokens[REF_64]
+TMP_300 = ! REF_65 
+TMP_301(bool) = TMP_299 && TMP_300
+CONDITION TMP_301
+EXPRESSION:i != 0 && _data[i - 1].beneficiary == address(this) && ! etherTokens[stepData.sourceToken]	NodeType.IF" -> "BlockID: 967
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 940
+Call context: 
+False
+REF_68(IERC20Token) -> stepData.sourceToken
+REF_69(IConverterAnchor) -> stepData.anchor
+TMP_303 = CONVERT REF_69 to ISmartToken
+TMP_304(bool) = REF_68 != TMP_303
+CONDITION TMP_304
+EXPRESSION:stepData.sourceToken != ISmartToken(stepData.anchor)	NodeType.IF" -> "BlockID: 941
+Call context: 
+True
+REF_70(IERC20Token) -> stepData.sourceToken
+REF_71(IConverter) -> stepData.converter
+INTERNAL_CALL, BancorNetwork.ensureAllowance(IERC20Token,address,uint256)(REF_70,REF_71,fromAmount)
+EXPRESSION:ensureAllowance(stepData.sourceToken,stepData.converter,fromAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 940
+Call context: 
+False
+REF_68(IERC20Token) -> stepData.sourceToken
+REF_69(IConverterAnchor) -> stepData.anchor
+TMP_303 = CONVERT REF_69 to ISmartToken
+TMP_304(bool) = REF_68 != TMP_303
+CONDITION TMP_304
+EXPRESSION:stepData.sourceToken != ISmartToken(stepData.anchor)	NodeType.IF" -> "BlockID: 943
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 941
+Call context: 
+True
+REF_70(IERC20Token) -> stepData.sourceToken
+REF_71(IConverter) -> stepData.converter
+INTERNAL_CALL, BancorNetwork.ensureAllowance(IERC20Token,address,uint256)(REF_70,REF_71,fromAmount)
+EXPRESSION:ensureAllowance(stepData.sourceToken,stepData.converter,fromAmount)	NodeType.EXPRESSION" -> "BlockID: 943
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 943
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 945
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 945
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 946
+Call context: 
+None
+REF_72(bool) -> stepData.isV28OrHigherConverter
+TMP_306 = ! REF_72 
+CONDITION TMP_306
+EXPRESSION:! stepData.isV28OrHigherConverter	NodeType.IF" [key=0];
+"BlockID: 946
+Call context: 
+None
+REF_72(bool) -> stepData.isV28OrHigherConverter
+TMP_306 = ! REF_72 
+CONDITION TMP_306
+EXPRESSION:! stepData.isV28OrHigherConverter	NodeType.IF" -> "BlockID: 947
+Call context: 
+True
+REF_73(IConverter) -> stepData.converter
+TMP_307 = CONVERT REF_73 to ILegacyConverter
+REF_75(IERC20Token) -> stepData.sourceToken
+REF_76(IERC20Token) -> stepData.targetToken
+TMP_308(uint256) = HIGH_LEVEL_CALL, dest:TMP_307(ILegacyConverter), function:change, arguments:['REF_75', 'REF_76', 'fromAmount', '1']  
+EXPRESSION:toAmount = ILegacyConverter(stepData.converter).change(stepData.sourceToken,stepData.targetToken,fromAmount,1)	NodeType.EXPRESSION" [key=0];
+"BlockID: 946
+Call context: 
+None
+REF_72(bool) -> stepData.isV28OrHigherConverter
+TMP_306 = ! REF_72 
+CONDITION TMP_306
+EXPRESSION:! stepData.isV28OrHigherConverter	NodeType.IF" -> "BlockID: 949
+Call context: 
+False
+REF_77(IERC20Token) -> stepData.sourceToken
+REF_78(bool) -> etherTokens[REF_77]
+CONDITION REF_78
+EXPRESSION:etherTokens[stepData.sourceToken]	NodeType.IF" [key=0];
+"BlockID: 947
+Call context: 
+True
+REF_73(IConverter) -> stepData.converter
+TMP_307 = CONVERT REF_73 to ILegacyConverter
+REF_75(IERC20Token) -> stepData.sourceToken
+REF_76(IERC20Token) -> stepData.targetToken
+TMP_308(uint256) = HIGH_LEVEL_CALL, dest:TMP_307(ILegacyConverter), function:change, arguments:['REF_75', 'REF_76', 'fromAmount', '1']  
+EXPRESSION:toAmount = ILegacyConverter(stepData.converter).change(stepData.sourceToken,stepData.targetToken,fromAmount,1)	NodeType.EXPRESSION" -> "BlockID: 948
+Call context: 
+None
+toAmount(uint256) := TMP_308(uint256)
+EXPRESSION:toAmount = ILegacyConverter(stepData.converter).change(stepData.sourceToken,stepData.targetToken,fromAmount,1)	NodeType.EXPRESSION" [key=0];
+"BlockID: 949
+Call context: 
+False
+REF_77(IERC20Token) -> stepData.sourceToken
+REF_78(bool) -> etherTokens[REF_77]
+CONDITION REF_78
+EXPRESSION:etherTokens[stepData.sourceToken]	NodeType.IF" -> "BlockID: 950
+Call context: 
+True
+REF_79(IConverter) -> stepData.converter
+REF_82(IERC20Token) -> stepData.sourceToken
+REF_83(IERC20Token) -> stepData.targetToken
+REF_84(address) -> stepData.beneficiary
+TMP_310(uint256) = HIGH_LEVEL_CALL, dest:REF_79(IConverter), function:convert, arguments:['REF_82', 'REF_83', 'fromAmount', 'msg.sender', 'REF_84'] value:msg.value 
+EXPRESSION:toAmount = stepData.converter.convert.value(msg.value)(stepData.sourceToken,stepData.targetToken,fromAmount,msg.sender,stepData.beneficiary)	NodeType.EXPRESSION" [key=0];
+"BlockID: 949
+Call context: 
+False
+REF_77(IERC20Token) -> stepData.sourceToken
+REF_78(bool) -> etherTokens[REF_77]
+CONDITION REF_78
+EXPRESSION:etherTokens[stepData.sourceToken]	NodeType.IF" -> "BlockID: 952
+Call context: 
+False
+REF_85(IConverter) -> stepData.converter
+REF_87(IERC20Token) -> stepData.sourceToken
+REF_88(IERC20Token) -> stepData.targetToken
+REF_89(address) -> stepData.beneficiary
+TMP_311(uint256) = HIGH_LEVEL_CALL, dest:REF_85(IConverter), function:convert, arguments:['REF_87', 'REF_88', 'fromAmount', 'msg.sender', 'REF_89']  
+EXPRESSION:toAmount = stepData.converter.convert(stepData.sourceToken,stepData.targetToken,fromAmount,msg.sender,stepData.beneficiary)	NodeType.EXPRESSION" [key=0];
+"BlockID: 950
+Call context: 
+True
+REF_79(IConverter) -> stepData.converter
+REF_82(IERC20Token) -> stepData.sourceToken
+REF_83(IERC20Token) -> stepData.targetToken
+REF_84(address) -> stepData.beneficiary
+TMP_310(uint256) = HIGH_LEVEL_CALL, dest:REF_79(IConverter), function:convert, arguments:['REF_82', 'REF_83', 'fromAmount', 'msg.sender', 'REF_84'] value:msg.value 
+EXPRESSION:toAmount = stepData.converter.convert.value(msg.value)(stepData.sourceToken,stepData.targetToken,fromAmount,msg.sender,stepData.beneficiary)	NodeType.EXPRESSION" -> "BlockID: 951
+Call context: 
+None
+toAmount(uint256) := TMP_310(uint256)
+EXPRESSION:toAmount = stepData.converter.convert.value(msg.value)(stepData.sourceToken,stepData.targetToken,fromAmount,msg.sender,stepData.beneficiary)	NodeType.EXPRESSION" [key=0];
+"BlockID: 952
+Call context: 
+False
+REF_85(IConverter) -> stepData.converter
+REF_87(IERC20Token) -> stepData.sourceToken
+REF_88(IERC20Token) -> stepData.targetToken
+REF_89(address) -> stepData.beneficiary
+TMP_311(uint256) = HIGH_LEVEL_CALL, dest:REF_85(IConverter), function:convert, arguments:['REF_87', 'REF_88', 'fromAmount', 'msg.sender', 'REF_89']  
+EXPRESSION:toAmount = stepData.converter.convert(stepData.sourceToken,stepData.targetToken,fromAmount,msg.sender,stepData.beneficiary)	NodeType.EXPRESSION" -> "BlockID: 953
+Call context: 
+None
+toAmount(uint256) := TMP_311(uint256)
+EXPRESSION:toAmount = stepData.converter.convert(stepData.sourceToken,stepData.targetToken,fromAmount,msg.sender,stepData.beneficiary)	NodeType.EXPRESSION" [key=0];
+"BlockID: 953
+Call context: 
+None
+toAmount(uint256) := TMP_311(uint256)
+EXPRESSION:toAmount = stepData.converter.convert(stepData.sourceToken,stepData.targetToken,fromAmount,msg.sender,stepData.beneficiary)	NodeType.EXPRESSION" -> "BlockID: 954
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 954
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 956
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 956
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 957
+Call context: 
+None
+REF_90(bool) -> stepData.processAffiliateFee
+CONDITION REF_90
+EXPRESSION:stepData.processAffiliateFee	NodeType.IF" [key=0];
+"BlockID: 957
+Call context: 
+None
+REF_90(bool) -> stepData.processAffiliateFee
+CONDITION REF_90
+EXPRESSION:stepData.processAffiliateFee	NodeType.IF" -> "BlockID: 958
+Call context: 
+True
+TMP_312(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['toAmount', '_affiliateFee'] 
+EXPRESSION:" [key=0];
+"BlockID: 957
+Call context: 
+None
+REF_90(bool) -> stepData.processAffiliateFee
+CONDITION REF_90
+EXPRESSION:stepData.processAffiliateFee	NodeType.IF" -> "BlockID: 961
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 958
+Call context: 
+True
+TMP_312(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['toAmount', '_affiliateFee'] 
+EXPRESSION:" -> "BlockID: 959
+Call context: 
+None
+TMP_313(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_312', 'AFFILIATE_FEE_RESOLUTION'] 
+EXPRESSION:" [key=0];
+"BlockID: 961
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 962
+Call context: 
+None
+fromAmount(uint256) := toAmount(uint256)
+TMP_317(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:fromAmount = toAmount	NodeType.EXPRESSION
+i ++	NodeType.EXPRESSION" [key=0];
+"BlockID: 962
+Call context: 
+None
+fromAmount(uint256) := toAmount(uint256)
+TMP_317(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:fromAmount = toAmount	NodeType.EXPRESSION
+i ++	NodeType.EXPRESSION" -> "BlockID: 934
+Call context: 
+None
+BEGIN_LOOP
+REF_59 -> LENGTH _data
+TMP_294(bool) = i < REF_59
+CONDITION TMP_294
+EXPRESSION:None	NodeType.STARTLOOP
+i < _data.length	NodeType.IFLOOP" [key=0];
+"BlockID: 959
+Call context: 
+None
+TMP_313(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_312', 'AFFILIATE_FEE_RESOLUTION'] 
+EXPRESSION:" -> "BlockID: 960
+Call context: 
+None
+affiliateAmount(uint256) := TMP_313(uint256)
+REF_93(IERC20Token) -> stepData.targetToken
+TMP_314(bool) = HIGH_LEVEL_CALL, dest:REF_93(IERC20Token), function:transfer, arguments:['_affiliateAccount', 'affiliateAmount']  
+EXPRESSION:affiliateAmount = toAmount.mul(_affiliateFee).div(AFFILIATE_FEE_RESOLUTION)	NodeType.VARIABLE
+affiliateAmount = toAmount.mul(_affiliateFee).div(AFFILIATE_FEE_RESOLUTION)	NodeType.EXPRESSION
+require(bool,string)(stepData.targetToken.transfer(_affiliateAccount,affiliateAmount),ERR_FEE_TRANSFER_FAILED)	NodeType.EXPRESSION" [key=0];
+"BlockID: 960
+Call context: 
+None
+affiliateAmount(uint256) := TMP_313(uint256)
+REF_93(IERC20Token) -> stepData.targetToken
+TMP_314(bool) = HIGH_LEVEL_CALL, dest:REF_93(IERC20Token), function:transfer, arguments:['_affiliateAccount', 'affiliateAmount']  
+EXPRESSION:affiliateAmount = toAmount.mul(_affiliateFee).div(AFFILIATE_FEE_RESOLUTION)	NodeType.VARIABLE
+affiliateAmount = toAmount.mul(_affiliateFee).div(AFFILIATE_FEE_RESOLUTION)	NodeType.EXPRESSION
+require(bool,string)(stepData.targetToken.transfer(_affiliateAccount,affiliateAmount),ERR_FEE_TRANSFER_FAILED)	NodeType.EXPRESSION" -> "BlockID: 972
+Call context: 
+None
+CONDITION TMP_314
+EXPRESSION:qiantao require	NodeType.IF" [key=0];
+"BlockID: 964
+Call context: 
+True
+toAmount(uint256) = toAmount - affiliateAmount
+EXPRESSION:toAmount -= affiliateAmount	NodeType.EXPRESSION" -> "BlockID: 961
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 951
+Call context: 
+None
+toAmount(uint256) := TMP_310(uint256)
+EXPRESSION:toAmount = stepData.converter.convert.value(msg.value)(stepData.sourceToken,stepData.targetToken,fromAmount,msg.sender,stepData.beneficiary)	NodeType.EXPRESSION" -> "BlockID: 954
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 948
+Call context: 
+None
+toAmount(uint256) := TMP_308(uint256)
+EXPRESSION:toAmount = ILegacyConverter(stepData.converter).change(stepData.sourceToken,stepData.targetToken,fromAmount,1)	NodeType.EXPRESSION" -> "BlockID: 956
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 965
+Call context: 
+True
+REF_66(IERC20Token) -> stepData.sourceToken
+REF_67(IConverter) -> stepData.converter
+INTERNAL_CALL, TokenHandler.safeTransfer(IERC20Token,address,uint256)(REF_66,REF_67,fromAmount)
+EXPRESSION:safeTransfer(stepData.sourceToken,stepData.converter,fromAmount)	NodeType.EXPRESSION" -> "BlockID: 967
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 967
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 945
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 969
+Call context: 
+None
+TMP_318(bool) = toAmount >= _minReturn
+CONDITION TMP_318
+EXPRESSION:TMP_318(bool) = toAmount >= _minReturn	NodeType.IF" -> "BlockID: 970
+Call context: 
+True
+TMP_319(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 969
+Call context: 
+None
+TMP_318(bool) = toAmount >= _minReturn
+CONDITION TMP_318
+EXPRESSION:TMP_318(bool) = toAmount >= _minReturn	NodeType.IF" -> "BlockID: 971
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 971
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 938
+Call context: 
+True
+RETURN toAmount
+EXPRESSION:toAmount	NodeType.RETURN" [key=0];
+"BlockID: 972
+Call context: 
+None
+CONDITION TMP_314
+EXPRESSION:qiantao require	NodeType.IF" -> "BlockID: 973
+Call context: 
+True
+TMP_315(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 972
+Call context: 
+None
+CONDITION TMP_314
+EXPRESSION:qiantao require	NodeType.IF" -> "BlockID: 974
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 974
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 964
+Call context: 
+True
+toAmount(uint256) = toAmount - affiliateAmount
+EXPRESSION:toAmount -= affiliateAmount	NodeType.EXPRESSION" [key=0];
+}

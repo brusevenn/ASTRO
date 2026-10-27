@@ -1,0 +1,566 @@
+digraph {
+"BlockID: 3590
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 3591
+Call context: 
+None
+TMP_2703(IPublicVault.VaultData) = INTERNAL_CALL, PublicVault._loadStorageSlot()()
+EXPRESSION:";
+"BlockID: 3592
+Call context: 
+None
+s(IPublicVault.VaultData) := TMP_2703(IPublicVault.VaultData)
+REF_1382(uint64) -> s.currentEpoch
+TMP_2704 = CONVERT 0 to uint64
+TMP_2705(bool) = REF_1382 == TMP_2704
+CONDITION TMP_2705
+EXPRESSION:s = _loadStorageSlot()	NodeType.VARIABLE
+s = _loadStorageSlot()	NodeType.EXPRESSION
+s.currentEpoch == uint64(0)	NodeType.IF" [shape=box];
+"BlockID: 3593
+Call context: 
+True
+RETURN
+EXPRESSION:None	NodeType.RETURN";
+"BlockID: 3594
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3595
+Call context: 
+None
+REF_1383(mapping(uint64 => IPublicVault.EpochData)) -> s.epochData
+REF_1384(uint64) -> s.currentEpoch
+TMP_2706(uint64) = REF_1384 (c)- 1
+REF_1385(IPublicVault.EpochData) -> REF_1383[TMP_2706]
+REF_1386(address) -> REF_1385.withdrawProxy
+currentWithdrawProxy(address) := REF_1386(address)
+TMP_2707 = CONVERT 0 to address
+TMP_2708(bool) = currentWithdrawProxy != TMP_2707
+CONDITION TMP_2708
+EXPRESSION:currentWithdrawProxy = s.epochData[s.currentEpoch - 1].withdrawProxy	NodeType.VARIABLE
+currentWithdrawProxy = s.epochData[s.currentEpoch - 1].withdrawProxy	NodeType.EXPRESSION
+currentWithdrawProxy != address(0)	NodeType.IF";
+"BlockID: 3596
+Call context: 
+True
+TMP_2709(address) = INTERNAL_CALL, PublicVault.asset()()
+EXPRESSION:";
+"BlockID: 3599
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3600
+Call context: 
+None
+REF_1395(mapping(uint64 => IPublicVault.EpochData)) -> s.epochData
+REF_1396(uint64) -> s.currentEpoch
+REF_1397(IPublicVault.EpochData) -> REF_1395[REF_1396]
+REF_1398(address) -> REF_1397.withdrawProxy
+withdrawProxy(address) := REF_1398(address)
+REF_1399(uint88) -> s.withdrawReserve
+TMP_2721(bool) = REF_1399 > 0
+TMP_2722(uint256) = INTERNAL_CALL, PublicVault.timeToEpochEnd()()
+EXPRESSION:withdrawProxy = s.epochData[s.currentEpoch].withdrawProxy	NodeType.VARIABLE
+withdrawProxy = s.epochData[s.currentEpoch].withdrawProxy	NodeType.EXPRESSION
+s.withdrawReserve > 0 && timeToEpochEnd() == 0 && withdrawProxy != address(0)	NodeType.EXPRESSION";
+"BlockID: 3601
+Call context: 
+None
+TMP_2723(bool) = TMP_2722 == 0
+TMP_2724(bool) = TMP_2721 && TMP_2723
+TMP_2725 = CONVERT 0 to address
+TMP_2726(bool) = withdrawProxy != TMP_2725
+TMP_2727(bool) = TMP_2724 && TMP_2726
+CONDITION TMP_2727
+EXPRESSION:s.withdrawReserve > 0 && timeToEpochEnd() == 0 && withdrawProxy != address(0)	NodeType.IF" [shape=box];
+"BlockID: 3602
+Call context: 
+True
+REF_1400(mapping(uint64 => IPublicVault.EpochData)) -> s.epochData
+REF_1401(uint64) -> s.currentEpoch
+TMP_2728(uint64) = REF_1401 (c)- 1
+REF_1402(IPublicVault.EpochData) -> REF_1400[TMP_2728]
+REF_1403(address) -> REF_1402.withdrawProxy
+currentWithdrawProxy_scope_0(address) := REF_1403(address)
+TMP_2729 = CONVERT withdrawProxy to WithdrawProxy
+REF_1405(uint88) -> s.withdrawReserve
+REF_1406(mapping(uint64 => IPublicVault.EpochData)) -> s.epochData
+REF_1407(uint64) -> s.currentEpoch
+TMP_2730(uint64) = REF_1407 (c)- 1
+REF_1408(IPublicVault.EpochData) -> REF_1406[TMP_2730]
+REF_1409(address) -> REF_1408.withdrawProxy
+TMP_2731(uint256) = HIGH_LEVEL_CALL, dest:TMP_2729(WithdrawProxy), function:drain, arguments:['REF_1405', 'REF_1409']  
+EXPRESSION:currentWithdrawProxy_scope_0 = s.epochData[s.currentEpoch - 1].withdrawProxy	NodeType.VARIABLE
+currentWithdrawProxy_scope_0 = s.epochData[s.currentEpoch - 1].withdrawProxy	NodeType.EXPRESSION";
+"BlockID: 3603
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3605
+Call context: 
+None
+drainBalance(uint256) := TMP_2731(uint256)
+REF_1410(uint88) -> s.withdrawReserve
+TMP_2732(uint88) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo88(uint256), arguments:['drainBalance'] 
+EXPRESSION:drainBalance = WithdrawProxy(withdrawProxy).drain(s.withdrawReserve,s.epochData[s.currentEpoch - 1].withdrawProxy)	NodeType.VARIABLE
+drainBalance = WithdrawProxy(withdrawProxy).drain(s.withdrawReserve,s.epochData[s.currentEpoch - 1].withdrawProxy)	NodeType.EXPRESSION
+s.withdrawReserve -= drainBalance.safeCastTo88()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3606
+Call context: 
+None
+REF_1410(-> s) = REF_1410 - TMP_2732
+TMP_2733 = CONVERT currentWithdrawProxy_scope_0 to WithdrawProxy
+HIGH_LEVEL_CALL, dest:TMP_2733(WithdrawProxy), function:increaseWithdrawReserveReceived, arguments:['drainBalance']  
+EXPRESSION:s.withdrawReserve -= drainBalance.safeCastTo88()	NodeType.EXPRESSION
+WithdrawProxy(currentWithdrawProxy_scope_0).increaseWithdrawReserveReceived(drainBalance)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3597
+Call context: 
+None
+TMP_2710 = CONVERT TMP_2709 to ERC20
+TMP_2711 = CONVERT this to address
+TMP_2712(uint256) = HIGH_LEVEL_CALL, dest:TMP_2710(ERC20), function:balanceOf, arguments:['TMP_2711']  
+EXPRESSION:" [shape=box];
+"BlockID: 3598
+Call context: 
+None
+withdrawBalance(uint256) := TMP_2712(uint256)
+REF_1388(uint88) -> s.withdrawReserve
+TMP_2713(bool) = REF_1388 <= withdrawBalance
+CONDITION TMP_2713
+EXPRESSION:withdrawBalance = ERC20(asset()).balanceOf(address(this))	NodeType.VARIABLE
+withdrawBalance = ERC20(asset()).balanceOf(address(this))	NodeType.EXPRESSION
+s.withdrawReserve <= withdrawBalance	NodeType.IF" [shape=box];
+"BlockID: 3608
+Call context: 
+True
+REF_1389(uint88) -> s.withdrawReserve
+withdrawBalance(uint256) := REF_1389(uint88)
+REF_1390(uint88) -> s.withdrawReserve
+REF_1390(uint88) (->s) := 0(uint256)
+EXPRESSION:withdrawBalance = s.withdrawReserve	NodeType.EXPRESSION
+s.withdrawReserve = 0	NodeType.EXPRESSION";
+"BlockID: 3609
+Call context: 
+False
+REF_1391(uint88) -> s.withdrawReserve
+TMP_2714(uint88) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo88(uint256), arguments:['withdrawBalance'] 
+EXPRESSION:s.withdrawReserve -= withdrawBalance.safeCastTo88()	NodeType.EXPRESSION";
+"BlockID: 3610
+Call context: 
+None
+REF_1391(-> s) = REF_1391 - TMP_2714
+EXPRESSION:s.withdrawReserve -= withdrawBalance.safeCastTo88()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3611
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3612
+Call context: 
+None
+TMP_2715(address) = INTERNAL_CALL, PublicVault.asset()()
+EXPRESSION:ERC20(asset()).safeTransfer(currentWithdrawProxy,withdrawBalance)	NodeType.EXPRESSION";
+"BlockID: 3613
+Call context: 
+None
+TMP_2716 = CONVERT TMP_2715 to ERC20
+LIBRARY_CALL, dest:SafeTransferLib, function:SafeTransferLib.safeTransfer(ERC20,address,uint256), arguments:['TMP_2716', 'currentWithdrawProxy', 'withdrawBalance'] 
+EXPRESSION:ERC20(asset()).safeTransfer(currentWithdrawProxy,withdrawBalance)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3614
+Call context: 
+None
+TMP_2718 = CONVERT currentWithdrawProxy to WithdrawProxy
+HIGH_LEVEL_CALL, dest:TMP_2718(WithdrawProxy), function:increaseWithdrawReserveReceived, arguments:['withdrawBalance']  
+EXPRESSION:ERC20(asset()).safeTransfer(currentWithdrawProxy,withdrawBalance)	NodeType.EXPRESSION
+WithdrawProxy(currentWithdrawProxy).increaseWithdrawReserveReceived(withdrawBalance)	NodeType.EXPRESSION";
+"BlockID: 3590
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 3591
+Call context: 
+None
+TMP_2703(IPublicVault.VaultData) = INTERNAL_CALL, PublicVault._loadStorageSlot()()
+EXPRESSION:" [key=0];
+"BlockID: 3591
+Call context: 
+None
+TMP_2703(IPublicVault.VaultData) = INTERNAL_CALL, PublicVault._loadStorageSlot()()
+EXPRESSION:" -> "BlockID: 3592
+Call context: 
+None
+s(IPublicVault.VaultData) := TMP_2703(IPublicVault.VaultData)
+REF_1382(uint64) -> s.currentEpoch
+TMP_2704 = CONVERT 0 to uint64
+TMP_2705(bool) = REF_1382 == TMP_2704
+CONDITION TMP_2705
+EXPRESSION:s = _loadStorageSlot()	NodeType.VARIABLE
+s = _loadStorageSlot()	NodeType.EXPRESSION
+s.currentEpoch == uint64(0)	NodeType.IF" [key=0];
+"BlockID: 3592
+Call context: 
+None
+s(IPublicVault.VaultData) := TMP_2703(IPublicVault.VaultData)
+REF_1382(uint64) -> s.currentEpoch
+TMP_2704 = CONVERT 0 to uint64
+TMP_2705(bool) = REF_1382 == TMP_2704
+CONDITION TMP_2705
+EXPRESSION:s = _loadStorageSlot()	NodeType.VARIABLE
+s = _loadStorageSlot()	NodeType.EXPRESSION
+s.currentEpoch == uint64(0)	NodeType.IF" -> "BlockID: 3593
+Call context: 
+True
+RETURN
+EXPRESSION:None	NodeType.RETURN" [key=0];
+"BlockID: 3592
+Call context: 
+None
+s(IPublicVault.VaultData) := TMP_2703(IPublicVault.VaultData)
+REF_1382(uint64) -> s.currentEpoch
+TMP_2704 = CONVERT 0 to uint64
+TMP_2705(bool) = REF_1382 == TMP_2704
+CONDITION TMP_2705
+EXPRESSION:s = _loadStorageSlot()	NodeType.VARIABLE
+s = _loadStorageSlot()	NodeType.EXPRESSION
+s.currentEpoch == uint64(0)	NodeType.IF" -> "BlockID: 3594
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3594
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3595
+Call context: 
+None
+REF_1383(mapping(uint64 => IPublicVault.EpochData)) -> s.epochData
+REF_1384(uint64) -> s.currentEpoch
+TMP_2706(uint64) = REF_1384 (c)- 1
+REF_1385(IPublicVault.EpochData) -> REF_1383[TMP_2706]
+REF_1386(address) -> REF_1385.withdrawProxy
+currentWithdrawProxy(address) := REF_1386(address)
+TMP_2707 = CONVERT 0 to address
+TMP_2708(bool) = currentWithdrawProxy != TMP_2707
+CONDITION TMP_2708
+EXPRESSION:currentWithdrawProxy = s.epochData[s.currentEpoch - 1].withdrawProxy	NodeType.VARIABLE
+currentWithdrawProxy = s.epochData[s.currentEpoch - 1].withdrawProxy	NodeType.EXPRESSION
+currentWithdrawProxy != address(0)	NodeType.IF" [key=0];
+"BlockID: 3595
+Call context: 
+None
+REF_1383(mapping(uint64 => IPublicVault.EpochData)) -> s.epochData
+REF_1384(uint64) -> s.currentEpoch
+TMP_2706(uint64) = REF_1384 (c)- 1
+REF_1385(IPublicVault.EpochData) -> REF_1383[TMP_2706]
+REF_1386(address) -> REF_1385.withdrawProxy
+currentWithdrawProxy(address) := REF_1386(address)
+TMP_2707 = CONVERT 0 to address
+TMP_2708(bool) = currentWithdrawProxy != TMP_2707
+CONDITION TMP_2708
+EXPRESSION:currentWithdrawProxy = s.epochData[s.currentEpoch - 1].withdrawProxy	NodeType.VARIABLE
+currentWithdrawProxy = s.epochData[s.currentEpoch - 1].withdrawProxy	NodeType.EXPRESSION
+currentWithdrawProxy != address(0)	NodeType.IF" -> "BlockID: 3596
+Call context: 
+True
+TMP_2709(address) = INTERNAL_CALL, PublicVault.asset()()
+EXPRESSION:" [key=0];
+"BlockID: 3595
+Call context: 
+None
+REF_1383(mapping(uint64 => IPublicVault.EpochData)) -> s.epochData
+REF_1384(uint64) -> s.currentEpoch
+TMP_2706(uint64) = REF_1384 (c)- 1
+REF_1385(IPublicVault.EpochData) -> REF_1383[TMP_2706]
+REF_1386(address) -> REF_1385.withdrawProxy
+currentWithdrawProxy(address) := REF_1386(address)
+TMP_2707 = CONVERT 0 to address
+TMP_2708(bool) = currentWithdrawProxy != TMP_2707
+CONDITION TMP_2708
+EXPRESSION:currentWithdrawProxy = s.epochData[s.currentEpoch - 1].withdrawProxy	NodeType.VARIABLE
+currentWithdrawProxy = s.epochData[s.currentEpoch - 1].withdrawProxy	NodeType.EXPRESSION
+currentWithdrawProxy != address(0)	NodeType.IF" -> "BlockID: 3599
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3596
+Call context: 
+True
+TMP_2709(address) = INTERNAL_CALL, PublicVault.asset()()
+EXPRESSION:" -> "BlockID: 3597
+Call context: 
+None
+TMP_2710 = CONVERT TMP_2709 to ERC20
+TMP_2711 = CONVERT this to address
+TMP_2712(uint256) = HIGH_LEVEL_CALL, dest:TMP_2710(ERC20), function:balanceOf, arguments:['TMP_2711']  
+EXPRESSION:" [key=0];
+"BlockID: 3599
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3600
+Call context: 
+None
+REF_1395(mapping(uint64 => IPublicVault.EpochData)) -> s.epochData
+REF_1396(uint64) -> s.currentEpoch
+REF_1397(IPublicVault.EpochData) -> REF_1395[REF_1396]
+REF_1398(address) -> REF_1397.withdrawProxy
+withdrawProxy(address) := REF_1398(address)
+REF_1399(uint88) -> s.withdrawReserve
+TMP_2721(bool) = REF_1399 > 0
+TMP_2722(uint256) = INTERNAL_CALL, PublicVault.timeToEpochEnd()()
+EXPRESSION:withdrawProxy = s.epochData[s.currentEpoch].withdrawProxy	NodeType.VARIABLE
+withdrawProxy = s.epochData[s.currentEpoch].withdrawProxy	NodeType.EXPRESSION
+s.withdrawReserve > 0 && timeToEpochEnd() == 0 && withdrawProxy != address(0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3600
+Call context: 
+None
+REF_1395(mapping(uint64 => IPublicVault.EpochData)) -> s.epochData
+REF_1396(uint64) -> s.currentEpoch
+REF_1397(IPublicVault.EpochData) -> REF_1395[REF_1396]
+REF_1398(address) -> REF_1397.withdrawProxy
+withdrawProxy(address) := REF_1398(address)
+REF_1399(uint88) -> s.withdrawReserve
+TMP_2721(bool) = REF_1399 > 0
+TMP_2722(uint256) = INTERNAL_CALL, PublicVault.timeToEpochEnd()()
+EXPRESSION:withdrawProxy = s.epochData[s.currentEpoch].withdrawProxy	NodeType.VARIABLE
+withdrawProxy = s.epochData[s.currentEpoch].withdrawProxy	NodeType.EXPRESSION
+s.withdrawReserve > 0 && timeToEpochEnd() == 0 && withdrawProxy != address(0)	NodeType.EXPRESSION" -> "BlockID: 3601
+Call context: 
+None
+TMP_2723(bool) = TMP_2722 == 0
+TMP_2724(bool) = TMP_2721 && TMP_2723
+TMP_2725 = CONVERT 0 to address
+TMP_2726(bool) = withdrawProxy != TMP_2725
+TMP_2727(bool) = TMP_2724 && TMP_2726
+CONDITION TMP_2727
+EXPRESSION:s.withdrawReserve > 0 && timeToEpochEnd() == 0 && withdrawProxy != address(0)	NodeType.IF" [key=0];
+"BlockID: 3601
+Call context: 
+None
+TMP_2723(bool) = TMP_2722 == 0
+TMP_2724(bool) = TMP_2721 && TMP_2723
+TMP_2725 = CONVERT 0 to address
+TMP_2726(bool) = withdrawProxy != TMP_2725
+TMP_2727(bool) = TMP_2724 && TMP_2726
+CONDITION TMP_2727
+EXPRESSION:s.withdrawReserve > 0 && timeToEpochEnd() == 0 && withdrawProxy != address(0)	NodeType.IF" -> "BlockID: 3602
+Call context: 
+True
+REF_1400(mapping(uint64 => IPublicVault.EpochData)) -> s.epochData
+REF_1401(uint64) -> s.currentEpoch
+TMP_2728(uint64) = REF_1401 (c)- 1
+REF_1402(IPublicVault.EpochData) -> REF_1400[TMP_2728]
+REF_1403(address) -> REF_1402.withdrawProxy
+currentWithdrawProxy_scope_0(address) := REF_1403(address)
+TMP_2729 = CONVERT withdrawProxy to WithdrawProxy
+REF_1405(uint88) -> s.withdrawReserve
+REF_1406(mapping(uint64 => IPublicVault.EpochData)) -> s.epochData
+REF_1407(uint64) -> s.currentEpoch
+TMP_2730(uint64) = REF_1407 (c)- 1
+REF_1408(IPublicVault.EpochData) -> REF_1406[TMP_2730]
+REF_1409(address) -> REF_1408.withdrawProxy
+TMP_2731(uint256) = HIGH_LEVEL_CALL, dest:TMP_2729(WithdrawProxy), function:drain, arguments:['REF_1405', 'REF_1409']  
+EXPRESSION:currentWithdrawProxy_scope_0 = s.epochData[s.currentEpoch - 1].withdrawProxy	NodeType.VARIABLE
+currentWithdrawProxy_scope_0 = s.epochData[s.currentEpoch - 1].withdrawProxy	NodeType.EXPRESSION" [key=0];
+"BlockID: 3601
+Call context: 
+None
+TMP_2723(bool) = TMP_2722 == 0
+TMP_2724(bool) = TMP_2721 && TMP_2723
+TMP_2725 = CONVERT 0 to address
+TMP_2726(bool) = withdrawProxy != TMP_2725
+TMP_2727(bool) = TMP_2724 && TMP_2726
+CONDITION TMP_2727
+EXPRESSION:s.withdrawReserve > 0 && timeToEpochEnd() == 0 && withdrawProxy != address(0)	NodeType.IF" -> "BlockID: 3603
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3602
+Call context: 
+True
+REF_1400(mapping(uint64 => IPublicVault.EpochData)) -> s.epochData
+REF_1401(uint64) -> s.currentEpoch
+TMP_2728(uint64) = REF_1401 (c)- 1
+REF_1402(IPublicVault.EpochData) -> REF_1400[TMP_2728]
+REF_1403(address) -> REF_1402.withdrawProxy
+currentWithdrawProxy_scope_0(address) := REF_1403(address)
+TMP_2729 = CONVERT withdrawProxy to WithdrawProxy
+REF_1405(uint88) -> s.withdrawReserve
+REF_1406(mapping(uint64 => IPublicVault.EpochData)) -> s.epochData
+REF_1407(uint64) -> s.currentEpoch
+TMP_2730(uint64) = REF_1407 (c)- 1
+REF_1408(IPublicVault.EpochData) -> REF_1406[TMP_2730]
+REF_1409(address) -> REF_1408.withdrawProxy
+TMP_2731(uint256) = HIGH_LEVEL_CALL, dest:TMP_2729(WithdrawProxy), function:drain, arguments:['REF_1405', 'REF_1409']  
+EXPRESSION:currentWithdrawProxy_scope_0 = s.epochData[s.currentEpoch - 1].withdrawProxy	NodeType.VARIABLE
+currentWithdrawProxy_scope_0 = s.epochData[s.currentEpoch - 1].withdrawProxy	NodeType.EXPRESSION" -> "BlockID: 3605
+Call context: 
+None
+drainBalance(uint256) := TMP_2731(uint256)
+REF_1410(uint88) -> s.withdrawReserve
+TMP_2732(uint88) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo88(uint256), arguments:['drainBalance'] 
+EXPRESSION:drainBalance = WithdrawProxy(withdrawProxy).drain(s.withdrawReserve,s.epochData[s.currentEpoch - 1].withdrawProxy)	NodeType.VARIABLE
+drainBalance = WithdrawProxy(withdrawProxy).drain(s.withdrawReserve,s.epochData[s.currentEpoch - 1].withdrawProxy)	NodeType.EXPRESSION
+s.withdrawReserve -= drainBalance.safeCastTo88()	NodeType.EXPRESSION" [key=0];
+"BlockID: 3605
+Call context: 
+None
+drainBalance(uint256) := TMP_2731(uint256)
+REF_1410(uint88) -> s.withdrawReserve
+TMP_2732(uint88) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo88(uint256), arguments:['drainBalance'] 
+EXPRESSION:drainBalance = WithdrawProxy(withdrawProxy).drain(s.withdrawReserve,s.epochData[s.currentEpoch - 1].withdrawProxy)	NodeType.VARIABLE
+drainBalance = WithdrawProxy(withdrawProxy).drain(s.withdrawReserve,s.epochData[s.currentEpoch - 1].withdrawProxy)	NodeType.EXPRESSION
+s.withdrawReserve -= drainBalance.safeCastTo88()	NodeType.EXPRESSION" -> "BlockID: 3606
+Call context: 
+None
+REF_1410(-> s) = REF_1410 - TMP_2732
+TMP_2733 = CONVERT currentWithdrawProxy_scope_0 to WithdrawProxy
+HIGH_LEVEL_CALL, dest:TMP_2733(WithdrawProxy), function:increaseWithdrawReserveReceived, arguments:['drainBalance']  
+EXPRESSION:s.withdrawReserve -= drainBalance.safeCastTo88()	NodeType.EXPRESSION
+WithdrawProxy(currentWithdrawProxy_scope_0).increaseWithdrawReserveReceived(drainBalance)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3606
+Call context: 
+None
+REF_1410(-> s) = REF_1410 - TMP_2732
+TMP_2733 = CONVERT currentWithdrawProxy_scope_0 to WithdrawProxy
+HIGH_LEVEL_CALL, dest:TMP_2733(WithdrawProxy), function:increaseWithdrawReserveReceived, arguments:['drainBalance']  
+EXPRESSION:s.withdrawReserve -= drainBalance.safeCastTo88()	NodeType.EXPRESSION
+WithdrawProxy(currentWithdrawProxy_scope_0).increaseWithdrawReserveReceived(drainBalance)	NodeType.EXPRESSION" -> "BlockID: 3603
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3597
+Call context: 
+None
+TMP_2710 = CONVERT TMP_2709 to ERC20
+TMP_2711 = CONVERT this to address
+TMP_2712(uint256) = HIGH_LEVEL_CALL, dest:TMP_2710(ERC20), function:balanceOf, arguments:['TMP_2711']  
+EXPRESSION:" -> "BlockID: 3598
+Call context: 
+None
+withdrawBalance(uint256) := TMP_2712(uint256)
+REF_1388(uint88) -> s.withdrawReserve
+TMP_2713(bool) = REF_1388 <= withdrawBalance
+CONDITION TMP_2713
+EXPRESSION:withdrawBalance = ERC20(asset()).balanceOf(address(this))	NodeType.VARIABLE
+withdrawBalance = ERC20(asset()).balanceOf(address(this))	NodeType.EXPRESSION
+s.withdrawReserve <= withdrawBalance	NodeType.IF" [key=0];
+"BlockID: 3598
+Call context: 
+None
+withdrawBalance(uint256) := TMP_2712(uint256)
+REF_1388(uint88) -> s.withdrawReserve
+TMP_2713(bool) = REF_1388 <= withdrawBalance
+CONDITION TMP_2713
+EXPRESSION:withdrawBalance = ERC20(asset()).balanceOf(address(this))	NodeType.VARIABLE
+withdrawBalance = ERC20(asset()).balanceOf(address(this))	NodeType.EXPRESSION
+s.withdrawReserve <= withdrawBalance	NodeType.IF" -> "BlockID: 3608
+Call context: 
+True
+REF_1389(uint88) -> s.withdrawReserve
+withdrawBalance(uint256) := REF_1389(uint88)
+REF_1390(uint88) -> s.withdrawReserve
+REF_1390(uint88) (->s) := 0(uint256)
+EXPRESSION:withdrawBalance = s.withdrawReserve	NodeType.EXPRESSION
+s.withdrawReserve = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 3598
+Call context: 
+None
+withdrawBalance(uint256) := TMP_2712(uint256)
+REF_1388(uint88) -> s.withdrawReserve
+TMP_2713(bool) = REF_1388 <= withdrawBalance
+CONDITION TMP_2713
+EXPRESSION:withdrawBalance = ERC20(asset()).balanceOf(address(this))	NodeType.VARIABLE
+withdrawBalance = ERC20(asset()).balanceOf(address(this))	NodeType.EXPRESSION
+s.withdrawReserve <= withdrawBalance	NodeType.IF" -> "BlockID: 3609
+Call context: 
+False
+REF_1391(uint88) -> s.withdrawReserve
+TMP_2714(uint88) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo88(uint256), arguments:['withdrawBalance'] 
+EXPRESSION:s.withdrawReserve -= withdrawBalance.safeCastTo88()	NodeType.EXPRESSION" [key=0];
+"BlockID: 3608
+Call context: 
+True
+REF_1389(uint88) -> s.withdrawReserve
+withdrawBalance(uint256) := REF_1389(uint88)
+REF_1390(uint88) -> s.withdrawReserve
+REF_1390(uint88) (->s) := 0(uint256)
+EXPRESSION:withdrawBalance = s.withdrawReserve	NodeType.EXPRESSION
+s.withdrawReserve = 0	NodeType.EXPRESSION" -> "BlockID: 3611
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3609
+Call context: 
+False
+REF_1391(uint88) -> s.withdrawReserve
+TMP_2714(uint88) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo88(uint256), arguments:['withdrawBalance'] 
+EXPRESSION:s.withdrawReserve -= withdrawBalance.safeCastTo88()	NodeType.EXPRESSION" -> "BlockID: 3610
+Call context: 
+None
+REF_1391(-> s) = REF_1391 - TMP_2714
+EXPRESSION:s.withdrawReserve -= withdrawBalance.safeCastTo88()	NodeType.EXPRESSION" [key=0];
+"BlockID: 3610
+Call context: 
+None
+REF_1391(-> s) = REF_1391 - TMP_2714
+EXPRESSION:s.withdrawReserve -= withdrawBalance.safeCastTo88()	NodeType.EXPRESSION" -> "BlockID: 3611
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3611
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3612
+Call context: 
+None
+TMP_2715(address) = INTERNAL_CALL, PublicVault.asset()()
+EXPRESSION:ERC20(asset()).safeTransfer(currentWithdrawProxy,withdrawBalance)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3612
+Call context: 
+None
+TMP_2715(address) = INTERNAL_CALL, PublicVault.asset()()
+EXPRESSION:ERC20(asset()).safeTransfer(currentWithdrawProxy,withdrawBalance)	NodeType.EXPRESSION" -> "BlockID: 3613
+Call context: 
+None
+TMP_2716 = CONVERT TMP_2715 to ERC20
+LIBRARY_CALL, dest:SafeTransferLib, function:SafeTransferLib.safeTransfer(ERC20,address,uint256), arguments:['TMP_2716', 'currentWithdrawProxy', 'withdrawBalance'] 
+EXPRESSION:ERC20(asset()).safeTransfer(currentWithdrawProxy,withdrawBalance)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3613
+Call context: 
+None
+TMP_2716 = CONVERT TMP_2715 to ERC20
+LIBRARY_CALL, dest:SafeTransferLib, function:SafeTransferLib.safeTransfer(ERC20,address,uint256), arguments:['TMP_2716', 'currentWithdrawProxy', 'withdrawBalance'] 
+EXPRESSION:ERC20(asset()).safeTransfer(currentWithdrawProxy,withdrawBalance)	NodeType.EXPRESSION" -> "BlockID: 3614
+Call context: 
+None
+TMP_2718 = CONVERT currentWithdrawProxy to WithdrawProxy
+HIGH_LEVEL_CALL, dest:TMP_2718(WithdrawProxy), function:increaseWithdrawReserveReceived, arguments:['withdrawBalance']  
+EXPRESSION:ERC20(asset()).safeTransfer(currentWithdrawProxy,withdrawBalance)	NodeType.EXPRESSION
+WithdrawProxy(currentWithdrawProxy).increaseWithdrawReserveReceived(withdrawBalance)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3614
+Call context: 
+None
+TMP_2718 = CONVERT currentWithdrawProxy to WithdrawProxy
+HIGH_LEVEL_CALL, dest:TMP_2718(WithdrawProxy), function:increaseWithdrawReserveReceived, arguments:['withdrawBalance']  
+EXPRESSION:ERC20(asset()).safeTransfer(currentWithdrawProxy,withdrawBalance)	NodeType.EXPRESSION
+WithdrawProxy(currentWithdrawProxy).increaseWithdrawReserveReceived(withdrawBalance)	NodeType.EXPRESSION" -> "BlockID: 3599
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

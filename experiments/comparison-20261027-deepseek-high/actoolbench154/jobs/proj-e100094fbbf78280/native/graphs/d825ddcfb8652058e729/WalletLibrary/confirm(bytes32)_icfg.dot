@@ -1,0 +1,666 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+TMP_109 = CONVERT msg.sender to uint256
+REF_71(uint256) -> m_ownerIndex[TMP_109]
+ownerIndex(uint256) := REF_71(uint256)
+TMP_110(bool) = ownerIndex == 0
+CONDITION TMP_110
+EXPRESSION:ownerIndex = m_ownerIndex[uint256(msg.sender)]	NodeType.VARIABLE
+ownerIndex = m_ownerIndex[uint256(msg.sender)]	NodeType.EXPRESSION
+ownerIndex == 0	NodeType.IF";
+"BlockID: 4
+Call context: 
+None
+REF_43(WalletLibrary.Transaction) -> m_txs[_h]
+REF_44(address) -> REF_43.to
+TMP_97(bool) = REF_44 != 0
+REF_45(WalletLibrary.Transaction) -> m_txs[_h]
+REF_46(uint256) -> REF_45.value
+TMP_98(bool) = REF_46 != 0
+TMP_99(bool) = TMP_97 || TMP_98
+REF_47(WalletLibrary.Transaction) -> m_txs[_h]
+REF_48(bytes) -> REF_47.data
+REF_49 -> LENGTH REF_48
+TMP_100(bool) = REF_49 != 0
+TMP_101(bool) = TMP_99 || TMP_100
+CONDITION TMP_101
+EXPRESSION:onlymanyowners(_h)	NodeType.EXPRESSION
+m_txs[_h].to != 0 || m_txs[_h].value != 0 || m_txs[_h].data.length != 0	NodeType.IF";
+"BlockID: 6
+Call context: 
+True
+NEW VARIABLE created
+REF_50(WalletLibrary.Transaction) -> m_txs[_h]
+REF_51(address) -> REF_50.to
+TMP_102(bool) = REF_51 == 0
+CONDITION TMP_102
+EXPRESSION:None	NodeType.VARIABLE
+m_txs[_h].to == 0	NodeType.IF";
+"BlockID: 7
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 10
+Call context: 
+True
+REF_52(WalletLibrary.Transaction) -> m_txs[_h]
+REF_53(uint256) -> REF_52.value
+REF_54(WalletLibrary.Transaction) -> m_txs[_h]
+REF_55(bytes) -> REF_54.data
+INLINE ASM
+created(address) := TMP_103(address)
+EXPRESSION:None	NodeType.ASSEMBLY
+created = create(m_txs[_h].value,m_txs[_h].data)	NodeType.EXPRESSION";
+"BlockID: 11
+Call context: 
+False
+REF_56(WalletLibrary.Transaction) -> m_txs[_h]
+REF_57(address) -> REF_56.to
+REF_60(WalletLibrary.Transaction) -> m_txs[_h]
+REF_61(uint256) -> REF_60.value
+REF_62(WalletLibrary.Transaction) -> m_txs[_h]
+REF_63(bytes) -> REF_62.data
+TMP_105(bool) = LOW_LEVEL_CALL, dest:REF_57, function:call, arguments:['REF_63'] value:REF_61 
+EXPRESSION:! m_txs[_h].to.call.value(m_txs[_h].value)(m_txs[_h].data)	NodeType.EXPRESSION";
+"BlockID: 14
+Call context: 
+None
+TMP_106 = ! TMP_105 
+CONDITION TMP_106
+EXPRESSION:! m_txs[_h].to.call.value(m_txs[_h].value)(m_txs[_h].data)	NodeType.IF" [shape=box];
+"BlockID: 18
+Call context: 
+True
+THROW
+EXPRESSION:None	NodeType.THROW";
+"BlockID: 19
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 13
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 17
+Call context: 
+None
+REF_70(WalletLibrary.Transaction) -> m_txs[_h]
+m_txs = delete REF_70 
+RETURN True
+EXPRESSION:delete m_txs[_h]	NodeType.EXPRESSION
+true	NodeType.RETURN";
+"BlockID: 2
+Call context: execute,confirm,onlymanyowners
+True
+RETURN
+EXPRESSION:None	NodeType.RETURN";
+"BlockID: 3
+Call context: execute,confirm,onlymanyowners
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 5
+Call context: execute,confirm,onlymanyowners
+None
+REF_72(WalletLibrary.PendingState) -> m_pending[_operation]
+pending(WalletLibrary.PendingState) := REF_72(WalletLibrary.PendingState)
+REF_73(uint256) -> pending.yetNeeded
+TMP_111(bool) = REF_73 == 0
+CONDITION TMP_111
+EXPRESSION:pending = m_pending[_operation]	NodeType.VARIABLE
+pending = m_pending[_operation]	NodeType.EXPRESSION
+pending.yetNeeded == 0	NodeType.IF";
+"BlockID: 8
+Call context: execute,confirm,onlymanyowners
+True
+REF_74(uint256) -> pending.yetNeeded
+REF_74(uint256) (->pending) := m_required(uint256)
+REF_75(uint256) -> pending.ownersDone
+REF_75(uint256) (->pending) := 0(uint256)
+REF_76(uint256) -> pending.index
+REF_77 -> LENGTH m_pendingIndex
+TMP_112(uint256) := REF_77(uint256)
+REF_77(-> m_pendingIndex) = REF_77 + 1
+REF_76(uint256) (->pending) := TMP_112(uint256)
+REF_78(uint256) -> pending.index
+REF_79(bytes32) -> m_pendingIndex[REF_78]
+REF_79(bytes32) (->m_pendingIndex) := _operation(bytes32)
+EXPRESSION:pending.yetNeeded = m_required	NodeType.EXPRESSION
+pending.ownersDone = 0	NodeType.EXPRESSION
+pending.index = m_pendingIndex.length ++	NodeType.EXPRESSION
+m_pendingIndex[pending.index] = _operation	NodeType.EXPRESSION";
+"BlockID: 9
+Call context: execute,confirm,onlymanyowners
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 12
+Call context: execute,confirm,onlymanyowners
+None
+TMP_113(uint256) = 2 ** ownerIndex
+ownerIndexBit(uint256) := TMP_113(uint256)
+REF_80(uint256) -> pending.ownersDone
+TMP_114(uint256) = REF_80 & ownerIndexBit
+TMP_115(bool) = TMP_114 == 0
+CONDITION TMP_115
+EXPRESSION:ownerIndexBit = 2 ** ownerIndex	NodeType.VARIABLE
+ownerIndexBit = 2 ** ownerIndex	NodeType.EXPRESSION
+pending.ownersDone & ownerIndexBit == 0	NodeType.IF";
+"BlockID: 15
+Call context: execute,confirm,onlymanyowners
+None
+REF_81(uint256) -> pending.yetNeeded
+TMP_117(bool) = REF_81 <= 1
+CONDITION TMP_117
+EXPRESSION:pending.yetNeeded <= 1	NodeType.IF";
+"BlockID: 16
+Call context: execute,confirm,onlymanyowners
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 20
+Call context: execute,confirm,onlymanyowners
+True
+REF_82(WalletLibrary.PendingState) -> m_pending[_operation]
+REF_83(uint256) -> REF_82.index
+REF_84(bytes32) -> m_pendingIndex[REF_83]
+m_pendingIndex = delete REF_84 
+REF_85(WalletLibrary.PendingState) -> m_pending[_operation]
+m_pending = delete REF_85 
+TMP_164(None) := True(bool)
+EXPRESSION:delete m_pendingIndex[m_pending[_operation].index]	NodeType.EXPRESSION
+delete m_pending[_operation]	NodeType.EXPRESSION";
+"BlockID: 21
+Call context: execute,confirm,onlymanyowners
+False
+REF_86(uint256) -> pending.yetNeeded
+TMP_118(uint256) := REF_86(uint256)
+REF_86(-> pending) = REF_86 - 1
+REF_87(uint256) -> pending.ownersDone
+REF_87(-> pending) = REF_87 | ownerIndexBit
+EXPRESSION:pending.yetNeeded --	NodeType.EXPRESSION
+pending.ownersDone |= ownerIndexBit	NodeType.EXPRESSION";
+"BlockID: 22
+Call context: execute,confirm,onlymanyowners
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+TMP_109 = CONVERT msg.sender to uint256
+REF_71(uint256) -> m_ownerIndex[TMP_109]
+ownerIndex(uint256) := REF_71(uint256)
+TMP_110(bool) = ownerIndex == 0
+CONDITION TMP_110
+EXPRESSION:ownerIndex = m_ownerIndex[uint256(msg.sender)]	NodeType.VARIABLE
+ownerIndex = m_ownerIndex[uint256(msg.sender)]	NodeType.EXPRESSION
+ownerIndex == 0	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_109 = CONVERT msg.sender to uint256
+REF_71(uint256) -> m_ownerIndex[TMP_109]
+ownerIndex(uint256) := REF_71(uint256)
+TMP_110(bool) = ownerIndex == 0
+CONDITION TMP_110
+EXPRESSION:ownerIndex = m_ownerIndex[uint256(msg.sender)]	NodeType.VARIABLE
+ownerIndex = m_ownerIndex[uint256(msg.sender)]	NodeType.EXPRESSION
+ownerIndex == 0	NodeType.IF" -> "BlockID: 2
+Call context: execute,confirm,onlymanyowners
+True
+RETURN
+EXPRESSION:None	NodeType.RETURN" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+TMP_109 = CONVERT msg.sender to uint256
+REF_71(uint256) -> m_ownerIndex[TMP_109]
+ownerIndex(uint256) := REF_71(uint256)
+TMP_110(bool) = ownerIndex == 0
+CONDITION TMP_110
+EXPRESSION:ownerIndex = m_ownerIndex[uint256(msg.sender)]	NodeType.VARIABLE
+ownerIndex = m_ownerIndex[uint256(msg.sender)]	NodeType.EXPRESSION
+ownerIndex == 0	NodeType.IF" -> "BlockID: 3
+Call context: execute,confirm,onlymanyowners
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 4
+Call context: 
+None
+REF_43(WalletLibrary.Transaction) -> m_txs[_h]
+REF_44(address) -> REF_43.to
+TMP_97(bool) = REF_44 != 0
+REF_45(WalletLibrary.Transaction) -> m_txs[_h]
+REF_46(uint256) -> REF_45.value
+TMP_98(bool) = REF_46 != 0
+TMP_99(bool) = TMP_97 || TMP_98
+REF_47(WalletLibrary.Transaction) -> m_txs[_h]
+REF_48(bytes) -> REF_47.data
+REF_49 -> LENGTH REF_48
+TMP_100(bool) = REF_49 != 0
+TMP_101(bool) = TMP_99 || TMP_100
+CONDITION TMP_101
+EXPRESSION:onlymanyowners(_h)	NodeType.EXPRESSION
+m_txs[_h].to != 0 || m_txs[_h].value != 0 || m_txs[_h].data.length != 0	NodeType.IF" -> "BlockID: 6
+Call context: 
+True
+NEW VARIABLE created
+REF_50(WalletLibrary.Transaction) -> m_txs[_h]
+REF_51(address) -> REF_50.to
+TMP_102(bool) = REF_51 == 0
+CONDITION TMP_102
+EXPRESSION:None	NodeType.VARIABLE
+m_txs[_h].to == 0	NodeType.IF" [key=0];
+"BlockID: 4
+Call context: 
+None
+REF_43(WalletLibrary.Transaction) -> m_txs[_h]
+REF_44(address) -> REF_43.to
+TMP_97(bool) = REF_44 != 0
+REF_45(WalletLibrary.Transaction) -> m_txs[_h]
+REF_46(uint256) -> REF_45.value
+TMP_98(bool) = REF_46 != 0
+TMP_99(bool) = TMP_97 || TMP_98
+REF_47(WalletLibrary.Transaction) -> m_txs[_h]
+REF_48(bytes) -> REF_47.data
+REF_49 -> LENGTH REF_48
+TMP_100(bool) = REF_49 != 0
+TMP_101(bool) = TMP_99 || TMP_100
+CONDITION TMP_101
+EXPRESSION:onlymanyowners(_h)	NodeType.EXPRESSION
+m_txs[_h].to != 0 || m_txs[_h].value != 0 || m_txs[_h].data.length != 0	NodeType.IF" -> "BlockID: 7
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 6
+Call context: 
+True
+NEW VARIABLE created
+REF_50(WalletLibrary.Transaction) -> m_txs[_h]
+REF_51(address) -> REF_50.to
+TMP_102(bool) = REF_51 == 0
+CONDITION TMP_102
+EXPRESSION:None	NodeType.VARIABLE
+m_txs[_h].to == 0	NodeType.IF" -> "BlockID: 10
+Call context: 
+True
+REF_52(WalletLibrary.Transaction) -> m_txs[_h]
+REF_53(uint256) -> REF_52.value
+REF_54(WalletLibrary.Transaction) -> m_txs[_h]
+REF_55(bytes) -> REF_54.data
+INLINE ASM
+created(address) := TMP_103(address)
+EXPRESSION:None	NodeType.ASSEMBLY
+created = create(m_txs[_h].value,m_txs[_h].data)	NodeType.EXPRESSION" [key=0];
+"BlockID: 6
+Call context: 
+True
+NEW VARIABLE created
+REF_50(WalletLibrary.Transaction) -> m_txs[_h]
+REF_51(address) -> REF_50.to
+TMP_102(bool) = REF_51 == 0
+CONDITION TMP_102
+EXPRESSION:None	NodeType.VARIABLE
+m_txs[_h].to == 0	NodeType.IF" -> "BlockID: 11
+Call context: 
+False
+REF_56(WalletLibrary.Transaction) -> m_txs[_h]
+REF_57(address) -> REF_56.to
+REF_60(WalletLibrary.Transaction) -> m_txs[_h]
+REF_61(uint256) -> REF_60.value
+REF_62(WalletLibrary.Transaction) -> m_txs[_h]
+REF_63(bytes) -> REF_62.data
+TMP_105(bool) = LOW_LEVEL_CALL, dest:REF_57, function:call, arguments:['REF_63'] value:REF_61 
+EXPRESSION:! m_txs[_h].to.call.value(m_txs[_h].value)(m_txs[_h].data)	NodeType.EXPRESSION" [key=0];
+"BlockID: 10
+Call context: 
+True
+REF_52(WalletLibrary.Transaction) -> m_txs[_h]
+REF_53(uint256) -> REF_52.value
+REF_54(WalletLibrary.Transaction) -> m_txs[_h]
+REF_55(bytes) -> REF_54.data
+INLINE ASM
+created(address) := TMP_103(address)
+EXPRESSION:None	NodeType.ASSEMBLY
+created = create(m_txs[_h].value,m_txs[_h].data)	NodeType.EXPRESSION" -> "BlockID: 13
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_3"];
+"BlockID: 11
+Call context: 
+False
+REF_56(WalletLibrary.Transaction) -> m_txs[_h]
+REF_57(address) -> REF_56.to
+REF_60(WalletLibrary.Transaction) -> m_txs[_h]
+REF_61(uint256) -> REF_60.value
+REF_62(WalletLibrary.Transaction) -> m_txs[_h]
+REF_63(bytes) -> REF_62.data
+TMP_105(bool) = LOW_LEVEL_CALL, dest:REF_57, function:call, arguments:['REF_63'] value:REF_61 
+EXPRESSION:! m_txs[_h].to.call.value(m_txs[_h].value)(m_txs[_h].data)	NodeType.EXPRESSION" -> "BlockID: 14
+Call context: 
+None
+TMP_106 = ! TMP_105 
+CONDITION TMP_106
+EXPRESSION:! m_txs[_h].to.call.value(m_txs[_h].value)(m_txs[_h].data)	NodeType.IF" [key=0];
+"BlockID: 14
+Call context: 
+None
+TMP_106 = ! TMP_105 
+CONDITION TMP_106
+EXPRESSION:! m_txs[_h].to.call.value(m_txs[_h].value)(m_txs[_h].data)	NodeType.IF" -> "BlockID: 18
+Call context: 
+True
+THROW
+EXPRESSION:None	NodeType.THROW" [key=0];
+"BlockID: 14
+Call context: 
+None
+TMP_106 = ! TMP_105 
+CONDITION TMP_106
+EXPRESSION:! m_txs[_h].to.call.value(m_txs[_h].value)(m_txs[_h].data)	NodeType.IF" -> "BlockID: 19
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 19
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 13
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 13
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 17
+Call context: 
+None
+REF_70(WalletLibrary.Transaction) -> m_txs[_h]
+m_txs = delete REF_70 
+RETURN True
+EXPRESSION:delete m_txs[_h]	NodeType.EXPRESSION
+true	NodeType.RETURN" [key=0];
+"BlockID: 2
+Call context: execute,confirm,onlymanyowners
+True
+RETURN
+EXPRESSION:None	NodeType.RETURN" -> "BlockID: 4
+Call context: 
+None
+REF_43(WalletLibrary.Transaction) -> m_txs[_h]
+REF_44(address) -> REF_43.to
+TMP_97(bool) = REF_44 != 0
+REF_45(WalletLibrary.Transaction) -> m_txs[_h]
+REF_46(uint256) -> REF_45.value
+TMP_98(bool) = REF_46 != 0
+TMP_99(bool) = TMP_97 || TMP_98
+REF_47(WalletLibrary.Transaction) -> m_txs[_h]
+REF_48(bytes) -> REF_47.data
+REF_49 -> LENGTH REF_48
+TMP_100(bool) = REF_49 != 0
+TMP_101(bool) = TMP_99 || TMP_100
+CONDITION TMP_101
+EXPRESSION:onlymanyowners(_h)	NodeType.EXPRESSION
+m_txs[_h].to != 0 || m_txs[_h].value != 0 || m_txs[_h].data.length != 0	NodeType.IF" [key="successor_5", ref="WalletLibrary.onlymanyowners"];
+"BlockID: 3
+Call context: execute,confirm,onlymanyowners
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 5
+Call context: execute,confirm,onlymanyowners
+None
+REF_72(WalletLibrary.PendingState) -> m_pending[_operation]
+pending(WalletLibrary.PendingState) := REF_72(WalletLibrary.PendingState)
+REF_73(uint256) -> pending.yetNeeded
+TMP_111(bool) = REF_73 == 0
+CONDITION TMP_111
+EXPRESSION:pending = m_pending[_operation]	NodeType.VARIABLE
+pending = m_pending[_operation]	NodeType.EXPRESSION
+pending.yetNeeded == 0	NodeType.IF" [key=0];
+"BlockID: 5
+Call context: execute,confirm,onlymanyowners
+None
+REF_72(WalletLibrary.PendingState) -> m_pending[_operation]
+pending(WalletLibrary.PendingState) := REF_72(WalletLibrary.PendingState)
+REF_73(uint256) -> pending.yetNeeded
+TMP_111(bool) = REF_73 == 0
+CONDITION TMP_111
+EXPRESSION:pending = m_pending[_operation]	NodeType.VARIABLE
+pending = m_pending[_operation]	NodeType.EXPRESSION
+pending.yetNeeded == 0	NodeType.IF" -> "BlockID: 8
+Call context: execute,confirm,onlymanyowners
+True
+REF_74(uint256) -> pending.yetNeeded
+REF_74(uint256) (->pending) := m_required(uint256)
+REF_75(uint256) -> pending.ownersDone
+REF_75(uint256) (->pending) := 0(uint256)
+REF_76(uint256) -> pending.index
+REF_77 -> LENGTH m_pendingIndex
+TMP_112(uint256) := REF_77(uint256)
+REF_77(-> m_pendingIndex) = REF_77 + 1
+REF_76(uint256) (->pending) := TMP_112(uint256)
+REF_78(uint256) -> pending.index
+REF_79(bytes32) -> m_pendingIndex[REF_78]
+REF_79(bytes32) (->m_pendingIndex) := _operation(bytes32)
+EXPRESSION:pending.yetNeeded = m_required	NodeType.EXPRESSION
+pending.ownersDone = 0	NodeType.EXPRESSION
+pending.index = m_pendingIndex.length ++	NodeType.EXPRESSION
+m_pendingIndex[pending.index] = _operation	NodeType.EXPRESSION" [key=0];
+"BlockID: 5
+Call context: execute,confirm,onlymanyowners
+None
+REF_72(WalletLibrary.PendingState) -> m_pending[_operation]
+pending(WalletLibrary.PendingState) := REF_72(WalletLibrary.PendingState)
+REF_73(uint256) -> pending.yetNeeded
+TMP_111(bool) = REF_73 == 0
+CONDITION TMP_111
+EXPRESSION:pending = m_pending[_operation]	NodeType.VARIABLE
+pending = m_pending[_operation]	NodeType.EXPRESSION
+pending.yetNeeded == 0	NodeType.IF" -> "BlockID: 9
+Call context: execute,confirm,onlymanyowners
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 8
+Call context: execute,confirm,onlymanyowners
+True
+REF_74(uint256) -> pending.yetNeeded
+REF_74(uint256) (->pending) := m_required(uint256)
+REF_75(uint256) -> pending.ownersDone
+REF_75(uint256) (->pending) := 0(uint256)
+REF_76(uint256) -> pending.index
+REF_77 -> LENGTH m_pendingIndex
+TMP_112(uint256) := REF_77(uint256)
+REF_77(-> m_pendingIndex) = REF_77 + 1
+REF_76(uint256) (->pending) := TMP_112(uint256)
+REF_78(uint256) -> pending.index
+REF_79(bytes32) -> m_pendingIndex[REF_78]
+REF_79(bytes32) (->m_pendingIndex) := _operation(bytes32)
+EXPRESSION:pending.yetNeeded = m_required	NodeType.EXPRESSION
+pending.ownersDone = 0	NodeType.EXPRESSION
+pending.index = m_pendingIndex.length ++	NodeType.EXPRESSION
+m_pendingIndex[pending.index] = _operation	NodeType.EXPRESSION" -> "BlockID: 9
+Call context: execute,confirm,onlymanyowners
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 9
+Call context: execute,confirm,onlymanyowners
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 12
+Call context: execute,confirm,onlymanyowners
+None
+TMP_113(uint256) = 2 ** ownerIndex
+ownerIndexBit(uint256) := TMP_113(uint256)
+REF_80(uint256) -> pending.ownersDone
+TMP_114(uint256) = REF_80 & ownerIndexBit
+TMP_115(bool) = TMP_114 == 0
+CONDITION TMP_115
+EXPRESSION:ownerIndexBit = 2 ** ownerIndex	NodeType.VARIABLE
+ownerIndexBit = 2 ** ownerIndex	NodeType.EXPRESSION
+pending.ownersDone & ownerIndexBit == 0	NodeType.IF" [key=0];
+"BlockID: 12
+Call context: execute,confirm,onlymanyowners
+None
+TMP_113(uint256) = 2 ** ownerIndex
+ownerIndexBit(uint256) := TMP_113(uint256)
+REF_80(uint256) -> pending.ownersDone
+TMP_114(uint256) = REF_80 & ownerIndexBit
+TMP_115(bool) = TMP_114 == 0
+CONDITION TMP_115
+EXPRESSION:ownerIndexBit = 2 ** ownerIndex	NodeType.VARIABLE
+ownerIndexBit = 2 ** ownerIndex	NodeType.EXPRESSION
+pending.ownersDone & ownerIndexBit == 0	NodeType.IF" -> "BlockID: 15
+Call context: execute,confirm,onlymanyowners
+None
+REF_81(uint256) -> pending.yetNeeded
+TMP_117(bool) = REF_81 <= 1
+CONDITION TMP_117
+EXPRESSION:pending.yetNeeded <= 1	NodeType.IF" [key=0];
+"BlockID: 12
+Call context: execute,confirm,onlymanyowners
+None
+TMP_113(uint256) = 2 ** ownerIndex
+ownerIndexBit(uint256) := TMP_113(uint256)
+REF_80(uint256) -> pending.ownersDone
+TMP_114(uint256) = REF_80 & ownerIndexBit
+TMP_115(bool) = TMP_114 == 0
+CONDITION TMP_115
+EXPRESSION:ownerIndexBit = 2 ** ownerIndex	NodeType.VARIABLE
+ownerIndexBit = 2 ** ownerIndex	NodeType.EXPRESSION
+pending.ownersDone & ownerIndexBit == 0	NodeType.IF" -> "BlockID: 16
+Call context: execute,confirm,onlymanyowners
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 15
+Call context: execute,confirm,onlymanyowners
+None
+REF_81(uint256) -> pending.yetNeeded
+TMP_117(bool) = REF_81 <= 1
+CONDITION TMP_117
+EXPRESSION:pending.yetNeeded <= 1	NodeType.IF" -> "BlockID: 20
+Call context: execute,confirm,onlymanyowners
+True
+REF_82(WalletLibrary.PendingState) -> m_pending[_operation]
+REF_83(uint256) -> REF_82.index
+REF_84(bytes32) -> m_pendingIndex[REF_83]
+m_pendingIndex = delete REF_84 
+REF_85(WalletLibrary.PendingState) -> m_pending[_operation]
+m_pending = delete REF_85 
+TMP_164(None) := True(bool)
+EXPRESSION:delete m_pendingIndex[m_pending[_operation].index]	NodeType.EXPRESSION
+delete m_pending[_operation]	NodeType.EXPRESSION" [key=0];
+"BlockID: 15
+Call context: execute,confirm,onlymanyowners
+None
+REF_81(uint256) -> pending.yetNeeded
+TMP_117(bool) = REF_81 <= 1
+CONDITION TMP_117
+EXPRESSION:pending.yetNeeded <= 1	NodeType.IF" -> "BlockID: 21
+Call context: execute,confirm,onlymanyowners
+False
+REF_86(uint256) -> pending.yetNeeded
+TMP_118(uint256) := REF_86(uint256)
+REF_86(-> pending) = REF_86 - 1
+REF_87(uint256) -> pending.ownersDone
+REF_87(-> pending) = REF_87 | ownerIndexBit
+EXPRESSION:pending.yetNeeded --	NodeType.EXPRESSION
+pending.ownersDone |= ownerIndexBit	NodeType.EXPRESSION" [key=0];
+"BlockID: 16
+Call context: execute,confirm,onlymanyowners
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: 
+None
+REF_43(WalletLibrary.Transaction) -> m_txs[_h]
+REF_44(address) -> REF_43.to
+TMP_97(bool) = REF_44 != 0
+REF_45(WalletLibrary.Transaction) -> m_txs[_h]
+REF_46(uint256) -> REF_45.value
+TMP_98(bool) = REF_46 != 0
+TMP_99(bool) = TMP_97 || TMP_98
+REF_47(WalletLibrary.Transaction) -> m_txs[_h]
+REF_48(bytes) -> REF_47.data
+REF_49 -> LENGTH REF_48
+TMP_100(bool) = REF_49 != 0
+TMP_101(bool) = TMP_99 || TMP_100
+CONDITION TMP_101
+EXPRESSION:onlymanyowners(_h)	NodeType.EXPRESSION
+m_txs[_h].to != 0 || m_txs[_h].value != 0 || m_txs[_h].data.length != 0	NodeType.IF" [key="successor_5", ref="WalletLibrary.onlymanyowners"];
+"BlockID: 20
+Call context: execute,confirm,onlymanyowners
+True
+REF_82(WalletLibrary.PendingState) -> m_pending[_operation]
+REF_83(uint256) -> REF_82.index
+REF_84(bytes32) -> m_pendingIndex[REF_83]
+m_pendingIndex = delete REF_84 
+REF_85(WalletLibrary.PendingState) -> m_pending[_operation]
+m_pending = delete REF_85 
+TMP_164(None) := True(bool)
+EXPRESSION:delete m_pendingIndex[m_pending[_operation].index]	NodeType.EXPRESSION
+delete m_pending[_operation]	NodeType.EXPRESSION" -> "BlockID: 4
+Call context: 
+None
+REF_43(WalletLibrary.Transaction) -> m_txs[_h]
+REF_44(address) -> REF_43.to
+TMP_97(bool) = REF_44 != 0
+REF_45(WalletLibrary.Transaction) -> m_txs[_h]
+REF_46(uint256) -> REF_45.value
+TMP_98(bool) = REF_46 != 0
+TMP_99(bool) = TMP_97 || TMP_98
+REF_47(WalletLibrary.Transaction) -> m_txs[_h]
+REF_48(bytes) -> REF_47.data
+REF_49 -> LENGTH REF_48
+TMP_100(bool) = REF_49 != 0
+TMP_101(bool) = TMP_99 || TMP_100
+CONDITION TMP_101
+EXPRESSION:onlymanyowners(_h)	NodeType.EXPRESSION
+m_txs[_h].to != 0 || m_txs[_h].value != 0 || m_txs[_h].data.length != 0	NodeType.IF" [key="successor_5", ref="WalletLibrary.onlymanyowners"];
+"BlockID: 21
+Call context: execute,confirm,onlymanyowners
+False
+REF_86(uint256) -> pending.yetNeeded
+TMP_118(uint256) := REF_86(uint256)
+REF_86(-> pending) = REF_86 - 1
+REF_87(uint256) -> pending.ownersDone
+REF_87(-> pending) = REF_87 | ownerIndexBit
+EXPRESSION:pending.yetNeeded --	NodeType.EXPRESSION
+pending.ownersDone |= ownerIndexBit	NodeType.EXPRESSION" -> "BlockID: 22
+Call context: execute,confirm,onlymanyowners
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 22
+Call context: execute,confirm,onlymanyowners
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 16
+Call context: execute,confirm,onlymanyowners
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

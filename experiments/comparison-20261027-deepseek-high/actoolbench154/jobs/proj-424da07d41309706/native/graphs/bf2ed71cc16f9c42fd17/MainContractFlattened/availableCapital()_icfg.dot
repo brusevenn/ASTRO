@@ -1,0 +1,510 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+stratAddr(address) := msg.sender(address)
+TMP_707(bool) = totalAllocBPS == 0
+TMP_708(bool) = TMP_707 || emergencyShutdown
+CONDITION TMP_708
+EXPRESSION:stratAddr = msg.sender	NodeType.VARIABLE
+stratAddr = msg.sender	NodeType.EXPRESSION
+totalAllocBPS == 0 || emergencyShutdown	NodeType.IF";
+"BlockID: 2
+Call context: 
+True
+REF_223(ReaperVaultV2.StrategyParams) -> strategies[stratAddr]
+REF_224(uint256) -> REF_223.allocated
+TMP_709 = CONVERT REF_224 to int256
+TMP_710(int256) = 0 (c)- TMP_709
+RETURN TMP_710
+EXPRESSION:- int256(strategies[stratAddr].allocated)	NodeType.RETURN";
+"BlockID: 3
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 4
+Call context: 
+None
+REF_225(ReaperVaultV2.StrategyParams) -> strategies[stratAddr]
+REF_226(uint256) -> REF_225.allocBPS
+TMP_543 = CONVERT asset to IERC20Metadata
+TMP_544 = CONVERT this to address
+TMP_545(uint256) = HIGH_LEVEL_CALL, dest:TMP_543(IERC20Metadata), function:balanceOf, arguments:['TMP_544']  
+EXPRESSION:IERC20Metadata(asset).balanceOf(address(this)) + totalAllocated	NodeType.EXPRESSION";
+"BlockID: 6
+Call context: 
+True
+TMP_715(uint256) = stratCurrentAllocation (c)- stratMaxAllocation
+TMP_716 = CONVERT TMP_715 to int256
+TMP_717(int256) = 0 (c)- TMP_716
+RETURN TMP_717
+EXPRESSION:- int256(stratCurrentAllocation - stratMaxAllocation)	NodeType.RETURN";
+"BlockID: 7
+Call context: 
+False
+TMP_718(bool) = stratCurrentAllocation < stratMaxAllocation
+CONDITION TMP_718
+EXPRESSION:stratCurrentAllocation < stratMaxAllocation	NodeType.IF";
+"BlockID: 8
+Call context: 
+True
+TMP_543 = CONVERT asset to IERC20Metadata
+TMP_544 = CONVERT this to address
+TMP_545(uint256) = HIGH_LEVEL_CALL, dest:TMP_543(IERC20Metadata), function:balanceOf, arguments:['TMP_544']  
+EXPRESSION:IERC20Metadata(asset).balanceOf(address(this)) + totalAllocated	NodeType.EXPRESSION";
+"BlockID: 9
+Call context: 
+False
+RETURN 0
+EXPRESSION:0	NodeType.RETURN";
+"BlockID: 11
+Call context: 
+True
+RETURN 0
+EXPRESSION:0	NodeType.RETURN";
+"BlockID: 12
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 13
+Call context: 
+None
+TMP_723(uint256) = stratMaxAllocation (c)- stratCurrentAllocation
+available(uint256) := TMP_723(uint256)
+TMP_724(uint256) = vaultMaxAllocation (c)- vaultCurrentAllocation
+TMP_296(bool) = a < b
+CONDITION TMP_296
+EXPRESSION:available = stratMaxAllocation - stratCurrentAllocation	NodeType.VARIABLE
+available = stratMaxAllocation - stratCurrentAllocation	NodeType.EXPRESSION
+a < b	NodeType.IF";
+"BlockID: 16
+Call context: 
+None
+available(uint256) := TMP_725(uint256)
+TMP_726 = CONVERT asset to IERC20Metadata
+TMP_727 = CONVERT this to address
+TMP_728(uint256) = HIGH_LEVEL_CALL, dest:TMP_726(IERC20Metadata), function:balanceOf, arguments:['TMP_727']  
+EXPRESSION:available = Math.min(available,vaultMaxAllocation - vaultCurrentAllocation)	NodeType.EXPRESSION
+available = Math.min(available,IERC20Metadata(asset).balanceOf(address(this)))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 17
+Call context: 
+None
+TMP_296(bool) = a < b
+CONDITION TMP_296
+EXPRESSION:a < b	NodeType.IF" [shape=box];
+"BlockID: 20
+Call context: 
+None
+available(uint256) := TMP_729(uint256)
+TMP_730 = CONVERT available to int256
+RETURN TMP_730
+EXPRESSION:available = Math.min(available,IERC20Metadata(asset).balanceOf(address(this)))	NodeType.EXPRESSION
+int256(available)	NodeType.RETURN" [shape=box];
+"BlockID: 5
+Call context: availableCapital
+None
+TMP_546(uint256) = TMP_545 (c)+ totalAllocated
+TMP_1012(None) := TMP_546(uint256)
+TMP_712(uint256) = REF_226 (c)* TMP_711
+TMP_713(uint256) = TMP_712 (c)/ PERCENT_DIVISOR
+stratMaxAllocation(uint256) := TMP_713(uint256)
+REF_227(ReaperVaultV2.StrategyParams) -> strategies[stratAddr]
+REF_228(uint256) -> REF_227.allocated
+stratCurrentAllocation(uint256) := REF_228(uint256)
+TMP_714(bool) = stratCurrentAllocation > stratMaxAllocation
+CONDITION TMP_714
+EXPRESSION:stratMaxAllocation = (strategies[stratAddr].allocBPS * totalAssets()) / PERCENT_DIVISOR	NodeType.VARIABLE
+stratMaxAllocation = (strategies[stratAddr].allocBPS * totalAssets()) / PERCENT_DIVISOR	NodeType.EXPRESSION
+stratCurrentAllocation = strategies[stratAddr].allocated	NodeType.VARIABLE
+stratCurrentAllocation = strategies[stratAddr].allocated	NodeType.EXPRESSION
+stratCurrentAllocation > stratMaxAllocation	NodeType.IF" [shape=box];
+"BlockID: 10
+Call context: availableCapital
+None
+TMP_546(uint256) = TMP_545 (c)+ totalAllocated
+TMP_1012(None) := TMP_546(uint256)
+TMP_720(uint256) = totalAllocBPS (c)* TMP_719
+TMP_721(uint256) = TMP_720 (c)/ PERCENT_DIVISOR
+vaultMaxAllocation(uint256) := TMP_721(uint256)
+vaultCurrentAllocation(uint256) := totalAllocated(uint256)
+TMP_722(bool) = vaultCurrentAllocation >= vaultMaxAllocation
+CONDITION TMP_722
+EXPRESSION:vaultMaxAllocation = (totalAllocBPS * totalAssets()) / PERCENT_DIVISOR	NodeType.VARIABLE
+vaultMaxAllocation = (totalAllocBPS * totalAssets()) / PERCENT_DIVISOR	NodeType.EXPRESSION
+vaultCurrentAllocation = totalAllocated	NodeType.VARIABLE
+vaultCurrentAllocation = totalAllocated	NodeType.EXPRESSION
+vaultCurrentAllocation >= vaultMaxAllocation	NodeType.IF" [shape=box];
+"BlockID: 14
+Call context: availableCapital
+True
+TMP_959(None) := a(uint256)
+EXPRESSION:";
+"BlockID: 15
+Call context: availableCapital
+False
+TMP_959(None) := b(uint256)
+EXPRESSION:";
+"BlockID: 18
+Call context: availableCapital
+True
+TMP_959(None) := a(uint256)
+EXPRESSION:";
+"BlockID: 19
+Call context: availableCapital
+False
+TMP_959(None) := b(uint256)
+EXPRESSION:";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+stratAddr(address) := msg.sender(address)
+TMP_707(bool) = totalAllocBPS == 0
+TMP_708(bool) = TMP_707 || emergencyShutdown
+CONDITION TMP_708
+EXPRESSION:stratAddr = msg.sender	NodeType.VARIABLE
+stratAddr = msg.sender	NodeType.EXPRESSION
+totalAllocBPS == 0 || emergencyShutdown	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+stratAddr(address) := msg.sender(address)
+TMP_707(bool) = totalAllocBPS == 0
+TMP_708(bool) = TMP_707 || emergencyShutdown
+CONDITION TMP_708
+EXPRESSION:stratAddr = msg.sender	NodeType.VARIABLE
+stratAddr = msg.sender	NodeType.EXPRESSION
+totalAllocBPS == 0 || emergencyShutdown	NodeType.IF" -> "BlockID: 2
+Call context: 
+True
+REF_223(ReaperVaultV2.StrategyParams) -> strategies[stratAddr]
+REF_224(uint256) -> REF_223.allocated
+TMP_709 = CONVERT REF_224 to int256
+TMP_710(int256) = 0 (c)- TMP_709
+RETURN TMP_710
+EXPRESSION:- int256(strategies[stratAddr].allocated)	NodeType.RETURN" [key=0];
+"BlockID: 1
+Call context: 
+None
+stratAddr(address) := msg.sender(address)
+TMP_707(bool) = totalAllocBPS == 0
+TMP_708(bool) = TMP_707 || emergencyShutdown
+CONDITION TMP_708
+EXPRESSION:stratAddr = msg.sender	NodeType.VARIABLE
+stratAddr = msg.sender	NodeType.EXPRESSION
+totalAllocBPS == 0 || emergencyShutdown	NodeType.IF" -> "BlockID: 3
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: 
+None
+REF_225(ReaperVaultV2.StrategyParams) -> strategies[stratAddr]
+REF_226(uint256) -> REF_225.allocBPS
+TMP_543 = CONVERT asset to IERC20Metadata
+TMP_544 = CONVERT this to address
+TMP_545(uint256) = HIGH_LEVEL_CALL, dest:TMP_543(IERC20Metadata), function:balanceOf, arguments:['TMP_544']  
+EXPRESSION:IERC20Metadata(asset).balanceOf(address(this)) + totalAllocated	NodeType.EXPRESSION" [key=0];
+"BlockID: 4
+Call context: 
+None
+REF_225(ReaperVaultV2.StrategyParams) -> strategies[stratAddr]
+REF_226(uint256) -> REF_225.allocBPS
+TMP_543 = CONVERT asset to IERC20Metadata
+TMP_544 = CONVERT this to address
+TMP_545(uint256) = HIGH_LEVEL_CALL, dest:TMP_543(IERC20Metadata), function:balanceOf, arguments:['TMP_544']  
+EXPRESSION:IERC20Metadata(asset).balanceOf(address(this)) + totalAllocated	NodeType.EXPRESSION" -> "BlockID: 5
+Call context: availableCapital
+None
+TMP_546(uint256) = TMP_545 (c)+ totalAllocated
+TMP_1012(None) := TMP_546(uint256)
+TMP_712(uint256) = REF_226 (c)* TMP_711
+TMP_713(uint256) = TMP_712 (c)/ PERCENT_DIVISOR
+stratMaxAllocation(uint256) := TMP_713(uint256)
+REF_227(ReaperVaultV2.StrategyParams) -> strategies[stratAddr]
+REF_228(uint256) -> REF_227.allocated
+stratCurrentAllocation(uint256) := REF_228(uint256)
+TMP_714(bool) = stratCurrentAllocation > stratMaxAllocation
+CONDITION TMP_714
+EXPRESSION:stratMaxAllocation = (strategies[stratAddr].allocBPS * totalAssets()) / PERCENT_DIVISOR	NodeType.VARIABLE
+stratMaxAllocation = (strategies[stratAddr].allocBPS * totalAssets()) / PERCENT_DIVISOR	NodeType.EXPRESSION
+stratCurrentAllocation = strategies[stratAddr].allocated	NodeType.VARIABLE
+stratCurrentAllocation = strategies[stratAddr].allocated	NodeType.EXPRESSION
+stratCurrentAllocation > stratMaxAllocation	NodeType.IF" [key="successor_5"];
+"BlockID: 7
+Call context: 
+False
+TMP_718(bool) = stratCurrentAllocation < stratMaxAllocation
+CONDITION TMP_718
+EXPRESSION:stratCurrentAllocation < stratMaxAllocation	NodeType.IF" -> "BlockID: 8
+Call context: 
+True
+TMP_543 = CONVERT asset to IERC20Metadata
+TMP_544 = CONVERT this to address
+TMP_545(uint256) = HIGH_LEVEL_CALL, dest:TMP_543(IERC20Metadata), function:balanceOf, arguments:['TMP_544']  
+EXPRESSION:IERC20Metadata(asset).balanceOf(address(this)) + totalAllocated	NodeType.EXPRESSION" [key=0];
+"BlockID: 7
+Call context: 
+False
+TMP_718(bool) = stratCurrentAllocation < stratMaxAllocation
+CONDITION TMP_718
+EXPRESSION:stratCurrentAllocation < stratMaxAllocation	NodeType.IF" -> "BlockID: 9
+Call context: 
+False
+RETURN 0
+EXPRESSION:0	NodeType.RETURN" [key=0];
+"BlockID: 8
+Call context: 
+True
+TMP_543 = CONVERT asset to IERC20Metadata
+TMP_544 = CONVERT this to address
+TMP_545(uint256) = HIGH_LEVEL_CALL, dest:TMP_543(IERC20Metadata), function:balanceOf, arguments:['TMP_544']  
+EXPRESSION:IERC20Metadata(asset).balanceOf(address(this)) + totalAllocated	NodeType.EXPRESSION" -> "BlockID: 10
+Call context: availableCapital
+None
+TMP_546(uint256) = TMP_545 (c)+ totalAllocated
+TMP_1012(None) := TMP_546(uint256)
+TMP_720(uint256) = totalAllocBPS (c)* TMP_719
+TMP_721(uint256) = TMP_720 (c)/ PERCENT_DIVISOR
+vaultMaxAllocation(uint256) := TMP_721(uint256)
+vaultCurrentAllocation(uint256) := totalAllocated(uint256)
+TMP_722(bool) = vaultCurrentAllocation >= vaultMaxAllocation
+CONDITION TMP_722
+EXPRESSION:vaultMaxAllocation = (totalAllocBPS * totalAssets()) / PERCENT_DIVISOR	NodeType.VARIABLE
+vaultMaxAllocation = (totalAllocBPS * totalAssets()) / PERCENT_DIVISOR	NodeType.EXPRESSION
+vaultCurrentAllocation = totalAllocated	NodeType.VARIABLE
+vaultCurrentAllocation = totalAllocated	NodeType.EXPRESSION
+vaultCurrentAllocation >= vaultMaxAllocation	NodeType.IF" [key="successor_5"];
+"BlockID: 12
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 13
+Call context: 
+None
+TMP_723(uint256) = stratMaxAllocation (c)- stratCurrentAllocation
+available(uint256) := TMP_723(uint256)
+TMP_724(uint256) = vaultMaxAllocation (c)- vaultCurrentAllocation
+TMP_296(bool) = a < b
+CONDITION TMP_296
+EXPRESSION:available = stratMaxAllocation - stratCurrentAllocation	NodeType.VARIABLE
+available = stratMaxAllocation - stratCurrentAllocation	NodeType.EXPRESSION
+a < b	NodeType.IF" [key=0];
+"BlockID: 13
+Call context: 
+None
+TMP_723(uint256) = stratMaxAllocation (c)- stratCurrentAllocation
+available(uint256) := TMP_723(uint256)
+TMP_724(uint256) = vaultMaxAllocation (c)- vaultCurrentAllocation
+TMP_296(bool) = a < b
+CONDITION TMP_296
+EXPRESSION:available = stratMaxAllocation - stratCurrentAllocation	NodeType.VARIABLE
+available = stratMaxAllocation - stratCurrentAllocation	NodeType.EXPRESSION
+a < b	NodeType.IF" -> "BlockID: 14
+Call context: availableCapital
+True
+TMP_959(None) := a(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 13
+Call context: 
+None
+TMP_723(uint256) = stratMaxAllocation (c)- stratCurrentAllocation
+available(uint256) := TMP_723(uint256)
+TMP_724(uint256) = vaultMaxAllocation (c)- vaultCurrentAllocation
+TMP_296(bool) = a < b
+CONDITION TMP_296
+EXPRESSION:available = stratMaxAllocation - stratCurrentAllocation	NodeType.VARIABLE
+available = stratMaxAllocation - stratCurrentAllocation	NodeType.EXPRESSION
+a < b	NodeType.IF" -> "BlockID: 15
+Call context: availableCapital
+False
+TMP_959(None) := b(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 16
+Call context: 
+None
+available(uint256) := TMP_725(uint256)
+TMP_726 = CONVERT asset to IERC20Metadata
+TMP_727 = CONVERT this to address
+TMP_728(uint256) = HIGH_LEVEL_CALL, dest:TMP_726(IERC20Metadata), function:balanceOf, arguments:['TMP_727']  
+EXPRESSION:available = Math.min(available,vaultMaxAllocation - vaultCurrentAllocation)	NodeType.EXPRESSION
+available = Math.min(available,IERC20Metadata(asset).balanceOf(address(this)))	NodeType.EXPRESSION" -> "BlockID: 17
+Call context: 
+None
+TMP_296(bool) = a < b
+CONDITION TMP_296
+EXPRESSION:a < b	NodeType.IF" [key=0];
+"BlockID: 17
+Call context: 
+None
+TMP_296(bool) = a < b
+CONDITION TMP_296
+EXPRESSION:a < b	NodeType.IF" -> "BlockID: 18
+Call context: availableCapital
+True
+TMP_959(None) := a(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 17
+Call context: 
+None
+TMP_296(bool) = a < b
+CONDITION TMP_296
+EXPRESSION:a < b	NodeType.IF" -> "BlockID: 19
+Call context: availableCapital
+False
+TMP_959(None) := b(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 5
+Call context: availableCapital
+None
+TMP_546(uint256) = TMP_545 (c)+ totalAllocated
+TMP_1012(None) := TMP_546(uint256)
+TMP_712(uint256) = REF_226 (c)* TMP_711
+TMP_713(uint256) = TMP_712 (c)/ PERCENT_DIVISOR
+stratMaxAllocation(uint256) := TMP_713(uint256)
+REF_227(ReaperVaultV2.StrategyParams) -> strategies[stratAddr]
+REF_228(uint256) -> REF_227.allocated
+stratCurrentAllocation(uint256) := REF_228(uint256)
+TMP_714(bool) = stratCurrentAllocation > stratMaxAllocation
+CONDITION TMP_714
+EXPRESSION:stratMaxAllocation = (strategies[stratAddr].allocBPS * totalAssets()) / PERCENT_DIVISOR	NodeType.VARIABLE
+stratMaxAllocation = (strategies[stratAddr].allocBPS * totalAssets()) / PERCENT_DIVISOR	NodeType.EXPRESSION
+stratCurrentAllocation = strategies[stratAddr].allocated	NodeType.VARIABLE
+stratCurrentAllocation = strategies[stratAddr].allocated	NodeType.EXPRESSION
+stratCurrentAllocation > stratMaxAllocation	NodeType.IF" -> "BlockID: 6
+Call context: 
+True
+TMP_715(uint256) = stratCurrentAllocation (c)- stratMaxAllocation
+TMP_716 = CONVERT TMP_715 to int256
+TMP_717(int256) = 0 (c)- TMP_716
+RETURN TMP_717
+EXPRESSION:- int256(stratCurrentAllocation - stratMaxAllocation)	NodeType.RETURN" [key="successor_2"];
+"BlockID: 5
+Call context: availableCapital
+None
+TMP_546(uint256) = TMP_545 (c)+ totalAllocated
+TMP_1012(None) := TMP_546(uint256)
+TMP_712(uint256) = REF_226 (c)* TMP_711
+TMP_713(uint256) = TMP_712 (c)/ PERCENT_DIVISOR
+stratMaxAllocation(uint256) := TMP_713(uint256)
+REF_227(ReaperVaultV2.StrategyParams) -> strategies[stratAddr]
+REF_228(uint256) -> REF_227.allocated
+stratCurrentAllocation(uint256) := REF_228(uint256)
+TMP_714(bool) = stratCurrentAllocation > stratMaxAllocation
+CONDITION TMP_714
+EXPRESSION:stratMaxAllocation = (strategies[stratAddr].allocBPS * totalAssets()) / PERCENT_DIVISOR	NodeType.VARIABLE
+stratMaxAllocation = (strategies[stratAddr].allocBPS * totalAssets()) / PERCENT_DIVISOR	NodeType.EXPRESSION
+stratCurrentAllocation = strategies[stratAddr].allocated	NodeType.VARIABLE
+stratCurrentAllocation = strategies[stratAddr].allocated	NodeType.EXPRESSION
+stratCurrentAllocation > stratMaxAllocation	NodeType.IF" -> "BlockID: 7
+Call context: 
+False
+TMP_718(bool) = stratCurrentAllocation < stratMaxAllocation
+CONDITION TMP_718
+EXPRESSION:stratCurrentAllocation < stratMaxAllocation	NodeType.IF" [key="successor_2"];
+"BlockID: 10
+Call context: availableCapital
+None
+TMP_546(uint256) = TMP_545 (c)+ totalAllocated
+TMP_1012(None) := TMP_546(uint256)
+TMP_720(uint256) = totalAllocBPS (c)* TMP_719
+TMP_721(uint256) = TMP_720 (c)/ PERCENT_DIVISOR
+vaultMaxAllocation(uint256) := TMP_721(uint256)
+vaultCurrentAllocation(uint256) := totalAllocated(uint256)
+TMP_722(bool) = vaultCurrentAllocation >= vaultMaxAllocation
+CONDITION TMP_722
+EXPRESSION:vaultMaxAllocation = (totalAllocBPS * totalAssets()) / PERCENT_DIVISOR	NodeType.VARIABLE
+vaultMaxAllocation = (totalAllocBPS * totalAssets()) / PERCENT_DIVISOR	NodeType.EXPRESSION
+vaultCurrentAllocation = totalAllocated	NodeType.VARIABLE
+vaultCurrentAllocation = totalAllocated	NodeType.EXPRESSION
+vaultCurrentAllocation >= vaultMaxAllocation	NodeType.IF" -> "BlockID: 11
+Call context: 
+True
+RETURN 0
+EXPRESSION:0	NodeType.RETURN" [key="successor_2"];
+"BlockID: 10
+Call context: availableCapital
+None
+TMP_546(uint256) = TMP_545 (c)+ totalAllocated
+TMP_1012(None) := TMP_546(uint256)
+TMP_720(uint256) = totalAllocBPS (c)* TMP_719
+TMP_721(uint256) = TMP_720 (c)/ PERCENT_DIVISOR
+vaultMaxAllocation(uint256) := TMP_721(uint256)
+vaultCurrentAllocation(uint256) := totalAllocated(uint256)
+TMP_722(bool) = vaultCurrentAllocation >= vaultMaxAllocation
+CONDITION TMP_722
+EXPRESSION:vaultMaxAllocation = (totalAllocBPS * totalAssets()) / PERCENT_DIVISOR	NodeType.VARIABLE
+vaultMaxAllocation = (totalAllocBPS * totalAssets()) / PERCENT_DIVISOR	NodeType.EXPRESSION
+vaultCurrentAllocation = totalAllocated	NodeType.VARIABLE
+vaultCurrentAllocation = totalAllocated	NodeType.EXPRESSION
+vaultCurrentAllocation >= vaultMaxAllocation	NodeType.IF" -> "BlockID: 12
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+"BlockID: 14
+Call context: availableCapital
+True
+TMP_959(None) := a(uint256)
+EXPRESSION:" -> "BlockID: 16
+Call context: 
+None
+available(uint256) := TMP_725(uint256)
+TMP_726 = CONVERT asset to IERC20Metadata
+TMP_727 = CONVERT this to address
+TMP_728(uint256) = HIGH_LEVEL_CALL, dest:TMP_726(IERC20Metadata), function:balanceOf, arguments:['TMP_727']  
+EXPRESSION:available = Math.min(available,vaultMaxAllocation - vaultCurrentAllocation)	NodeType.EXPRESSION
+available = Math.min(available,IERC20Metadata(asset).balanceOf(address(this)))	NodeType.EXPRESSION" [key="successor_5", ref="Math.min"];
+"BlockID: 15
+Call context: availableCapital
+False
+TMP_959(None) := b(uint256)
+EXPRESSION:" -> "BlockID: 16
+Call context: 
+None
+available(uint256) := TMP_725(uint256)
+TMP_726 = CONVERT asset to IERC20Metadata
+TMP_727 = CONVERT this to address
+TMP_728(uint256) = HIGH_LEVEL_CALL, dest:TMP_726(IERC20Metadata), function:balanceOf, arguments:['TMP_727']  
+EXPRESSION:available = Math.min(available,vaultMaxAllocation - vaultCurrentAllocation)	NodeType.EXPRESSION
+available = Math.min(available,IERC20Metadata(asset).balanceOf(address(this)))	NodeType.EXPRESSION" [key="successor_5", ref="Math.min"];
+"BlockID: 18
+Call context: availableCapital
+True
+TMP_959(None) := a(uint256)
+EXPRESSION:" -> "BlockID: 20
+Call context: 
+None
+available(uint256) := TMP_729(uint256)
+TMP_730 = CONVERT available to int256
+RETURN TMP_730
+EXPRESSION:available = Math.min(available,IERC20Metadata(asset).balanceOf(address(this)))	NodeType.EXPRESSION
+int256(available)	NodeType.RETURN" [key="successor_5", ref="Math.min"];
+"BlockID: 19
+Call context: availableCapital
+False
+TMP_959(None) := b(uint256)
+EXPRESSION:" -> "BlockID: 20
+Call context: 
+None
+available(uint256) := TMP_729(uint256)
+TMP_730 = CONVERT available to int256
+RETURN TMP_730
+EXPRESSION:available = Math.min(available,IERC20Metadata(asset).balanceOf(address(this)))	NodeType.EXPRESSION
+int256(available)	NodeType.RETURN" [key="successor_5", ref="Math.min"];
+}

@@ -1,0 +1,817 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+TMP_20 = CONVERT authorityContractAddress to Authority
+authority(Authority) := TMP_20(Authority)
+TMP_21(bool) = HIGH_LEVEL_CALL, dest:authority(Authority), function:isValidAuthority, arguments:['authorityAddress', 'block.number']  
+EXPRESSION:authority = Authority(authorityContractAddress)	NodeType.VARIABLE
+authority = Authority(authorityContractAddress)	NodeType.EXPRESSION
+authority.isValidAuthority(authorityAddress,block.number)	NodeType.EXPRESSION";
+"BlockID: 5
+Call context: 
+None
+REF_24(SingleSourceIdentity.KYC) -> records[userAddress]
+kycRecord(SingleSourceIdentity.KYC) := REF_24(SingleSourceIdentity.KYC)
+REF_25(address) -> kycRecord.verifiedBy
+TMP_82(bool) = REF_25 != 0
+REF_26(address) -> kycRecord.verifiedBy
+TMP_83(bool) = REF_26 != authorityAddress
+TMP_84(bool) = TMP_82 && TMP_83
+CONDITION TMP_84
+EXPRESSION:onlyValidAuthority(verifier)	NodeType.EXPRESSION
+kycRecord = records[userAddress]	NodeType.VARIABLE
+kycRecord = records[userAddress]	NodeType.EXPRESSION
+kycRecord.verifiedBy != 0x0 && kycRecord.verifiedBy != authorityAddress	NodeType.IF";
+"BlockID: 20
+Call context: 
+None
+TMP_53(bool) = verificationFee > 0
+CONDITION TMP_53
+EXPRESSION:onlyAuthoritativeAuthority(verifier,msg.sender)	NodeType.EXPRESSION
+verificationFee > 0	NodeType.IF";
+"BlockID: 21
+Call context: 
+True
+TMP_22 = CONVERT paymentContractAddress to ERC20
+TMP_23(bool) = HIGH_LEVEL_CALL, dest:TMP_22(ERC20), function:transferFrom, arguments:['userAddress', 'this', 'verificationFee']  
+EXPRESSION:! ERC20(paymentContractAddress).transferFrom(userAddress,this,verificationFee)	NodeType.EXPRESSION";
+"BlockID: 22
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 24
+Call context: 
+None
+TMP_57(bytes32) = SOLIDITY_CALL sha256()(this,msg.sender,verifiedAttributes,expires)
+hash(bytes32) := TMP_57(bytes32)
+prefix(bytes) := Ethereum Signed Message:
+32(string)
+TMP_58(bytes32) = SOLIDITY_CALL keccak256()(prefix,hash)
+prefixedHash(bytes32) := TMP_58(bytes32)
+TMP_59(address) = SOLIDITY_CALL ecrecover(bytes32,uint8,bytes32,bytes32)(prefixedHash,v,r,s)
+TMP_60(bool) = TMP_59 == verifier
+TMP_61(bool) = block.number <= expires
+TMP_62(bool) = TMP_60 && TMP_61
+TMP_63 = ! TMP_62 
+CONDITION TMP_63
+EXPRESSION:hash = sha256()(this,msg.sender,verifiedAttributes,expires)	NodeType.VARIABLE
+hash = sha256()(this,msg.sender,verifiedAttributes,expires)	NodeType.EXPRESSION
+prefix = Ethereum Signed Message:
+32	NodeType.VARIABLE
+prefix = Ethereum Signed Message:
+32	NodeType.EXPRESSION
+prefixedHash = keccak256()(prefix,hash)	NodeType.VARIABLE
+prefixedHash = keccak256()(prefix,hash)	NodeType.EXPRESSION
+! ((ecrecover(bytes32,uint8,bytes32,bytes32)(prefixedHash,v,r,s) == verifier) && block.number <= expires)	NodeType.IF";
+"BlockID: 27
+Call context: 
+True
+TMP_64(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 28
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 31
+Call context: 
+None
+TMP_65(SingleSourceIdentity.KYC) = new KYC(True,verifier,block.number,verifiedAttributes)
+kyc(SingleSourceIdentity.KYC) := TMP_65(SingleSourceIdentity.KYC)
+REF_21(SingleSourceIdentity.KYC) -> records[msg.sender]
+REF_21(SingleSourceIdentity.KYC) (->records) := kyc(SingleSourceIdentity.KYC)
+EXPRESSION:kyc = KYC(true,verifier,block.number,verifiedAttributes)	NodeType.VARIABLE
+kyc = KYC(true,verifier,block.number,verifiedAttributes)	NodeType.EXPRESSION
+records[msg.sender] = kyc	NodeType.EXPRESSION";
+"BlockID: 29
+Call context: 
+None
+TMP_55 = ! TMP_54 
+CONDITION TMP_55
+EXPRESSION:! chargeVerificationFee(msg.sender,verifier)	NodeType.IF" [shape=box];
+"BlockID: 32
+Call context: 
+True
+TMP_56(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 33
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3
+Call context: claim
+True
+TMP_81(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 4
+Call context: claim
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2
+Call context: claim,onlyValidAuthority
+None
+TMP_89(None) := TMP_21(bool)
+TMP_80 = ! TMP_79 
+CONDITION TMP_80
+EXPRESSION:! isValidAuthority(authorityAddress)	NodeType.IF" [shape=box];
+"BlockID: 6
+Call context: claim
+True
+REF_27(address) -> kycRecord.verifiedBy
+TMP_20 = CONVERT authorityContractAddress to Authority
+authority(Authority) := TMP_20(Authority)
+TMP_21(bool) = HIGH_LEVEL_CALL, dest:authority(Authority), function:isValidAuthority, arguments:['authorityAddress', 'block.number']  
+EXPRESSION:authority = Authority(authorityContractAddress)	NodeType.VARIABLE
+authority = Authority(authorityContractAddress)	NodeType.EXPRESSION
+authority.isValidAuthority(authorityAddress,block.number)	NodeType.EXPRESSION";
+"BlockID: 7
+Call context: claim
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 10
+Call context: claim
+True
+TMP_86(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 11
+Call context: claim
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 8
+Call context: claim,onlyAuthoritativeAuthority
+None
+TMP_89(None) := TMP_21(bool)
+CONDITION TMP_85
+EXPRESSION:isValidAuthority(kycRecord.verifiedBy)	NodeType.IF" [shape=box];
+"BlockID: 14
+Call context: claim
+None
+REF_24(SingleSourceIdentity.KYC) -> records[userAddress]
+kycRecord(SingleSourceIdentity.KYC) := REF_24(SingleSourceIdentity.KYC)
+REF_25(address) -> kycRecord.verifiedBy
+TMP_82(bool) = REF_25 != 0
+REF_26(address) -> kycRecord.verifiedBy
+TMP_83(bool) = REF_26 != authorityAddress
+TMP_84(bool) = TMP_82 && TMP_83
+CONDITION TMP_84
+EXPRESSION:kycRecord = records[userAddress]	NodeType.VARIABLE
+kycRecord = records[userAddress]	NodeType.EXPRESSION
+kycRecord.verifiedBy != 0x0 && kycRecord.verifiedBy != authorityAddress	NodeType.IF";
+"BlockID: 15
+Call context: claim
+True
+TMP_84(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 16
+Call context: claim
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 23
+Call context: claim
+None
+TMP_24 = ! TMP_23 
+CONDITION TMP_24
+EXPRESSION:! ERC20(paymentContractAddress).transferFrom(userAddress,this,verificationFee)	NodeType.IF" [shape=box];
+"BlockID: 25
+Call context: claim
+True
+TMP_98(None) := False(bool)
+EXPRESSION:";
+"BlockID: 26
+Call context: claim
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 30
+Call context: claim
+None
+REF_2(uint256) -> verificationFeeBalances[authorityAddress]
+currentBalance(uint256) := REF_2(uint256)
+REF_3(uint256) -> verificationFeeBalances[authorityAddress]
+TMP_25(uint256) = a + b
+REF_3(uint256) (->verificationFeeBalances) := TMP_25(uint256)
+TMP_98(None) := True(bool)
+EXPRESSION:currentBalance = verificationFeeBalances[authorityAddress]	NodeType.VARIABLE
+currentBalance = verificationFeeBalances[authorityAddress]	NodeType.EXPRESSION
+verificationFeeBalances[authorityAddress] = safeAdd(currentBalance,verificationFee)	NodeType.EXPRESSION
+verificationFeeBalances[authorityAddress] = safeAdd(currentBalance,verificationFee)	NodeType.EXPRESSION";
+"BlockID: 9
+Call context: 
+None
+REF_24(SingleSourceIdentity.KYC) -> records[userAddress]
+kycRecord(SingleSourceIdentity.KYC) := REF_24(SingleSourceIdentity.KYC)
+REF_25(address) -> kycRecord.verifiedBy
+TMP_82(bool) = REF_25 != 0
+REF_26(address) -> kycRecord.verifiedBy
+TMP_83(bool) = REF_26 != authorityAddress
+TMP_84(bool) = TMP_82 && TMP_83
+CONDITION TMP_84
+EXPRESSION:onlyValidAuthority(verifier)	NodeType.EXPRESSION
+kycRecord = records[userAddress]	NodeType.VARIABLE
+kycRecord = records[userAddress]	NodeType.EXPRESSION
+kycRecord.verifiedBy != 0x0 && kycRecord.verifiedBy != authorityAddress	NodeType.IF";
+"BlockID: 12
+Call context: 
+True
+TMP_84(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 13
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 17
+Call context: 
+None
+REF_24(SingleSourceIdentity.KYC) -> records[userAddress]
+kycRecord(SingleSourceIdentity.KYC) := REF_24(SingleSourceIdentity.KYC)
+REF_25(address) -> kycRecord.verifiedBy
+TMP_82(bool) = REF_25 != 0
+REF_26(address) -> kycRecord.verifiedBy
+TMP_83(bool) = REF_26 != authorityAddress
+TMP_84(bool) = TMP_82 && TMP_83
+CONDITION TMP_84
+EXPRESSION:kycRecord = records[userAddress]	NodeType.VARIABLE
+kycRecord = records[userAddress]	NodeType.EXPRESSION
+kycRecord.verifiedBy != 0x0 && kycRecord.verifiedBy != authorityAddress	NodeType.IF";
+"BlockID: 18
+Call context: 
+True
+TMP_84(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 19
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+TMP_20 = CONVERT authorityContractAddress to Authority
+authority(Authority) := TMP_20(Authority)
+TMP_21(bool) = HIGH_LEVEL_CALL, dest:authority(Authority), function:isValidAuthority, arguments:['authorityAddress', 'block.number']  
+EXPRESSION:authority = Authority(authorityContractAddress)	NodeType.VARIABLE
+authority = Authority(authorityContractAddress)	NodeType.EXPRESSION
+authority.isValidAuthority(authorityAddress,block.number)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_20 = CONVERT authorityContractAddress to Authority
+authority(Authority) := TMP_20(Authority)
+TMP_21(bool) = HIGH_LEVEL_CALL, dest:authority(Authority), function:isValidAuthority, arguments:['authorityAddress', 'block.number']  
+EXPRESSION:authority = Authority(authorityContractAddress)	NodeType.VARIABLE
+authority = Authority(authorityContractAddress)	NodeType.EXPRESSION
+authority.isValidAuthority(authorityAddress,block.number)	NodeType.EXPRESSION" -> "BlockID: 2
+Call context: claim,onlyValidAuthority
+None
+TMP_89(None) := TMP_21(bool)
+TMP_80 = ! TMP_79 
+CONDITION TMP_80
+EXPRESSION:! isValidAuthority(authorityAddress)	NodeType.IF" [key="successor_5"];
+"BlockID: 5
+Call context: 
+None
+REF_24(SingleSourceIdentity.KYC) -> records[userAddress]
+kycRecord(SingleSourceIdentity.KYC) := REF_24(SingleSourceIdentity.KYC)
+REF_25(address) -> kycRecord.verifiedBy
+TMP_82(bool) = REF_25 != 0
+REF_26(address) -> kycRecord.verifiedBy
+TMP_83(bool) = REF_26 != authorityAddress
+TMP_84(bool) = TMP_82 && TMP_83
+CONDITION TMP_84
+EXPRESSION:onlyValidAuthority(verifier)	NodeType.EXPRESSION
+kycRecord = records[userAddress]	NodeType.VARIABLE
+kycRecord = records[userAddress]	NodeType.EXPRESSION
+kycRecord.verifiedBy != 0x0 && kycRecord.verifiedBy != authorityAddress	NodeType.IF" -> "BlockID: 6
+Call context: claim
+True
+REF_27(address) -> kycRecord.verifiedBy
+TMP_20 = CONVERT authorityContractAddress to Authority
+authority(Authority) := TMP_20(Authority)
+TMP_21(bool) = HIGH_LEVEL_CALL, dest:authority(Authority), function:isValidAuthority, arguments:['authorityAddress', 'block.number']  
+EXPRESSION:authority = Authority(authorityContractAddress)	NodeType.VARIABLE
+authority = Authority(authorityContractAddress)	NodeType.EXPRESSION
+authority.isValidAuthority(authorityAddress,block.number)	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 5
+Call context: 
+None
+REF_24(SingleSourceIdentity.KYC) -> records[userAddress]
+kycRecord(SingleSourceIdentity.KYC) := REF_24(SingleSourceIdentity.KYC)
+REF_25(address) -> kycRecord.verifiedBy
+TMP_82(bool) = REF_25 != 0
+REF_26(address) -> kycRecord.verifiedBy
+TMP_83(bool) = REF_26 != authorityAddress
+TMP_84(bool) = TMP_82 && TMP_83
+CONDITION TMP_84
+EXPRESSION:onlyValidAuthority(verifier)	NodeType.EXPRESSION
+kycRecord = records[userAddress]	NodeType.VARIABLE
+kycRecord = records[userAddress]	NodeType.EXPRESSION
+kycRecord.verifiedBy != 0x0 && kycRecord.verifiedBy != authorityAddress	NodeType.IF" -> "BlockID: 7
+Call context: claim
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 20
+Call context: 
+None
+TMP_53(bool) = verificationFee > 0
+CONDITION TMP_53
+EXPRESSION:onlyAuthoritativeAuthority(verifier,msg.sender)	NodeType.EXPRESSION
+verificationFee > 0	NodeType.IF" -> "BlockID: 21
+Call context: 
+True
+TMP_22 = CONVERT paymentContractAddress to ERC20
+TMP_23(bool) = HIGH_LEVEL_CALL, dest:TMP_22(ERC20), function:transferFrom, arguments:['userAddress', 'this', 'verificationFee']  
+EXPRESSION:! ERC20(paymentContractAddress).transferFrom(userAddress,this,verificationFee)	NodeType.EXPRESSION" [key=0];
+"BlockID: 20
+Call context: 
+None
+TMP_53(bool) = verificationFee > 0
+CONDITION TMP_53
+EXPRESSION:onlyAuthoritativeAuthority(verifier,msg.sender)	NodeType.EXPRESSION
+verificationFee > 0	NodeType.IF" -> "BlockID: 22
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 21
+Call context: 
+True
+TMP_22 = CONVERT paymentContractAddress to ERC20
+TMP_23(bool) = HIGH_LEVEL_CALL, dest:TMP_22(ERC20), function:transferFrom, arguments:['userAddress', 'this', 'verificationFee']  
+EXPRESSION:! ERC20(paymentContractAddress).transferFrom(userAddress,this,verificationFee)	NodeType.EXPRESSION" -> "BlockID: 23
+Call context: claim
+None
+TMP_24 = ! TMP_23 
+CONDITION TMP_24
+EXPRESSION:! ERC20(paymentContractAddress).transferFrom(userAddress,this,verificationFee)	NodeType.IF" [key="successor_5"];
+"BlockID: 22
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 24
+Call context: 
+None
+TMP_57(bytes32) = SOLIDITY_CALL sha256()(this,msg.sender,verifiedAttributes,expires)
+hash(bytes32) := TMP_57(bytes32)
+prefix(bytes) := Ethereum Signed Message:
+32(string)
+TMP_58(bytes32) = SOLIDITY_CALL keccak256()(prefix,hash)
+prefixedHash(bytes32) := TMP_58(bytes32)
+TMP_59(address) = SOLIDITY_CALL ecrecover(bytes32,uint8,bytes32,bytes32)(prefixedHash,v,r,s)
+TMP_60(bool) = TMP_59 == verifier
+TMP_61(bool) = block.number <= expires
+TMP_62(bool) = TMP_60 && TMP_61
+TMP_63 = ! TMP_62 
+CONDITION TMP_63
+EXPRESSION:hash = sha256()(this,msg.sender,verifiedAttributes,expires)	NodeType.VARIABLE
+hash = sha256()(this,msg.sender,verifiedAttributes,expires)	NodeType.EXPRESSION
+prefix = Ethereum Signed Message:
+32	NodeType.VARIABLE
+prefix = Ethereum Signed Message:
+32	NodeType.EXPRESSION
+prefixedHash = keccak256()(prefix,hash)	NodeType.VARIABLE
+prefixedHash = keccak256()(prefix,hash)	NodeType.EXPRESSION
+! ((ecrecover(bytes32,uint8,bytes32,bytes32)(prefixedHash,v,r,s) == verifier) && block.number <= expires)	NodeType.IF" [key=0];
+"BlockID: 24
+Call context: 
+None
+TMP_57(bytes32) = SOLIDITY_CALL sha256()(this,msg.sender,verifiedAttributes,expires)
+hash(bytes32) := TMP_57(bytes32)
+prefix(bytes) := Ethereum Signed Message:
+32(string)
+TMP_58(bytes32) = SOLIDITY_CALL keccak256()(prefix,hash)
+prefixedHash(bytes32) := TMP_58(bytes32)
+TMP_59(address) = SOLIDITY_CALL ecrecover(bytes32,uint8,bytes32,bytes32)(prefixedHash,v,r,s)
+TMP_60(bool) = TMP_59 == verifier
+TMP_61(bool) = block.number <= expires
+TMP_62(bool) = TMP_60 && TMP_61
+TMP_63 = ! TMP_62 
+CONDITION TMP_63
+EXPRESSION:hash = sha256()(this,msg.sender,verifiedAttributes,expires)	NodeType.VARIABLE
+hash = sha256()(this,msg.sender,verifiedAttributes,expires)	NodeType.EXPRESSION
+prefix = Ethereum Signed Message:
+32	NodeType.VARIABLE
+prefix = Ethereum Signed Message:
+32	NodeType.EXPRESSION
+prefixedHash = keccak256()(prefix,hash)	NodeType.VARIABLE
+prefixedHash = keccak256()(prefix,hash)	NodeType.EXPRESSION
+! ((ecrecover(bytes32,uint8,bytes32,bytes32)(prefixedHash,v,r,s) == verifier) && block.number <= expires)	NodeType.IF" -> "BlockID: 27
+Call context: 
+True
+TMP_64(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 24
+Call context: 
+None
+TMP_57(bytes32) = SOLIDITY_CALL sha256()(this,msg.sender,verifiedAttributes,expires)
+hash(bytes32) := TMP_57(bytes32)
+prefix(bytes) := Ethereum Signed Message:
+32(string)
+TMP_58(bytes32) = SOLIDITY_CALL keccak256()(prefix,hash)
+prefixedHash(bytes32) := TMP_58(bytes32)
+TMP_59(address) = SOLIDITY_CALL ecrecover(bytes32,uint8,bytes32,bytes32)(prefixedHash,v,r,s)
+TMP_60(bool) = TMP_59 == verifier
+TMP_61(bool) = block.number <= expires
+TMP_62(bool) = TMP_60 && TMP_61
+TMP_63 = ! TMP_62 
+CONDITION TMP_63
+EXPRESSION:hash = sha256()(this,msg.sender,verifiedAttributes,expires)	NodeType.VARIABLE
+hash = sha256()(this,msg.sender,verifiedAttributes,expires)	NodeType.EXPRESSION
+prefix = Ethereum Signed Message:
+32	NodeType.VARIABLE
+prefix = Ethereum Signed Message:
+32	NodeType.EXPRESSION
+prefixedHash = keccak256()(prefix,hash)	NodeType.VARIABLE
+prefixedHash = keccak256()(prefix,hash)	NodeType.EXPRESSION
+! ((ecrecover(bytes32,uint8,bytes32,bytes32)(prefixedHash,v,r,s) == verifier) && block.number <= expires)	NodeType.IF" -> "BlockID: 28
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 28
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 31
+Call context: 
+None
+TMP_65(SingleSourceIdentity.KYC) = new KYC(True,verifier,block.number,verifiedAttributes)
+kyc(SingleSourceIdentity.KYC) := TMP_65(SingleSourceIdentity.KYC)
+REF_21(SingleSourceIdentity.KYC) -> records[msg.sender]
+REF_21(SingleSourceIdentity.KYC) (->records) := kyc(SingleSourceIdentity.KYC)
+EXPRESSION:kyc = KYC(true,verifier,block.number,verifiedAttributes)	NodeType.VARIABLE
+kyc = KYC(true,verifier,block.number,verifiedAttributes)	NodeType.EXPRESSION
+records[msg.sender] = kyc	NodeType.EXPRESSION" [key=0];
+"BlockID: 29
+Call context: 
+None
+TMP_55 = ! TMP_54 
+CONDITION TMP_55
+EXPRESSION:! chargeVerificationFee(msg.sender,verifier)	NodeType.IF" -> "BlockID: 32
+Call context: 
+True
+TMP_56(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 29
+Call context: 
+None
+TMP_55 = ! TMP_54 
+CONDITION TMP_55
+EXPRESSION:! chargeVerificationFee(msg.sender,verifier)	NodeType.IF" -> "BlockID: 33
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 33
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 22
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 4
+Call context: claim
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 5
+Call context: 
+None
+REF_24(SingleSourceIdentity.KYC) -> records[userAddress]
+kycRecord(SingleSourceIdentity.KYC) := REF_24(SingleSourceIdentity.KYC)
+REF_25(address) -> kycRecord.verifiedBy
+TMP_82(bool) = REF_25 != 0
+REF_26(address) -> kycRecord.verifiedBy
+TMP_83(bool) = REF_26 != authorityAddress
+TMP_84(bool) = TMP_82 && TMP_83
+CONDITION TMP_84
+EXPRESSION:onlyValidAuthority(verifier)	NodeType.EXPRESSION
+kycRecord = records[userAddress]	NodeType.VARIABLE
+kycRecord = records[userAddress]	NodeType.EXPRESSION
+kycRecord.verifiedBy != 0x0 && kycRecord.verifiedBy != authorityAddress	NodeType.IF" [key="Exit: onlyValidAuthority", ref="SingleSourceIdentity.onlyValidAuthority"];
+"BlockID: 2
+Call context: claim,onlyValidAuthority
+None
+TMP_89(None) := TMP_21(bool)
+TMP_80 = ! TMP_79 
+CONDITION TMP_80
+EXPRESSION:! isValidAuthority(authorityAddress)	NodeType.IF" -> "BlockID: 3
+Call context: claim
+True
+TMP_81(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_2"];
+"BlockID: 2
+Call context: claim,onlyValidAuthority
+None
+TMP_89(None) := TMP_21(bool)
+TMP_80 = ! TMP_79 
+CONDITION TMP_80
+EXPRESSION:! isValidAuthority(authorityAddress)	NodeType.IF" -> "BlockID: 4
+Call context: claim
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+"BlockID: 6
+Call context: claim
+True
+REF_27(address) -> kycRecord.verifiedBy
+TMP_20 = CONVERT authorityContractAddress to Authority
+authority(Authority) := TMP_20(Authority)
+TMP_21(bool) = HIGH_LEVEL_CALL, dest:authority(Authority), function:isValidAuthority, arguments:['authorityAddress', 'block.number']  
+EXPRESSION:authority = Authority(authorityContractAddress)	NodeType.VARIABLE
+authority = Authority(authorityContractAddress)	NodeType.EXPRESSION
+authority.isValidAuthority(authorityAddress,block.number)	NodeType.EXPRESSION" -> "BlockID: 8
+Call context: claim,onlyAuthoritativeAuthority
+None
+TMP_89(None) := TMP_21(bool)
+CONDITION TMP_85
+EXPRESSION:isValidAuthority(kycRecord.verifiedBy)	NodeType.IF" [key="successor_5"];
+"BlockID: 7
+Call context: claim
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 9
+Call context: 
+None
+REF_24(SingleSourceIdentity.KYC) -> records[userAddress]
+kycRecord(SingleSourceIdentity.KYC) := REF_24(SingleSourceIdentity.KYC)
+REF_25(address) -> kycRecord.verifiedBy
+TMP_82(bool) = REF_25 != 0
+REF_26(address) -> kycRecord.verifiedBy
+TMP_83(bool) = REF_26 != authorityAddress
+TMP_84(bool) = TMP_82 && TMP_83
+CONDITION TMP_84
+EXPRESSION:onlyValidAuthority(verifier)	NodeType.EXPRESSION
+kycRecord = records[userAddress]	NodeType.VARIABLE
+kycRecord = records[userAddress]	NodeType.EXPRESSION
+kycRecord.verifiedBy != 0x0 && kycRecord.verifiedBy != authorityAddress	NodeType.IF" [key=0];
+"BlockID: 11
+Call context: claim
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 7
+Call context: claim
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 8
+Call context: claim,onlyAuthoritativeAuthority
+None
+TMP_89(None) := TMP_21(bool)
+CONDITION TMP_85
+EXPRESSION:isValidAuthority(kycRecord.verifiedBy)	NodeType.IF" -> "BlockID: 10
+Call context: claim
+True
+TMP_86(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_2"];
+"BlockID: 8
+Call context: claim,onlyAuthoritativeAuthority
+None
+TMP_89(None) := TMP_21(bool)
+CONDITION TMP_85
+EXPRESSION:isValidAuthority(kycRecord.verifiedBy)	NodeType.IF" -> "BlockID: 11
+Call context: claim
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+"BlockID: 14
+Call context: claim
+None
+REF_24(SingleSourceIdentity.KYC) -> records[userAddress]
+kycRecord(SingleSourceIdentity.KYC) := REF_24(SingleSourceIdentity.KYC)
+REF_25(address) -> kycRecord.verifiedBy
+TMP_82(bool) = REF_25 != 0
+REF_26(address) -> kycRecord.verifiedBy
+TMP_83(bool) = REF_26 != authorityAddress
+TMP_84(bool) = TMP_82 && TMP_83
+CONDITION TMP_84
+EXPRESSION:kycRecord = records[userAddress]	NodeType.VARIABLE
+kycRecord = records[userAddress]	NodeType.EXPRESSION
+kycRecord.verifiedBy != 0x0 && kycRecord.verifiedBy != authorityAddress	NodeType.IF" -> "BlockID: 15
+Call context: claim
+True
+TMP_84(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 14
+Call context: claim
+None
+REF_24(SingleSourceIdentity.KYC) -> records[userAddress]
+kycRecord(SingleSourceIdentity.KYC) := REF_24(SingleSourceIdentity.KYC)
+REF_25(address) -> kycRecord.verifiedBy
+TMP_82(bool) = REF_25 != 0
+REF_26(address) -> kycRecord.verifiedBy
+TMP_83(bool) = REF_26 != authorityAddress
+TMP_84(bool) = TMP_82 && TMP_83
+CONDITION TMP_84
+EXPRESSION:kycRecord = records[userAddress]	NodeType.VARIABLE
+kycRecord = records[userAddress]	NodeType.EXPRESSION
+kycRecord.verifiedBy != 0x0 && kycRecord.verifiedBy != authorityAddress	NodeType.IF" -> "BlockID: 16
+Call context: claim
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 16
+Call context: claim
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 17
+Call context: 
+None
+REF_24(SingleSourceIdentity.KYC) -> records[userAddress]
+kycRecord(SingleSourceIdentity.KYC) := REF_24(SingleSourceIdentity.KYC)
+REF_25(address) -> kycRecord.verifiedBy
+TMP_82(bool) = REF_25 != 0
+REF_26(address) -> kycRecord.verifiedBy
+TMP_83(bool) = REF_26 != authorityAddress
+TMP_84(bool) = TMP_82 && TMP_83
+CONDITION TMP_84
+EXPRESSION:kycRecord = records[userAddress]	NodeType.VARIABLE
+kycRecord = records[userAddress]	NodeType.EXPRESSION
+kycRecord.verifiedBy != 0x0 && kycRecord.verifiedBy != authorityAddress	NodeType.IF" [key=0];
+"BlockID: 23
+Call context: claim
+None
+TMP_24 = ! TMP_23 
+CONDITION TMP_24
+EXPRESSION:! ERC20(paymentContractAddress).transferFrom(userAddress,this,verificationFee)	NodeType.IF" -> "BlockID: 25
+Call context: claim
+True
+TMP_98(None) := False(bool)
+EXPRESSION:" [key=0];
+"BlockID: 23
+Call context: claim
+None
+TMP_24 = ! TMP_23 
+CONDITION TMP_24
+EXPRESSION:! ERC20(paymentContractAddress).transferFrom(userAddress,this,verificationFee)	NodeType.IF" -> "BlockID: 26
+Call context: claim
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 25
+Call context: claim
+True
+TMP_98(None) := False(bool)
+EXPRESSION:" -> "BlockID: 29
+Call context: 
+None
+TMP_55 = ! TMP_54 
+CONDITION TMP_55
+EXPRESSION:! chargeVerificationFee(msg.sender,verifier)	NodeType.IF" [key="successor_5", ref="SingleSourceIdentity.chargeVerificationFee"];
+"BlockID: 26
+Call context: claim
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 30
+Call context: claim
+None
+REF_2(uint256) -> verificationFeeBalances[authorityAddress]
+currentBalance(uint256) := REF_2(uint256)
+REF_3(uint256) -> verificationFeeBalances[authorityAddress]
+TMP_25(uint256) = a + b
+REF_3(uint256) (->verificationFeeBalances) := TMP_25(uint256)
+TMP_98(None) := True(bool)
+EXPRESSION:currentBalance = verificationFeeBalances[authorityAddress]	NodeType.VARIABLE
+currentBalance = verificationFeeBalances[authorityAddress]	NodeType.EXPRESSION
+verificationFeeBalances[authorityAddress] = safeAdd(currentBalance,verificationFee)	NodeType.EXPRESSION
+verificationFeeBalances[authorityAddress] = safeAdd(currentBalance,verificationFee)	NodeType.EXPRESSION" [key=0];
+"BlockID: 30
+Call context: claim
+None
+REF_2(uint256) -> verificationFeeBalances[authorityAddress]
+currentBalance(uint256) := REF_2(uint256)
+REF_3(uint256) -> verificationFeeBalances[authorityAddress]
+TMP_25(uint256) = a + b
+REF_3(uint256) (->verificationFeeBalances) := TMP_25(uint256)
+TMP_98(None) := True(bool)
+EXPRESSION:currentBalance = verificationFeeBalances[authorityAddress]	NodeType.VARIABLE
+currentBalance = verificationFeeBalances[authorityAddress]	NodeType.EXPRESSION
+verificationFeeBalances[authorityAddress] = safeAdd(currentBalance,verificationFee)	NodeType.EXPRESSION
+verificationFeeBalances[authorityAddress] = safeAdd(currentBalance,verificationFee)	NodeType.EXPRESSION" -> "BlockID: 29
+Call context: 
+None
+TMP_55 = ! TMP_54 
+CONDITION TMP_55
+EXPRESSION:! chargeVerificationFee(msg.sender,verifier)	NodeType.IF" [key="successor_5", ref="SingleSourceIdentity.chargeVerificationFee"];
+"BlockID: 9
+Call context: 
+None
+REF_24(SingleSourceIdentity.KYC) -> records[userAddress]
+kycRecord(SingleSourceIdentity.KYC) := REF_24(SingleSourceIdentity.KYC)
+REF_25(address) -> kycRecord.verifiedBy
+TMP_82(bool) = REF_25 != 0
+REF_26(address) -> kycRecord.verifiedBy
+TMP_83(bool) = REF_26 != authorityAddress
+TMP_84(bool) = TMP_82 && TMP_83
+CONDITION TMP_84
+EXPRESSION:onlyValidAuthority(verifier)	NodeType.EXPRESSION
+kycRecord = records[userAddress]	NodeType.VARIABLE
+kycRecord = records[userAddress]	NodeType.EXPRESSION
+kycRecord.verifiedBy != 0x0 && kycRecord.verifiedBy != authorityAddress	NodeType.IF" -> "BlockID: 12
+Call context: 
+True
+TMP_84(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 9
+Call context: 
+None
+REF_24(SingleSourceIdentity.KYC) -> records[userAddress]
+kycRecord(SingleSourceIdentity.KYC) := REF_24(SingleSourceIdentity.KYC)
+REF_25(address) -> kycRecord.verifiedBy
+TMP_82(bool) = REF_25 != 0
+REF_26(address) -> kycRecord.verifiedBy
+TMP_83(bool) = REF_26 != authorityAddress
+TMP_84(bool) = TMP_82 && TMP_83
+CONDITION TMP_84
+EXPRESSION:onlyValidAuthority(verifier)	NodeType.EXPRESSION
+kycRecord = records[userAddress]	NodeType.VARIABLE
+kycRecord = records[userAddress]	NodeType.EXPRESSION
+kycRecord.verifiedBy != 0x0 && kycRecord.verifiedBy != authorityAddress	NodeType.IF" -> "BlockID: 13
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 13
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 14
+Call context: claim
+None
+REF_24(SingleSourceIdentity.KYC) -> records[userAddress]
+kycRecord(SingleSourceIdentity.KYC) := REF_24(SingleSourceIdentity.KYC)
+REF_25(address) -> kycRecord.verifiedBy
+TMP_82(bool) = REF_25 != 0
+REF_26(address) -> kycRecord.verifiedBy
+TMP_83(bool) = REF_26 != authorityAddress
+TMP_84(bool) = TMP_82 && TMP_83
+CONDITION TMP_84
+EXPRESSION:kycRecord = records[userAddress]	NodeType.VARIABLE
+kycRecord = records[userAddress]	NodeType.EXPRESSION
+kycRecord.verifiedBy != 0x0 && kycRecord.verifiedBy != authorityAddress	NodeType.IF" [key=0];
+"BlockID: 17
+Call context: 
+None
+REF_24(SingleSourceIdentity.KYC) -> records[userAddress]
+kycRecord(SingleSourceIdentity.KYC) := REF_24(SingleSourceIdentity.KYC)
+REF_25(address) -> kycRecord.verifiedBy
+TMP_82(bool) = REF_25 != 0
+REF_26(address) -> kycRecord.verifiedBy
+TMP_83(bool) = REF_26 != authorityAddress
+TMP_84(bool) = TMP_82 && TMP_83
+CONDITION TMP_84
+EXPRESSION:kycRecord = records[userAddress]	NodeType.VARIABLE
+kycRecord = records[userAddress]	NodeType.EXPRESSION
+kycRecord.verifiedBy != 0x0 && kycRecord.verifiedBy != authorityAddress	NodeType.IF" -> "BlockID: 18
+Call context: 
+True
+TMP_84(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 17
+Call context: 
+None
+REF_24(SingleSourceIdentity.KYC) -> records[userAddress]
+kycRecord(SingleSourceIdentity.KYC) := REF_24(SingleSourceIdentity.KYC)
+REF_25(address) -> kycRecord.verifiedBy
+TMP_82(bool) = REF_25 != 0
+REF_26(address) -> kycRecord.verifiedBy
+TMP_83(bool) = REF_26 != authorityAddress
+TMP_84(bool) = TMP_82 && TMP_83
+CONDITION TMP_84
+EXPRESSION:kycRecord = records[userAddress]	NodeType.VARIABLE
+kycRecord = records[userAddress]	NodeType.EXPRESSION
+kycRecord.verifiedBy != 0x0 && kycRecord.verifiedBy != authorityAddress	NodeType.IF" -> "BlockID: 19
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 19
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 20
+Call context: 
+None
+TMP_53(bool) = verificationFee > 0
+CONDITION TMP_53
+EXPRESSION:onlyAuthoritativeAuthority(verifier,msg.sender)	NodeType.EXPRESSION
+verificationFee > 0	NodeType.IF" [key=0];
+}

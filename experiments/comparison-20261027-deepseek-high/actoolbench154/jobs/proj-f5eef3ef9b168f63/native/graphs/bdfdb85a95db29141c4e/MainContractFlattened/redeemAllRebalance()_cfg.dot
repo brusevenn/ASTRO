@@ -1,0 +1,354 @@
+digraph {
+"BlockID: 2798
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 2799
+Call context: 
+None
+TMP_1858(uint256) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:getFx, arguments:['USDTUSDC']  
+EXPRESSION:";
+"BlockID: 2800
+Call context: 
+None
+fx_USDTUSDC_Mantissa(uint256) := TMP_1858(uint256)
+TMP_1859(ExponentialNoError.Exp) = new Exp(fx_USDTUSDC_Mantissa)
+fx_USDTUSDC(ExponentialNoError.Exp) := TMP_1859(ExponentialNoError.Exp)
+extraBorrowDemand(uint256) := 0(uint256)
+extraBorrowSupply(uint256) := borrowBalanceUSDT(uint256)
+TMP_1860(bool) = INTERNAL_CALL, LevToken.deleverage(ExponentialNoError.Exp,uint256,bool)(fx_USDTUSDC,extraBorrowSupply,True)
+EXPRESSION:fx_USDTUSDC_Mantissa = tensorpricer.getFx(USDTUSDC)	NodeType.VARIABLE
+fx_USDTUSDC_Mantissa = tensorpricer.getFx(USDTUSDC)	NodeType.EXPRESSION
+fx_USDTUSDC = Exp(fx_USDTUSDC_Mantissa)	NodeType.VARIABLE
+fx_USDTUSDC = Exp(fx_USDTUSDC_Mantissa)	NodeType.EXPRESSION
+extraBorrowDemand = 0	NodeType.EXPRESSION
+extraBorrowSupply = borrowBalanceUSDT	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2801
+Call context: 
+None
+isLiquidate(bool) := TMP_1860(bool)
+CONDITION isLiquidate
+EXPRESSION:isLiquidate = deleverage(fx_USDTUSDC,extraBorrowSupply,true)	NodeType.VARIABLE
+isLiquidate = deleverage(fx_USDTUSDC,extraBorrowSupply,true)	NodeType.EXPRESSION
+isLiquidate	NodeType.IF" [shape=box];
+"BlockID: 2802
+Call context: 
+True
+INTERNAL_CALL, LevToken.updateStats(bool,uint256,uint256,uint256)(False,0,0,0)
+EXPRESSION:updateStats(false,0,0,0)	NodeType.EXPRESSION";
+"BlockID: 2804
+Call context: 
+False
+TMP_1866(uint256) = INTERNAL_CALL, LevToken.getCashExReserves()()
+EXPRESSION:";
+"BlockID: 2805
+Call context: 
+None
+currUSDCBalance(uint256) := TMP_1866(uint256)
+TMP_1867(uint256) = redeemFeePC (c)* currUSDCBalance
+TMP_1868(uint256) = TMP_1867 (c)/ expScale
+redeemFeeBeforeLevRatio(uint256) := TMP_1868(uint256)
+TMP_1869(uint256) = targetLevRatio (c)* redeemFeeBeforeLevRatio
+TMP_1870(uint256) = TMP_1869 (c)/ expScale
+redeemFee(uint256) := TMP_1870(uint256)
+TMP_1871(bool) = currUSDCBalance <= redeemFee
+CONDITION TMP_1871
+EXPRESSION:currUSDCBalance = getCashExReserves()	NodeType.VARIABLE
+currUSDCBalance = getCashExReserves()	NodeType.EXPRESSION
+redeemFeeBeforeLevRatio = (redeemFeePC * currUSDCBalance) / expScale	NodeType.VARIABLE
+redeemFeeBeforeLevRatio = (redeemFeePC * currUSDCBalance) / expScale	NodeType.EXPRESSION
+redeemFee = (targetLevRatio * redeemFeeBeforeLevRatio) / expScale	NodeType.VARIABLE
+redeemFee = (targetLevRatio * redeemFeeBeforeLevRatio) / expScale	NodeType.EXPRESSION
+currUSDCBalance <= redeemFee	NodeType.IF" [shape=box];
+"BlockID: 2806
+Call context: 
+True
+redeemFee(uint256) := currUSDCBalance(uint256)
+currUSDCBalance(uint256) := 0(uint256)
+EXPRESSION:redeemFee = currUSDCBalance	NodeType.EXPRESSION
+currUSDCBalance = 0	NodeType.EXPRESSION";
+"BlockID: 2807
+Call context: 
+False
+TMP_1872(uint256) = currUSDCBalance (c)- redeemFee
+currUSDCBalance(uint256) := TMP_1872(uint256)
+EXPRESSION:currUSDCBalance = currUSDCBalance - redeemFee	NodeType.EXPRESSION";
+"BlockID: 2808
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2809
+Call context: 
+None
+TMP_1873(uint256) = levReserve (c)+ redeemFee
+levReserve(uint256) := TMP_1873(uint256)
+INTERNAL_CALL, LevToken.updateStats(bool,uint256,uint256,uint256)(False,0,0,0)
+EXPRESSION:levReserve = levReserve + redeemFee	NodeType.EXPRESSION
+updateStats(false,0,0,0)	NodeType.EXPRESSION";
+"BlockID: 2810
+Call context: 
+None
+netAssetValue(uint256) := initialNetAssetValueMantissa(uint256)
+RETURN currUSDCBalance
+EXPRESSION:updateStats(false,0,0,0)	NodeType.EXPRESSION
+netAssetValue = initialNetAssetValueMantissa	NodeType.EXPRESSION
+currUSDCBalance	NodeType.RETURN";
+"BlockID: 2803
+Call context: 
+None
+netAssetValue(uint256) := 0(uint256)
+TMP_1862 = CONVERT this to address
+TMP_1863(bool) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:_setMintPausedLev, arguments:['TMP_1862', 'True']  
+EXPRESSION:updateStats(false,0,0,0)	NodeType.EXPRESSION
+netAssetValue = 0	NodeType.EXPRESSION
+tensorpricer._setMintPausedLev(address(this),true)	NodeType.EXPRESSION";
+"BlockID: 2811
+Call context: 
+None
+TMP_1864 = CONVERT this to address
+TMP_1865(bool) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:_setRedeemPausedLev, arguments:['TMP_1864', 'True']  
+EXPRESSION:tensorpricer._setMintPausedLev(address(this),true)	NodeType.EXPRESSION
+tensorpricer._setRedeemPausedLev(address(this),true)	NodeType.EXPRESSION";
+"BlockID: 2812
+Call context: 
+None
+RETURN 0
+EXPRESSION:tensorpricer._setRedeemPausedLev(address(this),true)	NodeType.EXPRESSION
+0	NodeType.RETURN";
+"BlockID: 2798
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 2799
+Call context: 
+None
+TMP_1858(uint256) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:getFx, arguments:['USDTUSDC']  
+EXPRESSION:" [key=0];
+"BlockID: 2799
+Call context: 
+None
+TMP_1858(uint256) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:getFx, arguments:['USDTUSDC']  
+EXPRESSION:" -> "BlockID: 2800
+Call context: 
+None
+fx_USDTUSDC_Mantissa(uint256) := TMP_1858(uint256)
+TMP_1859(ExponentialNoError.Exp) = new Exp(fx_USDTUSDC_Mantissa)
+fx_USDTUSDC(ExponentialNoError.Exp) := TMP_1859(ExponentialNoError.Exp)
+extraBorrowDemand(uint256) := 0(uint256)
+extraBorrowSupply(uint256) := borrowBalanceUSDT(uint256)
+TMP_1860(bool) = INTERNAL_CALL, LevToken.deleverage(ExponentialNoError.Exp,uint256,bool)(fx_USDTUSDC,extraBorrowSupply,True)
+EXPRESSION:fx_USDTUSDC_Mantissa = tensorpricer.getFx(USDTUSDC)	NodeType.VARIABLE
+fx_USDTUSDC_Mantissa = tensorpricer.getFx(USDTUSDC)	NodeType.EXPRESSION
+fx_USDTUSDC = Exp(fx_USDTUSDC_Mantissa)	NodeType.VARIABLE
+fx_USDTUSDC = Exp(fx_USDTUSDC_Mantissa)	NodeType.EXPRESSION
+extraBorrowDemand = 0	NodeType.EXPRESSION
+extraBorrowSupply = borrowBalanceUSDT	NodeType.EXPRESSION" [key=0];
+"BlockID: 2800
+Call context: 
+None
+fx_USDTUSDC_Mantissa(uint256) := TMP_1858(uint256)
+TMP_1859(ExponentialNoError.Exp) = new Exp(fx_USDTUSDC_Mantissa)
+fx_USDTUSDC(ExponentialNoError.Exp) := TMP_1859(ExponentialNoError.Exp)
+extraBorrowDemand(uint256) := 0(uint256)
+extraBorrowSupply(uint256) := borrowBalanceUSDT(uint256)
+TMP_1860(bool) = INTERNAL_CALL, LevToken.deleverage(ExponentialNoError.Exp,uint256,bool)(fx_USDTUSDC,extraBorrowSupply,True)
+EXPRESSION:fx_USDTUSDC_Mantissa = tensorpricer.getFx(USDTUSDC)	NodeType.VARIABLE
+fx_USDTUSDC_Mantissa = tensorpricer.getFx(USDTUSDC)	NodeType.EXPRESSION
+fx_USDTUSDC = Exp(fx_USDTUSDC_Mantissa)	NodeType.VARIABLE
+fx_USDTUSDC = Exp(fx_USDTUSDC_Mantissa)	NodeType.EXPRESSION
+extraBorrowDemand = 0	NodeType.EXPRESSION
+extraBorrowSupply = borrowBalanceUSDT	NodeType.EXPRESSION" -> "BlockID: 2801
+Call context: 
+None
+isLiquidate(bool) := TMP_1860(bool)
+CONDITION isLiquidate
+EXPRESSION:isLiquidate = deleverage(fx_USDTUSDC,extraBorrowSupply,true)	NodeType.VARIABLE
+isLiquidate = deleverage(fx_USDTUSDC,extraBorrowSupply,true)	NodeType.EXPRESSION
+isLiquidate	NodeType.IF" [key=0];
+"BlockID: 2801
+Call context: 
+None
+isLiquidate(bool) := TMP_1860(bool)
+CONDITION isLiquidate
+EXPRESSION:isLiquidate = deleverage(fx_USDTUSDC,extraBorrowSupply,true)	NodeType.VARIABLE
+isLiquidate = deleverage(fx_USDTUSDC,extraBorrowSupply,true)	NodeType.EXPRESSION
+isLiquidate	NodeType.IF" -> "BlockID: 2802
+Call context: 
+True
+INTERNAL_CALL, LevToken.updateStats(bool,uint256,uint256,uint256)(False,0,0,0)
+EXPRESSION:updateStats(false,0,0,0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2801
+Call context: 
+None
+isLiquidate(bool) := TMP_1860(bool)
+CONDITION isLiquidate
+EXPRESSION:isLiquidate = deleverage(fx_USDTUSDC,extraBorrowSupply,true)	NodeType.VARIABLE
+isLiquidate = deleverage(fx_USDTUSDC,extraBorrowSupply,true)	NodeType.EXPRESSION
+isLiquidate	NodeType.IF" -> "BlockID: 2804
+Call context: 
+False
+TMP_1866(uint256) = INTERNAL_CALL, LevToken.getCashExReserves()()
+EXPRESSION:" [key=0];
+"BlockID: 2802
+Call context: 
+True
+INTERNAL_CALL, LevToken.updateStats(bool,uint256,uint256,uint256)(False,0,0,0)
+EXPRESSION:updateStats(false,0,0,0)	NodeType.EXPRESSION" -> "BlockID: 2803
+Call context: 
+None
+netAssetValue(uint256) := 0(uint256)
+TMP_1862 = CONVERT this to address
+TMP_1863(bool) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:_setMintPausedLev, arguments:['TMP_1862', 'True']  
+EXPRESSION:updateStats(false,0,0,0)	NodeType.EXPRESSION
+netAssetValue = 0	NodeType.EXPRESSION
+tensorpricer._setMintPausedLev(address(this),true)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2804
+Call context: 
+False
+TMP_1866(uint256) = INTERNAL_CALL, LevToken.getCashExReserves()()
+EXPRESSION:" -> "BlockID: 2805
+Call context: 
+None
+currUSDCBalance(uint256) := TMP_1866(uint256)
+TMP_1867(uint256) = redeemFeePC (c)* currUSDCBalance
+TMP_1868(uint256) = TMP_1867 (c)/ expScale
+redeemFeeBeforeLevRatio(uint256) := TMP_1868(uint256)
+TMP_1869(uint256) = targetLevRatio (c)* redeemFeeBeforeLevRatio
+TMP_1870(uint256) = TMP_1869 (c)/ expScale
+redeemFee(uint256) := TMP_1870(uint256)
+TMP_1871(bool) = currUSDCBalance <= redeemFee
+CONDITION TMP_1871
+EXPRESSION:currUSDCBalance = getCashExReserves()	NodeType.VARIABLE
+currUSDCBalance = getCashExReserves()	NodeType.EXPRESSION
+redeemFeeBeforeLevRatio = (redeemFeePC * currUSDCBalance) / expScale	NodeType.VARIABLE
+redeemFeeBeforeLevRatio = (redeemFeePC * currUSDCBalance) / expScale	NodeType.EXPRESSION
+redeemFee = (targetLevRatio * redeemFeeBeforeLevRatio) / expScale	NodeType.VARIABLE
+redeemFee = (targetLevRatio * redeemFeeBeforeLevRatio) / expScale	NodeType.EXPRESSION
+currUSDCBalance <= redeemFee	NodeType.IF" [key=0];
+"BlockID: 2805
+Call context: 
+None
+currUSDCBalance(uint256) := TMP_1866(uint256)
+TMP_1867(uint256) = redeemFeePC (c)* currUSDCBalance
+TMP_1868(uint256) = TMP_1867 (c)/ expScale
+redeemFeeBeforeLevRatio(uint256) := TMP_1868(uint256)
+TMP_1869(uint256) = targetLevRatio (c)* redeemFeeBeforeLevRatio
+TMP_1870(uint256) = TMP_1869 (c)/ expScale
+redeemFee(uint256) := TMP_1870(uint256)
+TMP_1871(bool) = currUSDCBalance <= redeemFee
+CONDITION TMP_1871
+EXPRESSION:currUSDCBalance = getCashExReserves()	NodeType.VARIABLE
+currUSDCBalance = getCashExReserves()	NodeType.EXPRESSION
+redeemFeeBeforeLevRatio = (redeemFeePC * currUSDCBalance) / expScale	NodeType.VARIABLE
+redeemFeeBeforeLevRatio = (redeemFeePC * currUSDCBalance) / expScale	NodeType.EXPRESSION
+redeemFee = (targetLevRatio * redeemFeeBeforeLevRatio) / expScale	NodeType.VARIABLE
+redeemFee = (targetLevRatio * redeemFeeBeforeLevRatio) / expScale	NodeType.EXPRESSION
+currUSDCBalance <= redeemFee	NodeType.IF" -> "BlockID: 2806
+Call context: 
+True
+redeemFee(uint256) := currUSDCBalance(uint256)
+currUSDCBalance(uint256) := 0(uint256)
+EXPRESSION:redeemFee = currUSDCBalance	NodeType.EXPRESSION
+currUSDCBalance = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 2805
+Call context: 
+None
+currUSDCBalance(uint256) := TMP_1866(uint256)
+TMP_1867(uint256) = redeemFeePC (c)* currUSDCBalance
+TMP_1868(uint256) = TMP_1867 (c)/ expScale
+redeemFeeBeforeLevRatio(uint256) := TMP_1868(uint256)
+TMP_1869(uint256) = targetLevRatio (c)* redeemFeeBeforeLevRatio
+TMP_1870(uint256) = TMP_1869 (c)/ expScale
+redeemFee(uint256) := TMP_1870(uint256)
+TMP_1871(bool) = currUSDCBalance <= redeemFee
+CONDITION TMP_1871
+EXPRESSION:currUSDCBalance = getCashExReserves()	NodeType.VARIABLE
+currUSDCBalance = getCashExReserves()	NodeType.EXPRESSION
+redeemFeeBeforeLevRatio = (redeemFeePC * currUSDCBalance) / expScale	NodeType.VARIABLE
+redeemFeeBeforeLevRatio = (redeemFeePC * currUSDCBalance) / expScale	NodeType.EXPRESSION
+redeemFee = (targetLevRatio * redeemFeeBeforeLevRatio) / expScale	NodeType.VARIABLE
+redeemFee = (targetLevRatio * redeemFeeBeforeLevRatio) / expScale	NodeType.EXPRESSION
+currUSDCBalance <= redeemFee	NodeType.IF" -> "BlockID: 2807
+Call context: 
+False
+TMP_1872(uint256) = currUSDCBalance (c)- redeemFee
+currUSDCBalance(uint256) := TMP_1872(uint256)
+EXPRESSION:currUSDCBalance = currUSDCBalance - redeemFee	NodeType.EXPRESSION" [key=0];
+"BlockID: 2806
+Call context: 
+True
+redeemFee(uint256) := currUSDCBalance(uint256)
+currUSDCBalance(uint256) := 0(uint256)
+EXPRESSION:redeemFee = currUSDCBalance	NodeType.EXPRESSION
+currUSDCBalance = 0	NodeType.EXPRESSION" -> "BlockID: 2808
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2807
+Call context: 
+False
+TMP_1872(uint256) = currUSDCBalance (c)- redeemFee
+currUSDCBalance(uint256) := TMP_1872(uint256)
+EXPRESSION:currUSDCBalance = currUSDCBalance - redeemFee	NodeType.EXPRESSION" -> "BlockID: 2808
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2808
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2809
+Call context: 
+None
+TMP_1873(uint256) = levReserve (c)+ redeemFee
+levReserve(uint256) := TMP_1873(uint256)
+INTERNAL_CALL, LevToken.updateStats(bool,uint256,uint256,uint256)(False,0,0,0)
+EXPRESSION:levReserve = levReserve + redeemFee	NodeType.EXPRESSION
+updateStats(false,0,0,0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2809
+Call context: 
+None
+TMP_1873(uint256) = levReserve (c)+ redeemFee
+levReserve(uint256) := TMP_1873(uint256)
+INTERNAL_CALL, LevToken.updateStats(bool,uint256,uint256,uint256)(False,0,0,0)
+EXPRESSION:levReserve = levReserve + redeemFee	NodeType.EXPRESSION
+updateStats(false,0,0,0)	NodeType.EXPRESSION" -> "BlockID: 2810
+Call context: 
+None
+netAssetValue(uint256) := initialNetAssetValueMantissa(uint256)
+RETURN currUSDCBalance
+EXPRESSION:updateStats(false,0,0,0)	NodeType.EXPRESSION
+netAssetValue = initialNetAssetValueMantissa	NodeType.EXPRESSION
+currUSDCBalance	NodeType.RETURN" [key=0];
+"BlockID: 2803
+Call context: 
+None
+netAssetValue(uint256) := 0(uint256)
+TMP_1862 = CONVERT this to address
+TMP_1863(bool) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:_setMintPausedLev, arguments:['TMP_1862', 'True']  
+EXPRESSION:updateStats(false,0,0,0)	NodeType.EXPRESSION
+netAssetValue = 0	NodeType.EXPRESSION
+tensorpricer._setMintPausedLev(address(this),true)	NodeType.EXPRESSION" -> "BlockID: 2811
+Call context: 
+None
+TMP_1864 = CONVERT this to address
+TMP_1865(bool) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:_setRedeemPausedLev, arguments:['TMP_1864', 'True']  
+EXPRESSION:tensorpricer._setMintPausedLev(address(this),true)	NodeType.EXPRESSION
+tensorpricer._setRedeemPausedLev(address(this),true)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2811
+Call context: 
+None
+TMP_1864 = CONVERT this to address
+TMP_1865(bool) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:_setRedeemPausedLev, arguments:['TMP_1864', 'True']  
+EXPRESSION:tensorpricer._setMintPausedLev(address(this),true)	NodeType.EXPRESSION
+tensorpricer._setRedeemPausedLev(address(this),true)	NodeType.EXPRESSION" -> "BlockID: 2812
+Call context: 
+None
+RETURN 0
+EXPRESSION:tensorpricer._setRedeemPausedLev(address(this),true)	NodeType.EXPRESSION
+0	NodeType.RETURN" [key=0];
+}

@@ -1,0 +1,1142 @@
+digraph {
+"BlockID: 1332
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1333
+Call context: 
+None
+MODIFIER_CALL, ReentrancyGuard.nonReentrant()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION";
+"BlockID: 1334
+Call context: 
+None
+TMP_717(bool) = LIBRARY_CALL, dest:EnumerableSet, function:EnumerableSet.contains(EnumerableSet.AddressSet,address), arguments:['depositableAssets', 'NATIVE_TOKEN'] 
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION
+require(bool,string)(depositableAssets.contains(NATIVE_TOKEN),da)	NodeType.EXPRESSION";
+"BlockID: 1336
+Call context: 
+True
+REF_328(SpotVault.FeeType) -> FeeType.DEPOSIT
+REF_329(uint256) -> feePercentages[REF_328]
+TMP_719(uint256) = msg.value (c)* REF_329
+TMP_720(uint256) = TMP_719 (c)/ UNIT
+feeAmount(uint256) := TMP_720(uint256)
+CONDITION useDiscount
+EXPRESSION:feeAmount = msg.value * feePercentages[FeeType.DEPOSIT] / UNIT	NodeType.VARIABLE
+feeAmount = msg.value * feePercentages[FeeType.DEPOSIT] / UNIT	NodeType.EXPRESSION
+useDiscount	NodeType.IF";
+"BlockID: 1337
+Call context: 
+True
+NEW VARIABLE discountTokensToSpend
+NEW VARIABLE discountMultipler
+TMP_721(uint256) = INTERNAL_CALL, SpotVault._getUsdValue(address,uint256)(NATIVE_TOKEN,feeAmount)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(discountTokensToSpend,discountMultipler) = discountPolicy.computeDiscountTokensToSpend(_getUsdValue(NATIVE_TOKEN,feeAmount))	NodeType.EXPRESSION";
+"BlockID: 1338
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1339
+Call context: 
+None
+TMP_731(uint256) = msg.value (c)- feeAmount
+amount(uint256) := TMP_731(uint256)
+TMP_732(bool) = feeAmount > 0
+CONDITION TMP_732
+EXPRESSION:amount = msg.value - feeAmount	NodeType.VARIABLE
+amount = msg.value - feeAmount	NodeType.EXPRESSION
+feeAmount > 0	NodeType.IF";
+"BlockID: 1340
+Call context: 
+True
+TMP_733 = CONVERT feeAsset to ERC20
+feeToken(ERC20) := TMP_733(ERC20)
+TMP_734 = CONVERT this to address
+TMP_735(uint256) = HIGH_LEVEL_CALL, dest:feeToken(ERC20), function:balanceOf, arguments:['TMP_734']  
+EXPRESSION:feeToken = ERC20(feeAsset)	NodeType.VARIABLE
+feeToken = ERC20(feeAsset)	NodeType.EXPRESSION";
+"BlockID: 1341
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1342
+Call context: 
+None
+NEW VARIABLE dp
+REF_339(uint256) -> dp.totalSupply
+TMP_743(uint256) = INTERNAL_CALL, ERC20.totalSupply()()
+EXPRESSION:None	NodeType.VARIABLE
+dp.totalSupply = totalSupply()	NodeType.EXPRESSION";
+"BlockID: 1343
+Call context: 
+None
+REF_339(uint256) (->dp) := TMP_743(uint256)
+REF_340(uint256) -> dp.aum
+REF_341(address[]) -> dp.assets
+REF_342(uint256[]) -> dp.prices
+REF_343(uint256[]) -> dp.usdValues
+TUPLE_10(uint256,address[],uint256[],uint256[]) = INTERNAL_CALL, SpotVault._getAllocations(uint256)(amount)
+EXPRESSION:dp.totalSupply = totalSupply()	NodeType.EXPRESSION
+(dp.aum,dp.assets,dp.prices,dp.usdValues) = _getAllocations(amount)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1344
+Call context: 
+None
+REF_340(uint256)= UNPACK TUPLE_10 index: 0 
+REF_341(address[])= UNPACK TUPLE_10 index: 1 
+REF_342(uint256[])= UNPACK TUPLE_10 index: 2 
+REF_343(uint256[])= UNPACK TUPLE_10 index: 3 
+REF_344(uint256) -> dp.aum
+TMP_744(bool) = REF_344 == 0
+CONDITION TMP_744
+EXPRESSION:(dp.aum,dp.assets,dp.prices,dp.usdValues) = _getAllocations(amount)	NodeType.EXPRESSION
+dp.aum == 0	NodeType.IF" [shape=box];
+"BlockID: 1345
+Call context: 
+True
+REF_345(uint256) -> dp.nav
+REF_345(uint256) (->dp) := 0(uint256)
+EXPRESSION:dp.nav = 0	NodeType.EXPRESSION";
+"BlockID: 1346
+Call context: 
+False
+REF_346(uint256) -> dp.nav
+REF_347(uint256) -> dp.aum
+TMP_745(uint256) = REF_347 (c)* UNIT
+REF_348(uint256) -> dp.totalSupply
+TMP_746(uint256) = TMP_745 (c)/ REF_348
+REF_346(uint256) (->dp) := TMP_746(uint256)
+EXPRESSION:dp.nav = dp.aum * UNIT / dp.totalSupply	NodeType.EXPRESSION";
+"BlockID: 1347
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1348
+Call context: 
+None
+REF_349(uint256) -> dp.nominalFinalAum
+REF_350(uint256) -> dp.aum
+TMP_747(uint256) = INTERNAL_CALL, SpotVault._getUsdValue(address,uint256)(NATIVE_TOKEN,amount)
+EXPRESSION:dp.nominalFinalAum = dp.aum + _getUsdValue(NATIVE_TOKEN,amount)	NodeType.EXPRESSION";
+"BlockID: 1350
+Call context: 
+True
+i(uint256) := 0(uint256)
+EXPRESSION:i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION";
+"BlockID: 1351
+Call context: 
+None
+BEGIN_LOOP
+REF_354(address[]) -> dp.assets
+REF_355 -> LENGTH REF_354
+TMP_751(bool) = i < REF_355
+CONDITION TMP_751
+EXPRESSION:None	NodeType.STARTLOOP
+i < dp.assets.length	NodeType.IFLOOP";
+"BlockID: 1352
+Call context: 
+True
+REF_356(address[]) -> dp.assets
+REF_357(address) -> REF_356[i]
+TMP_752(bool) = REF_357 == NATIVE_TOKEN
+CONDITION TMP_752
+EXPRESSION:dp.assets[i] == NATIVE_TOKEN	NodeType.IF";
+"BlockID: 1353
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 1354
+Call context: 
+None
+REF_361(uint256) -> dp.nav
+TMP_755(bool) = REF_361 != 0
+CONDITION TMP_755
+EXPRESSION:dp.nav != 0	NodeType.IF";
+"BlockID: 1355
+Call context: 
+True
+TMP_756(uint256) = INTERNAL_CALL, SpotVault._postSwapHandler(address,SpotVault.TxParams)(NATIVE_TOKEN,dp)
+EXPRESSION:";
+"BlockID: 1357
+Call context: 
+False
+TMP_767 = CONVERT NATIVE_TOKEN to ERC20
+INTERNAL_CALL, SpotVault._updatePortfolio(ERC20)(TMP_767)
+EXPRESSION:_updatePortfolio(ERC20(NATIVE_TOKEN))	NodeType.EXPRESSION";
+"BlockID: 1358
+Call context: 
+None
+TMP_769(uint256) = INTERNAL_CALL, SpotVault._getAum()()
+EXPRESSION:_updatePortfolio(ERC20(NATIVE_TOKEN))	NodeType.EXPRESSION
+sharesToMint = _getAum()	NodeType.EXPRESSION";
+"BlockID: 1359
+Call context: 
+None
+sharesToMint(uint256) := TMP_769(uint256)
+INTERNAL_CALL, ERC20._mint(address,uint256)(msg.sender,sharesToMint)
+EXPRESSION:sharesToMint = _getAum()	NodeType.EXPRESSION
+_mint(msg.sender,sharesToMint)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1361
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1363
+Call context: 
+True
+INTERNAL_CALL, ERC20._mint(address,uint256)(msg.sender,sharesToMint)
+EXPRESSION:_mint(msg.sender,sharesToMint)	NodeType.EXPRESSION";
+"BlockID: 1364
+Call context: 
+None
+REF_364(uint256) -> dp.nav
+TMP_763(uint256) = INTERNAL_CALL, SpotVault.getNav()()
+EXPRESSION:_mint(msg.sender,sharesToMint)	NodeType.EXPRESSION
+require(bool,string)(absSlippage(dp.nav,getNav(),UNIT) <= slippageTolerances[SlippageType.NAV],s3)	NodeType.EXPRESSION";
+"BlockID: 1365
+Call context: 
+None
+TMP_764(uint256) = INTERNAL_CALL, Utils.absSlippage(uint256,uint256,uint256)(REF_364,TMP_763,UNIT)
+EXPRESSION:require(bool,string)(absSlippage(dp.nav,getNav(),UNIT) <= slippageTolerances[SlippageType.NAV],s3)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1367
+Call context: 
+True
+CONTINUE
+EXPRESSION:None	NodeType.CONTINUE";
+"BlockID: 1368
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1369
+Call context: 
+None
+REF_359(bytes) -> dataList[i]
+REF_360(uint256) -> nativeAmounts[i]
+TMP_753(bytes) = LIBRARY_CALL, dest:Address, function:Address.functionCallWithValue(address,bytes,uint256), arguments:['ONE_INCH_AGG_ROUTER', 'REF_359', 'REF_360'] 
+EXPRESSION:ONE_INCH_AGG_ROUTER.functionCallWithValue(dataList[i],nativeAmounts[i])	NodeType.EXPRESSION";
+"BlockID: 1370
+Call context: 
+None
+TMP_754(uint256) := i(uint256)
+i(uint256) = i (c)+ 1
+EXPRESSION:ONE_INCH_AGG_ROUTER.functionCallWithValue(dataList[i],nativeAmounts[i])	NodeType.EXPRESSION
+i ++	NodeType.EXPRESSION";
+"BlockID: 1371
+Call context: 
+None
+feeTokenBeforeBal(uint256) := TMP_735(uint256)
+TMP_736(bytes) = LIBRARY_CALL, dest:Address, function:Address.functionCallWithValue(address,bytes,uint256), arguments:['ONE_INCH_AGG_ROUTER', 'feeSwapData', 'feeAmount'] 
+EXPRESSION:feeTokenBeforeBal = feeToken.balanceOf(address(this))	NodeType.VARIABLE
+feeTokenBeforeBal = feeToken.balanceOf(address(this))	NodeType.EXPRESSION
+ONE_INCH_AGG_ROUTER.functionCallWithValue(feeSwapData,feeAmount)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1372
+Call context: 
+None
+TMP_737 = CONVERT this to address
+TMP_738(uint256) = HIGH_LEVEL_CALL, dest:feeToken(ERC20), function:balanceOf, arguments:['TMP_737']  
+EXPRESSION:ONE_INCH_AGG_ROUTER.functionCallWithValue(feeSwapData,feeAmount)	NodeType.EXPRESSION";
+"BlockID: 1373
+Call context: 
+None
+TMP_739(uint256) = TMP_738 (c)- feeTokenBeforeBal
+feeTokenDeltaBal(uint256) := TMP_739(uint256)
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['feeToken', 'feeRecipient', 'feeTokenDeltaBal'] 
+EXPRESSION:feeTokenDeltaBal = feeToken.balanceOf(address(this)) - feeTokenBeforeBal	NodeType.VARIABLE
+feeTokenDeltaBal = feeToken.balanceOf(address(this)) - feeTokenBeforeBal	NodeType.EXPRESSION
+feeToken.safeTransfer(feeRecipient,feeTokenDeltaBal)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1375
+Call context: 
+None
+TUPLE_9(uint256,uint256) = HIGH_LEVEL_CALL, dest:discountPolicy(IDiscountPolicy), function:computeDiscountTokensToSpend, arguments:['TMP_721']  
+EXPRESSION:(discountTokensToSpend,discountMultipler) = discountPolicy.computeDiscountTokensToSpend(_getUsdValue(NATIVE_TOKEN,feeAmount))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1376
+Call context: 
+None
+discountTokensToSpend(uint256)= UNPACK TUPLE_9 index: 0 
+discountMultipler(uint256)= UNPACK TUPLE_9 index: 1 
+TMP_722(address) = HIGH_LEVEL_CALL, dest:discountPolicy(IDiscountPolicy), function:discountToken, arguments:[]  
+EXPRESSION:(discountTokensToSpend,discountMultipler) = discountPolicy.computeDiscountTokensToSpend(_getUsdValue(NATIVE_TOKEN,feeAmount))	NodeType.EXPRESSION
+ERC20(discountPolicy.discountToken()).safeTransferFrom(msg.sender,feeRecipient,discountTokensToSpend)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1377
+Call context: 
+None
+TMP_723 = CONVERT TMP_722 to ERC20
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransferFrom(IERC20,address,address,uint256), arguments:['TMP_723', 'msg.sender', 'feeRecipient', 'discountTokensToSpend'] 
+EXPRESSION:ERC20(discountPolicy.discountToken()).safeTransferFrom(msg.sender,feeRecipient,discountTokensToSpend)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1378
+Call context: 
+None
+TMP_725(uint256) = feeAmount (c)* discountMultipler
+TMP_726(uint8) = HIGH_LEVEL_CALL, dest:discountPolicy(IDiscountPolicy), function:decimals, arguments:[]  
+EXPRESSION:ERC20(discountPolicy.discountToken()).safeTransferFrom(msg.sender,feeRecipient,discountTokensToSpend)	NodeType.EXPRESSION
+feeAmount = feeAmount * discountMultipler / (10 ** discountPolicy.decimals())	NodeType.EXPRESSION";
+"BlockID: 1379
+Call context: 
+None
+TMP_727(uint256) = 10 (c)** TMP_726
+TMP_728(uint256) = TMP_725 (c)/ TMP_727
+feeAmount(uint256) := TMP_728(uint256)
+EXPRESSION:feeAmount = feeAmount * discountMultipler / (10 ** discountPolicy.decimals())	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1380
+Call context: 
+None
+CONDITION TMP_717
+EXPRESSION:qiantao require	NodeType.IF";
+"BlockID: 1381
+Call context: 
+True
+TMP_718(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 1382
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1383
+Call context: 
+None
+TMP_748(uint256) = REF_350 (c)+ TMP_747
+REF_349(uint256) (->dp) := TMP_748(uint256)
+REF_351(address[]) -> dp.assets
+REF_352 -> LENGTH REF_351
+REF_353 -> LENGTH dataList
+TMP_749(bool) = REF_352 == REF_353
+CONDITION TMP_749
+EXPRESSION:TMP_749(bool) = REF_352 == REF_353	NodeType.IF";
+"BlockID: 1384
+Call context: 
+True
+TMP_750(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 1385
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1386
+Call context: 
+None
+endAum(uint256) := TMP_756(uint256)
+TMP_757(uint256) = endAum (c)* UNIT
+REF_362(uint256) -> dp.nav
+TMP_758(uint256) = TMP_757 (c)/ REF_362
+REF_363(uint256) -> dp.totalSupply
+TMP_759(uint256) = TMP_758 (c)- REF_363
+sharesToMint(uint256) := TMP_759(uint256)
+TMP_760(bool) = sharesToMint >= minSharesToReceive
+CONDITION TMP_760
+EXPRESSION:TMP_760(bool) = sharesToMint >= minSharesToReceive	NodeType.IF";
+"BlockID: 1387
+Call context: 
+True
+TMP_761(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 1388
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1389
+Call context: 
+None
+REF_365(SpotVault.SlippageType) -> SlippageType.NAV
+REF_366(uint256) -> slippageTolerances[REF_365]
+TMP_765(bool) = TMP_764 <= REF_366
+CONDITION TMP_765
+EXPRESSION:TMP_765(bool) = TMP_764 <= REF_366	NodeType.IF";
+"BlockID: 1390
+Call context: 
+True
+TMP_766(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 1391
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1332
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1333
+Call context: 
+None
+MODIFIER_CALL, ReentrancyGuard.nonReentrant()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1333
+Call context: 
+None
+MODIFIER_CALL, ReentrancyGuard.nonReentrant()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION" -> "BlockID: 1334
+Call context: 
+None
+TMP_717(bool) = LIBRARY_CALL, dest:EnumerableSet, function:EnumerableSet.contains(EnumerableSet.AddressSet,address), arguments:['depositableAssets', 'NATIVE_TOKEN'] 
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION
+require(bool,string)(depositableAssets.contains(NATIVE_TOKEN),da)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1334
+Call context: 
+None
+TMP_717(bool) = LIBRARY_CALL, dest:EnumerableSet, function:EnumerableSet.contains(EnumerableSet.AddressSet,address), arguments:['depositableAssets', 'NATIVE_TOKEN'] 
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION
+require(bool,string)(depositableAssets.contains(NATIVE_TOKEN),da)	NodeType.EXPRESSION" -> "BlockID: 1380
+Call context: 
+None
+CONDITION TMP_717
+EXPRESSION:qiantao require	NodeType.IF" [key=0];
+"BlockID: 1336
+Call context: 
+True
+REF_328(SpotVault.FeeType) -> FeeType.DEPOSIT
+REF_329(uint256) -> feePercentages[REF_328]
+TMP_719(uint256) = msg.value (c)* REF_329
+TMP_720(uint256) = TMP_719 (c)/ UNIT
+feeAmount(uint256) := TMP_720(uint256)
+CONDITION useDiscount
+EXPRESSION:feeAmount = msg.value * feePercentages[FeeType.DEPOSIT] / UNIT	NodeType.VARIABLE
+feeAmount = msg.value * feePercentages[FeeType.DEPOSIT] / UNIT	NodeType.EXPRESSION
+useDiscount	NodeType.IF" -> "BlockID: 1337
+Call context: 
+True
+NEW VARIABLE discountTokensToSpend
+NEW VARIABLE discountMultipler
+TMP_721(uint256) = INTERNAL_CALL, SpotVault._getUsdValue(address,uint256)(NATIVE_TOKEN,feeAmount)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(discountTokensToSpend,discountMultipler) = discountPolicy.computeDiscountTokensToSpend(_getUsdValue(NATIVE_TOKEN,feeAmount))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1336
+Call context: 
+True
+REF_328(SpotVault.FeeType) -> FeeType.DEPOSIT
+REF_329(uint256) -> feePercentages[REF_328]
+TMP_719(uint256) = msg.value (c)* REF_329
+TMP_720(uint256) = TMP_719 (c)/ UNIT
+feeAmount(uint256) := TMP_720(uint256)
+CONDITION useDiscount
+EXPRESSION:feeAmount = msg.value * feePercentages[FeeType.DEPOSIT] / UNIT	NodeType.VARIABLE
+feeAmount = msg.value * feePercentages[FeeType.DEPOSIT] / UNIT	NodeType.EXPRESSION
+useDiscount	NodeType.IF" -> "BlockID: 1338
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1337
+Call context: 
+True
+NEW VARIABLE discountTokensToSpend
+NEW VARIABLE discountMultipler
+TMP_721(uint256) = INTERNAL_CALL, SpotVault._getUsdValue(address,uint256)(NATIVE_TOKEN,feeAmount)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(discountTokensToSpend,discountMultipler) = discountPolicy.computeDiscountTokensToSpend(_getUsdValue(NATIVE_TOKEN,feeAmount))	NodeType.EXPRESSION" -> "BlockID: 1375
+Call context: 
+None
+TUPLE_9(uint256,uint256) = HIGH_LEVEL_CALL, dest:discountPolicy(IDiscountPolicy), function:computeDiscountTokensToSpend, arguments:['TMP_721']  
+EXPRESSION:(discountTokensToSpend,discountMultipler) = discountPolicy.computeDiscountTokensToSpend(_getUsdValue(NATIVE_TOKEN,feeAmount))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1338
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1339
+Call context: 
+None
+TMP_731(uint256) = msg.value (c)- feeAmount
+amount(uint256) := TMP_731(uint256)
+TMP_732(bool) = feeAmount > 0
+CONDITION TMP_732
+EXPRESSION:amount = msg.value - feeAmount	NodeType.VARIABLE
+amount = msg.value - feeAmount	NodeType.EXPRESSION
+feeAmount > 0	NodeType.IF" [key=0];
+"BlockID: 1339
+Call context: 
+None
+TMP_731(uint256) = msg.value (c)- feeAmount
+amount(uint256) := TMP_731(uint256)
+TMP_732(bool) = feeAmount > 0
+CONDITION TMP_732
+EXPRESSION:amount = msg.value - feeAmount	NodeType.VARIABLE
+amount = msg.value - feeAmount	NodeType.EXPRESSION
+feeAmount > 0	NodeType.IF" -> "BlockID: 1340
+Call context: 
+True
+TMP_733 = CONVERT feeAsset to ERC20
+feeToken(ERC20) := TMP_733(ERC20)
+TMP_734 = CONVERT this to address
+TMP_735(uint256) = HIGH_LEVEL_CALL, dest:feeToken(ERC20), function:balanceOf, arguments:['TMP_734']  
+EXPRESSION:feeToken = ERC20(feeAsset)	NodeType.VARIABLE
+feeToken = ERC20(feeAsset)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1339
+Call context: 
+None
+TMP_731(uint256) = msg.value (c)- feeAmount
+amount(uint256) := TMP_731(uint256)
+TMP_732(bool) = feeAmount > 0
+CONDITION TMP_732
+EXPRESSION:amount = msg.value - feeAmount	NodeType.VARIABLE
+amount = msg.value - feeAmount	NodeType.EXPRESSION
+feeAmount > 0	NodeType.IF" -> "BlockID: 1341
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1340
+Call context: 
+True
+TMP_733 = CONVERT feeAsset to ERC20
+feeToken(ERC20) := TMP_733(ERC20)
+TMP_734 = CONVERT this to address
+TMP_735(uint256) = HIGH_LEVEL_CALL, dest:feeToken(ERC20), function:balanceOf, arguments:['TMP_734']  
+EXPRESSION:feeToken = ERC20(feeAsset)	NodeType.VARIABLE
+feeToken = ERC20(feeAsset)	NodeType.EXPRESSION" -> "BlockID: 1371
+Call context: 
+None
+feeTokenBeforeBal(uint256) := TMP_735(uint256)
+TMP_736(bytes) = LIBRARY_CALL, dest:Address, function:Address.functionCallWithValue(address,bytes,uint256), arguments:['ONE_INCH_AGG_ROUTER', 'feeSwapData', 'feeAmount'] 
+EXPRESSION:feeTokenBeforeBal = feeToken.balanceOf(address(this))	NodeType.VARIABLE
+feeTokenBeforeBal = feeToken.balanceOf(address(this))	NodeType.EXPRESSION
+ONE_INCH_AGG_ROUTER.functionCallWithValue(feeSwapData,feeAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1341
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1342
+Call context: 
+None
+NEW VARIABLE dp
+REF_339(uint256) -> dp.totalSupply
+TMP_743(uint256) = INTERNAL_CALL, ERC20.totalSupply()()
+EXPRESSION:None	NodeType.VARIABLE
+dp.totalSupply = totalSupply()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1342
+Call context: 
+None
+NEW VARIABLE dp
+REF_339(uint256) -> dp.totalSupply
+TMP_743(uint256) = INTERNAL_CALL, ERC20.totalSupply()()
+EXPRESSION:None	NodeType.VARIABLE
+dp.totalSupply = totalSupply()	NodeType.EXPRESSION" -> "BlockID: 1343
+Call context: 
+None
+REF_339(uint256) (->dp) := TMP_743(uint256)
+REF_340(uint256) -> dp.aum
+REF_341(address[]) -> dp.assets
+REF_342(uint256[]) -> dp.prices
+REF_343(uint256[]) -> dp.usdValues
+TUPLE_10(uint256,address[],uint256[],uint256[]) = INTERNAL_CALL, SpotVault._getAllocations(uint256)(amount)
+EXPRESSION:dp.totalSupply = totalSupply()	NodeType.EXPRESSION
+(dp.aum,dp.assets,dp.prices,dp.usdValues) = _getAllocations(amount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1343
+Call context: 
+None
+REF_339(uint256) (->dp) := TMP_743(uint256)
+REF_340(uint256) -> dp.aum
+REF_341(address[]) -> dp.assets
+REF_342(uint256[]) -> dp.prices
+REF_343(uint256[]) -> dp.usdValues
+TUPLE_10(uint256,address[],uint256[],uint256[]) = INTERNAL_CALL, SpotVault._getAllocations(uint256)(amount)
+EXPRESSION:dp.totalSupply = totalSupply()	NodeType.EXPRESSION
+(dp.aum,dp.assets,dp.prices,dp.usdValues) = _getAllocations(amount)	NodeType.EXPRESSION" -> "BlockID: 1344
+Call context: 
+None
+REF_340(uint256)= UNPACK TUPLE_10 index: 0 
+REF_341(address[])= UNPACK TUPLE_10 index: 1 
+REF_342(uint256[])= UNPACK TUPLE_10 index: 2 
+REF_343(uint256[])= UNPACK TUPLE_10 index: 3 
+REF_344(uint256) -> dp.aum
+TMP_744(bool) = REF_344 == 0
+CONDITION TMP_744
+EXPRESSION:(dp.aum,dp.assets,dp.prices,dp.usdValues) = _getAllocations(amount)	NodeType.EXPRESSION
+dp.aum == 0	NodeType.IF" [key=0];
+"BlockID: 1344
+Call context: 
+None
+REF_340(uint256)= UNPACK TUPLE_10 index: 0 
+REF_341(address[])= UNPACK TUPLE_10 index: 1 
+REF_342(uint256[])= UNPACK TUPLE_10 index: 2 
+REF_343(uint256[])= UNPACK TUPLE_10 index: 3 
+REF_344(uint256) -> dp.aum
+TMP_744(bool) = REF_344 == 0
+CONDITION TMP_744
+EXPRESSION:(dp.aum,dp.assets,dp.prices,dp.usdValues) = _getAllocations(amount)	NodeType.EXPRESSION
+dp.aum == 0	NodeType.IF" -> "BlockID: 1345
+Call context: 
+True
+REF_345(uint256) -> dp.nav
+REF_345(uint256) (->dp) := 0(uint256)
+EXPRESSION:dp.nav = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 1344
+Call context: 
+None
+REF_340(uint256)= UNPACK TUPLE_10 index: 0 
+REF_341(address[])= UNPACK TUPLE_10 index: 1 
+REF_342(uint256[])= UNPACK TUPLE_10 index: 2 
+REF_343(uint256[])= UNPACK TUPLE_10 index: 3 
+REF_344(uint256) -> dp.aum
+TMP_744(bool) = REF_344 == 0
+CONDITION TMP_744
+EXPRESSION:(dp.aum,dp.assets,dp.prices,dp.usdValues) = _getAllocations(amount)	NodeType.EXPRESSION
+dp.aum == 0	NodeType.IF" -> "BlockID: 1346
+Call context: 
+False
+REF_346(uint256) -> dp.nav
+REF_347(uint256) -> dp.aum
+TMP_745(uint256) = REF_347 (c)* UNIT
+REF_348(uint256) -> dp.totalSupply
+TMP_746(uint256) = TMP_745 (c)/ REF_348
+REF_346(uint256) (->dp) := TMP_746(uint256)
+EXPRESSION:dp.nav = dp.aum * UNIT / dp.totalSupply	NodeType.EXPRESSION" [key=0];
+"BlockID: 1345
+Call context: 
+True
+REF_345(uint256) -> dp.nav
+REF_345(uint256) (->dp) := 0(uint256)
+EXPRESSION:dp.nav = 0	NodeType.EXPRESSION" -> "BlockID: 1347
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1346
+Call context: 
+False
+REF_346(uint256) -> dp.nav
+REF_347(uint256) -> dp.aum
+TMP_745(uint256) = REF_347 (c)* UNIT
+REF_348(uint256) -> dp.totalSupply
+TMP_746(uint256) = TMP_745 (c)/ REF_348
+REF_346(uint256) (->dp) := TMP_746(uint256)
+EXPRESSION:dp.nav = dp.aum * UNIT / dp.totalSupply	NodeType.EXPRESSION" -> "BlockID: 1347
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1347
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1348
+Call context: 
+None
+REF_349(uint256) -> dp.nominalFinalAum
+REF_350(uint256) -> dp.aum
+TMP_747(uint256) = INTERNAL_CALL, SpotVault._getUsdValue(address,uint256)(NATIVE_TOKEN,amount)
+EXPRESSION:dp.nominalFinalAum = dp.aum + _getUsdValue(NATIVE_TOKEN,amount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1348
+Call context: 
+None
+REF_349(uint256) -> dp.nominalFinalAum
+REF_350(uint256) -> dp.aum
+TMP_747(uint256) = INTERNAL_CALL, SpotVault._getUsdValue(address,uint256)(NATIVE_TOKEN,amount)
+EXPRESSION:dp.nominalFinalAum = dp.aum + _getUsdValue(NATIVE_TOKEN,amount)	NodeType.EXPRESSION" -> "BlockID: 1383
+Call context: 
+None
+TMP_748(uint256) = REF_350 (c)+ TMP_747
+REF_349(uint256) (->dp) := TMP_748(uint256)
+REF_351(address[]) -> dp.assets
+REF_352 -> LENGTH REF_351
+REF_353 -> LENGTH dataList
+TMP_749(bool) = REF_352 == REF_353
+CONDITION TMP_749
+EXPRESSION:TMP_749(bool) = REF_352 == REF_353	NodeType.IF" [key=0];
+"BlockID: 1350
+Call context: 
+True
+i(uint256) := 0(uint256)
+EXPRESSION:i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" -> "BlockID: 1351
+Call context: 
+None
+BEGIN_LOOP
+REF_354(address[]) -> dp.assets
+REF_355 -> LENGTH REF_354
+TMP_751(bool) = i < REF_355
+CONDITION TMP_751
+EXPRESSION:None	NodeType.STARTLOOP
+i < dp.assets.length	NodeType.IFLOOP" [key=0];
+"BlockID: 1351
+Call context: 
+None
+BEGIN_LOOP
+REF_354(address[]) -> dp.assets
+REF_355 -> LENGTH REF_354
+TMP_751(bool) = i < REF_355
+CONDITION TMP_751
+EXPRESSION:None	NodeType.STARTLOOP
+i < dp.assets.length	NodeType.IFLOOP" -> "BlockID: 1352
+Call context: 
+True
+REF_356(address[]) -> dp.assets
+REF_357(address) -> REF_356[i]
+TMP_752(bool) = REF_357 == NATIVE_TOKEN
+CONDITION TMP_752
+EXPRESSION:dp.assets[i] == NATIVE_TOKEN	NodeType.IF" [key=0];
+"BlockID: 1351
+Call context: 
+None
+BEGIN_LOOP
+REF_354(address[]) -> dp.assets
+REF_355 -> LENGTH REF_354
+TMP_751(bool) = i < REF_355
+CONDITION TMP_751
+EXPRESSION:None	NodeType.STARTLOOP
+i < dp.assets.length	NodeType.IFLOOP" -> "BlockID: 1353
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 1352
+Call context: 
+True
+REF_356(address[]) -> dp.assets
+REF_357(address) -> REF_356[i]
+TMP_752(bool) = REF_357 == NATIVE_TOKEN
+CONDITION TMP_752
+EXPRESSION:dp.assets[i] == NATIVE_TOKEN	NodeType.IF" -> "BlockID: 1367
+Call context: 
+True
+CONTINUE
+EXPRESSION:None	NodeType.CONTINUE" [key=0];
+"BlockID: 1352
+Call context: 
+True
+REF_356(address[]) -> dp.assets
+REF_357(address) -> REF_356[i]
+TMP_752(bool) = REF_357 == NATIVE_TOKEN
+CONDITION TMP_752
+EXPRESSION:dp.assets[i] == NATIVE_TOKEN	NodeType.IF" -> "BlockID: 1368
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1353
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 1354
+Call context: 
+None
+REF_361(uint256) -> dp.nav
+TMP_755(bool) = REF_361 != 0
+CONDITION TMP_755
+EXPRESSION:dp.nav != 0	NodeType.IF" [key=0];
+"BlockID: 1354
+Call context: 
+None
+REF_361(uint256) -> dp.nav
+TMP_755(bool) = REF_361 != 0
+CONDITION TMP_755
+EXPRESSION:dp.nav != 0	NodeType.IF" -> "BlockID: 1355
+Call context: 
+True
+TMP_756(uint256) = INTERNAL_CALL, SpotVault._postSwapHandler(address,SpotVault.TxParams)(NATIVE_TOKEN,dp)
+EXPRESSION:" [key=0];
+"BlockID: 1354
+Call context: 
+None
+REF_361(uint256) -> dp.nav
+TMP_755(bool) = REF_361 != 0
+CONDITION TMP_755
+EXPRESSION:dp.nav != 0	NodeType.IF" -> "BlockID: 1357
+Call context: 
+False
+TMP_767 = CONVERT NATIVE_TOKEN to ERC20
+INTERNAL_CALL, SpotVault._updatePortfolio(ERC20)(TMP_767)
+EXPRESSION:_updatePortfolio(ERC20(NATIVE_TOKEN))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1355
+Call context: 
+True
+TMP_756(uint256) = INTERNAL_CALL, SpotVault._postSwapHandler(address,SpotVault.TxParams)(NATIVE_TOKEN,dp)
+EXPRESSION:" -> "BlockID: 1386
+Call context: 
+None
+endAum(uint256) := TMP_756(uint256)
+TMP_757(uint256) = endAum (c)* UNIT
+REF_362(uint256) -> dp.nav
+TMP_758(uint256) = TMP_757 (c)/ REF_362
+REF_363(uint256) -> dp.totalSupply
+TMP_759(uint256) = TMP_758 (c)- REF_363
+sharesToMint(uint256) := TMP_759(uint256)
+TMP_760(bool) = sharesToMint >= minSharesToReceive
+CONDITION TMP_760
+EXPRESSION:TMP_760(bool) = sharesToMint >= minSharesToReceive	NodeType.IF" [key=0];
+"BlockID: 1357
+Call context: 
+False
+TMP_767 = CONVERT NATIVE_TOKEN to ERC20
+INTERNAL_CALL, SpotVault._updatePortfolio(ERC20)(TMP_767)
+EXPRESSION:_updatePortfolio(ERC20(NATIVE_TOKEN))	NodeType.EXPRESSION" -> "BlockID: 1358
+Call context: 
+None
+TMP_769(uint256) = INTERNAL_CALL, SpotVault._getAum()()
+EXPRESSION:_updatePortfolio(ERC20(NATIVE_TOKEN))	NodeType.EXPRESSION
+sharesToMint = _getAum()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1358
+Call context: 
+None
+TMP_769(uint256) = INTERNAL_CALL, SpotVault._getAum()()
+EXPRESSION:_updatePortfolio(ERC20(NATIVE_TOKEN))	NodeType.EXPRESSION
+sharesToMint = _getAum()	NodeType.EXPRESSION" -> "BlockID: 1359
+Call context: 
+None
+sharesToMint(uint256) := TMP_769(uint256)
+INTERNAL_CALL, ERC20._mint(address,uint256)(msg.sender,sharesToMint)
+EXPRESSION:sharesToMint = _getAum()	NodeType.EXPRESSION
+_mint(msg.sender,sharesToMint)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1359
+Call context: 
+None
+sharesToMint(uint256) := TMP_769(uint256)
+INTERNAL_CALL, ERC20._mint(address,uint256)(msg.sender,sharesToMint)
+EXPRESSION:sharesToMint = _getAum()	NodeType.EXPRESSION
+_mint(msg.sender,sharesToMint)	NodeType.EXPRESSION" -> "BlockID: 1361
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1363
+Call context: 
+True
+INTERNAL_CALL, ERC20._mint(address,uint256)(msg.sender,sharesToMint)
+EXPRESSION:_mint(msg.sender,sharesToMint)	NodeType.EXPRESSION" -> "BlockID: 1364
+Call context: 
+None
+REF_364(uint256) -> dp.nav
+TMP_763(uint256) = INTERNAL_CALL, SpotVault.getNav()()
+EXPRESSION:_mint(msg.sender,sharesToMint)	NodeType.EXPRESSION
+require(bool,string)(absSlippage(dp.nav,getNav(),UNIT) <= slippageTolerances[SlippageType.NAV],s3)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1364
+Call context: 
+None
+REF_364(uint256) -> dp.nav
+TMP_763(uint256) = INTERNAL_CALL, SpotVault.getNav()()
+EXPRESSION:_mint(msg.sender,sharesToMint)	NodeType.EXPRESSION
+require(bool,string)(absSlippage(dp.nav,getNav(),UNIT) <= slippageTolerances[SlippageType.NAV],s3)	NodeType.EXPRESSION" -> "BlockID: 1365
+Call context: 
+None
+TMP_764(uint256) = INTERNAL_CALL, Utils.absSlippage(uint256,uint256,uint256)(REF_364,TMP_763,UNIT)
+EXPRESSION:require(bool,string)(absSlippage(dp.nav,getNav(),UNIT) <= slippageTolerances[SlippageType.NAV],s3)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1365
+Call context: 
+None
+TMP_764(uint256) = INTERNAL_CALL, Utils.absSlippage(uint256,uint256,uint256)(REF_364,TMP_763,UNIT)
+EXPRESSION:require(bool,string)(absSlippage(dp.nav,getNav(),UNIT) <= slippageTolerances[SlippageType.NAV],s3)	NodeType.EXPRESSION" -> "BlockID: 1389
+Call context: 
+None
+REF_365(SpotVault.SlippageType) -> SlippageType.NAV
+REF_366(uint256) -> slippageTolerances[REF_365]
+TMP_765(bool) = TMP_764 <= REF_366
+CONDITION TMP_765
+EXPRESSION:TMP_765(bool) = TMP_764 <= REF_366	NodeType.IF" [key=0];
+"BlockID: 1367
+Call context: 
+True
+CONTINUE
+EXPRESSION:None	NodeType.CONTINUE" -> "BlockID: 1351
+Call context: 
+None
+BEGIN_LOOP
+REF_354(address[]) -> dp.assets
+REF_355 -> LENGTH REF_354
+TMP_751(bool) = i < REF_355
+CONDITION TMP_751
+EXPRESSION:None	NodeType.STARTLOOP
+i < dp.assets.length	NodeType.IFLOOP" [key=0];
+"BlockID: 1368
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1369
+Call context: 
+None
+REF_359(bytes) -> dataList[i]
+REF_360(uint256) -> nativeAmounts[i]
+TMP_753(bytes) = LIBRARY_CALL, dest:Address, function:Address.functionCallWithValue(address,bytes,uint256), arguments:['ONE_INCH_AGG_ROUTER', 'REF_359', 'REF_360'] 
+EXPRESSION:ONE_INCH_AGG_ROUTER.functionCallWithValue(dataList[i],nativeAmounts[i])	NodeType.EXPRESSION" [key=0];
+"BlockID: 1369
+Call context: 
+None
+REF_359(bytes) -> dataList[i]
+REF_360(uint256) -> nativeAmounts[i]
+TMP_753(bytes) = LIBRARY_CALL, dest:Address, function:Address.functionCallWithValue(address,bytes,uint256), arguments:['ONE_INCH_AGG_ROUTER', 'REF_359', 'REF_360'] 
+EXPRESSION:ONE_INCH_AGG_ROUTER.functionCallWithValue(dataList[i],nativeAmounts[i])	NodeType.EXPRESSION" -> "BlockID: 1370
+Call context: 
+None
+TMP_754(uint256) := i(uint256)
+i(uint256) = i (c)+ 1
+EXPRESSION:ONE_INCH_AGG_ROUTER.functionCallWithValue(dataList[i],nativeAmounts[i])	NodeType.EXPRESSION
+i ++	NodeType.EXPRESSION" [key=0];
+"BlockID: 1370
+Call context: 
+None
+TMP_754(uint256) := i(uint256)
+i(uint256) = i (c)+ 1
+EXPRESSION:ONE_INCH_AGG_ROUTER.functionCallWithValue(dataList[i],nativeAmounts[i])	NodeType.EXPRESSION
+i ++	NodeType.EXPRESSION" -> "BlockID: 1351
+Call context: 
+None
+BEGIN_LOOP
+REF_354(address[]) -> dp.assets
+REF_355 -> LENGTH REF_354
+TMP_751(bool) = i < REF_355
+CONDITION TMP_751
+EXPRESSION:None	NodeType.STARTLOOP
+i < dp.assets.length	NodeType.IFLOOP" [key=0];
+"BlockID: 1371
+Call context: 
+None
+feeTokenBeforeBal(uint256) := TMP_735(uint256)
+TMP_736(bytes) = LIBRARY_CALL, dest:Address, function:Address.functionCallWithValue(address,bytes,uint256), arguments:['ONE_INCH_AGG_ROUTER', 'feeSwapData', 'feeAmount'] 
+EXPRESSION:feeTokenBeforeBal = feeToken.balanceOf(address(this))	NodeType.VARIABLE
+feeTokenBeforeBal = feeToken.balanceOf(address(this))	NodeType.EXPRESSION
+ONE_INCH_AGG_ROUTER.functionCallWithValue(feeSwapData,feeAmount)	NodeType.EXPRESSION" -> "BlockID: 1372
+Call context: 
+None
+TMP_737 = CONVERT this to address
+TMP_738(uint256) = HIGH_LEVEL_CALL, dest:feeToken(ERC20), function:balanceOf, arguments:['TMP_737']  
+EXPRESSION:ONE_INCH_AGG_ROUTER.functionCallWithValue(feeSwapData,feeAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1372
+Call context: 
+None
+TMP_737 = CONVERT this to address
+TMP_738(uint256) = HIGH_LEVEL_CALL, dest:feeToken(ERC20), function:balanceOf, arguments:['TMP_737']  
+EXPRESSION:ONE_INCH_AGG_ROUTER.functionCallWithValue(feeSwapData,feeAmount)	NodeType.EXPRESSION" -> "BlockID: 1373
+Call context: 
+None
+TMP_739(uint256) = TMP_738 (c)- feeTokenBeforeBal
+feeTokenDeltaBal(uint256) := TMP_739(uint256)
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['feeToken', 'feeRecipient', 'feeTokenDeltaBal'] 
+EXPRESSION:feeTokenDeltaBal = feeToken.balanceOf(address(this)) - feeTokenBeforeBal	NodeType.VARIABLE
+feeTokenDeltaBal = feeToken.balanceOf(address(this)) - feeTokenBeforeBal	NodeType.EXPRESSION
+feeToken.safeTransfer(feeRecipient,feeTokenDeltaBal)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1373
+Call context: 
+None
+TMP_739(uint256) = TMP_738 (c)- feeTokenBeforeBal
+feeTokenDeltaBal(uint256) := TMP_739(uint256)
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['feeToken', 'feeRecipient', 'feeTokenDeltaBal'] 
+EXPRESSION:feeTokenDeltaBal = feeToken.balanceOf(address(this)) - feeTokenBeforeBal	NodeType.VARIABLE
+feeTokenDeltaBal = feeToken.balanceOf(address(this)) - feeTokenBeforeBal	NodeType.EXPRESSION
+feeToken.safeTransfer(feeRecipient,feeTokenDeltaBal)	NodeType.EXPRESSION" -> "BlockID: 1341
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1375
+Call context: 
+None
+TUPLE_9(uint256,uint256) = HIGH_LEVEL_CALL, dest:discountPolicy(IDiscountPolicy), function:computeDiscountTokensToSpend, arguments:['TMP_721']  
+EXPRESSION:(discountTokensToSpend,discountMultipler) = discountPolicy.computeDiscountTokensToSpend(_getUsdValue(NATIVE_TOKEN,feeAmount))	NodeType.EXPRESSION" -> "BlockID: 1376
+Call context: 
+None
+discountTokensToSpend(uint256)= UNPACK TUPLE_9 index: 0 
+discountMultipler(uint256)= UNPACK TUPLE_9 index: 1 
+TMP_722(address) = HIGH_LEVEL_CALL, dest:discountPolicy(IDiscountPolicy), function:discountToken, arguments:[]  
+EXPRESSION:(discountTokensToSpend,discountMultipler) = discountPolicy.computeDiscountTokensToSpend(_getUsdValue(NATIVE_TOKEN,feeAmount))	NodeType.EXPRESSION
+ERC20(discountPolicy.discountToken()).safeTransferFrom(msg.sender,feeRecipient,discountTokensToSpend)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1376
+Call context: 
+None
+discountTokensToSpend(uint256)= UNPACK TUPLE_9 index: 0 
+discountMultipler(uint256)= UNPACK TUPLE_9 index: 1 
+TMP_722(address) = HIGH_LEVEL_CALL, dest:discountPolicy(IDiscountPolicy), function:discountToken, arguments:[]  
+EXPRESSION:(discountTokensToSpend,discountMultipler) = discountPolicy.computeDiscountTokensToSpend(_getUsdValue(NATIVE_TOKEN,feeAmount))	NodeType.EXPRESSION
+ERC20(discountPolicy.discountToken()).safeTransferFrom(msg.sender,feeRecipient,discountTokensToSpend)	NodeType.EXPRESSION" -> "BlockID: 1377
+Call context: 
+None
+TMP_723 = CONVERT TMP_722 to ERC20
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransferFrom(IERC20,address,address,uint256), arguments:['TMP_723', 'msg.sender', 'feeRecipient', 'discountTokensToSpend'] 
+EXPRESSION:ERC20(discountPolicy.discountToken()).safeTransferFrom(msg.sender,feeRecipient,discountTokensToSpend)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1377
+Call context: 
+None
+TMP_723 = CONVERT TMP_722 to ERC20
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransferFrom(IERC20,address,address,uint256), arguments:['TMP_723', 'msg.sender', 'feeRecipient', 'discountTokensToSpend'] 
+EXPRESSION:ERC20(discountPolicy.discountToken()).safeTransferFrom(msg.sender,feeRecipient,discountTokensToSpend)	NodeType.EXPRESSION" -> "BlockID: 1378
+Call context: 
+None
+TMP_725(uint256) = feeAmount (c)* discountMultipler
+TMP_726(uint8) = HIGH_LEVEL_CALL, dest:discountPolicy(IDiscountPolicy), function:decimals, arguments:[]  
+EXPRESSION:ERC20(discountPolicy.discountToken()).safeTransferFrom(msg.sender,feeRecipient,discountTokensToSpend)	NodeType.EXPRESSION
+feeAmount = feeAmount * discountMultipler / (10 ** discountPolicy.decimals())	NodeType.EXPRESSION" [key=0];
+"BlockID: 1378
+Call context: 
+None
+TMP_725(uint256) = feeAmount (c)* discountMultipler
+TMP_726(uint8) = HIGH_LEVEL_CALL, dest:discountPolicy(IDiscountPolicy), function:decimals, arguments:[]  
+EXPRESSION:ERC20(discountPolicy.discountToken()).safeTransferFrom(msg.sender,feeRecipient,discountTokensToSpend)	NodeType.EXPRESSION
+feeAmount = feeAmount * discountMultipler / (10 ** discountPolicy.decimals())	NodeType.EXPRESSION" -> "BlockID: 1379
+Call context: 
+None
+TMP_727(uint256) = 10 (c)** TMP_726
+TMP_728(uint256) = TMP_725 (c)/ TMP_727
+feeAmount(uint256) := TMP_728(uint256)
+EXPRESSION:feeAmount = feeAmount * discountMultipler / (10 ** discountPolicy.decimals())	NodeType.EXPRESSION" [key=0];
+"BlockID: 1379
+Call context: 
+None
+TMP_727(uint256) = 10 (c)** TMP_726
+TMP_728(uint256) = TMP_725 (c)/ TMP_727
+feeAmount(uint256) := TMP_728(uint256)
+EXPRESSION:feeAmount = feeAmount * discountMultipler / (10 ** discountPolicy.decimals())	NodeType.EXPRESSION" -> "BlockID: 1338
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1380
+Call context: 
+None
+CONDITION TMP_717
+EXPRESSION:qiantao require	NodeType.IF" -> "BlockID: 1381
+Call context: 
+True
+TMP_718(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1380
+Call context: 
+None
+CONDITION TMP_717
+EXPRESSION:qiantao require	NodeType.IF" -> "BlockID: 1382
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1382
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1336
+Call context: 
+True
+REF_328(SpotVault.FeeType) -> FeeType.DEPOSIT
+REF_329(uint256) -> feePercentages[REF_328]
+TMP_719(uint256) = msg.value (c)* REF_329
+TMP_720(uint256) = TMP_719 (c)/ UNIT
+feeAmount(uint256) := TMP_720(uint256)
+CONDITION useDiscount
+EXPRESSION:feeAmount = msg.value * feePercentages[FeeType.DEPOSIT] / UNIT	NodeType.VARIABLE
+feeAmount = msg.value * feePercentages[FeeType.DEPOSIT] / UNIT	NodeType.EXPRESSION
+useDiscount	NodeType.IF" [key=0];
+"BlockID: 1383
+Call context: 
+None
+TMP_748(uint256) = REF_350 (c)+ TMP_747
+REF_349(uint256) (->dp) := TMP_748(uint256)
+REF_351(address[]) -> dp.assets
+REF_352 -> LENGTH REF_351
+REF_353 -> LENGTH dataList
+TMP_749(bool) = REF_352 == REF_353
+CONDITION TMP_749
+EXPRESSION:TMP_749(bool) = REF_352 == REF_353	NodeType.IF" -> "BlockID: 1384
+Call context: 
+True
+TMP_750(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1383
+Call context: 
+None
+TMP_748(uint256) = REF_350 (c)+ TMP_747
+REF_349(uint256) (->dp) := TMP_748(uint256)
+REF_351(address[]) -> dp.assets
+REF_352 -> LENGTH REF_351
+REF_353 -> LENGTH dataList
+TMP_749(bool) = REF_352 == REF_353
+CONDITION TMP_749
+EXPRESSION:TMP_749(bool) = REF_352 == REF_353	NodeType.IF" -> "BlockID: 1385
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1385
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1350
+Call context: 
+True
+i(uint256) := 0(uint256)
+EXPRESSION:i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 1386
+Call context: 
+None
+endAum(uint256) := TMP_756(uint256)
+TMP_757(uint256) = endAum (c)* UNIT
+REF_362(uint256) -> dp.nav
+TMP_758(uint256) = TMP_757 (c)/ REF_362
+REF_363(uint256) -> dp.totalSupply
+TMP_759(uint256) = TMP_758 (c)- REF_363
+sharesToMint(uint256) := TMP_759(uint256)
+TMP_760(bool) = sharesToMint >= minSharesToReceive
+CONDITION TMP_760
+EXPRESSION:TMP_760(bool) = sharesToMint >= minSharesToReceive	NodeType.IF" -> "BlockID: 1387
+Call context: 
+True
+TMP_761(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1386
+Call context: 
+None
+endAum(uint256) := TMP_756(uint256)
+TMP_757(uint256) = endAum (c)* UNIT
+REF_362(uint256) -> dp.nav
+TMP_758(uint256) = TMP_757 (c)/ REF_362
+REF_363(uint256) -> dp.totalSupply
+TMP_759(uint256) = TMP_758 (c)- REF_363
+sharesToMint(uint256) := TMP_759(uint256)
+TMP_760(bool) = sharesToMint >= minSharesToReceive
+CONDITION TMP_760
+EXPRESSION:TMP_760(bool) = sharesToMint >= minSharesToReceive	NodeType.IF" -> "BlockID: 1388
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1388
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1363
+Call context: 
+True
+INTERNAL_CALL, ERC20._mint(address,uint256)(msg.sender,sharesToMint)
+EXPRESSION:_mint(msg.sender,sharesToMint)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1389
+Call context: 
+None
+REF_365(SpotVault.SlippageType) -> SlippageType.NAV
+REF_366(uint256) -> slippageTolerances[REF_365]
+TMP_765(bool) = TMP_764 <= REF_366
+CONDITION TMP_765
+EXPRESSION:TMP_765(bool) = TMP_764 <= REF_366	NodeType.IF" -> "BlockID: 1390
+Call context: 
+True
+TMP_766(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1389
+Call context: 
+None
+REF_365(SpotVault.SlippageType) -> SlippageType.NAV
+REF_366(uint256) -> slippageTolerances[REF_365]
+TMP_765(bool) = TMP_764 <= REF_366
+CONDITION TMP_765
+EXPRESSION:TMP_765(bool) = TMP_764 <= REF_366	NodeType.IF" -> "BlockID: 1391
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1391
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1361
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

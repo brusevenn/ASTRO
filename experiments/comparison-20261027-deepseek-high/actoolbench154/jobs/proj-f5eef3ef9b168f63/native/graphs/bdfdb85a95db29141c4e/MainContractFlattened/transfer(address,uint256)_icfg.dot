@@ -1,0 +1,477 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+CONDITION _notEntered
+EXPRESSION:qiantao require	NodeType.IF";
+"BlockID: 4
+Call context: transfer
+True
+_notEntered(bool) := False(bool)
+_notEntered(bool) := True(bool)
+TMP_1604 = CONVERT this to address
+TMP_1605(uint256) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:transferAllowed, arguments:['TMP_1604', 'src', 'dst', 'tokens']  
+EXPRESSION:_notEntered = false	NodeType.EXPRESSION
+_notEntered = true	NodeType.EXPRESSION
+nonReentrant()	NodeType.EXPRESSION";
+"BlockID: 2
+Call context: transfer
+True
+TMP_2236(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 3
+Call context: transfer
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 5
+Call context: transfer
+None
+allowed(uint256) := TMP_1605(uint256)
+TMP_1606(bool) = allowed != 0
+CONDITION TMP_1606
+EXPRESSION:allowed = tensorpricer.transferAllowed(address(this),src,dst,tokens)	NodeType.VARIABLE
+allowed = tensorpricer.transferAllowed(address(this),src,dst,tokens)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" [shape=box];
+"BlockID: 6
+Call context: transfer
+True
+TMP_1607(None) = SOLIDITY_CALL revert TransferTensorpricerRejection(uint256)(allowed)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 7
+Call context: transfer
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 8
+Call context: transfer
+None
+TMP_1608(bool) = src == dst
+CONDITION TMP_1608
+EXPRESSION:src == dst	NodeType.IF";
+"BlockID: 9
+Call context: transfer
+True
+TMP_1609(None) = SOLIDITY_CALL revert TransferNotAllowed()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 10
+Call context: transfer
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 11
+Call context: transfer
+None
+startingAllowance(uint256) := 0(uint256)
+TMP_1610(bool) = spender == src
+CONDITION TMP_1610
+EXPRESSION:startingAllowance = 0	NodeType.VARIABLE
+startingAllowance = 0	NodeType.EXPRESSION
+spender == src	NodeType.IF";
+"BlockID: 12
+Call context: transfer
+True
+TMP_1612(uint256) := 115792089237316195423570985008687907853269984665640564039457584007913129639935(uint256)
+startingAllowance(uint256) := TMP_1612(uint256)
+EXPRESSION:startingAllowance = type()(uint256).max	NodeType.EXPRESSION";
+"BlockID: 13
+Call context: transfer
+False
+REF_604(mapping(address => uint256)) -> transferAllowances[src]
+REF_605(uint256) -> REF_604[spender]
+startingAllowance(uint256) := REF_605(uint256)
+TMP_1613(bool) = startingAllowance < tokens
+CONDITION TMP_1613
+EXPRESSION:startingAllowance = transferAllowances[src][spender]	NodeType.EXPRESSION
+startingAllowance < tokens	NodeType.IF";
+"BlockID: 15
+Call context: transfer
+True
+TMP_1614(None) = SOLIDITY_CALL revert TransferNotEnoughAllowance()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 16
+Call context: transfer
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 14
+Call context: transfer
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 17
+Call context: transfer
+None
+TMP_1615(uint256) = startingAllowance (c)- tokens
+allowanceNew(uint256) := TMP_1615(uint256)
+REF_606(uint256) -> accountTokens[src]
+TMP_1616(uint256) = REF_606 (c)- tokens
+srLevTokensNew(uint256) := TMP_1616(uint256)
+REF_607(uint256) -> accountTokens[dst]
+TMP_1617(uint256) = REF_607 (c)+ tokens
+dstTokensNew(uint256) := TMP_1617(uint256)
+REF_608(uint256) -> accountTokens[src]
+REF_608(uint256) (->accountTokens) := srLevTokensNew(uint256)
+REF_609(uint256) -> accountTokens[dst]
+REF_609(uint256) (->accountTokens) := dstTokensNew(uint256)
+TMP_1619(uint256) := 115792089237316195423570985008687907853269984665640564039457584007913129639935(uint256)
+TMP_1620(bool) = startingAllowance != TMP_1619
+CONDITION TMP_1620
+EXPRESSION:allowanceNew = startingAllowance - tokens	NodeType.VARIABLE
+allowanceNew = startingAllowance - tokens	NodeType.EXPRESSION
+srLevTokensNew = accountTokens[src] - tokens	NodeType.VARIABLE
+srLevTokensNew = accountTokens[src] - tokens	NodeType.EXPRESSION
+dstTokensNew = accountTokens[dst] + tokens	NodeType.VARIABLE
+dstTokensNew = accountTokens[dst] + tokens	NodeType.EXPRESSION
+accountTokens[src] = srLevTokensNew	NodeType.EXPRESSION
+accountTokens[dst] = dstTokensNew	NodeType.EXPRESSION
+startingAllowance != type()(uint256).max	NodeType.IF";
+"BlockID: 18
+Call context: transfer
+True
+REF_610(mapping(address => uint256)) -> transferAllowances[src]
+REF_611(uint256) -> REF_610[spender]
+REF_611(uint256) (->transferAllowances) := allowanceNew(uint256)
+EXPRESSION:transferAllowances[src][spender] = allowanceNew	NodeType.EXPRESSION";
+"BlockID: 19
+Call context: transfer
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 20
+Call context: transfer
+None
+TMP_2840(None) := NO_ERROR(uint256)
+TMP_1623(bool) = TMP_1622 == NO_ERROR
+RETURN TMP_1623
+EXPRESSION:transferTokens(msg.sender,msg.sender,dst,amount) == NO_ERROR	NodeType.RETURN";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+CONDITION _notEntered
+EXPRESSION:qiantao require	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+CONDITION _notEntered
+EXPRESSION:qiantao require	NodeType.IF" -> "BlockID: 2
+Call context: transfer
+True
+TMP_2236(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+CONDITION _notEntered
+EXPRESSION:qiantao require	NodeType.IF" -> "BlockID: 3
+Call context: transfer
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 4
+Call context: transfer
+True
+_notEntered(bool) := False(bool)
+_notEntered(bool) := True(bool)
+TMP_1604 = CONVERT this to address
+TMP_1605(uint256) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:transferAllowed, arguments:['TMP_1604', 'src', 'dst', 'tokens']  
+EXPRESSION:_notEntered = false	NodeType.EXPRESSION
+_notEntered = true	NodeType.EXPRESSION
+nonReentrant()	NodeType.EXPRESSION" -> "BlockID: 5
+Call context: transfer
+None
+allowed(uint256) := TMP_1605(uint256)
+TMP_1606(bool) = allowed != 0
+CONDITION TMP_1606
+EXPRESSION:allowed = tensorpricer.transferAllowed(address(this),src,dst,tokens)	NodeType.VARIABLE
+allowed = tensorpricer.transferAllowed(address(this),src,dst,tokens)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" [key="successor_1"];
+"BlockID: 3
+Call context: transfer
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: transfer
+True
+_notEntered(bool) := False(bool)
+_notEntered(bool) := True(bool)
+TMP_1604 = CONVERT this to address
+TMP_1605(uint256) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:transferAllowed, arguments:['TMP_1604', 'src', 'dst', 'tokens']  
+EXPRESSION:_notEntered = false	NodeType.EXPRESSION
+_notEntered = true	NodeType.EXPRESSION
+nonReentrant()	NodeType.EXPRESSION" [key=0];
+"BlockID: 5
+Call context: transfer
+None
+allowed(uint256) := TMP_1605(uint256)
+TMP_1606(bool) = allowed != 0
+CONDITION TMP_1606
+EXPRESSION:allowed = tensorpricer.transferAllowed(address(this),src,dst,tokens)	NodeType.VARIABLE
+allowed = tensorpricer.transferAllowed(address(this),src,dst,tokens)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" -> "BlockID: 6
+Call context: transfer
+True
+TMP_1607(None) = SOLIDITY_CALL revert TransferTensorpricerRejection(uint256)(allowed)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 5
+Call context: transfer
+None
+allowed(uint256) := TMP_1605(uint256)
+TMP_1606(bool) = allowed != 0
+CONDITION TMP_1606
+EXPRESSION:allowed = tensorpricer.transferAllowed(address(this),src,dst,tokens)	NodeType.VARIABLE
+allowed = tensorpricer.transferAllowed(address(this),src,dst,tokens)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" -> "BlockID: 7
+Call context: transfer
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 7
+Call context: transfer
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 8
+Call context: transfer
+None
+TMP_1608(bool) = src == dst
+CONDITION TMP_1608
+EXPRESSION:src == dst	NodeType.IF" [key=0];
+"BlockID: 8
+Call context: transfer
+None
+TMP_1608(bool) = src == dst
+CONDITION TMP_1608
+EXPRESSION:src == dst	NodeType.IF" -> "BlockID: 9
+Call context: transfer
+True
+TMP_1609(None) = SOLIDITY_CALL revert TransferNotAllowed()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 8
+Call context: transfer
+None
+TMP_1608(bool) = src == dst
+CONDITION TMP_1608
+EXPRESSION:src == dst	NodeType.IF" -> "BlockID: 10
+Call context: transfer
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 10
+Call context: transfer
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 11
+Call context: transfer
+None
+startingAllowance(uint256) := 0(uint256)
+TMP_1610(bool) = spender == src
+CONDITION TMP_1610
+EXPRESSION:startingAllowance = 0	NodeType.VARIABLE
+startingAllowance = 0	NodeType.EXPRESSION
+spender == src	NodeType.IF" [key=0];
+"BlockID: 11
+Call context: transfer
+None
+startingAllowance(uint256) := 0(uint256)
+TMP_1610(bool) = spender == src
+CONDITION TMP_1610
+EXPRESSION:startingAllowance = 0	NodeType.VARIABLE
+startingAllowance = 0	NodeType.EXPRESSION
+spender == src	NodeType.IF" -> "BlockID: 12
+Call context: transfer
+True
+TMP_1612(uint256) := 115792089237316195423570985008687907853269984665640564039457584007913129639935(uint256)
+startingAllowance(uint256) := TMP_1612(uint256)
+EXPRESSION:startingAllowance = type()(uint256).max	NodeType.EXPRESSION" [key=0];
+"BlockID: 11
+Call context: transfer
+None
+startingAllowance(uint256) := 0(uint256)
+TMP_1610(bool) = spender == src
+CONDITION TMP_1610
+EXPRESSION:startingAllowance = 0	NodeType.VARIABLE
+startingAllowance = 0	NodeType.EXPRESSION
+spender == src	NodeType.IF" -> "BlockID: 13
+Call context: transfer
+False
+REF_604(mapping(address => uint256)) -> transferAllowances[src]
+REF_605(uint256) -> REF_604[spender]
+startingAllowance(uint256) := REF_605(uint256)
+TMP_1613(bool) = startingAllowance < tokens
+CONDITION TMP_1613
+EXPRESSION:startingAllowance = transferAllowances[src][spender]	NodeType.EXPRESSION
+startingAllowance < tokens	NodeType.IF" [key=0];
+"BlockID: 12
+Call context: transfer
+True
+TMP_1612(uint256) := 115792089237316195423570985008687907853269984665640564039457584007913129639935(uint256)
+startingAllowance(uint256) := TMP_1612(uint256)
+EXPRESSION:startingAllowance = type()(uint256).max	NodeType.EXPRESSION" -> "BlockID: 14
+Call context: transfer
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 13
+Call context: transfer
+False
+REF_604(mapping(address => uint256)) -> transferAllowances[src]
+REF_605(uint256) -> REF_604[spender]
+startingAllowance(uint256) := REF_605(uint256)
+TMP_1613(bool) = startingAllowance < tokens
+CONDITION TMP_1613
+EXPRESSION:startingAllowance = transferAllowances[src][spender]	NodeType.EXPRESSION
+startingAllowance < tokens	NodeType.IF" -> "BlockID: 15
+Call context: transfer
+True
+TMP_1614(None) = SOLIDITY_CALL revert TransferNotEnoughAllowance()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 13
+Call context: transfer
+False
+REF_604(mapping(address => uint256)) -> transferAllowances[src]
+REF_605(uint256) -> REF_604[spender]
+startingAllowance(uint256) := REF_605(uint256)
+TMP_1613(bool) = startingAllowance < tokens
+CONDITION TMP_1613
+EXPRESSION:startingAllowance = transferAllowances[src][spender]	NodeType.EXPRESSION
+startingAllowance < tokens	NodeType.IF" -> "BlockID: 16
+Call context: transfer
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 16
+Call context: transfer
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 14
+Call context: transfer
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 14
+Call context: transfer
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 17
+Call context: transfer
+None
+TMP_1615(uint256) = startingAllowance (c)- tokens
+allowanceNew(uint256) := TMP_1615(uint256)
+REF_606(uint256) -> accountTokens[src]
+TMP_1616(uint256) = REF_606 (c)- tokens
+srLevTokensNew(uint256) := TMP_1616(uint256)
+REF_607(uint256) -> accountTokens[dst]
+TMP_1617(uint256) = REF_607 (c)+ tokens
+dstTokensNew(uint256) := TMP_1617(uint256)
+REF_608(uint256) -> accountTokens[src]
+REF_608(uint256) (->accountTokens) := srLevTokensNew(uint256)
+REF_609(uint256) -> accountTokens[dst]
+REF_609(uint256) (->accountTokens) := dstTokensNew(uint256)
+TMP_1619(uint256) := 115792089237316195423570985008687907853269984665640564039457584007913129639935(uint256)
+TMP_1620(bool) = startingAllowance != TMP_1619
+CONDITION TMP_1620
+EXPRESSION:allowanceNew = startingAllowance - tokens	NodeType.VARIABLE
+allowanceNew = startingAllowance - tokens	NodeType.EXPRESSION
+srLevTokensNew = accountTokens[src] - tokens	NodeType.VARIABLE
+srLevTokensNew = accountTokens[src] - tokens	NodeType.EXPRESSION
+dstTokensNew = accountTokens[dst] + tokens	NodeType.VARIABLE
+dstTokensNew = accountTokens[dst] + tokens	NodeType.EXPRESSION
+accountTokens[src] = srLevTokensNew	NodeType.EXPRESSION
+accountTokens[dst] = dstTokensNew	NodeType.EXPRESSION
+startingAllowance != type()(uint256).max	NodeType.IF" [key=0];
+"BlockID: 17
+Call context: transfer
+None
+TMP_1615(uint256) = startingAllowance (c)- tokens
+allowanceNew(uint256) := TMP_1615(uint256)
+REF_606(uint256) -> accountTokens[src]
+TMP_1616(uint256) = REF_606 (c)- tokens
+srLevTokensNew(uint256) := TMP_1616(uint256)
+REF_607(uint256) -> accountTokens[dst]
+TMP_1617(uint256) = REF_607 (c)+ tokens
+dstTokensNew(uint256) := TMP_1617(uint256)
+REF_608(uint256) -> accountTokens[src]
+REF_608(uint256) (->accountTokens) := srLevTokensNew(uint256)
+REF_609(uint256) -> accountTokens[dst]
+REF_609(uint256) (->accountTokens) := dstTokensNew(uint256)
+TMP_1619(uint256) := 115792089237316195423570985008687907853269984665640564039457584007913129639935(uint256)
+TMP_1620(bool) = startingAllowance != TMP_1619
+CONDITION TMP_1620
+EXPRESSION:allowanceNew = startingAllowance - tokens	NodeType.VARIABLE
+allowanceNew = startingAllowance - tokens	NodeType.EXPRESSION
+srLevTokensNew = accountTokens[src] - tokens	NodeType.VARIABLE
+srLevTokensNew = accountTokens[src] - tokens	NodeType.EXPRESSION
+dstTokensNew = accountTokens[dst] + tokens	NodeType.VARIABLE
+dstTokensNew = accountTokens[dst] + tokens	NodeType.EXPRESSION
+accountTokens[src] = srLevTokensNew	NodeType.EXPRESSION
+accountTokens[dst] = dstTokensNew	NodeType.EXPRESSION
+startingAllowance != type()(uint256).max	NodeType.IF" -> "BlockID: 18
+Call context: transfer
+True
+REF_610(mapping(address => uint256)) -> transferAllowances[src]
+REF_611(uint256) -> REF_610[spender]
+REF_611(uint256) (->transferAllowances) := allowanceNew(uint256)
+EXPRESSION:transferAllowances[src][spender] = allowanceNew	NodeType.EXPRESSION" [key=0];
+"BlockID: 17
+Call context: transfer
+None
+TMP_1615(uint256) = startingAllowance (c)- tokens
+allowanceNew(uint256) := TMP_1615(uint256)
+REF_606(uint256) -> accountTokens[src]
+TMP_1616(uint256) = REF_606 (c)- tokens
+srLevTokensNew(uint256) := TMP_1616(uint256)
+REF_607(uint256) -> accountTokens[dst]
+TMP_1617(uint256) = REF_607 (c)+ tokens
+dstTokensNew(uint256) := TMP_1617(uint256)
+REF_608(uint256) -> accountTokens[src]
+REF_608(uint256) (->accountTokens) := srLevTokensNew(uint256)
+REF_609(uint256) -> accountTokens[dst]
+REF_609(uint256) (->accountTokens) := dstTokensNew(uint256)
+TMP_1619(uint256) := 115792089237316195423570985008687907853269984665640564039457584007913129639935(uint256)
+TMP_1620(bool) = startingAllowance != TMP_1619
+CONDITION TMP_1620
+EXPRESSION:allowanceNew = startingAllowance - tokens	NodeType.VARIABLE
+allowanceNew = startingAllowance - tokens	NodeType.EXPRESSION
+srLevTokensNew = accountTokens[src] - tokens	NodeType.VARIABLE
+srLevTokensNew = accountTokens[src] - tokens	NodeType.EXPRESSION
+dstTokensNew = accountTokens[dst] + tokens	NodeType.VARIABLE
+dstTokensNew = accountTokens[dst] + tokens	NodeType.EXPRESSION
+accountTokens[src] = srLevTokensNew	NodeType.EXPRESSION
+accountTokens[dst] = dstTokensNew	NodeType.EXPRESSION
+startingAllowance != type()(uint256).max	NodeType.IF" -> "BlockID: 19
+Call context: transfer
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 18
+Call context: transfer
+True
+REF_610(mapping(address => uint256)) -> transferAllowances[src]
+REF_611(uint256) -> REF_610[spender]
+REF_611(uint256) (->transferAllowances) := allowanceNew(uint256)
+EXPRESSION:transferAllowances[src][spender] = allowanceNew	NodeType.EXPRESSION" -> "BlockID: 19
+Call context: transfer
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 19
+Call context: transfer
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 20
+Call context: transfer
+None
+TMP_2840(None) := NO_ERROR(uint256)
+TMP_1623(bool) = TMP_1622 == NO_ERROR
+RETURN TMP_1623
+EXPRESSION:transferTokens(msg.sender,msg.sender,dst,amount) == NO_ERROR	NodeType.RETURN" [key=0];
+}

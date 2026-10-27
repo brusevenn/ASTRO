@@ -1,0 +1,665 @@
+digraph {
+"BlockID: 2679
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 2680
+Call context: 
+None
+TMP_1619 = CONVERT this to address
+TMP_1620(uint256) = HIGH_LEVEL_CALL, dest:comptroller(ComptrollerInterface), function:borrowAllowed, arguments:['TMP_1619', 'borrower', 'borrowAmount']  
+EXPRESSION:";
+"BlockID: 2681
+Call context: 
+None
+allowed(uint256) := TMP_1620(uint256)
+TMP_1621(bool) = allowed != 0
+CONDITION TMP_1621
+EXPRESSION:allowed = comptroller.borrowAllowed(address(this),borrower,borrowAmount)	NodeType.VARIABLE
+allowed = comptroller.borrowAllowed(address(this),borrower,borrowAmount)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" [shape=box];
+"BlockID: 2682
+Call context: 
+True
+REF_1237(TokenErrorReporter.Error) -> Error.COMPTROLLER_REJECTION
+REF_1238(TokenErrorReporter.FailureInfo) -> FailureInfo.BORROW_COMPTROLLER_REJECTION
+TMP_1622(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_1237,REF_1238,allowed)
+EXPRESSION:failOpaque(Error.COMPTROLLER_REJECTION,FailureInfo.BORROW_COMPTROLLER_REJECTION,allowed)	NodeType.EXPRESSION";
+"BlockID: 2684
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2685
+Call context: 
+None
+TMP_1623(uint256) = INTERNAL_CALL, CToken.getBlockNumber()()
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.EXPRESSION";
+"BlockID: 2686
+Call context: 
+None
+TMP_1624(bool) = accrualBlockNumber != TMP_1623
+CONDITION TMP_1624
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.IF" [shape=box];
+"BlockID: 2687
+Call context: 
+True
+REF_1239(TokenErrorReporter.Error) -> Error.MARKET_NOT_FRESH
+REF_1240(TokenErrorReporter.FailureInfo) -> FailureInfo.BORROW_FRESHNESS_CHECK
+TMP_1625(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_1239,REF_1240)
+EXPRESSION:fail(Error.MARKET_NOT_FRESH,FailureInfo.BORROW_FRESHNESS_CHECK)	NodeType.EXPRESSION";
+"BlockID: 2689
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2690
+Call context: 
+None
+TMP_1626(uint256) = INTERNAL_CALL, CErc20.getCashPrior()()
+EXPRESSION:getCashPrior() < borrowAmount	NodeType.EXPRESSION";
+"BlockID: 2691
+Call context: 
+None
+TMP_1627(bool) = TMP_1626 < borrowAmount
+CONDITION TMP_1627
+EXPRESSION:getCashPrior() < borrowAmount	NodeType.IF" [shape=box];
+"BlockID: 2692
+Call context: 
+True
+REF_1241(TokenErrorReporter.Error) -> Error.TOKEN_INSUFFICIENT_CASH
+REF_1242(TokenErrorReporter.FailureInfo) -> FailureInfo.BORROW_CASH_NOT_AVAILABLE
+TMP_1628(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_1241,REF_1242)
+EXPRESSION:fail(Error.TOKEN_INSUFFICIENT_CASH,FailureInfo.BORROW_CASH_NOT_AVAILABLE)	NodeType.EXPRESSION";
+"BlockID: 2694
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2695
+Call context: 
+None
+NEW VARIABLE vars
+REF_1243(CarefulMath.MathError) -> vars.mathErr
+REF_1244(uint256) -> vars.accountBorrows
+TUPLE_187(CarefulMath.MathError,uint256) = INTERNAL_CALL, CToken.borrowBalanceStoredInternal(address)(borrower)
+EXPRESSION:None	NodeType.VARIABLE
+(vars.mathErr,vars.accountBorrows) = borrowBalanceStoredInternal(borrower)	NodeType.EXPRESSION";
+"BlockID: 2696
+Call context: 
+None
+REF_1243(CarefulMath.MathError)= UNPACK TUPLE_187 index: 0 
+REF_1244(uint256)= UNPACK TUPLE_187 index: 1 
+REF_1245(CarefulMath.MathError) -> vars.mathErr
+REF_1246(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1629(bool) = REF_1245 != REF_1246
+CONDITION TMP_1629
+EXPRESSION:(vars.mathErr,vars.accountBorrows) = borrowBalanceStoredInternal(borrower)	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 2697
+Call context: 
+True
+REF_1247(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_1248(TokenErrorReporter.FailureInfo) -> FailureInfo.BORROW_ACCUMULATED_BALANCE_CALCULATION_FAILED
+REF_1249(CarefulMath.MathError) -> vars.mathErr
+TMP_1630 = CONVERT REF_1249 to uint256
+TMP_1631(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_1247,REF_1248,TMP_1630)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.BORROW_ACCUMULATED_BALANCE_CALCULATION_FAILED,uint256(vars.mathErr))	NodeType.EXPRESSION";
+"BlockID: 2699
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2700
+Call context: 
+None
+REF_1250(CarefulMath.MathError) -> vars.mathErr
+REF_1251(uint256) -> vars.accountBorrowsNew
+REF_1252(uint256) -> vars.accountBorrows
+TUPLE_188(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.addUInt(uint256,uint256)(REF_1252,borrowAmount)
+EXPRESSION:(vars.mathErr,vars.accountBorrowsNew) = addUInt(vars.accountBorrows,borrowAmount)	NodeType.EXPRESSION";
+"BlockID: 2701
+Call context: 
+None
+REF_1250(CarefulMath.MathError)= UNPACK TUPLE_188 index: 0 
+REF_1251(uint256)= UNPACK TUPLE_188 index: 1 
+REF_1253(CarefulMath.MathError) -> vars.mathErr
+REF_1254(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1632(bool) = REF_1253 != REF_1254
+CONDITION TMP_1632
+EXPRESSION:(vars.mathErr,vars.accountBorrowsNew) = addUInt(vars.accountBorrows,borrowAmount)	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 2702
+Call context: 
+True
+REF_1255(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_1256(TokenErrorReporter.FailureInfo) -> FailureInfo.BORROW_NEW_ACCOUNT_BORROW_BALANCE_CALCULATION_FAILED
+REF_1257(CarefulMath.MathError) -> vars.mathErr
+TMP_1633 = CONVERT REF_1257 to uint256
+TMP_1634(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_1255,REF_1256,TMP_1633)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.BORROW_NEW_ACCOUNT_BORROW_BALANCE_CALCULATION_FAILED,uint256(vars.mathErr))	NodeType.EXPRESSION";
+"BlockID: 2704
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2705
+Call context: 
+None
+REF_1258(CarefulMath.MathError) -> vars.mathErr
+REF_1259(uint256) -> vars.totalBorrowsNew
+TUPLE_189(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.addUInt(uint256,uint256)(totalBorrows,borrowAmount)
+EXPRESSION:(vars.mathErr,vars.totalBorrowsNew) = addUInt(totalBorrows,borrowAmount)	NodeType.EXPRESSION";
+"BlockID: 2706
+Call context: 
+None
+REF_1258(CarefulMath.MathError)= UNPACK TUPLE_189 index: 0 
+REF_1259(uint256)= UNPACK TUPLE_189 index: 1 
+REF_1260(CarefulMath.MathError) -> vars.mathErr
+REF_1261(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1635(bool) = REF_1260 != REF_1261
+CONDITION TMP_1635
+EXPRESSION:(vars.mathErr,vars.totalBorrowsNew) = addUInt(totalBorrows,borrowAmount)	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 2707
+Call context: 
+True
+REF_1262(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_1263(TokenErrorReporter.FailureInfo) -> FailureInfo.BORROW_NEW_TOTAL_BALANCE_CALCULATION_FAILED
+REF_1264(CarefulMath.MathError) -> vars.mathErr
+TMP_1636 = CONVERT REF_1264 to uint256
+TMP_1637(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_1262,REF_1263,TMP_1636)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.BORROW_NEW_TOTAL_BALANCE_CALCULATION_FAILED,uint256(vars.mathErr))	NodeType.EXPRESSION";
+"BlockID: 2709
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2710
+Call context: 
+None
+INTERNAL_CALL, CErc20.doTransferOut(address,uint256)(borrower,borrowAmount)
+EXPRESSION:doTransferOut(borrower,borrowAmount)	NodeType.EXPRESSION";
+"BlockID: 2711
+Call context: 
+None
+REF_1265(CTokenStorage.BorrowSnapshot) -> accountBorrows[borrower]
+REF_1266(uint256) -> REF_1265.principal
+REF_1267(uint256) -> vars.accountBorrowsNew
+REF_1266(uint256) (->accountBorrows) := REF_1267(uint256)
+REF_1268(CTokenStorage.BorrowSnapshot) -> accountBorrows[borrower]
+REF_1269(uint256) -> REF_1268.interestIndex
+REF_1269(uint256) (->accountBorrows) := borrowIndex(uint256)
+REF_1270(uint256) -> vars.totalBorrowsNew
+totalBorrows(uint256) := REF_1270(uint256)
+REF_1273(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1640 = CONVERT REF_1273 to uint256
+RETURN TMP_1640
+EXPRESSION:doTransferOut(borrower,borrowAmount)	NodeType.EXPRESSION
+accountBorrows[borrower].principal = vars.accountBorrowsNew	NodeType.EXPRESSION
+accountBorrows[borrower].interestIndex = borrowIndex	NodeType.EXPRESSION
+totalBorrows = vars.totalBorrowsNew	NodeType.EXPRESSION
+uint256(Error.NO_ERROR)	NodeType.RETURN";
+"BlockID: 2708
+Call context: 
+None
+RETURN TMP_1637
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.BORROW_NEW_TOTAL_BALANCE_CALCULATION_FAILED,uint256(vars.mathErr))	NodeType.RETURN" [shape=box];
+"BlockID: 2703
+Call context: 
+None
+RETURN TMP_1634
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.BORROW_NEW_ACCOUNT_BORROW_BALANCE_CALCULATION_FAILED,uint256(vars.mathErr))	NodeType.RETURN" [shape=box];
+"BlockID: 2698
+Call context: 
+None
+RETURN TMP_1631
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.BORROW_ACCUMULATED_BALANCE_CALCULATION_FAILED,uint256(vars.mathErr))	NodeType.RETURN" [shape=box];
+"BlockID: 2693
+Call context: 
+None
+RETURN TMP_1628
+EXPRESSION:fail(Error.TOKEN_INSUFFICIENT_CASH,FailureInfo.BORROW_CASH_NOT_AVAILABLE)	NodeType.RETURN" [shape=box];
+"BlockID: 2688
+Call context: 
+None
+RETURN TMP_1625
+EXPRESSION:fail(Error.MARKET_NOT_FRESH,FailureInfo.BORROW_FRESHNESS_CHECK)	NodeType.RETURN" [shape=box];
+"BlockID: 2683
+Call context: 
+None
+RETURN TMP_1622
+EXPRESSION:failOpaque(Error.COMPTROLLER_REJECTION,FailureInfo.BORROW_COMPTROLLER_REJECTION,allowed)	NodeType.RETURN" [shape=box];
+"BlockID: 2679
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 2680
+Call context: 
+None
+TMP_1619 = CONVERT this to address
+TMP_1620(uint256) = HIGH_LEVEL_CALL, dest:comptroller(ComptrollerInterface), function:borrowAllowed, arguments:['TMP_1619', 'borrower', 'borrowAmount']  
+EXPRESSION:" [key=0];
+"BlockID: 2680
+Call context: 
+None
+TMP_1619 = CONVERT this to address
+TMP_1620(uint256) = HIGH_LEVEL_CALL, dest:comptroller(ComptrollerInterface), function:borrowAllowed, arguments:['TMP_1619', 'borrower', 'borrowAmount']  
+EXPRESSION:" -> "BlockID: 2681
+Call context: 
+None
+allowed(uint256) := TMP_1620(uint256)
+TMP_1621(bool) = allowed != 0
+CONDITION TMP_1621
+EXPRESSION:allowed = comptroller.borrowAllowed(address(this),borrower,borrowAmount)	NodeType.VARIABLE
+allowed = comptroller.borrowAllowed(address(this),borrower,borrowAmount)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" [key=0];
+"BlockID: 2681
+Call context: 
+None
+allowed(uint256) := TMP_1620(uint256)
+TMP_1621(bool) = allowed != 0
+CONDITION TMP_1621
+EXPRESSION:allowed = comptroller.borrowAllowed(address(this),borrower,borrowAmount)	NodeType.VARIABLE
+allowed = comptroller.borrowAllowed(address(this),borrower,borrowAmount)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" -> "BlockID: 2682
+Call context: 
+True
+REF_1237(TokenErrorReporter.Error) -> Error.COMPTROLLER_REJECTION
+REF_1238(TokenErrorReporter.FailureInfo) -> FailureInfo.BORROW_COMPTROLLER_REJECTION
+TMP_1622(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_1237,REF_1238,allowed)
+EXPRESSION:failOpaque(Error.COMPTROLLER_REJECTION,FailureInfo.BORROW_COMPTROLLER_REJECTION,allowed)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2681
+Call context: 
+None
+allowed(uint256) := TMP_1620(uint256)
+TMP_1621(bool) = allowed != 0
+CONDITION TMP_1621
+EXPRESSION:allowed = comptroller.borrowAllowed(address(this),borrower,borrowAmount)	NodeType.VARIABLE
+allowed = comptroller.borrowAllowed(address(this),borrower,borrowAmount)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" -> "BlockID: 2684
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2682
+Call context: 
+True
+REF_1237(TokenErrorReporter.Error) -> Error.COMPTROLLER_REJECTION
+REF_1238(TokenErrorReporter.FailureInfo) -> FailureInfo.BORROW_COMPTROLLER_REJECTION
+TMP_1622(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_1237,REF_1238,allowed)
+EXPRESSION:failOpaque(Error.COMPTROLLER_REJECTION,FailureInfo.BORROW_COMPTROLLER_REJECTION,allowed)	NodeType.EXPRESSION" -> "BlockID: 2683
+Call context: 
+None
+RETURN TMP_1622
+EXPRESSION:failOpaque(Error.COMPTROLLER_REJECTION,FailureInfo.BORROW_COMPTROLLER_REJECTION,allowed)	NodeType.RETURN" [key=0];
+"BlockID: 2684
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2685
+Call context: 
+None
+TMP_1623(uint256) = INTERNAL_CALL, CToken.getBlockNumber()()
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2685
+Call context: 
+None
+TMP_1623(uint256) = INTERNAL_CALL, CToken.getBlockNumber()()
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.EXPRESSION" -> "BlockID: 2686
+Call context: 
+None
+TMP_1624(bool) = accrualBlockNumber != TMP_1623
+CONDITION TMP_1624
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.IF" [key=0];
+"BlockID: 2686
+Call context: 
+None
+TMP_1624(bool) = accrualBlockNumber != TMP_1623
+CONDITION TMP_1624
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.IF" -> "BlockID: 2687
+Call context: 
+True
+REF_1239(TokenErrorReporter.Error) -> Error.MARKET_NOT_FRESH
+REF_1240(TokenErrorReporter.FailureInfo) -> FailureInfo.BORROW_FRESHNESS_CHECK
+TMP_1625(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_1239,REF_1240)
+EXPRESSION:fail(Error.MARKET_NOT_FRESH,FailureInfo.BORROW_FRESHNESS_CHECK)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2686
+Call context: 
+None
+TMP_1624(bool) = accrualBlockNumber != TMP_1623
+CONDITION TMP_1624
+EXPRESSION:accrualBlockNumber != getBlockNumber()	NodeType.IF" -> "BlockID: 2689
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2687
+Call context: 
+True
+REF_1239(TokenErrorReporter.Error) -> Error.MARKET_NOT_FRESH
+REF_1240(TokenErrorReporter.FailureInfo) -> FailureInfo.BORROW_FRESHNESS_CHECK
+TMP_1625(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_1239,REF_1240)
+EXPRESSION:fail(Error.MARKET_NOT_FRESH,FailureInfo.BORROW_FRESHNESS_CHECK)	NodeType.EXPRESSION" -> "BlockID: 2688
+Call context: 
+None
+RETURN TMP_1625
+EXPRESSION:fail(Error.MARKET_NOT_FRESH,FailureInfo.BORROW_FRESHNESS_CHECK)	NodeType.RETURN" [key=0];
+"BlockID: 2689
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2690
+Call context: 
+None
+TMP_1626(uint256) = INTERNAL_CALL, CErc20.getCashPrior()()
+EXPRESSION:getCashPrior() < borrowAmount	NodeType.EXPRESSION" [key=0];
+"BlockID: 2690
+Call context: 
+None
+TMP_1626(uint256) = INTERNAL_CALL, CErc20.getCashPrior()()
+EXPRESSION:getCashPrior() < borrowAmount	NodeType.EXPRESSION" -> "BlockID: 2691
+Call context: 
+None
+TMP_1627(bool) = TMP_1626 < borrowAmount
+CONDITION TMP_1627
+EXPRESSION:getCashPrior() < borrowAmount	NodeType.IF" [key=0];
+"BlockID: 2691
+Call context: 
+None
+TMP_1627(bool) = TMP_1626 < borrowAmount
+CONDITION TMP_1627
+EXPRESSION:getCashPrior() < borrowAmount	NodeType.IF" -> "BlockID: 2692
+Call context: 
+True
+REF_1241(TokenErrorReporter.Error) -> Error.TOKEN_INSUFFICIENT_CASH
+REF_1242(TokenErrorReporter.FailureInfo) -> FailureInfo.BORROW_CASH_NOT_AVAILABLE
+TMP_1628(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_1241,REF_1242)
+EXPRESSION:fail(Error.TOKEN_INSUFFICIENT_CASH,FailureInfo.BORROW_CASH_NOT_AVAILABLE)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2691
+Call context: 
+None
+TMP_1627(bool) = TMP_1626 < borrowAmount
+CONDITION TMP_1627
+EXPRESSION:getCashPrior() < borrowAmount	NodeType.IF" -> "BlockID: 2694
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2692
+Call context: 
+True
+REF_1241(TokenErrorReporter.Error) -> Error.TOKEN_INSUFFICIENT_CASH
+REF_1242(TokenErrorReporter.FailureInfo) -> FailureInfo.BORROW_CASH_NOT_AVAILABLE
+TMP_1628(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_1241,REF_1242)
+EXPRESSION:fail(Error.TOKEN_INSUFFICIENT_CASH,FailureInfo.BORROW_CASH_NOT_AVAILABLE)	NodeType.EXPRESSION" -> "BlockID: 2693
+Call context: 
+None
+RETURN TMP_1628
+EXPRESSION:fail(Error.TOKEN_INSUFFICIENT_CASH,FailureInfo.BORROW_CASH_NOT_AVAILABLE)	NodeType.RETURN" [key=0];
+"BlockID: 2694
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2695
+Call context: 
+None
+NEW VARIABLE vars
+REF_1243(CarefulMath.MathError) -> vars.mathErr
+REF_1244(uint256) -> vars.accountBorrows
+TUPLE_187(CarefulMath.MathError,uint256) = INTERNAL_CALL, CToken.borrowBalanceStoredInternal(address)(borrower)
+EXPRESSION:None	NodeType.VARIABLE
+(vars.mathErr,vars.accountBorrows) = borrowBalanceStoredInternal(borrower)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2695
+Call context: 
+None
+NEW VARIABLE vars
+REF_1243(CarefulMath.MathError) -> vars.mathErr
+REF_1244(uint256) -> vars.accountBorrows
+TUPLE_187(CarefulMath.MathError,uint256) = INTERNAL_CALL, CToken.borrowBalanceStoredInternal(address)(borrower)
+EXPRESSION:None	NodeType.VARIABLE
+(vars.mathErr,vars.accountBorrows) = borrowBalanceStoredInternal(borrower)	NodeType.EXPRESSION" -> "BlockID: 2696
+Call context: 
+None
+REF_1243(CarefulMath.MathError)= UNPACK TUPLE_187 index: 0 
+REF_1244(uint256)= UNPACK TUPLE_187 index: 1 
+REF_1245(CarefulMath.MathError) -> vars.mathErr
+REF_1246(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1629(bool) = REF_1245 != REF_1246
+CONDITION TMP_1629
+EXPRESSION:(vars.mathErr,vars.accountBorrows) = borrowBalanceStoredInternal(borrower)	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" [key=0];
+"BlockID: 2696
+Call context: 
+None
+REF_1243(CarefulMath.MathError)= UNPACK TUPLE_187 index: 0 
+REF_1244(uint256)= UNPACK TUPLE_187 index: 1 
+REF_1245(CarefulMath.MathError) -> vars.mathErr
+REF_1246(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1629(bool) = REF_1245 != REF_1246
+CONDITION TMP_1629
+EXPRESSION:(vars.mathErr,vars.accountBorrows) = borrowBalanceStoredInternal(borrower)	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 2697
+Call context: 
+True
+REF_1247(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_1248(TokenErrorReporter.FailureInfo) -> FailureInfo.BORROW_ACCUMULATED_BALANCE_CALCULATION_FAILED
+REF_1249(CarefulMath.MathError) -> vars.mathErr
+TMP_1630 = CONVERT REF_1249 to uint256
+TMP_1631(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_1247,REF_1248,TMP_1630)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.BORROW_ACCUMULATED_BALANCE_CALCULATION_FAILED,uint256(vars.mathErr))	NodeType.EXPRESSION" [key=0];
+"BlockID: 2696
+Call context: 
+None
+REF_1243(CarefulMath.MathError)= UNPACK TUPLE_187 index: 0 
+REF_1244(uint256)= UNPACK TUPLE_187 index: 1 
+REF_1245(CarefulMath.MathError) -> vars.mathErr
+REF_1246(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1629(bool) = REF_1245 != REF_1246
+CONDITION TMP_1629
+EXPRESSION:(vars.mathErr,vars.accountBorrows) = borrowBalanceStoredInternal(borrower)	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 2699
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2697
+Call context: 
+True
+REF_1247(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_1248(TokenErrorReporter.FailureInfo) -> FailureInfo.BORROW_ACCUMULATED_BALANCE_CALCULATION_FAILED
+REF_1249(CarefulMath.MathError) -> vars.mathErr
+TMP_1630 = CONVERT REF_1249 to uint256
+TMP_1631(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_1247,REF_1248,TMP_1630)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.BORROW_ACCUMULATED_BALANCE_CALCULATION_FAILED,uint256(vars.mathErr))	NodeType.EXPRESSION" -> "BlockID: 2698
+Call context: 
+None
+RETURN TMP_1631
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.BORROW_ACCUMULATED_BALANCE_CALCULATION_FAILED,uint256(vars.mathErr))	NodeType.RETURN" [key=0];
+"BlockID: 2699
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2700
+Call context: 
+None
+REF_1250(CarefulMath.MathError) -> vars.mathErr
+REF_1251(uint256) -> vars.accountBorrowsNew
+REF_1252(uint256) -> vars.accountBorrows
+TUPLE_188(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.addUInt(uint256,uint256)(REF_1252,borrowAmount)
+EXPRESSION:(vars.mathErr,vars.accountBorrowsNew) = addUInt(vars.accountBorrows,borrowAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2700
+Call context: 
+None
+REF_1250(CarefulMath.MathError) -> vars.mathErr
+REF_1251(uint256) -> vars.accountBorrowsNew
+REF_1252(uint256) -> vars.accountBorrows
+TUPLE_188(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.addUInt(uint256,uint256)(REF_1252,borrowAmount)
+EXPRESSION:(vars.mathErr,vars.accountBorrowsNew) = addUInt(vars.accountBorrows,borrowAmount)	NodeType.EXPRESSION" -> "BlockID: 2701
+Call context: 
+None
+REF_1250(CarefulMath.MathError)= UNPACK TUPLE_188 index: 0 
+REF_1251(uint256)= UNPACK TUPLE_188 index: 1 
+REF_1253(CarefulMath.MathError) -> vars.mathErr
+REF_1254(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1632(bool) = REF_1253 != REF_1254
+CONDITION TMP_1632
+EXPRESSION:(vars.mathErr,vars.accountBorrowsNew) = addUInt(vars.accountBorrows,borrowAmount)	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" [key=0];
+"BlockID: 2701
+Call context: 
+None
+REF_1250(CarefulMath.MathError)= UNPACK TUPLE_188 index: 0 
+REF_1251(uint256)= UNPACK TUPLE_188 index: 1 
+REF_1253(CarefulMath.MathError) -> vars.mathErr
+REF_1254(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1632(bool) = REF_1253 != REF_1254
+CONDITION TMP_1632
+EXPRESSION:(vars.mathErr,vars.accountBorrowsNew) = addUInt(vars.accountBorrows,borrowAmount)	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 2702
+Call context: 
+True
+REF_1255(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_1256(TokenErrorReporter.FailureInfo) -> FailureInfo.BORROW_NEW_ACCOUNT_BORROW_BALANCE_CALCULATION_FAILED
+REF_1257(CarefulMath.MathError) -> vars.mathErr
+TMP_1633 = CONVERT REF_1257 to uint256
+TMP_1634(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_1255,REF_1256,TMP_1633)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.BORROW_NEW_ACCOUNT_BORROW_BALANCE_CALCULATION_FAILED,uint256(vars.mathErr))	NodeType.EXPRESSION" [key=0];
+"BlockID: 2701
+Call context: 
+None
+REF_1250(CarefulMath.MathError)= UNPACK TUPLE_188 index: 0 
+REF_1251(uint256)= UNPACK TUPLE_188 index: 1 
+REF_1253(CarefulMath.MathError) -> vars.mathErr
+REF_1254(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1632(bool) = REF_1253 != REF_1254
+CONDITION TMP_1632
+EXPRESSION:(vars.mathErr,vars.accountBorrowsNew) = addUInt(vars.accountBorrows,borrowAmount)	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 2704
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2702
+Call context: 
+True
+REF_1255(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_1256(TokenErrorReporter.FailureInfo) -> FailureInfo.BORROW_NEW_ACCOUNT_BORROW_BALANCE_CALCULATION_FAILED
+REF_1257(CarefulMath.MathError) -> vars.mathErr
+TMP_1633 = CONVERT REF_1257 to uint256
+TMP_1634(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_1255,REF_1256,TMP_1633)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.BORROW_NEW_ACCOUNT_BORROW_BALANCE_CALCULATION_FAILED,uint256(vars.mathErr))	NodeType.EXPRESSION" -> "BlockID: 2703
+Call context: 
+None
+RETURN TMP_1634
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.BORROW_NEW_ACCOUNT_BORROW_BALANCE_CALCULATION_FAILED,uint256(vars.mathErr))	NodeType.RETURN" [key=0];
+"BlockID: 2704
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2705
+Call context: 
+None
+REF_1258(CarefulMath.MathError) -> vars.mathErr
+REF_1259(uint256) -> vars.totalBorrowsNew
+TUPLE_189(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.addUInt(uint256,uint256)(totalBorrows,borrowAmount)
+EXPRESSION:(vars.mathErr,vars.totalBorrowsNew) = addUInt(totalBorrows,borrowAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2705
+Call context: 
+None
+REF_1258(CarefulMath.MathError) -> vars.mathErr
+REF_1259(uint256) -> vars.totalBorrowsNew
+TUPLE_189(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.addUInt(uint256,uint256)(totalBorrows,borrowAmount)
+EXPRESSION:(vars.mathErr,vars.totalBorrowsNew) = addUInt(totalBorrows,borrowAmount)	NodeType.EXPRESSION" -> "BlockID: 2706
+Call context: 
+None
+REF_1258(CarefulMath.MathError)= UNPACK TUPLE_189 index: 0 
+REF_1259(uint256)= UNPACK TUPLE_189 index: 1 
+REF_1260(CarefulMath.MathError) -> vars.mathErr
+REF_1261(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1635(bool) = REF_1260 != REF_1261
+CONDITION TMP_1635
+EXPRESSION:(vars.mathErr,vars.totalBorrowsNew) = addUInt(totalBorrows,borrowAmount)	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" [key=0];
+"BlockID: 2706
+Call context: 
+None
+REF_1258(CarefulMath.MathError)= UNPACK TUPLE_189 index: 0 
+REF_1259(uint256)= UNPACK TUPLE_189 index: 1 
+REF_1260(CarefulMath.MathError) -> vars.mathErr
+REF_1261(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1635(bool) = REF_1260 != REF_1261
+CONDITION TMP_1635
+EXPRESSION:(vars.mathErr,vars.totalBorrowsNew) = addUInt(totalBorrows,borrowAmount)	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 2707
+Call context: 
+True
+REF_1262(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_1263(TokenErrorReporter.FailureInfo) -> FailureInfo.BORROW_NEW_TOTAL_BALANCE_CALCULATION_FAILED
+REF_1264(CarefulMath.MathError) -> vars.mathErr
+TMP_1636 = CONVERT REF_1264 to uint256
+TMP_1637(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_1262,REF_1263,TMP_1636)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.BORROW_NEW_TOTAL_BALANCE_CALCULATION_FAILED,uint256(vars.mathErr))	NodeType.EXPRESSION" [key=0];
+"BlockID: 2706
+Call context: 
+None
+REF_1258(CarefulMath.MathError)= UNPACK TUPLE_189 index: 0 
+REF_1259(uint256)= UNPACK TUPLE_189 index: 1 
+REF_1260(CarefulMath.MathError) -> vars.mathErr
+REF_1261(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1635(bool) = REF_1260 != REF_1261
+CONDITION TMP_1635
+EXPRESSION:(vars.mathErr,vars.totalBorrowsNew) = addUInt(totalBorrows,borrowAmount)	NodeType.EXPRESSION
+vars.mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 2709
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2707
+Call context: 
+True
+REF_1262(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_1263(TokenErrorReporter.FailureInfo) -> FailureInfo.BORROW_NEW_TOTAL_BALANCE_CALCULATION_FAILED
+REF_1264(CarefulMath.MathError) -> vars.mathErr
+TMP_1636 = CONVERT REF_1264 to uint256
+TMP_1637(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_1262,REF_1263,TMP_1636)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.BORROW_NEW_TOTAL_BALANCE_CALCULATION_FAILED,uint256(vars.mathErr))	NodeType.EXPRESSION" -> "BlockID: 2708
+Call context: 
+None
+RETURN TMP_1637
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.BORROW_NEW_TOTAL_BALANCE_CALCULATION_FAILED,uint256(vars.mathErr))	NodeType.RETURN" [key=0];
+"BlockID: 2709
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2710
+Call context: 
+None
+INTERNAL_CALL, CErc20.doTransferOut(address,uint256)(borrower,borrowAmount)
+EXPRESSION:doTransferOut(borrower,borrowAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2710
+Call context: 
+None
+INTERNAL_CALL, CErc20.doTransferOut(address,uint256)(borrower,borrowAmount)
+EXPRESSION:doTransferOut(borrower,borrowAmount)	NodeType.EXPRESSION" -> "BlockID: 2711
+Call context: 
+None
+REF_1265(CTokenStorage.BorrowSnapshot) -> accountBorrows[borrower]
+REF_1266(uint256) -> REF_1265.principal
+REF_1267(uint256) -> vars.accountBorrowsNew
+REF_1266(uint256) (->accountBorrows) := REF_1267(uint256)
+REF_1268(CTokenStorage.BorrowSnapshot) -> accountBorrows[borrower]
+REF_1269(uint256) -> REF_1268.interestIndex
+REF_1269(uint256) (->accountBorrows) := borrowIndex(uint256)
+REF_1270(uint256) -> vars.totalBorrowsNew
+totalBorrows(uint256) := REF_1270(uint256)
+REF_1273(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1640 = CONVERT REF_1273 to uint256
+RETURN TMP_1640
+EXPRESSION:doTransferOut(borrower,borrowAmount)	NodeType.EXPRESSION
+accountBorrows[borrower].principal = vars.accountBorrowsNew	NodeType.EXPRESSION
+accountBorrows[borrower].interestIndex = borrowIndex	NodeType.EXPRESSION
+totalBorrows = vars.totalBorrowsNew	NodeType.EXPRESSION
+uint256(Error.NO_ERROR)	NodeType.RETURN" [key=0];
+}

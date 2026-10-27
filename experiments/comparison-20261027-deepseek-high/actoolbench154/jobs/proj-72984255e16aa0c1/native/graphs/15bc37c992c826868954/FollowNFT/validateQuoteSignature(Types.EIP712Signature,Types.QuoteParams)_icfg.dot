@@ -1,0 +1,794 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+REF_85(string) -> quoteParams.contentURI
+TMP_401 = CONVERT REF_85 to bytes
+TMP_402(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_401)
+contentURIHash(bytes32) := TMP_402(bytes32)
+REF_86(bytes) -> quoteParams.referenceModuleData
+TMP_403(bytes32) = SOLIDITY_CALL keccak256(bytes)(REF_86)
+referenceModuleDataHash(bytes32) := TMP_403(bytes32)
+REF_87(bytes[]) -> quoteParams.actionModulesInitDatas
+REF_64 -> LENGTH actionModulesInitDatas
+TMP_379bytes32[])  = new bytes32[](REF_64)
+actionModulesInitDatasHashes(bytes32[]) =  ['TMP_379(bytes32[])']
+NEW VARIABLE i
+EXPRESSION:contentURIHash = keccak256(bytes)(bytes(quoteParams.contentURI))	NodeType.VARIABLE
+contentURIHash = keccak256(bytes)(bytes(quoteParams.contentURI))	NodeType.EXPRESSION
+referenceModuleDataHash = keccak256(bytes)(quoteParams.referenceModuleData)	NodeType.VARIABLE
+actionModulesInitDatasHashes = new bytes32[](actionModulesInitDatas.length)	NodeType.VARIABLE
+actionModulesInitDatasHashes = new bytes32[](actionModulesInitDatas.length)	NodeType.EXPRESSION
+None	NodeType.VARIABLE";
+"BlockID: 2
+Call context: validateQuoteSignature
+None
+BEGIN_LOOP
+REF_65 -> LENGTH actionModulesInitDatas
+TMP_380(bool) = i < REF_65
+CONDITION TMP_380
+EXPRESSION:None	NodeType.STARTLOOP
+i < actionModulesInitDatas.length	NodeType.IFLOOP";
+"BlockID: 3
+Call context: validateQuoteSignature
+True
+REF_66(bytes32) -> actionModulesInitDatasHashes[i]
+REF_68(bytes) -> actionModulesInitDatas[i]
+TMP_381(bytes) = SOLIDITY_CALL abi.encode()(REF_68)
+TMP_382(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_381)
+REF_66(bytes32) (->actionModulesInitDatasHashes) := TMP_382(bytes32)
+i(uint256) = i + 1
+EXPRESSION:actionModulesInitDatasHashes[i] = keccak256(bytes)(abi.encode(actionModulesInitDatas[i]))	NodeType.EXPRESSION
+++ i	NodeType.EXPRESSION";
+"BlockID: 4
+Call context: validateQuoteSignature
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 5
+Call context: validateQuoteSignature
+None
+TMP_383(bytes) = SOLIDITY_CALL abi.encodePacked()(actionModulesInitDatasHashes)
+TMP_384(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_383)
+TMP_994(None) := TMP_384(bytes32)
+actionModulesInitDataHash(bytes32) := TMP_404(bytes32)
+REF_88(bytes) -> quoteParams.referenceModuleInitData
+TMP_405(bytes32) = SOLIDITY_CALL keccak256(bytes)(REF_88)
+referenceModuleInitDataHash(bytes32) := TMP_405(bytes32)
+REF_89(address) -> signature.signer
+INLINE ASM
+_nonces(mapping(address => uint256)) := SIG_NONCES_MAPPING_SLOT(uint256)
+TMP_962(None) := _nonces(mapping(address => uint256))
+REF_174(uint256) -> TMP_493[user]
+TMP_494(uint256) := REF_174(uint256)
+REF_174(-> TMP_493) = REF_174 + 1
+TMP_1008(None) := TMP_494(uint256)
+nonce(uint256) := TMP_406(uint256)
+REF_90(uint256) -> signature.deadline
+deadline(uint256) := REF_90(uint256)
+REF_91(bytes32) -> Typehash.QUOTE
+REF_92(uint256) -> quoteParams.profileId
+REF_93(uint256) -> quoteParams.pointedProfileId
+REF_94(uint256) -> quoteParams.pointedPubId
+REF_95(uint256[]) -> quoteParams.referrerProfileIds
+REF_96(uint256[]) -> quoteParams.referrerPubIds
+REF_97(address[]) -> quoteParams.actionModules
+REF_98(address) -> quoteParams.referenceModule
+TMP_407(MetaTxLib.ReferenceParamsForAbiEncode) = new ReferenceParamsForAbiEncode(REF_91,REF_92,contentURIHash,REF_93,REF_94,REF_95,REF_96,referenceModuleDataHash,REF_97,actionModulesInitDataHash,REF_98,referenceModuleInitDataHash,nonce,deadline)
+TMP_385(bytes) = SOLIDITY_CALL abi.encode()(referenceParamsForAbiEncode)
+encodedStruct(bytes) := TMP_385(bytes)
+INLINE ASM
+NEW VARIABLE lengthWithoutOffset__abiEncode_asm_0
+TMP_386(uint256) = SOLIDITY_CALL mload(uint256)(encodedStruct)
+TMP_387(uint256) = TMP_386 - 32
+lengthWithoutOffset__abiEncode_asm_0(uint256) := TMP_387(uint256)
+TMP_388(bytes) = encodedStruct + 32
+encodedStruct(bytes) := TMP_388(bytes)
+TMP_389(None) = SOLIDITY_CALL mstore(uint256,uint256)(encodedStruct,lengthWithoutOffset__abiEncode_asm_0)
+TMP_995(None) := encodedStruct(bytes)
+encodedAbi(bytes) := TMP_408(bytes)
+TMP_409(bytes32) = SOLIDITY_CALL keccak256(bytes)(encodedAbi)
+TMP_466 = CONVERT this to address
+TMP_467(bool) = TMP_466 == LENS_HUB_ADDRESS
+CONDITION TMP_467
+EXPRESSION:actionModulesInitDataHash = _hashActionModulesInitDatas(quoteParams.actionModulesInitDatas)	NodeType.VARIABLE
+actionModulesInitDataHash = _hashActionModulesInitDatas(quoteParams.actionModulesInitDatas)	NodeType.EXPRESSION
+referenceModuleInitDataHash = keccak256(bytes)(quoteParams.referenceModuleInitData)	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+_nonces = SIG_NONCES_MAPPING_SLOT	NodeType.EXPRESSION
+nonce = _getAndIncrementNonce(signature.signer)	NodeType.VARIABLE
+nonce = _getAndIncrementNonce(signature.signer)	NodeType.EXPRESSION
+deadline = signature.deadline	NodeType.VARIABLE
+encodedStruct = abi.encode(referenceParamsForAbiEncode)	NodeType.VARIABLE
+encodedStruct = abi.encode(referenceParamsForAbiEncode)	NodeType.EXPRESSION
+None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+lengthWithoutOffset__abiEncode_asm_0 = mload(uint256)(encodedStruct) - 32	NodeType.EXPRESSION
+encodedStruct = encodedStruct + 32	NodeType.EXPRESSION
+mstore(uint256,uint256)(encodedStruct,lengthWithoutOffset__abiEncode_asm_0)	NodeType.EXPRESSION
+encodedAbi = _abiEncode(ReferenceParamsForAbiEncode(Typehash.QUOTE,quoteParams.profileId,contentURIHash,quoteParams.pointedProfileId,quoteParams.pointedPubId,quoteParams.referrerProfileIds,quoteParams.referrerPubIds,referenceModuleDataHash,quoteParams.actionModules,actionModulesInitDataHash,quoteParams.referenceModule,referenceModuleInitDataHash,nonce,deadline))	NodeType.VARIABLE
+encodedAbi = _abiEncode(ReferenceParamsForAbiEncode(Typehash.QUOTE,quoteParams.profileId,contentURIHash,quoteParams.pointedProfileId,quoteParams.pointedPubId,quoteParams.referrerProfileIds,quoteParams.referrerPubIds,referenceModuleDataHash,quoteParams.actionModules,actionModulesInitDataHash,quoteParams.referenceModule,referenceModuleInitDataHash,nonce,deadline))	NodeType.EXPRESSION
+address(this) == LENS_HUB_ADDRESS	NodeType.IF";
+"BlockID: 8
+Call context: validateQuoteSignature
+None
+TMP_491(bytes) = SOLIDITY_CALL abi.encodePacked()(,TMP_490,hashedMessage)
+TMP_492(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_491)
+TMP_1007(None) := TMP_492(bytes32)
+REF_158(uint256) -> signature.deadline
+TMP_476(bool) = REF_158 < block.timestamp
+CONDITION TMP_476
+EXPRESSION:signature.deadline < block.timestamp	NodeType.IF" [shape=box];
+"BlockID: 6
+Call context: validateQuoteSignature,_calculateDigest
+True
+TMP_1005(None) := LENS_HUB_CACHED_POLYGON_DOMAIN_SEPARATOR(bytes32)
+EXPRESSION:";
+"BlockID: 7
+Call context: validateQuoteSignature,_calculateDigest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 9
+Call context: validateQuoteSignature,_calculateDigest
+None
+REF_156(bytes32) -> Typehash.EIP712_DOMAIN
+TMP_468 = CONVERT this to address
+TMP_469 = CONVERT TMP_468 to ILensERC721
+TMP_470(string) = HIGH_LEVEL_CALL, dest:TMP_469(ILensERC721), function:name, arguments:[]  
+EXPRESSION:keccak256(bytes)(abi.encode(Typehash.EIP712_DOMAIN,keccak256(bytes)(bytes(ILensERC721(address(this)).name())),EIP712_DOMAIN_VERSION_HASH,block.chainid,address(this)))	NodeType.EXPRESSION";
+"BlockID: 12
+Call context: validateQuoteSignature,_calculateDigest
+None
+TMP_471 = CONVERT TMP_470 to bytes
+TMP_472(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_471)
+TMP_473 = CONVERT this to address
+TMP_474(bytes) = SOLIDITY_CALL abi.encode()(REF_156,TMP_472,EIP712_DOMAIN_VERSION_HASH,block.chainid,TMP_473)
+TMP_475(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_474)
+TMP_1005(None) := TMP_475(bytes32)
+EXPRESSION:" [shape=box];
+"BlockID: 10
+Call context: validateQuoteSignature
+True
+TMP_477(None) = SOLIDITY_CALL revert SignatureExpired()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 11
+Call context: validateQuoteSignature
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 13
+Call context: validateQuoteSignature
+None
+REF_159(address) -> signature.signer
+REF_160(bytes) = SOLIDITY_CALL code(address)(REF_159)
+REF_161(None) -> REF_160.length
+TMP_478(bool) = REF_161 != 0
+CONDITION TMP_478
+EXPRESSION:signature.signer.code.length != 0	NodeType.IF";
+"BlockID: 14
+Call context: validateQuoteSignature
+True
+REF_163(bytes32) -> signature.r
+REF_164(bytes32) -> signature.s
+REF_165(uint8) -> signature.v
+TMP_479(bytes) = SOLIDITY_CALL abi.encodePacked()(REF_163,REF_164,REF_165)
+concatenatedSig(bytes) := TMP_479(bytes)
+REF_166(address) -> signature.signer
+TMP_480 = CONVERT REF_166 to IERC1271
+TMP_481(bytes4) = HIGH_LEVEL_CALL, dest:TMP_480(IERC1271), function:isValidSignature, arguments:['digest', 'concatenatedSig']  
+EXPRESSION:concatenatedSig = abi.encodePacked(signature.r,signature.s,signature.v)	NodeType.VARIABLE
+concatenatedSig = abi.encodePacked(signature.r,signature.s,signature.v)	NodeType.EXPRESSION
+IERC1271(signature.signer).isValidSignature(digest,concatenatedSig) != EIP1271_MAGIC_VALUE	NodeType.EXPRESSION";
+"BlockID: 15
+Call context: validateQuoteSignature
+False
+REF_168(uint8) -> signature.v
+REF_169(bytes32) -> signature.r
+REF_170(bytes32) -> signature.s
+TMP_484(address) = SOLIDITY_CALL ecrecover(bytes32,uint8,bytes32,bytes32)(digest,REF_168,REF_169,REF_170)
+recoveredAddress(address) := TMP_484(address)
+TMP_485 = CONVERT 0 to address
+TMP_486(bool) = recoveredAddress == TMP_485
+REF_171(address) -> signature.signer
+TMP_487(bool) = recoveredAddress != REF_171
+TMP_488(bool) = TMP_486 || TMP_487
+CONDITION TMP_488
+EXPRESSION:recoveredAddress = ecrecover(bytes32,uint8,bytes32,bytes32)(digest,signature.v,signature.r,signature.s)	NodeType.VARIABLE
+recoveredAddress = ecrecover(bytes32,uint8,bytes32,bytes32)(digest,signature.v,signature.r,signature.s)	NodeType.EXPRESSION
+recoveredAddress == address(0) || recoveredAddress != signature.signer	NodeType.IF";
+"BlockID: 17
+Call context: validateQuoteSignature
+True
+TMP_489(None) = SOLIDITY_CALL revert SignatureInvalid()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 18
+Call context: validateQuoteSignature
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 21
+Call context: validateQuoteSignature
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 16
+Call context: validateQuoteSignature
+None
+TMP_482(bool) = TMP_481 != EIP1271_MAGIC_VALUE
+CONDITION TMP_482
+EXPRESSION:IERC1271(signature.signer).isValidSignature(digest,concatenatedSig) != EIP1271_MAGIC_VALUE	NodeType.IF" [shape=box];
+"BlockID: 19
+Call context: validateQuoteSignature
+True
+TMP_483(None) = SOLIDITY_CALL revert SignatureInvalid()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 20
+Call context: validateQuoteSignature
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+REF_85(string) -> quoteParams.contentURI
+TMP_401 = CONVERT REF_85 to bytes
+TMP_402(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_401)
+contentURIHash(bytes32) := TMP_402(bytes32)
+REF_86(bytes) -> quoteParams.referenceModuleData
+TMP_403(bytes32) = SOLIDITY_CALL keccak256(bytes)(REF_86)
+referenceModuleDataHash(bytes32) := TMP_403(bytes32)
+REF_87(bytes[]) -> quoteParams.actionModulesInitDatas
+REF_64 -> LENGTH actionModulesInitDatas
+TMP_379bytes32[])  = new bytes32[](REF_64)
+actionModulesInitDatasHashes(bytes32[]) =  ['TMP_379(bytes32[])']
+NEW VARIABLE i
+EXPRESSION:contentURIHash = keccak256(bytes)(bytes(quoteParams.contentURI))	NodeType.VARIABLE
+contentURIHash = keccak256(bytes)(bytes(quoteParams.contentURI))	NodeType.EXPRESSION
+referenceModuleDataHash = keccak256(bytes)(quoteParams.referenceModuleData)	NodeType.VARIABLE
+actionModulesInitDatasHashes = new bytes32[](actionModulesInitDatas.length)	NodeType.VARIABLE
+actionModulesInitDatasHashes = new bytes32[](actionModulesInitDatas.length)	NodeType.EXPRESSION
+None	NodeType.VARIABLE" [key=0];
+"BlockID: 1
+Call context: 
+None
+REF_85(string) -> quoteParams.contentURI
+TMP_401 = CONVERT REF_85 to bytes
+TMP_402(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_401)
+contentURIHash(bytes32) := TMP_402(bytes32)
+REF_86(bytes) -> quoteParams.referenceModuleData
+TMP_403(bytes32) = SOLIDITY_CALL keccak256(bytes)(REF_86)
+referenceModuleDataHash(bytes32) := TMP_403(bytes32)
+REF_87(bytes[]) -> quoteParams.actionModulesInitDatas
+REF_64 -> LENGTH actionModulesInitDatas
+TMP_379bytes32[])  = new bytes32[](REF_64)
+actionModulesInitDatasHashes(bytes32[]) =  ['TMP_379(bytes32[])']
+NEW VARIABLE i
+EXPRESSION:contentURIHash = keccak256(bytes)(bytes(quoteParams.contentURI))	NodeType.VARIABLE
+contentURIHash = keccak256(bytes)(bytes(quoteParams.contentURI))	NodeType.EXPRESSION
+referenceModuleDataHash = keccak256(bytes)(quoteParams.referenceModuleData)	NodeType.VARIABLE
+actionModulesInitDatasHashes = new bytes32[](actionModulesInitDatas.length)	NodeType.VARIABLE
+actionModulesInitDatasHashes = new bytes32[](actionModulesInitDatas.length)	NodeType.EXPRESSION
+None	NodeType.VARIABLE" -> "BlockID: 2
+Call context: validateQuoteSignature
+None
+BEGIN_LOOP
+REF_65 -> LENGTH actionModulesInitDatas
+TMP_380(bool) = i < REF_65
+CONDITION TMP_380
+EXPRESSION:None	NodeType.STARTLOOP
+i < actionModulesInitDatas.length	NodeType.IFLOOP" [key="successor_5"];
+"BlockID: 2
+Call context: validateQuoteSignature
+None
+BEGIN_LOOP
+REF_65 -> LENGTH actionModulesInitDatas
+TMP_380(bool) = i < REF_65
+CONDITION TMP_380
+EXPRESSION:None	NodeType.STARTLOOP
+i < actionModulesInitDatas.length	NodeType.IFLOOP" -> "BlockID: 3
+Call context: validateQuoteSignature
+True
+REF_66(bytes32) -> actionModulesInitDatasHashes[i]
+REF_68(bytes) -> actionModulesInitDatas[i]
+TMP_381(bytes) = SOLIDITY_CALL abi.encode()(REF_68)
+TMP_382(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_381)
+REF_66(bytes32) (->actionModulesInitDatasHashes) := TMP_382(bytes32)
+i(uint256) = i + 1
+EXPRESSION:actionModulesInitDatasHashes[i] = keccak256(bytes)(abi.encode(actionModulesInitDatas[i]))	NodeType.EXPRESSION
+++ i	NodeType.EXPRESSION" [key=0];
+"BlockID: 2
+Call context: validateQuoteSignature
+None
+BEGIN_LOOP
+REF_65 -> LENGTH actionModulesInitDatas
+TMP_380(bool) = i < REF_65
+CONDITION TMP_380
+EXPRESSION:None	NodeType.STARTLOOP
+i < actionModulesInitDatas.length	NodeType.IFLOOP" -> "BlockID: 4
+Call context: validateQuoteSignature
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 3
+Call context: validateQuoteSignature
+True
+REF_66(bytes32) -> actionModulesInitDatasHashes[i]
+REF_68(bytes) -> actionModulesInitDatas[i]
+TMP_381(bytes) = SOLIDITY_CALL abi.encode()(REF_68)
+TMP_382(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_381)
+REF_66(bytes32) (->actionModulesInitDatasHashes) := TMP_382(bytes32)
+i(uint256) = i + 1
+EXPRESSION:actionModulesInitDatasHashes[i] = keccak256(bytes)(abi.encode(actionModulesInitDatas[i]))	NodeType.EXPRESSION
+++ i	NodeType.EXPRESSION" -> "BlockID: 2
+Call context: validateQuoteSignature
+None
+BEGIN_LOOP
+REF_65 -> LENGTH actionModulesInitDatas
+TMP_380(bool) = i < REF_65
+CONDITION TMP_380
+EXPRESSION:None	NodeType.STARTLOOP
+i < actionModulesInitDatas.length	NodeType.IFLOOP" [key=0];
+"BlockID: 4
+Call context: validateQuoteSignature
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 5
+Call context: validateQuoteSignature
+None
+TMP_383(bytes) = SOLIDITY_CALL abi.encodePacked()(actionModulesInitDatasHashes)
+TMP_384(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_383)
+TMP_994(None) := TMP_384(bytes32)
+actionModulesInitDataHash(bytes32) := TMP_404(bytes32)
+REF_88(bytes) -> quoteParams.referenceModuleInitData
+TMP_405(bytes32) = SOLIDITY_CALL keccak256(bytes)(REF_88)
+referenceModuleInitDataHash(bytes32) := TMP_405(bytes32)
+REF_89(address) -> signature.signer
+INLINE ASM
+_nonces(mapping(address => uint256)) := SIG_NONCES_MAPPING_SLOT(uint256)
+TMP_962(None) := _nonces(mapping(address => uint256))
+REF_174(uint256) -> TMP_493[user]
+TMP_494(uint256) := REF_174(uint256)
+REF_174(-> TMP_493) = REF_174 + 1
+TMP_1008(None) := TMP_494(uint256)
+nonce(uint256) := TMP_406(uint256)
+REF_90(uint256) -> signature.deadline
+deadline(uint256) := REF_90(uint256)
+REF_91(bytes32) -> Typehash.QUOTE
+REF_92(uint256) -> quoteParams.profileId
+REF_93(uint256) -> quoteParams.pointedProfileId
+REF_94(uint256) -> quoteParams.pointedPubId
+REF_95(uint256[]) -> quoteParams.referrerProfileIds
+REF_96(uint256[]) -> quoteParams.referrerPubIds
+REF_97(address[]) -> quoteParams.actionModules
+REF_98(address) -> quoteParams.referenceModule
+TMP_407(MetaTxLib.ReferenceParamsForAbiEncode) = new ReferenceParamsForAbiEncode(REF_91,REF_92,contentURIHash,REF_93,REF_94,REF_95,REF_96,referenceModuleDataHash,REF_97,actionModulesInitDataHash,REF_98,referenceModuleInitDataHash,nonce,deadline)
+TMP_385(bytes) = SOLIDITY_CALL abi.encode()(referenceParamsForAbiEncode)
+encodedStruct(bytes) := TMP_385(bytes)
+INLINE ASM
+NEW VARIABLE lengthWithoutOffset__abiEncode_asm_0
+TMP_386(uint256) = SOLIDITY_CALL mload(uint256)(encodedStruct)
+TMP_387(uint256) = TMP_386 - 32
+lengthWithoutOffset__abiEncode_asm_0(uint256) := TMP_387(uint256)
+TMP_388(bytes) = encodedStruct + 32
+encodedStruct(bytes) := TMP_388(bytes)
+TMP_389(None) = SOLIDITY_CALL mstore(uint256,uint256)(encodedStruct,lengthWithoutOffset__abiEncode_asm_0)
+TMP_995(None) := encodedStruct(bytes)
+encodedAbi(bytes) := TMP_408(bytes)
+TMP_409(bytes32) = SOLIDITY_CALL keccak256(bytes)(encodedAbi)
+TMP_466 = CONVERT this to address
+TMP_467(bool) = TMP_466 == LENS_HUB_ADDRESS
+CONDITION TMP_467
+EXPRESSION:actionModulesInitDataHash = _hashActionModulesInitDatas(quoteParams.actionModulesInitDatas)	NodeType.VARIABLE
+actionModulesInitDataHash = _hashActionModulesInitDatas(quoteParams.actionModulesInitDatas)	NodeType.EXPRESSION
+referenceModuleInitDataHash = keccak256(bytes)(quoteParams.referenceModuleInitData)	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+_nonces = SIG_NONCES_MAPPING_SLOT	NodeType.EXPRESSION
+nonce = _getAndIncrementNonce(signature.signer)	NodeType.VARIABLE
+nonce = _getAndIncrementNonce(signature.signer)	NodeType.EXPRESSION
+deadline = signature.deadline	NodeType.VARIABLE
+encodedStruct = abi.encode(referenceParamsForAbiEncode)	NodeType.VARIABLE
+encodedStruct = abi.encode(referenceParamsForAbiEncode)	NodeType.EXPRESSION
+None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+lengthWithoutOffset__abiEncode_asm_0 = mload(uint256)(encodedStruct) - 32	NodeType.EXPRESSION
+encodedStruct = encodedStruct + 32	NodeType.EXPRESSION
+mstore(uint256,uint256)(encodedStruct,lengthWithoutOffset__abiEncode_asm_0)	NodeType.EXPRESSION
+encodedAbi = _abiEncode(ReferenceParamsForAbiEncode(Typehash.QUOTE,quoteParams.profileId,contentURIHash,quoteParams.pointedProfileId,quoteParams.pointedPubId,quoteParams.referrerProfileIds,quoteParams.referrerPubIds,referenceModuleDataHash,quoteParams.actionModules,actionModulesInitDataHash,quoteParams.referenceModule,referenceModuleInitDataHash,nonce,deadline))	NodeType.VARIABLE
+encodedAbi = _abiEncode(ReferenceParamsForAbiEncode(Typehash.QUOTE,quoteParams.profileId,contentURIHash,quoteParams.pointedProfileId,quoteParams.pointedPubId,quoteParams.referrerProfileIds,quoteParams.referrerPubIds,referenceModuleDataHash,quoteParams.actionModules,actionModulesInitDataHash,quoteParams.referenceModule,referenceModuleInitDataHash,nonce,deadline))	NodeType.EXPRESSION
+address(this) == LENS_HUB_ADDRESS	NodeType.IF" [key=0];
+"BlockID: 5
+Call context: validateQuoteSignature
+None
+TMP_383(bytes) = SOLIDITY_CALL abi.encodePacked()(actionModulesInitDatasHashes)
+TMP_384(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_383)
+TMP_994(None) := TMP_384(bytes32)
+actionModulesInitDataHash(bytes32) := TMP_404(bytes32)
+REF_88(bytes) -> quoteParams.referenceModuleInitData
+TMP_405(bytes32) = SOLIDITY_CALL keccak256(bytes)(REF_88)
+referenceModuleInitDataHash(bytes32) := TMP_405(bytes32)
+REF_89(address) -> signature.signer
+INLINE ASM
+_nonces(mapping(address => uint256)) := SIG_NONCES_MAPPING_SLOT(uint256)
+TMP_962(None) := _nonces(mapping(address => uint256))
+REF_174(uint256) -> TMP_493[user]
+TMP_494(uint256) := REF_174(uint256)
+REF_174(-> TMP_493) = REF_174 + 1
+TMP_1008(None) := TMP_494(uint256)
+nonce(uint256) := TMP_406(uint256)
+REF_90(uint256) -> signature.deadline
+deadline(uint256) := REF_90(uint256)
+REF_91(bytes32) -> Typehash.QUOTE
+REF_92(uint256) -> quoteParams.profileId
+REF_93(uint256) -> quoteParams.pointedProfileId
+REF_94(uint256) -> quoteParams.pointedPubId
+REF_95(uint256[]) -> quoteParams.referrerProfileIds
+REF_96(uint256[]) -> quoteParams.referrerPubIds
+REF_97(address[]) -> quoteParams.actionModules
+REF_98(address) -> quoteParams.referenceModule
+TMP_407(MetaTxLib.ReferenceParamsForAbiEncode) = new ReferenceParamsForAbiEncode(REF_91,REF_92,contentURIHash,REF_93,REF_94,REF_95,REF_96,referenceModuleDataHash,REF_97,actionModulesInitDataHash,REF_98,referenceModuleInitDataHash,nonce,deadline)
+TMP_385(bytes) = SOLIDITY_CALL abi.encode()(referenceParamsForAbiEncode)
+encodedStruct(bytes) := TMP_385(bytes)
+INLINE ASM
+NEW VARIABLE lengthWithoutOffset__abiEncode_asm_0
+TMP_386(uint256) = SOLIDITY_CALL mload(uint256)(encodedStruct)
+TMP_387(uint256) = TMP_386 - 32
+lengthWithoutOffset__abiEncode_asm_0(uint256) := TMP_387(uint256)
+TMP_388(bytes) = encodedStruct + 32
+encodedStruct(bytes) := TMP_388(bytes)
+TMP_389(None) = SOLIDITY_CALL mstore(uint256,uint256)(encodedStruct,lengthWithoutOffset__abiEncode_asm_0)
+TMP_995(None) := encodedStruct(bytes)
+encodedAbi(bytes) := TMP_408(bytes)
+TMP_409(bytes32) = SOLIDITY_CALL keccak256(bytes)(encodedAbi)
+TMP_466 = CONVERT this to address
+TMP_467(bool) = TMP_466 == LENS_HUB_ADDRESS
+CONDITION TMP_467
+EXPRESSION:actionModulesInitDataHash = _hashActionModulesInitDatas(quoteParams.actionModulesInitDatas)	NodeType.VARIABLE
+actionModulesInitDataHash = _hashActionModulesInitDatas(quoteParams.actionModulesInitDatas)	NodeType.EXPRESSION
+referenceModuleInitDataHash = keccak256(bytes)(quoteParams.referenceModuleInitData)	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+_nonces = SIG_NONCES_MAPPING_SLOT	NodeType.EXPRESSION
+nonce = _getAndIncrementNonce(signature.signer)	NodeType.VARIABLE
+nonce = _getAndIncrementNonce(signature.signer)	NodeType.EXPRESSION
+deadline = signature.deadline	NodeType.VARIABLE
+encodedStruct = abi.encode(referenceParamsForAbiEncode)	NodeType.VARIABLE
+encodedStruct = abi.encode(referenceParamsForAbiEncode)	NodeType.EXPRESSION
+None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+lengthWithoutOffset__abiEncode_asm_0 = mload(uint256)(encodedStruct) - 32	NodeType.EXPRESSION
+encodedStruct = encodedStruct + 32	NodeType.EXPRESSION
+mstore(uint256,uint256)(encodedStruct,lengthWithoutOffset__abiEncode_asm_0)	NodeType.EXPRESSION
+encodedAbi = _abiEncode(ReferenceParamsForAbiEncode(Typehash.QUOTE,quoteParams.profileId,contentURIHash,quoteParams.pointedProfileId,quoteParams.pointedPubId,quoteParams.referrerProfileIds,quoteParams.referrerPubIds,referenceModuleDataHash,quoteParams.actionModules,actionModulesInitDataHash,quoteParams.referenceModule,referenceModuleInitDataHash,nonce,deadline))	NodeType.VARIABLE
+encodedAbi = _abiEncode(ReferenceParamsForAbiEncode(Typehash.QUOTE,quoteParams.profileId,contentURIHash,quoteParams.pointedProfileId,quoteParams.pointedPubId,quoteParams.referrerProfileIds,quoteParams.referrerPubIds,referenceModuleDataHash,quoteParams.actionModules,actionModulesInitDataHash,quoteParams.referenceModule,referenceModuleInitDataHash,nonce,deadline))	NodeType.EXPRESSION
+address(this) == LENS_HUB_ADDRESS	NodeType.IF" -> "BlockID: 6
+Call context: validateQuoteSignature,_calculateDigest
+True
+TMP_1005(None) := LENS_HUB_CACHED_POLYGON_DOMAIN_SEPARATOR(bytes32)
+EXPRESSION:" [key="successor_1"];
+"BlockID: 5
+Call context: validateQuoteSignature
+None
+TMP_383(bytes) = SOLIDITY_CALL abi.encodePacked()(actionModulesInitDatasHashes)
+TMP_384(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_383)
+TMP_994(None) := TMP_384(bytes32)
+actionModulesInitDataHash(bytes32) := TMP_404(bytes32)
+REF_88(bytes) -> quoteParams.referenceModuleInitData
+TMP_405(bytes32) = SOLIDITY_CALL keccak256(bytes)(REF_88)
+referenceModuleInitDataHash(bytes32) := TMP_405(bytes32)
+REF_89(address) -> signature.signer
+INLINE ASM
+_nonces(mapping(address => uint256)) := SIG_NONCES_MAPPING_SLOT(uint256)
+TMP_962(None) := _nonces(mapping(address => uint256))
+REF_174(uint256) -> TMP_493[user]
+TMP_494(uint256) := REF_174(uint256)
+REF_174(-> TMP_493) = REF_174 + 1
+TMP_1008(None) := TMP_494(uint256)
+nonce(uint256) := TMP_406(uint256)
+REF_90(uint256) -> signature.deadline
+deadline(uint256) := REF_90(uint256)
+REF_91(bytes32) -> Typehash.QUOTE
+REF_92(uint256) -> quoteParams.profileId
+REF_93(uint256) -> quoteParams.pointedProfileId
+REF_94(uint256) -> quoteParams.pointedPubId
+REF_95(uint256[]) -> quoteParams.referrerProfileIds
+REF_96(uint256[]) -> quoteParams.referrerPubIds
+REF_97(address[]) -> quoteParams.actionModules
+REF_98(address) -> quoteParams.referenceModule
+TMP_407(MetaTxLib.ReferenceParamsForAbiEncode) = new ReferenceParamsForAbiEncode(REF_91,REF_92,contentURIHash,REF_93,REF_94,REF_95,REF_96,referenceModuleDataHash,REF_97,actionModulesInitDataHash,REF_98,referenceModuleInitDataHash,nonce,deadline)
+TMP_385(bytes) = SOLIDITY_CALL abi.encode()(referenceParamsForAbiEncode)
+encodedStruct(bytes) := TMP_385(bytes)
+INLINE ASM
+NEW VARIABLE lengthWithoutOffset__abiEncode_asm_0
+TMP_386(uint256) = SOLIDITY_CALL mload(uint256)(encodedStruct)
+TMP_387(uint256) = TMP_386 - 32
+lengthWithoutOffset__abiEncode_asm_0(uint256) := TMP_387(uint256)
+TMP_388(bytes) = encodedStruct + 32
+encodedStruct(bytes) := TMP_388(bytes)
+TMP_389(None) = SOLIDITY_CALL mstore(uint256,uint256)(encodedStruct,lengthWithoutOffset__abiEncode_asm_0)
+TMP_995(None) := encodedStruct(bytes)
+encodedAbi(bytes) := TMP_408(bytes)
+TMP_409(bytes32) = SOLIDITY_CALL keccak256(bytes)(encodedAbi)
+TMP_466 = CONVERT this to address
+TMP_467(bool) = TMP_466 == LENS_HUB_ADDRESS
+CONDITION TMP_467
+EXPRESSION:actionModulesInitDataHash = _hashActionModulesInitDatas(quoteParams.actionModulesInitDatas)	NodeType.VARIABLE
+actionModulesInitDataHash = _hashActionModulesInitDatas(quoteParams.actionModulesInitDatas)	NodeType.EXPRESSION
+referenceModuleInitDataHash = keccak256(bytes)(quoteParams.referenceModuleInitData)	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+_nonces = SIG_NONCES_MAPPING_SLOT	NodeType.EXPRESSION
+nonce = _getAndIncrementNonce(signature.signer)	NodeType.VARIABLE
+nonce = _getAndIncrementNonce(signature.signer)	NodeType.EXPRESSION
+deadline = signature.deadline	NodeType.VARIABLE
+encodedStruct = abi.encode(referenceParamsForAbiEncode)	NodeType.VARIABLE
+encodedStruct = abi.encode(referenceParamsForAbiEncode)	NodeType.EXPRESSION
+None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+lengthWithoutOffset__abiEncode_asm_0 = mload(uint256)(encodedStruct) - 32	NodeType.EXPRESSION
+encodedStruct = encodedStruct + 32	NodeType.EXPRESSION
+mstore(uint256,uint256)(encodedStruct,lengthWithoutOffset__abiEncode_asm_0)	NodeType.EXPRESSION
+encodedAbi = _abiEncode(ReferenceParamsForAbiEncode(Typehash.QUOTE,quoteParams.profileId,contentURIHash,quoteParams.pointedProfileId,quoteParams.pointedPubId,quoteParams.referrerProfileIds,quoteParams.referrerPubIds,referenceModuleDataHash,quoteParams.actionModules,actionModulesInitDataHash,quoteParams.referenceModule,referenceModuleInitDataHash,nonce,deadline))	NodeType.VARIABLE
+encodedAbi = _abiEncode(ReferenceParamsForAbiEncode(Typehash.QUOTE,quoteParams.profileId,contentURIHash,quoteParams.pointedProfileId,quoteParams.pointedPubId,quoteParams.referrerProfileIds,quoteParams.referrerPubIds,referenceModuleDataHash,quoteParams.actionModules,actionModulesInitDataHash,quoteParams.referenceModule,referenceModuleInitDataHash,nonce,deadline))	NodeType.EXPRESSION
+address(this) == LENS_HUB_ADDRESS	NodeType.IF" -> "BlockID: 7
+Call context: validateQuoteSignature,_calculateDigest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_1"];
+"BlockID: 8
+Call context: validateQuoteSignature
+None
+TMP_491(bytes) = SOLIDITY_CALL abi.encodePacked()(,TMP_490,hashedMessage)
+TMP_492(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_491)
+TMP_1007(None) := TMP_492(bytes32)
+REF_158(uint256) -> signature.deadline
+TMP_476(bool) = REF_158 < block.timestamp
+CONDITION TMP_476
+EXPRESSION:signature.deadline < block.timestamp	NodeType.IF" -> "BlockID: 10
+Call context: validateQuoteSignature
+True
+TMP_477(None) = SOLIDITY_CALL revert SignatureExpired()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_1"];
+"BlockID: 8
+Call context: validateQuoteSignature
+None
+TMP_491(bytes) = SOLIDITY_CALL abi.encodePacked()(,TMP_490,hashedMessage)
+TMP_492(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_491)
+TMP_1007(None) := TMP_492(bytes32)
+REF_158(uint256) -> signature.deadline
+TMP_476(bool) = REF_158 < block.timestamp
+CONDITION TMP_476
+EXPRESSION:signature.deadline < block.timestamp	NodeType.IF" -> "BlockID: 11
+Call context: validateQuoteSignature
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_1"];
+"BlockID: 6
+Call context: validateQuoteSignature,_calculateDigest
+True
+TMP_1005(None) := LENS_HUB_CACHED_POLYGON_DOMAIN_SEPARATOR(bytes32)
+EXPRESSION:" -> "BlockID: 8
+Call context: validateQuoteSignature
+None
+TMP_491(bytes) = SOLIDITY_CALL abi.encodePacked()(,TMP_490,hashedMessage)
+TMP_492(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_491)
+TMP_1007(None) := TMP_492(bytes32)
+REF_158(uint256) -> signature.deadline
+TMP_476(bool) = REF_158 < block.timestamp
+CONDITION TMP_476
+EXPRESSION:signature.deadline < block.timestamp	NodeType.IF" [key="successor_5", ref="MetaTxLib.calculateDomainSeparator"];
+"BlockID: 7
+Call context: validateQuoteSignature,_calculateDigest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 9
+Call context: validateQuoteSignature,_calculateDigest
+None
+REF_156(bytes32) -> Typehash.EIP712_DOMAIN
+TMP_468 = CONVERT this to address
+TMP_469 = CONVERT TMP_468 to ILensERC721
+TMP_470(string) = HIGH_LEVEL_CALL, dest:TMP_469(ILensERC721), function:name, arguments:[]  
+EXPRESSION:keccak256(bytes)(abi.encode(Typehash.EIP712_DOMAIN,keccak256(bytes)(bytes(ILensERC721(address(this)).name())),EIP712_DOMAIN_VERSION_HASH,block.chainid,address(this)))	NodeType.EXPRESSION" [key=0];
+"BlockID: 9
+Call context: validateQuoteSignature,_calculateDigest
+None
+REF_156(bytes32) -> Typehash.EIP712_DOMAIN
+TMP_468 = CONVERT this to address
+TMP_469 = CONVERT TMP_468 to ILensERC721
+TMP_470(string) = HIGH_LEVEL_CALL, dest:TMP_469(ILensERC721), function:name, arguments:[]  
+EXPRESSION:keccak256(bytes)(abi.encode(Typehash.EIP712_DOMAIN,keccak256(bytes)(bytes(ILensERC721(address(this)).name())),EIP712_DOMAIN_VERSION_HASH,block.chainid,address(this)))	NodeType.EXPRESSION" -> "BlockID: 12
+Call context: validateQuoteSignature,_calculateDigest
+None
+TMP_471 = CONVERT TMP_470 to bytes
+TMP_472(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_471)
+TMP_473 = CONVERT this to address
+TMP_474(bytes) = SOLIDITY_CALL abi.encode()(REF_156,TMP_472,EIP712_DOMAIN_VERSION_HASH,block.chainid,TMP_473)
+TMP_475(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_474)
+TMP_1005(None) := TMP_475(bytes32)
+EXPRESSION:" [key=0];
+"BlockID: 12
+Call context: validateQuoteSignature,_calculateDigest
+None
+TMP_471 = CONVERT TMP_470 to bytes
+TMP_472(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_471)
+TMP_473 = CONVERT this to address
+TMP_474(bytes) = SOLIDITY_CALL abi.encode()(REF_156,TMP_472,EIP712_DOMAIN_VERSION_HASH,block.chainid,TMP_473)
+TMP_475(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_474)
+TMP_1005(None) := TMP_475(bytes32)
+EXPRESSION:" -> "BlockID: 8
+Call context: validateQuoteSignature
+None
+TMP_491(bytes) = SOLIDITY_CALL abi.encodePacked()(,TMP_490,hashedMessage)
+TMP_492(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_491)
+TMP_1007(None) := TMP_492(bytes32)
+REF_158(uint256) -> signature.deadline
+TMP_476(bool) = REF_158 < block.timestamp
+CONDITION TMP_476
+EXPRESSION:signature.deadline < block.timestamp	NodeType.IF" [key="successor_5", ref="MetaTxLib.calculateDomainSeparator"];
+"BlockID: 11
+Call context: validateQuoteSignature
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 13
+Call context: validateQuoteSignature
+None
+REF_159(address) -> signature.signer
+REF_160(bytes) = SOLIDITY_CALL code(address)(REF_159)
+REF_161(None) -> REF_160.length
+TMP_478(bool) = REF_161 != 0
+CONDITION TMP_478
+EXPRESSION:signature.signer.code.length != 0	NodeType.IF" [key=0];
+"BlockID: 13
+Call context: validateQuoteSignature
+None
+REF_159(address) -> signature.signer
+REF_160(bytes) = SOLIDITY_CALL code(address)(REF_159)
+REF_161(None) -> REF_160.length
+TMP_478(bool) = REF_161 != 0
+CONDITION TMP_478
+EXPRESSION:signature.signer.code.length != 0	NodeType.IF" -> "BlockID: 14
+Call context: validateQuoteSignature
+True
+REF_163(bytes32) -> signature.r
+REF_164(bytes32) -> signature.s
+REF_165(uint8) -> signature.v
+TMP_479(bytes) = SOLIDITY_CALL abi.encodePacked()(REF_163,REF_164,REF_165)
+concatenatedSig(bytes) := TMP_479(bytes)
+REF_166(address) -> signature.signer
+TMP_480 = CONVERT REF_166 to IERC1271
+TMP_481(bytes4) = HIGH_LEVEL_CALL, dest:TMP_480(IERC1271), function:isValidSignature, arguments:['digest', 'concatenatedSig']  
+EXPRESSION:concatenatedSig = abi.encodePacked(signature.r,signature.s,signature.v)	NodeType.VARIABLE
+concatenatedSig = abi.encodePacked(signature.r,signature.s,signature.v)	NodeType.EXPRESSION
+IERC1271(signature.signer).isValidSignature(digest,concatenatedSig) != EIP1271_MAGIC_VALUE	NodeType.EXPRESSION" [key=0];
+"BlockID: 13
+Call context: validateQuoteSignature
+None
+REF_159(address) -> signature.signer
+REF_160(bytes) = SOLIDITY_CALL code(address)(REF_159)
+REF_161(None) -> REF_160.length
+TMP_478(bool) = REF_161 != 0
+CONDITION TMP_478
+EXPRESSION:signature.signer.code.length != 0	NodeType.IF" -> "BlockID: 15
+Call context: validateQuoteSignature
+False
+REF_168(uint8) -> signature.v
+REF_169(bytes32) -> signature.r
+REF_170(bytes32) -> signature.s
+TMP_484(address) = SOLIDITY_CALL ecrecover(bytes32,uint8,bytes32,bytes32)(digest,REF_168,REF_169,REF_170)
+recoveredAddress(address) := TMP_484(address)
+TMP_485 = CONVERT 0 to address
+TMP_486(bool) = recoveredAddress == TMP_485
+REF_171(address) -> signature.signer
+TMP_487(bool) = recoveredAddress != REF_171
+TMP_488(bool) = TMP_486 || TMP_487
+CONDITION TMP_488
+EXPRESSION:recoveredAddress = ecrecover(bytes32,uint8,bytes32,bytes32)(digest,signature.v,signature.r,signature.s)	NodeType.VARIABLE
+recoveredAddress = ecrecover(bytes32,uint8,bytes32,bytes32)(digest,signature.v,signature.r,signature.s)	NodeType.EXPRESSION
+recoveredAddress == address(0) || recoveredAddress != signature.signer	NodeType.IF" [key=0];
+"BlockID: 14
+Call context: validateQuoteSignature
+True
+REF_163(bytes32) -> signature.r
+REF_164(bytes32) -> signature.s
+REF_165(uint8) -> signature.v
+TMP_479(bytes) = SOLIDITY_CALL abi.encodePacked()(REF_163,REF_164,REF_165)
+concatenatedSig(bytes) := TMP_479(bytes)
+REF_166(address) -> signature.signer
+TMP_480 = CONVERT REF_166 to IERC1271
+TMP_481(bytes4) = HIGH_LEVEL_CALL, dest:TMP_480(IERC1271), function:isValidSignature, arguments:['digest', 'concatenatedSig']  
+EXPRESSION:concatenatedSig = abi.encodePacked(signature.r,signature.s,signature.v)	NodeType.VARIABLE
+concatenatedSig = abi.encodePacked(signature.r,signature.s,signature.v)	NodeType.EXPRESSION
+IERC1271(signature.signer).isValidSignature(digest,concatenatedSig) != EIP1271_MAGIC_VALUE	NodeType.EXPRESSION" -> "BlockID: 16
+Call context: validateQuoteSignature
+None
+TMP_482(bool) = TMP_481 != EIP1271_MAGIC_VALUE
+CONDITION TMP_482
+EXPRESSION:IERC1271(signature.signer).isValidSignature(digest,concatenatedSig) != EIP1271_MAGIC_VALUE	NodeType.IF" [key=0];
+"BlockID: 15
+Call context: validateQuoteSignature
+False
+REF_168(uint8) -> signature.v
+REF_169(bytes32) -> signature.r
+REF_170(bytes32) -> signature.s
+TMP_484(address) = SOLIDITY_CALL ecrecover(bytes32,uint8,bytes32,bytes32)(digest,REF_168,REF_169,REF_170)
+recoveredAddress(address) := TMP_484(address)
+TMP_485 = CONVERT 0 to address
+TMP_486(bool) = recoveredAddress == TMP_485
+REF_171(address) -> signature.signer
+TMP_487(bool) = recoveredAddress != REF_171
+TMP_488(bool) = TMP_486 || TMP_487
+CONDITION TMP_488
+EXPRESSION:recoveredAddress = ecrecover(bytes32,uint8,bytes32,bytes32)(digest,signature.v,signature.r,signature.s)	NodeType.VARIABLE
+recoveredAddress = ecrecover(bytes32,uint8,bytes32,bytes32)(digest,signature.v,signature.r,signature.s)	NodeType.EXPRESSION
+recoveredAddress == address(0) || recoveredAddress != signature.signer	NodeType.IF" -> "BlockID: 17
+Call context: validateQuoteSignature
+True
+TMP_489(None) = SOLIDITY_CALL revert SignatureInvalid()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 15
+Call context: validateQuoteSignature
+False
+REF_168(uint8) -> signature.v
+REF_169(bytes32) -> signature.r
+REF_170(bytes32) -> signature.s
+TMP_484(address) = SOLIDITY_CALL ecrecover(bytes32,uint8,bytes32,bytes32)(digest,REF_168,REF_169,REF_170)
+recoveredAddress(address) := TMP_484(address)
+TMP_485 = CONVERT 0 to address
+TMP_486(bool) = recoveredAddress == TMP_485
+REF_171(address) -> signature.signer
+TMP_487(bool) = recoveredAddress != REF_171
+TMP_488(bool) = TMP_486 || TMP_487
+CONDITION TMP_488
+EXPRESSION:recoveredAddress = ecrecover(bytes32,uint8,bytes32,bytes32)(digest,signature.v,signature.r,signature.s)	NodeType.VARIABLE
+recoveredAddress = ecrecover(bytes32,uint8,bytes32,bytes32)(digest,signature.v,signature.r,signature.s)	NodeType.EXPRESSION
+recoveredAddress == address(0) || recoveredAddress != signature.signer	NodeType.IF" -> "BlockID: 18
+Call context: validateQuoteSignature
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 18
+Call context: validateQuoteSignature
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 21
+Call context: validateQuoteSignature
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 16
+Call context: validateQuoteSignature
+None
+TMP_482(bool) = TMP_481 != EIP1271_MAGIC_VALUE
+CONDITION TMP_482
+EXPRESSION:IERC1271(signature.signer).isValidSignature(digest,concatenatedSig) != EIP1271_MAGIC_VALUE	NodeType.IF" -> "BlockID: 19
+Call context: validateQuoteSignature
+True
+TMP_483(None) = SOLIDITY_CALL revert SignatureInvalid()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 16
+Call context: validateQuoteSignature
+None
+TMP_482(bool) = TMP_481 != EIP1271_MAGIC_VALUE
+CONDITION TMP_482
+EXPRESSION:IERC1271(signature.signer).isValidSignature(digest,concatenatedSig) != EIP1271_MAGIC_VALUE	NodeType.IF" -> "BlockID: 20
+Call context: validateQuoteSignature
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 20
+Call context: validateQuoteSignature
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 21
+Call context: validateQuoteSignature
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

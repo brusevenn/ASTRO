@@ -1,0 +1,517 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+CONDITION paused
+EXPRESSION:paused	NodeType.IF";
+"BlockID: 2
+Call context: 
+True
+Transfer dest:msg.sender value:msg.value
+EXPRESSION:msg.sender.transfer(msg.value)	NodeType.EXPRESSION";
+"BlockID: 3
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 5
+Call context: 
+None
+moneySent(uint256) := msg.value(uint256)
+EXPRESSION:moneySent = msg.value	NodeType.VARIABLE
+moneySent = msg.value	NodeType.EXPRESSION";
+"BlockID: 6
+Call context: 
+None
+BEGIN_LOOP
+TMP_2(bool) = moneySent >= pricePerTicket
+TMP_3(bool) = nextTicket < totalTickets
+TMP_4(bool) = TMP_2 && TMP_3
+CONDITION TMP_4
+EXPRESSION:None	NodeType.STARTLOOP
+moneySent >= pricePerTicket && nextTicket < totalTickets	NodeType.IFLOOP";
+"BlockID: 7
+Call context: 
+True
+currTicket(uint256) := 0(uint256)
+REF_1 -> LENGTH gaps
+TMP_5(bool) = REF_1 > 0
+CONDITION TMP_5
+EXPRESSION:currTicket = 0	NodeType.VARIABLE
+currTicket = 0	NodeType.EXPRESSION
+gaps.length > 0	NodeType.IF";
+"BlockID: 8
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 11
+Call context: 
+None
+TMP_11(bool) = nextTicket == totalTickets
+CONDITION TMP_11
+EXPRESSION:nextTicket == totalTickets	NodeType.IF";
+"BlockID: 13
+Call context: 
+True
+TMP_15 = CONVERT block.coinbase to uint256
+TMP_16(uint256) = TMP_15 % totalTickets
+REF_7(Ethraffle.Contestant) -> contestants[TMP_16]
+REF_8(address) -> REF_7.addr
+seed1(address) := REF_8(address)
+TMP_17 = CONVERT msg.sender to uint256
+TMP_18(uint256) = TMP_17 % totalTickets
+REF_9(Ethraffle.Contestant) -> contestants[TMP_18]
+REF_10(address) -> REF_9.addr
+seed2(address) := REF_10(address)
+seed3(uint256) := block.difficulty(uint256)
+TMP_19(bytes32) = SOLIDITY_CALL keccak256()(seed1,seed2,seed3)
+randHash(bytes32) := TMP_19(bytes32)
+TMP_20 = CONVERT randHash to uint256
+TMP_21(uint256) = TMP_20 % totalTickets
+winningNumber(uint256) := TMP_21(uint256)
+REF_11(Ethraffle.Contestant) -> contestants[winningNumber]
+REF_12(address) -> REF_11.addr
+winningAddress(address) := REF_12(address)
+TMP_23(uint256) := raffleId(uint256)
+raffleId(uint256) = raffleId + 1
+nextTicket(uint256) := 0(uint256)
+Transfer dest:winningAddress value:prize
+EXPRESSION:seed1 = contestants[uint256(block.coinbase) % totalTickets].addr	NodeType.VARIABLE
+seed1 = contestants[uint256(block.coinbase) % totalTickets].addr	NodeType.EXPRESSION
+seed2 = contestants[uint256(msg.sender) % totalTickets].addr	NodeType.VARIABLE
+seed2 = contestants[uint256(msg.sender) % totalTickets].addr	NodeType.EXPRESSION
+seed3 = block.difficulty	NodeType.VARIABLE
+seed3 = block.difficulty	NodeType.EXPRESSION
+randHash = keccak256()(seed1,seed2,seed3)	NodeType.VARIABLE
+randHash = keccak256()(seed1,seed2,seed3)	NodeType.EXPRESSION
+winningNumber = uint256(randHash) % totalTickets	NodeType.VARIABLE
+winningNumber = uint256(randHash) % totalTickets	NodeType.EXPRESSION
+winningAddress = contestants[winningNumber].addr	NodeType.VARIABLE
+winningAddress = contestants[winningNumber].addr	NodeType.EXPRESSION
+raffleId ++	NodeType.EXPRESSION
+nextTicket = 0	NodeType.EXPRESSION
+winningAddress.transfer(prize)	NodeType.EXPRESSION";
+"BlockID: 14
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 17
+Call context: 
+None
+TMP_13(bool) = moneySent > 0
+CONDITION TMP_13
+EXPRESSION:moneySent > 0	NodeType.IF";
+"BlockID: 18
+Call context: 
+True
+Transfer dest:msg.sender value:moneySent
+EXPRESSION:msg.sender.transfer(moneySent)	NodeType.EXPRESSION";
+"BlockID: 19
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 9
+Call context: 
+True
+REF_2 -> LENGTH gaps
+TMP_6(uint256) = REF_2 - 1
+REF_3(uint256) -> gaps[TMP_6]
+currTicket(uint256) := REF_3(uint256)
+REF_4 -> LENGTH gaps
+TMP_7(uint256) := REF_4(uint256)
+REF_4(-> gaps) = REF_4 - 1
+EXPRESSION:currTicket = gaps[gaps.length - 1]	NodeType.EXPRESSION
+gaps.length --	NodeType.EXPRESSION";
+"BlockID: 10
+Call context: 
+False
+TMP_8(uint256) := nextTicket(uint256)
+nextTicket(uint256) = nextTicket + 1
+currTicket(uint256) := TMP_8(uint256)
+EXPRESSION:currTicket = nextTicket ++	NodeType.EXPRESSION";
+"BlockID: 12
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 15
+Call context: 
+None
+REF_5(Ethraffle.Contestant) -> contestants[currTicket]
+TMP_9(Ethraffle.Contestant) = new Contestant(msg.sender,raffleId)
+REF_5(Ethraffle.Contestant) (->contestants) := TMP_9(Ethraffle.Contestant)
+moneySent(uint256) = moneySent - pricePerTicket
+EXPRESSION:contestants[currTicket] = Contestant(msg.sender,raffleId)	NodeType.EXPRESSION
+moneySent -= pricePerTicket	NodeType.EXPRESSION";
+"BlockID: 4
+Call context: 
+None
+RETURN
+EXPRESSION:msg.sender.transfer(msg.value)	NodeType.EXPRESSION
+None	NodeType.RETURN";
+"BlockID: 16
+Call context: fallback,buyTickets
+None
+Transfer dest:feeAddress value:fee
+EXPRESSION:winningAddress.transfer(prize)	NodeType.EXPRESSION
+feeAddress.transfer(fee)	NodeType.EXPRESSION";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+CONDITION paused
+EXPRESSION:paused	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+CONDITION paused
+EXPRESSION:paused	NodeType.IF" -> "BlockID: 2
+Call context: 
+True
+Transfer dest:msg.sender value:msg.value
+EXPRESSION:msg.sender.transfer(msg.value)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1
+Call context: 
+None
+CONDITION paused
+EXPRESSION:paused	NodeType.IF" -> "BlockID: 3
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2
+Call context: 
+True
+Transfer dest:msg.sender value:msg.value
+EXPRESSION:msg.sender.transfer(msg.value)	NodeType.EXPRESSION" -> "BlockID: 4
+Call context: 
+None
+RETURN
+EXPRESSION:msg.sender.transfer(msg.value)	NodeType.EXPRESSION
+None	NodeType.RETURN" [key=0];
+"BlockID: 3
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 5
+Call context: 
+None
+moneySent(uint256) := msg.value(uint256)
+EXPRESSION:moneySent = msg.value	NodeType.VARIABLE
+moneySent = msg.value	NodeType.EXPRESSION" [key=0];
+"BlockID: 5
+Call context: 
+None
+moneySent(uint256) := msg.value(uint256)
+EXPRESSION:moneySent = msg.value	NodeType.VARIABLE
+moneySent = msg.value	NodeType.EXPRESSION" -> "BlockID: 6
+Call context: 
+None
+BEGIN_LOOP
+TMP_2(bool) = moneySent >= pricePerTicket
+TMP_3(bool) = nextTicket < totalTickets
+TMP_4(bool) = TMP_2 && TMP_3
+CONDITION TMP_4
+EXPRESSION:None	NodeType.STARTLOOP
+moneySent >= pricePerTicket && nextTicket < totalTickets	NodeType.IFLOOP" [key=0];
+"BlockID: 6
+Call context: 
+None
+BEGIN_LOOP
+TMP_2(bool) = moneySent >= pricePerTicket
+TMP_3(bool) = nextTicket < totalTickets
+TMP_4(bool) = TMP_2 && TMP_3
+CONDITION TMP_4
+EXPRESSION:None	NodeType.STARTLOOP
+moneySent >= pricePerTicket && nextTicket < totalTickets	NodeType.IFLOOP" -> "BlockID: 7
+Call context: 
+True
+currTicket(uint256) := 0(uint256)
+REF_1 -> LENGTH gaps
+TMP_5(bool) = REF_1 > 0
+CONDITION TMP_5
+EXPRESSION:currTicket = 0	NodeType.VARIABLE
+currTicket = 0	NodeType.EXPRESSION
+gaps.length > 0	NodeType.IF" [key=0];
+"BlockID: 6
+Call context: 
+None
+BEGIN_LOOP
+TMP_2(bool) = moneySent >= pricePerTicket
+TMP_3(bool) = nextTicket < totalTickets
+TMP_4(bool) = TMP_2 && TMP_3
+CONDITION TMP_4
+EXPRESSION:None	NodeType.STARTLOOP
+moneySent >= pricePerTicket && nextTicket < totalTickets	NodeType.IFLOOP" -> "BlockID: 8
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 7
+Call context: 
+True
+currTicket(uint256) := 0(uint256)
+REF_1 -> LENGTH gaps
+TMP_5(bool) = REF_1 > 0
+CONDITION TMP_5
+EXPRESSION:currTicket = 0	NodeType.VARIABLE
+currTicket = 0	NodeType.EXPRESSION
+gaps.length > 0	NodeType.IF" -> "BlockID: 9
+Call context: 
+True
+REF_2 -> LENGTH gaps
+TMP_6(uint256) = REF_2 - 1
+REF_3(uint256) -> gaps[TMP_6]
+currTicket(uint256) := REF_3(uint256)
+REF_4 -> LENGTH gaps
+TMP_7(uint256) := REF_4(uint256)
+REF_4(-> gaps) = REF_4 - 1
+EXPRESSION:currTicket = gaps[gaps.length - 1]	NodeType.EXPRESSION
+gaps.length --	NodeType.EXPRESSION" [key=0];
+"BlockID: 7
+Call context: 
+True
+currTicket(uint256) := 0(uint256)
+REF_1 -> LENGTH gaps
+TMP_5(bool) = REF_1 > 0
+CONDITION TMP_5
+EXPRESSION:currTicket = 0	NodeType.VARIABLE
+currTicket = 0	NodeType.EXPRESSION
+gaps.length > 0	NodeType.IF" -> "BlockID: 10
+Call context: 
+False
+TMP_8(uint256) := nextTicket(uint256)
+nextTicket(uint256) = nextTicket + 1
+currTicket(uint256) := TMP_8(uint256)
+EXPRESSION:currTicket = nextTicket ++	NodeType.EXPRESSION" [key=0];
+"BlockID: 8
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 11
+Call context: 
+None
+TMP_11(bool) = nextTicket == totalTickets
+CONDITION TMP_11
+EXPRESSION:nextTicket == totalTickets	NodeType.IF" [key=0];
+"BlockID: 11
+Call context: 
+None
+TMP_11(bool) = nextTicket == totalTickets
+CONDITION TMP_11
+EXPRESSION:nextTicket == totalTickets	NodeType.IF" -> "BlockID: 13
+Call context: 
+True
+TMP_15 = CONVERT block.coinbase to uint256
+TMP_16(uint256) = TMP_15 % totalTickets
+REF_7(Ethraffle.Contestant) -> contestants[TMP_16]
+REF_8(address) -> REF_7.addr
+seed1(address) := REF_8(address)
+TMP_17 = CONVERT msg.sender to uint256
+TMP_18(uint256) = TMP_17 % totalTickets
+REF_9(Ethraffle.Contestant) -> contestants[TMP_18]
+REF_10(address) -> REF_9.addr
+seed2(address) := REF_10(address)
+seed3(uint256) := block.difficulty(uint256)
+TMP_19(bytes32) = SOLIDITY_CALL keccak256()(seed1,seed2,seed3)
+randHash(bytes32) := TMP_19(bytes32)
+TMP_20 = CONVERT randHash to uint256
+TMP_21(uint256) = TMP_20 % totalTickets
+winningNumber(uint256) := TMP_21(uint256)
+REF_11(Ethraffle.Contestant) -> contestants[winningNumber]
+REF_12(address) -> REF_11.addr
+winningAddress(address) := REF_12(address)
+TMP_23(uint256) := raffleId(uint256)
+raffleId(uint256) = raffleId + 1
+nextTicket(uint256) := 0(uint256)
+Transfer dest:winningAddress value:prize
+EXPRESSION:seed1 = contestants[uint256(block.coinbase) % totalTickets].addr	NodeType.VARIABLE
+seed1 = contestants[uint256(block.coinbase) % totalTickets].addr	NodeType.EXPRESSION
+seed2 = contestants[uint256(msg.sender) % totalTickets].addr	NodeType.VARIABLE
+seed2 = contestants[uint256(msg.sender) % totalTickets].addr	NodeType.EXPRESSION
+seed3 = block.difficulty	NodeType.VARIABLE
+seed3 = block.difficulty	NodeType.EXPRESSION
+randHash = keccak256()(seed1,seed2,seed3)	NodeType.VARIABLE
+randHash = keccak256()(seed1,seed2,seed3)	NodeType.EXPRESSION
+winningNumber = uint256(randHash) % totalTickets	NodeType.VARIABLE
+winningNumber = uint256(randHash) % totalTickets	NodeType.EXPRESSION
+winningAddress = contestants[winningNumber].addr	NodeType.VARIABLE
+winningAddress = contestants[winningNumber].addr	NodeType.EXPRESSION
+raffleId ++	NodeType.EXPRESSION
+nextTicket = 0	NodeType.EXPRESSION
+winningAddress.transfer(prize)	NodeType.EXPRESSION" [key=0];
+"BlockID: 11
+Call context: 
+None
+TMP_11(bool) = nextTicket == totalTickets
+CONDITION TMP_11
+EXPRESSION:nextTicket == totalTickets	NodeType.IF" -> "BlockID: 14
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 13
+Call context: 
+True
+TMP_15 = CONVERT block.coinbase to uint256
+TMP_16(uint256) = TMP_15 % totalTickets
+REF_7(Ethraffle.Contestant) -> contestants[TMP_16]
+REF_8(address) -> REF_7.addr
+seed1(address) := REF_8(address)
+TMP_17 = CONVERT msg.sender to uint256
+TMP_18(uint256) = TMP_17 % totalTickets
+REF_9(Ethraffle.Contestant) -> contestants[TMP_18]
+REF_10(address) -> REF_9.addr
+seed2(address) := REF_10(address)
+seed3(uint256) := block.difficulty(uint256)
+TMP_19(bytes32) = SOLIDITY_CALL keccak256()(seed1,seed2,seed3)
+randHash(bytes32) := TMP_19(bytes32)
+TMP_20 = CONVERT randHash to uint256
+TMP_21(uint256) = TMP_20 % totalTickets
+winningNumber(uint256) := TMP_21(uint256)
+REF_11(Ethraffle.Contestant) -> contestants[winningNumber]
+REF_12(address) -> REF_11.addr
+winningAddress(address) := REF_12(address)
+TMP_23(uint256) := raffleId(uint256)
+raffleId(uint256) = raffleId + 1
+nextTicket(uint256) := 0(uint256)
+Transfer dest:winningAddress value:prize
+EXPRESSION:seed1 = contestants[uint256(block.coinbase) % totalTickets].addr	NodeType.VARIABLE
+seed1 = contestants[uint256(block.coinbase) % totalTickets].addr	NodeType.EXPRESSION
+seed2 = contestants[uint256(msg.sender) % totalTickets].addr	NodeType.VARIABLE
+seed2 = contestants[uint256(msg.sender) % totalTickets].addr	NodeType.EXPRESSION
+seed3 = block.difficulty	NodeType.VARIABLE
+seed3 = block.difficulty	NodeType.EXPRESSION
+randHash = keccak256()(seed1,seed2,seed3)	NodeType.VARIABLE
+randHash = keccak256()(seed1,seed2,seed3)	NodeType.EXPRESSION
+winningNumber = uint256(randHash) % totalTickets	NodeType.VARIABLE
+winningNumber = uint256(randHash) % totalTickets	NodeType.EXPRESSION
+winningAddress = contestants[winningNumber].addr	NodeType.VARIABLE
+winningAddress = contestants[winningNumber].addr	NodeType.EXPRESSION
+raffleId ++	NodeType.EXPRESSION
+nextTicket = 0	NodeType.EXPRESSION
+winningAddress.transfer(prize)	NodeType.EXPRESSION" -> "BlockID: 16
+Call context: fallback,buyTickets
+None
+Transfer dest:feeAddress value:fee
+EXPRESSION:winningAddress.transfer(prize)	NodeType.EXPRESSION
+feeAddress.transfer(fee)	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 14
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 17
+Call context: 
+None
+TMP_13(bool) = moneySent > 0
+CONDITION TMP_13
+EXPRESSION:moneySent > 0	NodeType.IF" [key=0];
+"BlockID: 17
+Call context: 
+None
+TMP_13(bool) = moneySent > 0
+CONDITION TMP_13
+EXPRESSION:moneySent > 0	NodeType.IF" -> "BlockID: 18
+Call context: 
+True
+Transfer dest:msg.sender value:moneySent
+EXPRESSION:msg.sender.transfer(moneySent)	NodeType.EXPRESSION" [key=0];
+"BlockID: 17
+Call context: 
+None
+TMP_13(bool) = moneySent > 0
+CONDITION TMP_13
+EXPRESSION:moneySent > 0	NodeType.IF" -> "BlockID: 19
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 18
+Call context: 
+True
+Transfer dest:msg.sender value:moneySent
+EXPRESSION:msg.sender.transfer(moneySent)	NodeType.EXPRESSION" -> "BlockID: 19
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 9
+Call context: 
+True
+REF_2 -> LENGTH gaps
+TMP_6(uint256) = REF_2 - 1
+REF_3(uint256) -> gaps[TMP_6]
+currTicket(uint256) := REF_3(uint256)
+REF_4 -> LENGTH gaps
+TMP_7(uint256) := REF_4(uint256)
+REF_4(-> gaps) = REF_4 - 1
+EXPRESSION:currTicket = gaps[gaps.length - 1]	NodeType.EXPRESSION
+gaps.length --	NodeType.EXPRESSION" -> "BlockID: 12
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 10
+Call context: 
+False
+TMP_8(uint256) := nextTicket(uint256)
+nextTicket(uint256) = nextTicket + 1
+currTicket(uint256) := TMP_8(uint256)
+EXPRESSION:currTicket = nextTicket ++	NodeType.EXPRESSION" -> "BlockID: 12
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 12
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 15
+Call context: 
+None
+REF_5(Ethraffle.Contestant) -> contestants[currTicket]
+TMP_9(Ethraffle.Contestant) = new Contestant(msg.sender,raffleId)
+REF_5(Ethraffle.Contestant) (->contestants) := TMP_9(Ethraffle.Contestant)
+moneySent(uint256) = moneySent - pricePerTicket
+EXPRESSION:contestants[currTicket] = Contestant(msg.sender,raffleId)	NodeType.EXPRESSION
+moneySent -= pricePerTicket	NodeType.EXPRESSION" [key=0];
+"BlockID: 15
+Call context: 
+None
+REF_5(Ethraffle.Contestant) -> contestants[currTicket]
+TMP_9(Ethraffle.Contestant) = new Contestant(msg.sender,raffleId)
+REF_5(Ethraffle.Contestant) (->contestants) := TMP_9(Ethraffle.Contestant)
+moneySent(uint256) = moneySent - pricePerTicket
+EXPRESSION:contestants[currTicket] = Contestant(msg.sender,raffleId)	NodeType.EXPRESSION
+moneySent -= pricePerTicket	NodeType.EXPRESSION" -> "BlockID: 6
+Call context: 
+None
+BEGIN_LOOP
+TMP_2(bool) = moneySent >= pricePerTicket
+TMP_3(bool) = nextTicket < totalTickets
+TMP_4(bool) = TMP_2 && TMP_3
+CONDITION TMP_4
+EXPRESSION:None	NodeType.STARTLOOP
+moneySent >= pricePerTicket && nextTicket < totalTickets	NodeType.IFLOOP" [key=0];
+"BlockID: 16
+Call context: fallback,buyTickets
+None
+Transfer dest:feeAddress value:fee
+EXPRESSION:winningAddress.transfer(prize)	NodeType.EXPRESSION
+feeAddress.transfer(fee)	NodeType.EXPRESSION" -> "BlockID: 14
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="Exit: chooseWinner", ref="Ethraffle.chooseWinner"];
+}

@@ -1,0 +1,535 @@
+digraph {
+"BlockID: 1433
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1434
+Call context: 
+None
+TMP_797(bool) = LIBRARY_CALL, dest:EnumerableSet, function:EnumerableSet.contains(EnumerableSet.AddressSet,address), arguments:['portfolio', 'token'] 
+EXPRESSION:! portfolio.contains(token)	NodeType.EXPRESSION";
+"BlockID: 1435
+Call context: 
+None
+TMP_798 = ! TMP_797 
+CONDITION TMP_798
+EXPRESSION:! portfolio.contains(token)	NodeType.IF" [shape=box];
+"BlockID: 1436
+Call context: 
+True
+TMP_811(bool) = token == NATIVE_TOKEN
+CONDITION TMP_811
+EXPRESSION:token == NATIVE_TOKEN	NodeType.IF";
+"BlockID: 1437
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1438
+Call context: 
+None
+NEW VARIABLE newUsdValues
+REF_401(address[]) -> dp.assets
+REF_402(uint256[]) -> dp.prices
+TUPLE_12(uint256,uint256[]) = INTERNAL_CALL, SpotVault._getAllocationsWithPrices(address[],uint256[])(REF_401,REF_402)
+EXPRESSION:None	NodeType.VARIABLE
+(endAum,newUsdValues) = _getAllocationsWithPrices(dp.assets,dp.prices)	NodeType.EXPRESSION";
+"BlockID: 1439
+Call context: 
+None
+endAum(uint256)= UNPACK TUPLE_12 index: 0 
+newUsdValues(uint256[])= UNPACK TUPLE_12 index: 1 
+REF_403(uint256) -> dp.nominalFinalAum
+TMP_799(uint256) = INTERNAL_CALL, Utils.absSlippage(uint256,uint256,uint256)(REF_403,endAum,UNIT)
+EXPRESSION:(endAum,newUsdValues) = _getAllocationsWithPrices(dp.assets,dp.prices)	NodeType.EXPRESSION
+require(bool,string)(absSlippage(dp.nominalFinalAum,endAum,UNIT) <= slippageTolerances[SlippageType.AUM],s2)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1441
+Call context: 
+True
+i(uint256) := 0(uint256)
+EXPRESSION:i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION";
+"BlockID: 1442
+Call context: 
+None
+BEGIN_LOOP
+REF_406(address[]) -> dp.assets
+REF_407 -> LENGTH REF_406
+TMP_802(bool) = i < REF_407
+CONDITION TMP_802
+EXPRESSION:None	NodeType.STARTLOOP
+i < dp.assets.length	NodeType.IFLOOP";
+"BlockID: 1443
+Call context: 
+True
+REF_408(uint256[]) -> dp.usdValues
+REF_409(uint256) -> REF_408[i]
+TMP_803(uint256) = REF_409 (c)* UNIT
+REF_410(uint256) -> dp.aum
+TMP_804(uint256) = TMP_803 (c)/ REF_410
+initialAlloc(uint256) := TMP_804(uint256)
+REF_411(uint256) -> newUsdValues[i]
+TMP_805(uint256) = REF_411 (c)* UNIT
+TMP_806(uint256) = TMP_805 (c)/ endAum
+newAlloc(uint256) := TMP_806(uint256)
+TMP_807(uint256) = INTERNAL_CALL, Utils.absSlippage(uint256,uint256,uint256)(initialAlloc,newAlloc,UNIT)
+EXPRESSION:initialAlloc = dp.usdValues[i] * UNIT / dp.aum	NodeType.VARIABLE
+initialAlloc = dp.usdValues[i] * UNIT / dp.aum	NodeType.EXPRESSION
+newAlloc = newUsdValues[i] * UNIT / endAum	NodeType.VARIABLE
+newAlloc = newUsdValues[i] * UNIT / endAum	NodeType.EXPRESSION
+require(bool,string)(absSlippage(initialAlloc,newAlloc,UNIT) <= slippageTolerances[SlippageType.SWAP],s1)	NodeType.EXPRESSION";
+"BlockID: 1444
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 1447
+Call context: 
+True
+TMP_810(uint256) := i(uint256)
+i(uint256) = i (c)+ 1
+EXPRESSION:i ++	NodeType.EXPRESSION";
+"BlockID: 1449
+Call context: 
+False
+TMP_816 = CONVERT token to ERC20
+TMP_817 = CONVERT this to address
+TMP_818(uint256) = HIGH_LEVEL_CALL, dest:TMP_816(ERC20), function:balanceOf, arguments:['TMP_817']  
+EXPRESSION:require(bool,string)(ERC20(token).balanceOf(address(this)) == 0,b1)	NodeType.EXPRESSION";
+"BlockID: 1451
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1453
+Call context: 
+None
+REF_404(SpotVault.SlippageType) -> SlippageType.AUM
+REF_405(uint256) -> slippageTolerances[REF_404]
+TMP_800(bool) = TMP_799 <= REF_405
+CONDITION TMP_800
+EXPRESSION:TMP_800(bool) = TMP_799 <= REF_405	NodeType.IF";
+"BlockID: 1454
+Call context: 
+True
+TMP_801(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 1455
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1456
+Call context: 
+None
+REF_412(SpotVault.SlippageType) -> SlippageType.SWAP
+REF_413(uint256) -> slippageTolerances[REF_412]
+TMP_808(bool) = TMP_807 <= REF_413
+CONDITION TMP_808
+EXPRESSION:TMP_808(bool) = TMP_807 <= REF_413	NodeType.IF";
+"BlockID: 1457
+Call context: 
+True
+TMP_809(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 1458
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1459
+Call context: 
+None
+TMP_812 = CONVERT this to address
+TMP_813(uint256) = SOLIDITY_CALL balance(address)(TMP_812)
+TMP_814(bool) = TMP_813 == 0
+CONDITION TMP_814
+EXPRESSION:TMP_814(bool) = TMP_813 == 0	NodeType.IF";
+"BlockID: 1460
+Call context: 
+True
+TMP_815(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 1461
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1462
+Call context: 
+None
+TMP_819(bool) = TMP_818 == 0
+CONDITION TMP_819
+EXPRESSION:TMP_819(bool) = TMP_818 == 0	NodeType.IF";
+"BlockID: 1463
+Call context: 
+True
+TMP_820(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 1464
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1433
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1434
+Call context: 
+None
+TMP_797(bool) = LIBRARY_CALL, dest:EnumerableSet, function:EnumerableSet.contains(EnumerableSet.AddressSet,address), arguments:['portfolio', 'token'] 
+EXPRESSION:! portfolio.contains(token)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1434
+Call context: 
+None
+TMP_797(bool) = LIBRARY_CALL, dest:EnumerableSet, function:EnumerableSet.contains(EnumerableSet.AddressSet,address), arguments:['portfolio', 'token'] 
+EXPRESSION:! portfolio.contains(token)	NodeType.EXPRESSION" -> "BlockID: 1435
+Call context: 
+None
+TMP_798 = ! TMP_797 
+CONDITION TMP_798
+EXPRESSION:! portfolio.contains(token)	NodeType.IF" [key=0];
+"BlockID: 1435
+Call context: 
+None
+TMP_798 = ! TMP_797 
+CONDITION TMP_798
+EXPRESSION:! portfolio.contains(token)	NodeType.IF" -> "BlockID: 1436
+Call context: 
+True
+TMP_811(bool) = token == NATIVE_TOKEN
+CONDITION TMP_811
+EXPRESSION:token == NATIVE_TOKEN	NodeType.IF" [key=0];
+"BlockID: 1435
+Call context: 
+None
+TMP_798 = ! TMP_797 
+CONDITION TMP_798
+EXPRESSION:! portfolio.contains(token)	NodeType.IF" -> "BlockID: 1437
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1436
+Call context: 
+True
+TMP_811(bool) = token == NATIVE_TOKEN
+CONDITION TMP_811
+EXPRESSION:token == NATIVE_TOKEN	NodeType.IF" -> "BlockID: 1449
+Call context: 
+False
+TMP_816 = CONVERT token to ERC20
+TMP_817 = CONVERT this to address
+TMP_818(uint256) = HIGH_LEVEL_CALL, dest:TMP_816(ERC20), function:balanceOf, arguments:['TMP_817']  
+EXPRESSION:require(bool,string)(ERC20(token).balanceOf(address(this)) == 0,b1)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1436
+Call context: 
+True
+TMP_811(bool) = token == NATIVE_TOKEN
+CONDITION TMP_811
+EXPRESSION:token == NATIVE_TOKEN	NodeType.IF" -> "BlockID: 1459
+Call context: 
+None
+TMP_812 = CONVERT this to address
+TMP_813(uint256) = SOLIDITY_CALL balance(address)(TMP_812)
+TMP_814(bool) = TMP_813 == 0
+CONDITION TMP_814
+EXPRESSION:TMP_814(bool) = TMP_813 == 0	NodeType.IF" [key=0];
+"BlockID: 1437
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1438
+Call context: 
+None
+NEW VARIABLE newUsdValues
+REF_401(address[]) -> dp.assets
+REF_402(uint256[]) -> dp.prices
+TUPLE_12(uint256,uint256[]) = INTERNAL_CALL, SpotVault._getAllocationsWithPrices(address[],uint256[])(REF_401,REF_402)
+EXPRESSION:None	NodeType.VARIABLE
+(endAum,newUsdValues) = _getAllocationsWithPrices(dp.assets,dp.prices)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1438
+Call context: 
+None
+NEW VARIABLE newUsdValues
+REF_401(address[]) -> dp.assets
+REF_402(uint256[]) -> dp.prices
+TUPLE_12(uint256,uint256[]) = INTERNAL_CALL, SpotVault._getAllocationsWithPrices(address[],uint256[])(REF_401,REF_402)
+EXPRESSION:None	NodeType.VARIABLE
+(endAum,newUsdValues) = _getAllocationsWithPrices(dp.assets,dp.prices)	NodeType.EXPRESSION" -> "BlockID: 1439
+Call context: 
+None
+endAum(uint256)= UNPACK TUPLE_12 index: 0 
+newUsdValues(uint256[])= UNPACK TUPLE_12 index: 1 
+REF_403(uint256) -> dp.nominalFinalAum
+TMP_799(uint256) = INTERNAL_CALL, Utils.absSlippage(uint256,uint256,uint256)(REF_403,endAum,UNIT)
+EXPRESSION:(endAum,newUsdValues) = _getAllocationsWithPrices(dp.assets,dp.prices)	NodeType.EXPRESSION
+require(bool,string)(absSlippage(dp.nominalFinalAum,endAum,UNIT) <= slippageTolerances[SlippageType.AUM],s2)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1439
+Call context: 
+None
+endAum(uint256)= UNPACK TUPLE_12 index: 0 
+newUsdValues(uint256[])= UNPACK TUPLE_12 index: 1 
+REF_403(uint256) -> dp.nominalFinalAum
+TMP_799(uint256) = INTERNAL_CALL, Utils.absSlippage(uint256,uint256,uint256)(REF_403,endAum,UNIT)
+EXPRESSION:(endAum,newUsdValues) = _getAllocationsWithPrices(dp.assets,dp.prices)	NodeType.EXPRESSION
+require(bool,string)(absSlippage(dp.nominalFinalAum,endAum,UNIT) <= slippageTolerances[SlippageType.AUM],s2)	NodeType.EXPRESSION" -> "BlockID: 1453
+Call context: 
+None
+REF_404(SpotVault.SlippageType) -> SlippageType.AUM
+REF_405(uint256) -> slippageTolerances[REF_404]
+TMP_800(bool) = TMP_799 <= REF_405
+CONDITION TMP_800
+EXPRESSION:TMP_800(bool) = TMP_799 <= REF_405	NodeType.IF" [key=0];
+"BlockID: 1441
+Call context: 
+True
+i(uint256) := 0(uint256)
+EXPRESSION:i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" -> "BlockID: 1442
+Call context: 
+None
+BEGIN_LOOP
+REF_406(address[]) -> dp.assets
+REF_407 -> LENGTH REF_406
+TMP_802(bool) = i < REF_407
+CONDITION TMP_802
+EXPRESSION:None	NodeType.STARTLOOP
+i < dp.assets.length	NodeType.IFLOOP" [key=0];
+"BlockID: 1442
+Call context: 
+None
+BEGIN_LOOP
+REF_406(address[]) -> dp.assets
+REF_407 -> LENGTH REF_406
+TMP_802(bool) = i < REF_407
+CONDITION TMP_802
+EXPRESSION:None	NodeType.STARTLOOP
+i < dp.assets.length	NodeType.IFLOOP" -> "BlockID: 1443
+Call context: 
+True
+REF_408(uint256[]) -> dp.usdValues
+REF_409(uint256) -> REF_408[i]
+TMP_803(uint256) = REF_409 (c)* UNIT
+REF_410(uint256) -> dp.aum
+TMP_804(uint256) = TMP_803 (c)/ REF_410
+initialAlloc(uint256) := TMP_804(uint256)
+REF_411(uint256) -> newUsdValues[i]
+TMP_805(uint256) = REF_411 (c)* UNIT
+TMP_806(uint256) = TMP_805 (c)/ endAum
+newAlloc(uint256) := TMP_806(uint256)
+TMP_807(uint256) = INTERNAL_CALL, Utils.absSlippage(uint256,uint256,uint256)(initialAlloc,newAlloc,UNIT)
+EXPRESSION:initialAlloc = dp.usdValues[i] * UNIT / dp.aum	NodeType.VARIABLE
+initialAlloc = dp.usdValues[i] * UNIT / dp.aum	NodeType.EXPRESSION
+newAlloc = newUsdValues[i] * UNIT / endAum	NodeType.VARIABLE
+newAlloc = newUsdValues[i] * UNIT / endAum	NodeType.EXPRESSION
+require(bool,string)(absSlippage(initialAlloc,newAlloc,UNIT) <= slippageTolerances[SlippageType.SWAP],s1)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1442
+Call context: 
+None
+BEGIN_LOOP
+REF_406(address[]) -> dp.assets
+REF_407 -> LENGTH REF_406
+TMP_802(bool) = i < REF_407
+CONDITION TMP_802
+EXPRESSION:None	NodeType.STARTLOOP
+i < dp.assets.length	NodeType.IFLOOP" -> "BlockID: 1444
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 1443
+Call context: 
+True
+REF_408(uint256[]) -> dp.usdValues
+REF_409(uint256) -> REF_408[i]
+TMP_803(uint256) = REF_409 (c)* UNIT
+REF_410(uint256) -> dp.aum
+TMP_804(uint256) = TMP_803 (c)/ REF_410
+initialAlloc(uint256) := TMP_804(uint256)
+REF_411(uint256) -> newUsdValues[i]
+TMP_805(uint256) = REF_411 (c)* UNIT
+TMP_806(uint256) = TMP_805 (c)/ endAum
+newAlloc(uint256) := TMP_806(uint256)
+TMP_807(uint256) = INTERNAL_CALL, Utils.absSlippage(uint256,uint256,uint256)(initialAlloc,newAlloc,UNIT)
+EXPRESSION:initialAlloc = dp.usdValues[i] * UNIT / dp.aum	NodeType.VARIABLE
+initialAlloc = dp.usdValues[i] * UNIT / dp.aum	NodeType.EXPRESSION
+newAlloc = newUsdValues[i] * UNIT / endAum	NodeType.VARIABLE
+newAlloc = newUsdValues[i] * UNIT / endAum	NodeType.EXPRESSION
+require(bool,string)(absSlippage(initialAlloc,newAlloc,UNIT) <= slippageTolerances[SlippageType.SWAP],s1)	NodeType.EXPRESSION" -> "BlockID: 1456
+Call context: 
+None
+REF_412(SpotVault.SlippageType) -> SlippageType.SWAP
+REF_413(uint256) -> slippageTolerances[REF_412]
+TMP_808(bool) = TMP_807 <= REF_413
+CONDITION TMP_808
+EXPRESSION:TMP_808(bool) = TMP_807 <= REF_413	NodeType.IF" [key=0];
+"BlockID: 1447
+Call context: 
+True
+TMP_810(uint256) := i(uint256)
+i(uint256) = i (c)+ 1
+EXPRESSION:i ++	NodeType.EXPRESSION" -> "BlockID: 1442
+Call context: 
+None
+BEGIN_LOOP
+REF_406(address[]) -> dp.assets
+REF_407 -> LENGTH REF_406
+TMP_802(bool) = i < REF_407
+CONDITION TMP_802
+EXPRESSION:None	NodeType.STARTLOOP
+i < dp.assets.length	NodeType.IFLOOP" [key=0];
+"BlockID: 1449
+Call context: 
+False
+TMP_816 = CONVERT token to ERC20
+TMP_817 = CONVERT this to address
+TMP_818(uint256) = HIGH_LEVEL_CALL, dest:TMP_816(ERC20), function:balanceOf, arguments:['TMP_817']  
+EXPRESSION:require(bool,string)(ERC20(token).balanceOf(address(this)) == 0,b1)	NodeType.EXPRESSION" -> "BlockID: 1462
+Call context: 
+None
+TMP_819(bool) = TMP_818 == 0
+CONDITION TMP_819
+EXPRESSION:TMP_819(bool) = TMP_818 == 0	NodeType.IF" [key=0];
+"BlockID: 1451
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1437
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1453
+Call context: 
+None
+REF_404(SpotVault.SlippageType) -> SlippageType.AUM
+REF_405(uint256) -> slippageTolerances[REF_404]
+TMP_800(bool) = TMP_799 <= REF_405
+CONDITION TMP_800
+EXPRESSION:TMP_800(bool) = TMP_799 <= REF_405	NodeType.IF" -> "BlockID: 1454
+Call context: 
+True
+TMP_801(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1453
+Call context: 
+None
+REF_404(SpotVault.SlippageType) -> SlippageType.AUM
+REF_405(uint256) -> slippageTolerances[REF_404]
+TMP_800(bool) = TMP_799 <= REF_405
+CONDITION TMP_800
+EXPRESSION:TMP_800(bool) = TMP_799 <= REF_405	NodeType.IF" -> "BlockID: 1455
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1455
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1441
+Call context: 
+True
+i(uint256) := 0(uint256)
+EXPRESSION:i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 1456
+Call context: 
+None
+REF_412(SpotVault.SlippageType) -> SlippageType.SWAP
+REF_413(uint256) -> slippageTolerances[REF_412]
+TMP_808(bool) = TMP_807 <= REF_413
+CONDITION TMP_808
+EXPRESSION:TMP_808(bool) = TMP_807 <= REF_413	NodeType.IF" -> "BlockID: 1457
+Call context: 
+True
+TMP_809(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1456
+Call context: 
+None
+REF_412(SpotVault.SlippageType) -> SlippageType.SWAP
+REF_413(uint256) -> slippageTolerances[REF_412]
+TMP_808(bool) = TMP_807 <= REF_413
+CONDITION TMP_808
+EXPRESSION:TMP_808(bool) = TMP_807 <= REF_413	NodeType.IF" -> "BlockID: 1458
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1458
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1447
+Call context: 
+True
+TMP_810(uint256) := i(uint256)
+i(uint256) = i (c)+ 1
+EXPRESSION:i ++	NodeType.EXPRESSION" [key=0];
+"BlockID: 1459
+Call context: 
+None
+TMP_812 = CONVERT this to address
+TMP_813(uint256) = SOLIDITY_CALL balance(address)(TMP_812)
+TMP_814(bool) = TMP_813 == 0
+CONDITION TMP_814
+EXPRESSION:TMP_814(bool) = TMP_813 == 0	NodeType.IF" -> "BlockID: 1460
+Call context: 
+True
+TMP_815(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1459
+Call context: 
+None
+TMP_812 = CONVERT this to address
+TMP_813(uint256) = SOLIDITY_CALL balance(address)(TMP_812)
+TMP_814(bool) = TMP_813 == 0
+CONDITION TMP_814
+EXPRESSION:TMP_814(bool) = TMP_813 == 0	NodeType.IF" -> "BlockID: 1461
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1461
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1451
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1462
+Call context: 
+None
+TMP_819(bool) = TMP_818 == 0
+CONDITION TMP_819
+EXPRESSION:TMP_819(bool) = TMP_818 == 0	NodeType.IF" -> "BlockID: 1463
+Call context: 
+True
+TMP_820(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1462
+Call context: 
+None
+TMP_819(bool) = TMP_818 == 0
+CONDITION TMP_819
+EXPRESSION:TMP_819(bool) = TMP_818 == 0	NodeType.IF" -> "BlockID: 1464
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1464
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1451
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

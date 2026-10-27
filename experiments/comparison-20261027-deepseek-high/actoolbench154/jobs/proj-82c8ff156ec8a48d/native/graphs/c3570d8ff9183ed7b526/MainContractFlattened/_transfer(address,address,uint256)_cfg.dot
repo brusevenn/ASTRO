@@ -1,0 +1,538 @@
+digraph {
+"BlockID: 575
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 576
+Call context: 
+None
+TMP_331(ERC721A.TokenOwnership) = INTERNAL_CALL, ERC721A.ownershipOf(uint256)(tokenId)
+EXPRESSION:";
+"BlockID: 577
+Call context: 
+None
+prevOwnership(ERC721A.TokenOwnership) := TMP_331(ERC721A.TokenOwnership)
+TMP_332(address) = INTERNAL_CALL, Context._msgSender()()
+EXPRESSION:prevOwnership = ownershipOf(tokenId)	NodeType.VARIABLE
+prevOwnership = ownershipOf(tokenId)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 578
+Call context: 
+None
+REF_101(address) -> prevOwnership.addr
+TMP_333(bool) = TMP_332 == REF_101
+TMP_334(address) = INTERNAL_CALL, ERC721A.getApproved(uint256)(tokenId)
+EXPRESSION:" [shape=box];
+"BlockID: 579
+Call context: 
+None
+TMP_335(address) = INTERNAL_CALL, Context._msgSender()()
+EXPRESSION:" [shape=box];
+"BlockID: 580
+Call context: 
+None
+TMP_336(bool) = TMP_334 == TMP_335
+TMP_337(bool) = TMP_333 || TMP_336
+REF_102(address) -> prevOwnership.addr
+TMP_338(address) = INTERNAL_CALL, Context._msgSender()()
+EXPRESSION:" [shape=box];
+"BlockID: 581
+Call context: 
+None
+TMP_339(bool) = INTERNAL_CALL, ERC721A.isApprovedForAll(address,address)(REF_102,TMP_338)
+EXPRESSION:" [shape=box];
+"BlockID: 582
+Call context: 
+None
+TMP_340(bool) = TMP_337 || TMP_339
+isApprovedOrOwner(bool) := TMP_340(bool)
+TMP_341 = ! isApprovedOrOwner 
+CONDITION TMP_341
+EXPRESSION:isApprovedOrOwner = (_msgSender() == prevOwnership.addr || getApproved(tokenId) == _msgSender() || isApprovedForAll(prevOwnership.addr,_msgSender()))	NodeType.VARIABLE
+isApprovedOrOwner = (_msgSender() == prevOwnership.addr || getApproved(tokenId) == _msgSender() || isApprovedForAll(prevOwnership.addr,_msgSender()))	NodeType.EXPRESSION
+! isApprovedOrOwner	NodeType.IF" [shape=box];
+"BlockID: 583
+Call context: 
+True
+TMP_342(None) = SOLIDITY_CALL revert TransferCallerNotOwnerNorApproved()()
+EXPRESSION:revert TransferCallerNotOwnerNorApproved()()	NodeType.EXPRESSION";
+"BlockID: 584
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 585
+Call context: 
+None
+REF_103(address) -> prevOwnership.addr
+TMP_343(bool) = REF_103 != from
+CONDITION TMP_343
+EXPRESSION:prevOwnership.addr != from	NodeType.IF";
+"BlockID: 586
+Call context: 
+True
+TMP_344(None) = SOLIDITY_CALL revert TransferFromIncorrectOwner()()
+EXPRESSION:revert TransferFromIncorrectOwner()()	NodeType.EXPRESSION";
+"BlockID: 587
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 588
+Call context: 
+None
+TMP_345 = CONVERT 0 to address
+TMP_346(bool) = to == TMP_345
+CONDITION TMP_346
+EXPRESSION:to == address(0)	NodeType.IF";
+"BlockID: 589
+Call context: 
+True
+TMP_347(None) = SOLIDITY_CALL revert TransferToZeroAddress()()
+EXPRESSION:revert TransferToZeroAddress()()	NodeType.EXPRESSION";
+"BlockID: 590
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 591
+Call context: 
+None
+TMP_348 = CONVERT 0 to address
+REF_104(address) -> prevOwnership.addr
+INTERNAL_CALL, ERC721A._approve(address,uint256,address)(TMP_348,tokenId,REF_104)
+EXPRESSION:_approve(address(0),tokenId,prevOwnership.addr)	NodeType.EXPRESSION";
+"BlockID: 592
+Call context: 
+None
+REF_105(ERC721A.AddressData) -> _addressData[from]
+REF_106(uint128) -> REF_105.balance
+REF_106(-> _addressData) = REF_106 - 1
+REF_107(ERC721A.AddressData) -> _addressData[to]
+REF_108(uint128) -> REF_107.balance
+REF_108(-> _addressData) = REF_108 + 1
+REF_109(ERC721A.TokenOwnership) -> _ownerships[tokenId]
+REF_110(address) -> REF_109.addr
+REF_110(address) (->_ownerships) := to(address)
+REF_111(ERC721A.TokenOwnership) -> _ownerships[tokenId]
+REF_112(uint64) -> REF_111.startTimestamp
+TMP_350 = CONVERT block.timestamp to uint64
+REF_112(uint64) (->_ownerships) := TMP_350(uint64)
+TMP_351(uint256) = tokenId + 1
+nextTokenId(uint256) := TMP_351(uint256)
+REF_113(ERC721A.TokenOwnership) -> _ownerships[nextTokenId]
+REF_114(address) -> REF_113.addr
+TMP_352 = CONVERT 0 to address
+TMP_353(bool) = REF_114 == TMP_352
+CONDITION TMP_353
+EXPRESSION:_approve(address(0),tokenId,prevOwnership.addr)	NodeType.EXPRESSION
+_addressData[from].balance -= 1	NodeType.EXPRESSION
+_addressData[to].balance += 1	NodeType.EXPRESSION
+_ownerships[tokenId].addr = to	NodeType.EXPRESSION
+_ownerships[tokenId].startTimestamp = uint64(block.timestamp)	NodeType.EXPRESSION
+nextTokenId = tokenId + 1	NodeType.VARIABLE
+nextTokenId = tokenId + 1	NodeType.EXPRESSION
+_ownerships[nextTokenId].addr == address(0)	NodeType.IF";
+"BlockID: 593
+Call context: 
+True
+TMP_354(bool) = INTERNAL_CALL, ERC721A._exists(uint256)(nextTokenId)
+EXPRESSION:_exists(nextTokenId)	NodeType.EXPRESSION";
+"BlockID: 595
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 596
+Call context: 
+None
+INTERNAL_CALL, ERC721A._afterTokenTransfers(address,address,uint256,uint256)(from,to,tokenId,1)
+EXPRESSION:_afterTokenTransfers(from,to,tokenId,1)	NodeType.EXPRESSION";
+"BlockID: 594
+Call context: 
+None
+CONDITION TMP_354
+EXPRESSION:_exists(nextTokenId)	NodeType.IF" [shape=box];
+"BlockID: 598
+Call context: 
+True
+REF_115(ERC721A.TokenOwnership) -> _ownerships[nextTokenId]
+REF_116(address) -> REF_115.addr
+REF_117(address) -> prevOwnership.addr
+REF_116(address) (->_ownerships) := REF_117(address)
+REF_118(ERC721A.TokenOwnership) -> _ownerships[nextTokenId]
+REF_119(uint64) -> REF_118.startTimestamp
+REF_120(uint64) -> prevOwnership.startTimestamp
+REF_119(uint64) (->_ownerships) := REF_120(uint64)
+EXPRESSION:_ownerships[nextTokenId].addr = prevOwnership.addr	NodeType.EXPRESSION
+_ownerships[nextTokenId].startTimestamp = prevOwnership.startTimestamp	NodeType.EXPRESSION";
+"BlockID: 599
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 575
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 576
+Call context: 
+None
+TMP_331(ERC721A.TokenOwnership) = INTERNAL_CALL, ERC721A.ownershipOf(uint256)(tokenId)
+EXPRESSION:" [key=0];
+"BlockID: 576
+Call context: 
+None
+TMP_331(ERC721A.TokenOwnership) = INTERNAL_CALL, ERC721A.ownershipOf(uint256)(tokenId)
+EXPRESSION:" -> "BlockID: 577
+Call context: 
+None
+prevOwnership(ERC721A.TokenOwnership) := TMP_331(ERC721A.TokenOwnership)
+TMP_332(address) = INTERNAL_CALL, Context._msgSender()()
+EXPRESSION:prevOwnership = ownershipOf(tokenId)	NodeType.VARIABLE
+prevOwnership = ownershipOf(tokenId)	NodeType.EXPRESSION" [key=0];
+"BlockID: 577
+Call context: 
+None
+prevOwnership(ERC721A.TokenOwnership) := TMP_331(ERC721A.TokenOwnership)
+TMP_332(address) = INTERNAL_CALL, Context._msgSender()()
+EXPRESSION:prevOwnership = ownershipOf(tokenId)	NodeType.VARIABLE
+prevOwnership = ownershipOf(tokenId)	NodeType.EXPRESSION" -> "BlockID: 578
+Call context: 
+None
+REF_101(address) -> prevOwnership.addr
+TMP_333(bool) = TMP_332 == REF_101
+TMP_334(address) = INTERNAL_CALL, ERC721A.getApproved(uint256)(tokenId)
+EXPRESSION:" [key=0];
+"BlockID: 578
+Call context: 
+None
+REF_101(address) -> prevOwnership.addr
+TMP_333(bool) = TMP_332 == REF_101
+TMP_334(address) = INTERNAL_CALL, ERC721A.getApproved(uint256)(tokenId)
+EXPRESSION:" -> "BlockID: 579
+Call context: 
+None
+TMP_335(address) = INTERNAL_CALL, Context._msgSender()()
+EXPRESSION:" [key=0];
+"BlockID: 579
+Call context: 
+None
+TMP_335(address) = INTERNAL_CALL, Context._msgSender()()
+EXPRESSION:" -> "BlockID: 580
+Call context: 
+None
+TMP_336(bool) = TMP_334 == TMP_335
+TMP_337(bool) = TMP_333 || TMP_336
+REF_102(address) -> prevOwnership.addr
+TMP_338(address) = INTERNAL_CALL, Context._msgSender()()
+EXPRESSION:" [key=0];
+"BlockID: 580
+Call context: 
+None
+TMP_336(bool) = TMP_334 == TMP_335
+TMP_337(bool) = TMP_333 || TMP_336
+REF_102(address) -> prevOwnership.addr
+TMP_338(address) = INTERNAL_CALL, Context._msgSender()()
+EXPRESSION:" -> "BlockID: 581
+Call context: 
+None
+TMP_339(bool) = INTERNAL_CALL, ERC721A.isApprovedForAll(address,address)(REF_102,TMP_338)
+EXPRESSION:" [key=0];
+"BlockID: 581
+Call context: 
+None
+TMP_339(bool) = INTERNAL_CALL, ERC721A.isApprovedForAll(address,address)(REF_102,TMP_338)
+EXPRESSION:" -> "BlockID: 582
+Call context: 
+None
+TMP_340(bool) = TMP_337 || TMP_339
+isApprovedOrOwner(bool) := TMP_340(bool)
+TMP_341 = ! isApprovedOrOwner 
+CONDITION TMP_341
+EXPRESSION:isApprovedOrOwner = (_msgSender() == prevOwnership.addr || getApproved(tokenId) == _msgSender() || isApprovedForAll(prevOwnership.addr,_msgSender()))	NodeType.VARIABLE
+isApprovedOrOwner = (_msgSender() == prevOwnership.addr || getApproved(tokenId) == _msgSender() || isApprovedForAll(prevOwnership.addr,_msgSender()))	NodeType.EXPRESSION
+! isApprovedOrOwner	NodeType.IF" [key=0];
+"BlockID: 582
+Call context: 
+None
+TMP_340(bool) = TMP_337 || TMP_339
+isApprovedOrOwner(bool) := TMP_340(bool)
+TMP_341 = ! isApprovedOrOwner 
+CONDITION TMP_341
+EXPRESSION:isApprovedOrOwner = (_msgSender() == prevOwnership.addr || getApproved(tokenId) == _msgSender() || isApprovedForAll(prevOwnership.addr,_msgSender()))	NodeType.VARIABLE
+isApprovedOrOwner = (_msgSender() == prevOwnership.addr || getApproved(tokenId) == _msgSender() || isApprovedForAll(prevOwnership.addr,_msgSender()))	NodeType.EXPRESSION
+! isApprovedOrOwner	NodeType.IF" -> "BlockID: 583
+Call context: 
+True
+TMP_342(None) = SOLIDITY_CALL revert TransferCallerNotOwnerNorApproved()()
+EXPRESSION:revert TransferCallerNotOwnerNorApproved()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 582
+Call context: 
+None
+TMP_340(bool) = TMP_337 || TMP_339
+isApprovedOrOwner(bool) := TMP_340(bool)
+TMP_341 = ! isApprovedOrOwner 
+CONDITION TMP_341
+EXPRESSION:isApprovedOrOwner = (_msgSender() == prevOwnership.addr || getApproved(tokenId) == _msgSender() || isApprovedForAll(prevOwnership.addr,_msgSender()))	NodeType.VARIABLE
+isApprovedOrOwner = (_msgSender() == prevOwnership.addr || getApproved(tokenId) == _msgSender() || isApprovedForAll(prevOwnership.addr,_msgSender()))	NodeType.EXPRESSION
+! isApprovedOrOwner	NodeType.IF" -> "BlockID: 584
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 584
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 585
+Call context: 
+None
+REF_103(address) -> prevOwnership.addr
+TMP_343(bool) = REF_103 != from
+CONDITION TMP_343
+EXPRESSION:prevOwnership.addr != from	NodeType.IF" [key=0];
+"BlockID: 585
+Call context: 
+None
+REF_103(address) -> prevOwnership.addr
+TMP_343(bool) = REF_103 != from
+CONDITION TMP_343
+EXPRESSION:prevOwnership.addr != from	NodeType.IF" -> "BlockID: 586
+Call context: 
+True
+TMP_344(None) = SOLIDITY_CALL revert TransferFromIncorrectOwner()()
+EXPRESSION:revert TransferFromIncorrectOwner()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 585
+Call context: 
+None
+REF_103(address) -> prevOwnership.addr
+TMP_343(bool) = REF_103 != from
+CONDITION TMP_343
+EXPRESSION:prevOwnership.addr != from	NodeType.IF" -> "BlockID: 587
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 587
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 588
+Call context: 
+None
+TMP_345 = CONVERT 0 to address
+TMP_346(bool) = to == TMP_345
+CONDITION TMP_346
+EXPRESSION:to == address(0)	NodeType.IF" [key=0];
+"BlockID: 588
+Call context: 
+None
+TMP_345 = CONVERT 0 to address
+TMP_346(bool) = to == TMP_345
+CONDITION TMP_346
+EXPRESSION:to == address(0)	NodeType.IF" -> "BlockID: 589
+Call context: 
+True
+TMP_347(None) = SOLIDITY_CALL revert TransferToZeroAddress()()
+EXPRESSION:revert TransferToZeroAddress()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 588
+Call context: 
+None
+TMP_345 = CONVERT 0 to address
+TMP_346(bool) = to == TMP_345
+CONDITION TMP_346
+EXPRESSION:to == address(0)	NodeType.IF" -> "BlockID: 590
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 590
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 591
+Call context: 
+None
+TMP_348 = CONVERT 0 to address
+REF_104(address) -> prevOwnership.addr
+INTERNAL_CALL, ERC721A._approve(address,uint256,address)(TMP_348,tokenId,REF_104)
+EXPRESSION:_approve(address(0),tokenId,prevOwnership.addr)	NodeType.EXPRESSION" [key=0];
+"BlockID: 591
+Call context: 
+None
+TMP_348 = CONVERT 0 to address
+REF_104(address) -> prevOwnership.addr
+INTERNAL_CALL, ERC721A._approve(address,uint256,address)(TMP_348,tokenId,REF_104)
+EXPRESSION:_approve(address(0),tokenId,prevOwnership.addr)	NodeType.EXPRESSION" -> "BlockID: 592
+Call context: 
+None
+REF_105(ERC721A.AddressData) -> _addressData[from]
+REF_106(uint128) -> REF_105.balance
+REF_106(-> _addressData) = REF_106 - 1
+REF_107(ERC721A.AddressData) -> _addressData[to]
+REF_108(uint128) -> REF_107.balance
+REF_108(-> _addressData) = REF_108 + 1
+REF_109(ERC721A.TokenOwnership) -> _ownerships[tokenId]
+REF_110(address) -> REF_109.addr
+REF_110(address) (->_ownerships) := to(address)
+REF_111(ERC721A.TokenOwnership) -> _ownerships[tokenId]
+REF_112(uint64) -> REF_111.startTimestamp
+TMP_350 = CONVERT block.timestamp to uint64
+REF_112(uint64) (->_ownerships) := TMP_350(uint64)
+TMP_351(uint256) = tokenId + 1
+nextTokenId(uint256) := TMP_351(uint256)
+REF_113(ERC721A.TokenOwnership) -> _ownerships[nextTokenId]
+REF_114(address) -> REF_113.addr
+TMP_352 = CONVERT 0 to address
+TMP_353(bool) = REF_114 == TMP_352
+CONDITION TMP_353
+EXPRESSION:_approve(address(0),tokenId,prevOwnership.addr)	NodeType.EXPRESSION
+_addressData[from].balance -= 1	NodeType.EXPRESSION
+_addressData[to].balance += 1	NodeType.EXPRESSION
+_ownerships[tokenId].addr = to	NodeType.EXPRESSION
+_ownerships[tokenId].startTimestamp = uint64(block.timestamp)	NodeType.EXPRESSION
+nextTokenId = tokenId + 1	NodeType.VARIABLE
+nextTokenId = tokenId + 1	NodeType.EXPRESSION
+_ownerships[nextTokenId].addr == address(0)	NodeType.IF" [key=0];
+"BlockID: 592
+Call context: 
+None
+REF_105(ERC721A.AddressData) -> _addressData[from]
+REF_106(uint128) -> REF_105.balance
+REF_106(-> _addressData) = REF_106 - 1
+REF_107(ERC721A.AddressData) -> _addressData[to]
+REF_108(uint128) -> REF_107.balance
+REF_108(-> _addressData) = REF_108 + 1
+REF_109(ERC721A.TokenOwnership) -> _ownerships[tokenId]
+REF_110(address) -> REF_109.addr
+REF_110(address) (->_ownerships) := to(address)
+REF_111(ERC721A.TokenOwnership) -> _ownerships[tokenId]
+REF_112(uint64) -> REF_111.startTimestamp
+TMP_350 = CONVERT block.timestamp to uint64
+REF_112(uint64) (->_ownerships) := TMP_350(uint64)
+TMP_351(uint256) = tokenId + 1
+nextTokenId(uint256) := TMP_351(uint256)
+REF_113(ERC721A.TokenOwnership) -> _ownerships[nextTokenId]
+REF_114(address) -> REF_113.addr
+TMP_352 = CONVERT 0 to address
+TMP_353(bool) = REF_114 == TMP_352
+CONDITION TMP_353
+EXPRESSION:_approve(address(0),tokenId,prevOwnership.addr)	NodeType.EXPRESSION
+_addressData[from].balance -= 1	NodeType.EXPRESSION
+_addressData[to].balance += 1	NodeType.EXPRESSION
+_ownerships[tokenId].addr = to	NodeType.EXPRESSION
+_ownerships[tokenId].startTimestamp = uint64(block.timestamp)	NodeType.EXPRESSION
+nextTokenId = tokenId + 1	NodeType.VARIABLE
+nextTokenId = tokenId + 1	NodeType.EXPRESSION
+_ownerships[nextTokenId].addr == address(0)	NodeType.IF" -> "BlockID: 593
+Call context: 
+True
+TMP_354(bool) = INTERNAL_CALL, ERC721A._exists(uint256)(nextTokenId)
+EXPRESSION:_exists(nextTokenId)	NodeType.EXPRESSION" [key=0];
+"BlockID: 592
+Call context: 
+None
+REF_105(ERC721A.AddressData) -> _addressData[from]
+REF_106(uint128) -> REF_105.balance
+REF_106(-> _addressData) = REF_106 - 1
+REF_107(ERC721A.AddressData) -> _addressData[to]
+REF_108(uint128) -> REF_107.balance
+REF_108(-> _addressData) = REF_108 + 1
+REF_109(ERC721A.TokenOwnership) -> _ownerships[tokenId]
+REF_110(address) -> REF_109.addr
+REF_110(address) (->_ownerships) := to(address)
+REF_111(ERC721A.TokenOwnership) -> _ownerships[tokenId]
+REF_112(uint64) -> REF_111.startTimestamp
+TMP_350 = CONVERT block.timestamp to uint64
+REF_112(uint64) (->_ownerships) := TMP_350(uint64)
+TMP_351(uint256) = tokenId + 1
+nextTokenId(uint256) := TMP_351(uint256)
+REF_113(ERC721A.TokenOwnership) -> _ownerships[nextTokenId]
+REF_114(address) -> REF_113.addr
+TMP_352 = CONVERT 0 to address
+TMP_353(bool) = REF_114 == TMP_352
+CONDITION TMP_353
+EXPRESSION:_approve(address(0),tokenId,prevOwnership.addr)	NodeType.EXPRESSION
+_addressData[from].balance -= 1	NodeType.EXPRESSION
+_addressData[to].balance += 1	NodeType.EXPRESSION
+_ownerships[tokenId].addr = to	NodeType.EXPRESSION
+_ownerships[tokenId].startTimestamp = uint64(block.timestamp)	NodeType.EXPRESSION
+nextTokenId = tokenId + 1	NodeType.VARIABLE
+nextTokenId = tokenId + 1	NodeType.EXPRESSION
+_ownerships[nextTokenId].addr == address(0)	NodeType.IF" -> "BlockID: 595
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 593
+Call context: 
+True
+TMP_354(bool) = INTERNAL_CALL, ERC721A._exists(uint256)(nextTokenId)
+EXPRESSION:_exists(nextTokenId)	NodeType.EXPRESSION" -> "BlockID: 594
+Call context: 
+None
+CONDITION TMP_354
+EXPRESSION:_exists(nextTokenId)	NodeType.IF" [key=0];
+"BlockID: 595
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 596
+Call context: 
+None
+INTERNAL_CALL, ERC721A._afterTokenTransfers(address,address,uint256,uint256)(from,to,tokenId,1)
+EXPRESSION:_afterTokenTransfers(from,to,tokenId,1)	NodeType.EXPRESSION" [key=0];
+"BlockID: 594
+Call context: 
+None
+CONDITION TMP_354
+EXPRESSION:_exists(nextTokenId)	NodeType.IF" -> "BlockID: 598
+Call context: 
+True
+REF_115(ERC721A.TokenOwnership) -> _ownerships[nextTokenId]
+REF_116(address) -> REF_115.addr
+REF_117(address) -> prevOwnership.addr
+REF_116(address) (->_ownerships) := REF_117(address)
+REF_118(ERC721A.TokenOwnership) -> _ownerships[nextTokenId]
+REF_119(uint64) -> REF_118.startTimestamp
+REF_120(uint64) -> prevOwnership.startTimestamp
+REF_119(uint64) (->_ownerships) := REF_120(uint64)
+EXPRESSION:_ownerships[nextTokenId].addr = prevOwnership.addr	NodeType.EXPRESSION
+_ownerships[nextTokenId].startTimestamp = prevOwnership.startTimestamp	NodeType.EXPRESSION" [key=0];
+"BlockID: 594
+Call context: 
+None
+CONDITION TMP_354
+EXPRESSION:_exists(nextTokenId)	NodeType.IF" -> "BlockID: 599
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 598
+Call context: 
+True
+REF_115(ERC721A.TokenOwnership) -> _ownerships[nextTokenId]
+REF_116(address) -> REF_115.addr
+REF_117(address) -> prevOwnership.addr
+REF_116(address) (->_ownerships) := REF_117(address)
+REF_118(ERC721A.TokenOwnership) -> _ownerships[nextTokenId]
+REF_119(uint64) -> REF_118.startTimestamp
+REF_120(uint64) -> prevOwnership.startTimestamp
+REF_119(uint64) (->_ownerships) := REF_120(uint64)
+EXPRESSION:_ownerships[nextTokenId].addr = prevOwnership.addr	NodeType.EXPRESSION
+_ownerships[nextTokenId].startTimestamp = prevOwnership.startTimestamp	NodeType.EXPRESSION" -> "BlockID: 599
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 599
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 595
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

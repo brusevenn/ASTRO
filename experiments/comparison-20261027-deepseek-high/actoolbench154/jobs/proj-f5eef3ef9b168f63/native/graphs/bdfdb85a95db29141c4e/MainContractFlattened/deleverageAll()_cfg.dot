@@ -1,0 +1,452 @@
+digraph {
+"BlockID: 2624
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 2625
+Call context: 
+None
+TMP_1734(uint256) = INTERNAL_CALL, LevToken.getCashExReserves()()
+EXPRESSION:";
+"BlockID: 2626
+Call context: 
+None
+cashOnBook(uint256) := TMP_1734(uint256)
+TMP_1735(uint256) = INTERNAL_CALL, LevToken.getCmpBalanceInternal()()
+EXPRESSION:cashOnBook = getCashExReserves()	NodeType.VARIABLE
+cashOnBook = getCashExReserves()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2627
+Call context: 
+None
+compoundBalance(uint256) := TMP_1735(uint256)
+TMP_1736(bool) = compoundBalance > 0
+CONDITION TMP_1736
+EXPRESSION:compoundBalance = getCmpBalanceInternal()	NodeType.VARIABLE
+compoundBalance = getCmpBalanceInternal()	NodeType.EXPRESSION
+compoundBalance > 0	NodeType.IF" [shape=box];
+"BlockID: 2628
+Call context: 
+True
+INTERNAL_CALL, DepositWithdraw.withdrawUSDCfromCmp(uint256)(compoundBalance)
+EXPRESSION:withdrawUSDCfromCmp(compoundBalance)	NodeType.EXPRESSION";
+"BlockID: 2630
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2631
+Call context: 
+None
+TMP_1738(uint256) = INTERNAL_CALL, LevToken.getCashExReserves()()
+EXPRESSION:cashOnBook = getCashExReserves()	NodeType.EXPRESSION";
+"BlockID: 2632
+Call context: 
+None
+cashOnBook(uint256) := TMP_1738(uint256)
+TMP_1739(bool) = cashOnBook > 0
+CONDITION TMP_1739
+EXPRESSION:cashOnBook = getCashExReserves()	NodeType.EXPRESSION
+cashOnBook > 0	NodeType.IF" [shape=box];
+"BlockID: 2633
+Call context: 
+True
+TMP_1740 = CONVERT depErc20 to address
+TMP_1741(uint256) = INTERNAL_CALL, CurveSwap.changeUSDC2USDT(uint256,uint256,address)(cashOnBook,0,TMP_1740)
+EXPRESSION:";
+"BlockID: 2635
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2636
+Call context: 
+None
+RETURN True
+EXPRESSION:true	NodeType.RETURN";
+"BlockID: 2634
+Call context: 
+None
+finalRepayAmount(uint256) := TMP_1741(uint256)
+TMP_1742(uint256) = cashOnBook (c)* expScale
+TMP_1743(uint256) = TMP_1742 (c)/ finalRepayAmount
+transFx(uint256) := TMP_1743(uint256)
+TMP_1744(uint256) = HIGH_LEVEL_CALL, dest:depErc20(DepErc20Interface), function:getTotalBorrowsAfterAccrueInterest, arguments:[]  
+EXPRESSION:finalRepayAmount = changeUSDC2USDT(cashOnBook,0,address(depErc20))	NodeType.VARIABLE
+finalRepayAmount = changeUSDC2USDT(cashOnBook,0,address(depErc20))	NodeType.EXPRESSION
+transFx = cashOnBook * expScale / finalRepayAmount	NodeType.VARIABLE
+transFx = cashOnBook * expScale / finalRepayAmount	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2637
+Call context: 
+None
+origBorrowBalanceUSDT(uint256) := TMP_1744(uint256)
+extraBorrowDemand(uint256) := 0(uint256)
+extraBorrowSupply(uint256) := 0(uint256)
+TMP_1745(bool) = origBorrowBalanceUSDT > finalRepayAmount
+CONDITION TMP_1745
+EXPRESSION:origBorrowBalanceUSDT = depErc20.getTotalBorrowsAfterAccrueInterest()	NodeType.VARIABLE
+origBorrowBalanceUSDT = depErc20.getTotalBorrowsAfterAccrueInterest()	NodeType.EXPRESSION
+extraBorrowDemand = 0	NodeType.EXPRESSION
+extraBorrowSupply = 0	NodeType.EXPRESSION
+origBorrowBalanceUSDT > finalRepayAmount	NodeType.IF" [shape=box];
+"BlockID: 2638
+Call context: 
+True
+TMP_1746(uint256) = origBorrowBalanceUSDT (c)- finalRepayAmount
+INTERNAL_CALL, LevToken.updateBorrowBalances(uint256,uint256)(transFx,TMP_1746)
+EXPRESSION:updateBorrowBalances(transFx,origBorrowBalanceUSDT - finalRepayAmount)	NodeType.EXPRESSION";
+"BlockID: 2640
+Call context: 
+False
+INTERNAL_CALL, LevToken.updateBorrowBalances(uint256,uint256)(transFx,0)
+EXPRESSION:updateBorrowBalances(transFx,0)	NodeType.EXPRESSION";
+"BlockID: 2641
+Call context: 
+None
+TMP_1755(uint256) = HIGH_LEVEL_CALL, dest:depErc20(DepErc20Interface), function:repayBorrow, arguments:['finalRepayAmount', 'False']  
+EXPRESSION:updateBorrowBalances(transFx,0)	NodeType.EXPRESSION
+depErc20.repayBorrow(finalRepayAmount,false)	NodeType.EXPRESSION";
+"BlockID: 2642
+Call context: 
+None
+INTERNAL_CALL, LevToken.updateStats(bool,uint256,uint256,uint256)(True,0,0,0)
+EXPRESSION:depErc20.repayBorrow(finalRepayAmount,false)	NodeType.EXPRESSION
+updateStats(true,0,0,0)	NodeType.EXPRESSION";
+"BlockID: 2643
+Call context: 
+None
+RETURN False
+EXPRESSION:updateStats(true,0,0,0)	NodeType.EXPRESSION
+false	NodeType.RETURN";
+"BlockID: 2639
+Call context: 
+None
+TMP_1748(uint256) = HIGH_LEVEL_CALL, dest:depErc20(DepErc20Interface), function:repayBorrow, arguments:['finalRepayAmount', 'True']  
+EXPRESSION:updateBorrowBalances(transFx,origBorrowBalanceUSDT - finalRepayAmount)	NodeType.EXPRESSION
+depErc20.repayBorrow(finalRepayAmount,true)	NodeType.EXPRESSION";
+"BlockID: 2644
+Call context: 
+None
+INTERNAL_CALL, LevToken.updateStats(bool,uint256,uint256,uint256)(False,0,0,0)
+EXPRESSION:depErc20.repayBorrow(finalRepayAmount,true)	NodeType.EXPRESSION
+updateStats(false,0,0,0)	NodeType.EXPRESSION";
+"BlockID: 2645
+Call context: 
+None
+TMP_1750 = CONVERT this to address
+TMP_1751(bool) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:_setMintPausedLev, arguments:['TMP_1750', 'True']  
+EXPRESSION:updateStats(false,0,0,0)	NodeType.EXPRESSION
+tensorpricer._setMintPausedLev(address(this),true)	NodeType.EXPRESSION";
+"BlockID: 2646
+Call context: 
+None
+TMP_1752 = CONVERT this to address
+TMP_1753(bool) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:_setRedeemPausedLev, arguments:['TMP_1752', 'True']  
+EXPRESSION:tensorpricer._setMintPausedLev(address(this),true)	NodeType.EXPRESSION
+tensorpricer._setRedeemPausedLev(address(this),true)	NodeType.EXPRESSION";
+"BlockID: 2648
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2624
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 2625
+Call context: 
+None
+TMP_1734(uint256) = INTERNAL_CALL, LevToken.getCashExReserves()()
+EXPRESSION:" [key=0];
+"BlockID: 2625
+Call context: 
+None
+TMP_1734(uint256) = INTERNAL_CALL, LevToken.getCashExReserves()()
+EXPRESSION:" -> "BlockID: 2626
+Call context: 
+None
+cashOnBook(uint256) := TMP_1734(uint256)
+TMP_1735(uint256) = INTERNAL_CALL, LevToken.getCmpBalanceInternal()()
+EXPRESSION:cashOnBook = getCashExReserves()	NodeType.VARIABLE
+cashOnBook = getCashExReserves()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2626
+Call context: 
+None
+cashOnBook(uint256) := TMP_1734(uint256)
+TMP_1735(uint256) = INTERNAL_CALL, LevToken.getCmpBalanceInternal()()
+EXPRESSION:cashOnBook = getCashExReserves()	NodeType.VARIABLE
+cashOnBook = getCashExReserves()	NodeType.EXPRESSION" -> "BlockID: 2627
+Call context: 
+None
+compoundBalance(uint256) := TMP_1735(uint256)
+TMP_1736(bool) = compoundBalance > 0
+CONDITION TMP_1736
+EXPRESSION:compoundBalance = getCmpBalanceInternal()	NodeType.VARIABLE
+compoundBalance = getCmpBalanceInternal()	NodeType.EXPRESSION
+compoundBalance > 0	NodeType.IF" [key=0];
+"BlockID: 2627
+Call context: 
+None
+compoundBalance(uint256) := TMP_1735(uint256)
+TMP_1736(bool) = compoundBalance > 0
+CONDITION TMP_1736
+EXPRESSION:compoundBalance = getCmpBalanceInternal()	NodeType.VARIABLE
+compoundBalance = getCmpBalanceInternal()	NodeType.EXPRESSION
+compoundBalance > 0	NodeType.IF" -> "BlockID: 2628
+Call context: 
+True
+INTERNAL_CALL, DepositWithdraw.withdrawUSDCfromCmp(uint256)(compoundBalance)
+EXPRESSION:withdrawUSDCfromCmp(compoundBalance)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2627
+Call context: 
+None
+compoundBalance(uint256) := TMP_1735(uint256)
+TMP_1736(bool) = compoundBalance > 0
+CONDITION TMP_1736
+EXPRESSION:compoundBalance = getCmpBalanceInternal()	NodeType.VARIABLE
+compoundBalance = getCmpBalanceInternal()	NodeType.EXPRESSION
+compoundBalance > 0	NodeType.IF" -> "BlockID: 2630
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2628
+Call context: 
+True
+INTERNAL_CALL, DepositWithdraw.withdrawUSDCfromCmp(uint256)(compoundBalance)
+EXPRESSION:withdrawUSDCfromCmp(compoundBalance)	NodeType.EXPRESSION" -> "BlockID: 2630
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2630
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2631
+Call context: 
+None
+TMP_1738(uint256) = INTERNAL_CALL, LevToken.getCashExReserves()()
+EXPRESSION:cashOnBook = getCashExReserves()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2631
+Call context: 
+None
+TMP_1738(uint256) = INTERNAL_CALL, LevToken.getCashExReserves()()
+EXPRESSION:cashOnBook = getCashExReserves()	NodeType.EXPRESSION" -> "BlockID: 2632
+Call context: 
+None
+cashOnBook(uint256) := TMP_1738(uint256)
+TMP_1739(bool) = cashOnBook > 0
+CONDITION TMP_1739
+EXPRESSION:cashOnBook = getCashExReserves()	NodeType.EXPRESSION
+cashOnBook > 0	NodeType.IF" [key=0];
+"BlockID: 2632
+Call context: 
+None
+cashOnBook(uint256) := TMP_1738(uint256)
+TMP_1739(bool) = cashOnBook > 0
+CONDITION TMP_1739
+EXPRESSION:cashOnBook = getCashExReserves()	NodeType.EXPRESSION
+cashOnBook > 0	NodeType.IF" -> "BlockID: 2633
+Call context: 
+True
+TMP_1740 = CONVERT depErc20 to address
+TMP_1741(uint256) = INTERNAL_CALL, CurveSwap.changeUSDC2USDT(uint256,uint256,address)(cashOnBook,0,TMP_1740)
+EXPRESSION:" [key=0];
+"BlockID: 2632
+Call context: 
+None
+cashOnBook(uint256) := TMP_1738(uint256)
+TMP_1739(bool) = cashOnBook > 0
+CONDITION TMP_1739
+EXPRESSION:cashOnBook = getCashExReserves()	NodeType.EXPRESSION
+cashOnBook > 0	NodeType.IF" -> "BlockID: 2635
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2633
+Call context: 
+True
+TMP_1740 = CONVERT depErc20 to address
+TMP_1741(uint256) = INTERNAL_CALL, CurveSwap.changeUSDC2USDT(uint256,uint256,address)(cashOnBook,0,TMP_1740)
+EXPRESSION:" -> "BlockID: 2634
+Call context: 
+None
+finalRepayAmount(uint256) := TMP_1741(uint256)
+TMP_1742(uint256) = cashOnBook (c)* expScale
+TMP_1743(uint256) = TMP_1742 (c)/ finalRepayAmount
+transFx(uint256) := TMP_1743(uint256)
+TMP_1744(uint256) = HIGH_LEVEL_CALL, dest:depErc20(DepErc20Interface), function:getTotalBorrowsAfterAccrueInterest, arguments:[]  
+EXPRESSION:finalRepayAmount = changeUSDC2USDT(cashOnBook,0,address(depErc20))	NodeType.VARIABLE
+finalRepayAmount = changeUSDC2USDT(cashOnBook,0,address(depErc20))	NodeType.EXPRESSION
+transFx = cashOnBook * expScale / finalRepayAmount	NodeType.VARIABLE
+transFx = cashOnBook * expScale / finalRepayAmount	NodeType.EXPRESSION" [key=0];
+"BlockID: 2635
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2636
+Call context: 
+None
+RETURN True
+EXPRESSION:true	NodeType.RETURN" [key=0];
+"BlockID: 2634
+Call context: 
+None
+finalRepayAmount(uint256) := TMP_1741(uint256)
+TMP_1742(uint256) = cashOnBook (c)* expScale
+TMP_1743(uint256) = TMP_1742 (c)/ finalRepayAmount
+transFx(uint256) := TMP_1743(uint256)
+TMP_1744(uint256) = HIGH_LEVEL_CALL, dest:depErc20(DepErc20Interface), function:getTotalBorrowsAfterAccrueInterest, arguments:[]  
+EXPRESSION:finalRepayAmount = changeUSDC2USDT(cashOnBook,0,address(depErc20))	NodeType.VARIABLE
+finalRepayAmount = changeUSDC2USDT(cashOnBook,0,address(depErc20))	NodeType.EXPRESSION
+transFx = cashOnBook * expScale / finalRepayAmount	NodeType.VARIABLE
+transFx = cashOnBook * expScale / finalRepayAmount	NodeType.EXPRESSION" -> "BlockID: 2637
+Call context: 
+None
+origBorrowBalanceUSDT(uint256) := TMP_1744(uint256)
+extraBorrowDemand(uint256) := 0(uint256)
+extraBorrowSupply(uint256) := 0(uint256)
+TMP_1745(bool) = origBorrowBalanceUSDT > finalRepayAmount
+CONDITION TMP_1745
+EXPRESSION:origBorrowBalanceUSDT = depErc20.getTotalBorrowsAfterAccrueInterest()	NodeType.VARIABLE
+origBorrowBalanceUSDT = depErc20.getTotalBorrowsAfterAccrueInterest()	NodeType.EXPRESSION
+extraBorrowDemand = 0	NodeType.EXPRESSION
+extraBorrowSupply = 0	NodeType.EXPRESSION
+origBorrowBalanceUSDT > finalRepayAmount	NodeType.IF" [key=0];
+"BlockID: 2637
+Call context: 
+None
+origBorrowBalanceUSDT(uint256) := TMP_1744(uint256)
+extraBorrowDemand(uint256) := 0(uint256)
+extraBorrowSupply(uint256) := 0(uint256)
+TMP_1745(bool) = origBorrowBalanceUSDT > finalRepayAmount
+CONDITION TMP_1745
+EXPRESSION:origBorrowBalanceUSDT = depErc20.getTotalBorrowsAfterAccrueInterest()	NodeType.VARIABLE
+origBorrowBalanceUSDT = depErc20.getTotalBorrowsAfterAccrueInterest()	NodeType.EXPRESSION
+extraBorrowDemand = 0	NodeType.EXPRESSION
+extraBorrowSupply = 0	NodeType.EXPRESSION
+origBorrowBalanceUSDT > finalRepayAmount	NodeType.IF" -> "BlockID: 2638
+Call context: 
+True
+TMP_1746(uint256) = origBorrowBalanceUSDT (c)- finalRepayAmount
+INTERNAL_CALL, LevToken.updateBorrowBalances(uint256,uint256)(transFx,TMP_1746)
+EXPRESSION:updateBorrowBalances(transFx,origBorrowBalanceUSDT - finalRepayAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2637
+Call context: 
+None
+origBorrowBalanceUSDT(uint256) := TMP_1744(uint256)
+extraBorrowDemand(uint256) := 0(uint256)
+extraBorrowSupply(uint256) := 0(uint256)
+TMP_1745(bool) = origBorrowBalanceUSDT > finalRepayAmount
+CONDITION TMP_1745
+EXPRESSION:origBorrowBalanceUSDT = depErc20.getTotalBorrowsAfterAccrueInterest()	NodeType.VARIABLE
+origBorrowBalanceUSDT = depErc20.getTotalBorrowsAfterAccrueInterest()	NodeType.EXPRESSION
+extraBorrowDemand = 0	NodeType.EXPRESSION
+extraBorrowSupply = 0	NodeType.EXPRESSION
+origBorrowBalanceUSDT > finalRepayAmount	NodeType.IF" -> "BlockID: 2640
+Call context: 
+False
+INTERNAL_CALL, LevToken.updateBorrowBalances(uint256,uint256)(transFx,0)
+EXPRESSION:updateBorrowBalances(transFx,0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2638
+Call context: 
+True
+TMP_1746(uint256) = origBorrowBalanceUSDT (c)- finalRepayAmount
+INTERNAL_CALL, LevToken.updateBorrowBalances(uint256,uint256)(transFx,TMP_1746)
+EXPRESSION:updateBorrowBalances(transFx,origBorrowBalanceUSDT - finalRepayAmount)	NodeType.EXPRESSION" -> "BlockID: 2639
+Call context: 
+None
+TMP_1748(uint256) = HIGH_LEVEL_CALL, dest:depErc20(DepErc20Interface), function:repayBorrow, arguments:['finalRepayAmount', 'True']  
+EXPRESSION:updateBorrowBalances(transFx,origBorrowBalanceUSDT - finalRepayAmount)	NodeType.EXPRESSION
+depErc20.repayBorrow(finalRepayAmount,true)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2640
+Call context: 
+False
+INTERNAL_CALL, LevToken.updateBorrowBalances(uint256,uint256)(transFx,0)
+EXPRESSION:updateBorrowBalances(transFx,0)	NodeType.EXPRESSION" -> "BlockID: 2641
+Call context: 
+None
+TMP_1755(uint256) = HIGH_LEVEL_CALL, dest:depErc20(DepErc20Interface), function:repayBorrow, arguments:['finalRepayAmount', 'False']  
+EXPRESSION:updateBorrowBalances(transFx,0)	NodeType.EXPRESSION
+depErc20.repayBorrow(finalRepayAmount,false)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2641
+Call context: 
+None
+TMP_1755(uint256) = HIGH_LEVEL_CALL, dest:depErc20(DepErc20Interface), function:repayBorrow, arguments:['finalRepayAmount', 'False']  
+EXPRESSION:updateBorrowBalances(transFx,0)	NodeType.EXPRESSION
+depErc20.repayBorrow(finalRepayAmount,false)	NodeType.EXPRESSION" -> "BlockID: 2642
+Call context: 
+None
+INTERNAL_CALL, LevToken.updateStats(bool,uint256,uint256,uint256)(True,0,0,0)
+EXPRESSION:depErc20.repayBorrow(finalRepayAmount,false)	NodeType.EXPRESSION
+updateStats(true,0,0,0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2642
+Call context: 
+None
+INTERNAL_CALL, LevToken.updateStats(bool,uint256,uint256,uint256)(True,0,0,0)
+EXPRESSION:depErc20.repayBorrow(finalRepayAmount,false)	NodeType.EXPRESSION
+updateStats(true,0,0,0)	NodeType.EXPRESSION" -> "BlockID: 2643
+Call context: 
+None
+RETURN False
+EXPRESSION:updateStats(true,0,0,0)	NodeType.EXPRESSION
+false	NodeType.RETURN" [key=0];
+"BlockID: 2639
+Call context: 
+None
+TMP_1748(uint256) = HIGH_LEVEL_CALL, dest:depErc20(DepErc20Interface), function:repayBorrow, arguments:['finalRepayAmount', 'True']  
+EXPRESSION:updateBorrowBalances(transFx,origBorrowBalanceUSDT - finalRepayAmount)	NodeType.EXPRESSION
+depErc20.repayBorrow(finalRepayAmount,true)	NodeType.EXPRESSION" -> "BlockID: 2644
+Call context: 
+None
+INTERNAL_CALL, LevToken.updateStats(bool,uint256,uint256,uint256)(False,0,0,0)
+EXPRESSION:depErc20.repayBorrow(finalRepayAmount,true)	NodeType.EXPRESSION
+updateStats(false,0,0,0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2644
+Call context: 
+None
+INTERNAL_CALL, LevToken.updateStats(bool,uint256,uint256,uint256)(False,0,0,0)
+EXPRESSION:depErc20.repayBorrow(finalRepayAmount,true)	NodeType.EXPRESSION
+updateStats(false,0,0,0)	NodeType.EXPRESSION" -> "BlockID: 2645
+Call context: 
+None
+TMP_1750 = CONVERT this to address
+TMP_1751(bool) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:_setMintPausedLev, arguments:['TMP_1750', 'True']  
+EXPRESSION:updateStats(false,0,0,0)	NodeType.EXPRESSION
+tensorpricer._setMintPausedLev(address(this),true)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2645
+Call context: 
+None
+TMP_1750 = CONVERT this to address
+TMP_1751(bool) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:_setMintPausedLev, arguments:['TMP_1750', 'True']  
+EXPRESSION:updateStats(false,0,0,0)	NodeType.EXPRESSION
+tensorpricer._setMintPausedLev(address(this),true)	NodeType.EXPRESSION" -> "BlockID: 2646
+Call context: 
+None
+TMP_1752 = CONVERT this to address
+TMP_1753(bool) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:_setRedeemPausedLev, arguments:['TMP_1752', 'True']  
+EXPRESSION:tensorpricer._setMintPausedLev(address(this),true)	NodeType.EXPRESSION
+tensorpricer._setRedeemPausedLev(address(this),true)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2646
+Call context: 
+None
+TMP_1752 = CONVERT this to address
+TMP_1753(bool) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:_setRedeemPausedLev, arguments:['TMP_1752', 'True']  
+EXPRESSION:tensorpricer._setMintPausedLev(address(this),true)	NodeType.EXPRESSION
+tensorpricer._setRedeemPausedLev(address(this),true)	NodeType.EXPRESSION" -> "BlockID: 2648
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2648
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2635
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

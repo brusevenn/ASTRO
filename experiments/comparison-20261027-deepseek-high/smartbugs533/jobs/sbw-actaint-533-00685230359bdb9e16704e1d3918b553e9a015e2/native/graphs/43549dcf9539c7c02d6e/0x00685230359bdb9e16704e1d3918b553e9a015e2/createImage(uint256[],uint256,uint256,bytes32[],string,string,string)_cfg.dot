@@ -1,0 +1,566 @@
+digraph {
+"BlockID: 772
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 775
+Call context: 
+True
+REF_267(bool) -> usernameExists[_author]
+TMP_463 = ! REF_267 
+CONDITION TMP_463
+EXPRESSION:! usernameExists[_author]	NodeType.IF";
+"BlockID: 776
+Call context: 
+True
+TMP_464 = CONVERT 0 to bytes32
+INTERNAL_CALL, UserManager.register(string,bytes32)(_author,TMP_464)
+EXPRESSION:register(_author,bytes32(0))	NodeType.EXPRESSION";
+"BlockID: 778
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 779
+Call context: 
+None
+NEW VARIABLE pickedAssets
+NEW VARIABLE finalSeed
+TUPLE_1(uint256[],uint256) = INTERNAL_CALL, DigitalPrintImage.getPickedAssetsAndFinalSeed(bytes32[],uint256[],uint256,uint256)(_potentialAssets,_randomHashIds,_timestamp,_iterations)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(pickedAssets,finalSeed) = getPickedAssetsAndFinalSeed(_potentialAssets,_randomHashIds,_timestamp,_iterations)	NodeType.EXPRESSION";
+"BlockID: 780
+Call context: 
+None
+pickedAssets(uint256[])= UNPACK TUPLE_1 index: 0 
+finalSeed(uint256)= UNPACK TUPLE_1 index: 1 
+TMP_466(uint256[]) = HIGH_LEVEL_CALL, dest:assetManager(IAssetManager), function:pickUniquePacks, arguments:['pickedAssets']  
+EXPRESSION:(pickedAssets,finalSeed) = getPickedAssetsAndFinalSeed(_potentialAssets,_randomHashIds,_timestamp,_iterations)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 781
+Call context: 
+None
+pickedAssetPacks(uint256[]) =  ['TMP_466(uint256[])']
+finalPrice(uint256) := 0(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:pickedAssetPacks = assetManager.pickUniquePacks(pickedAssets)	NodeType.VARIABLE
+pickedAssetPacks = assetManager.pickUniquePacks(pickedAssets)	NodeType.EXPRESSION
+finalPrice = 0	NodeType.VARIABLE
+finalPrice = 0	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" [shape=box];
+"BlockID: 782
+Call context: 
+None
+BEGIN_LOOP
+REF_269 -> LENGTH pickedAssetPacks
+TMP_467(bool) = i < REF_269
+CONDITION TMP_467
+EXPRESSION:None	NodeType.STARTLOOP
+i < pickedAssetPacks.length	NodeType.IFLOOP";
+"BlockID: 783
+Call context: 
+True
+REF_271(uint256) -> pickedAssetPacks[i]
+TMP_468(bool) = HIGH_LEVEL_CALL, dest:assetManager(IAssetManager), function:checkHasPermissionForPack, arguments:['msg.sender', 'REF_271']  
+EXPRESSION:assetManager.checkHasPermissionForPack(msg.sender,pickedAssetPacks[i]) == false	NodeType.EXPRESSION";
+"BlockID: 785
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 787
+Call context: 
+True
+TMP_477(uint256) = INTERNAL_CALL, ERC721Token.totalSupply()()
+EXPRESSION:";
+"BlockID: 788
+Call context: 
+None
+id(uint256) := TMP_477(uint256)
+INTERNAL_CALL, ERC721Token._mint(address,uint256)(msg.sender,id)
+EXPRESSION:id = totalSupply()	NodeType.VARIABLE
+id = totalSupply()	NodeType.EXPRESSION
+_mint(msg.sender,id)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 789
+Call context: 
+None
+REF_279(DigitalPrintImage.ImageMetadata) -> imageMetadata[id]
+TMP_479(DigitalPrintImage.ImageMetadata) = new ImageMetadata(finalSeed,_potentialAssets,_timestamp,msg.sender,_ipfsHash,_extraData)
+REF_279(DigitalPrintImage.ImageMetadata) (->imageMetadata) := TMP_479(DigitalPrintImage.ImageMetadata)
+REF_280(string) -> idToIpfsHash[id]
+REF_280(string) (->idToIpfsHash) := _ipfsHash(string)
+REF_281(bool) -> seedExists[finalSeed]
+REF_281(bool) (->seedExists) := True(bool)
+EXPRESSION:_mint(msg.sender,id)	NodeType.EXPRESSION
+imageMetadata[id] = ImageMetadata(finalSeed,_potentialAssets,_timestamp,msg.sender,_ipfsHash,_extraData)	NodeType.EXPRESSION
+idToIpfsHash[id] = _ipfsHash	NodeType.EXPRESSION
+seedExists[finalSeed] = true	NodeType.EXPRESSION";
+"BlockID: 784
+Call context: 
+None
+TMP_469(bool) = TMP_468 == False
+CONDITION TMP_469
+EXPRESSION:assetManager.checkHasPermissionForPack(msg.sender,pickedAssetPacks[i]) == false	NodeType.IF" [shape=box];
+"BlockID: 790
+Call context: 
+True
+REF_273(uint256) -> pickedAssetPacks[i]
+TMP_470(uint256) = HIGH_LEVEL_CALL, dest:assetManager(IAssetManager), function:getAssetPackPrice, arguments:['REF_273']  
+EXPRESSION:finalPrice += assetManager.getAssetPackPrice(pickedAssetPacks[i])	NodeType.EXPRESSION";
+"BlockID: 792
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 793
+Call context: 
+None
+TMP_474(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:i ++	NodeType.EXPRESSION";
+"BlockID: 791
+Call context: 
+None
+finalPrice(uint256) = finalPrice + TMP_470
+REF_277(uint256) -> pickedAssetPacks[i]
+TMP_471(uint256) = HIGH_LEVEL_CALL, dest:assetManager(IAssetManager), function:getAssetPackPrice, arguments:['REF_277']  
+EXPRESSION:finalPrice += assetManager.getAssetPackPrice(pickedAssetPacks[i])	NodeType.EXPRESSION
+assetManager.buyAssetPack.value(assetManager.getAssetPackPrice(pickedAssetPacks[i]))(msg.sender,pickedAssetPacks[i])	NodeType.EXPRESSION" [shape=box];
+"BlockID: 794
+Call context: 
+None
+REF_278(uint256) -> pickedAssetPacks[i]
+HIGH_LEVEL_CALL, dest:assetManager(IAssetManager), function:buyAssetPack, arguments:['msg.sender', 'REF_278'] value:TMP_471 
+EXPRESSION:assetManager.buyAssetPack.value(assetManager.getAssetPackPrice(pickedAssetPacks[i]))(msg.sender,pickedAssetPacks[i])	NodeType.EXPRESSION" [shape=box];
+"BlockID: 796
+Call context: 
+None
+REF_264 -> LENGTH _potentialAssets
+TMP_457(bool) = REF_264 <= 5
+CONDITION TMP_457
+EXPRESSION:TMP_457(bool) = REF_264 <= 5	NodeType.IF";
+"BlockID: 797
+Call context: 
+True
+TMP_458(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 798
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 799
+Call context: 
+None
+REF_265(address) -> usernameToAddress[_author]
+TMP_459(bool) = msg.sender == REF_265
+REF_266(bool) -> usernameExists[_author]
+TMP_460 = ! REF_266 
+TMP_461(bool) = TMP_459 || TMP_460
+CONDITION TMP_461
+EXPRESSION:TMP_461(bool) = TMP_459 || TMP_460	NodeType.IF";
+"BlockID: 800
+Call context: 
+True
+TMP_462(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 801
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 802
+Call context: 
+None
+TMP_475(bool) = msg.value >= finalPrice
+CONDITION TMP_475
+EXPRESSION:TMP_475(bool) = msg.value >= finalPrice	NodeType.IF";
+"BlockID: 803
+Call context: 
+True
+TMP_476(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 804
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 772
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 796
+Call context: 
+None
+REF_264 -> LENGTH _potentialAssets
+TMP_457(bool) = REF_264 <= 5
+CONDITION TMP_457
+EXPRESSION:TMP_457(bool) = REF_264 <= 5	NodeType.IF" [key=0];
+"BlockID: 775
+Call context: 
+True
+REF_267(bool) -> usernameExists[_author]
+TMP_463 = ! REF_267 
+CONDITION TMP_463
+EXPRESSION:! usernameExists[_author]	NodeType.IF" -> "BlockID: 776
+Call context: 
+True
+TMP_464 = CONVERT 0 to bytes32
+INTERNAL_CALL, UserManager.register(string,bytes32)(_author,TMP_464)
+EXPRESSION:register(_author,bytes32(0))	NodeType.EXPRESSION" [key=0];
+"BlockID: 775
+Call context: 
+True
+REF_267(bool) -> usernameExists[_author]
+TMP_463 = ! REF_267 
+CONDITION TMP_463
+EXPRESSION:! usernameExists[_author]	NodeType.IF" -> "BlockID: 778
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 776
+Call context: 
+True
+TMP_464 = CONVERT 0 to bytes32
+INTERNAL_CALL, UserManager.register(string,bytes32)(_author,TMP_464)
+EXPRESSION:register(_author,bytes32(0))	NodeType.EXPRESSION" -> "BlockID: 778
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 778
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 779
+Call context: 
+None
+NEW VARIABLE pickedAssets
+NEW VARIABLE finalSeed
+TUPLE_1(uint256[],uint256) = INTERNAL_CALL, DigitalPrintImage.getPickedAssetsAndFinalSeed(bytes32[],uint256[],uint256,uint256)(_potentialAssets,_randomHashIds,_timestamp,_iterations)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(pickedAssets,finalSeed) = getPickedAssetsAndFinalSeed(_potentialAssets,_randomHashIds,_timestamp,_iterations)	NodeType.EXPRESSION" [key=0];
+"BlockID: 779
+Call context: 
+None
+NEW VARIABLE pickedAssets
+NEW VARIABLE finalSeed
+TUPLE_1(uint256[],uint256) = INTERNAL_CALL, DigitalPrintImage.getPickedAssetsAndFinalSeed(bytes32[],uint256[],uint256,uint256)(_potentialAssets,_randomHashIds,_timestamp,_iterations)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(pickedAssets,finalSeed) = getPickedAssetsAndFinalSeed(_potentialAssets,_randomHashIds,_timestamp,_iterations)	NodeType.EXPRESSION" -> "BlockID: 780
+Call context: 
+None
+pickedAssets(uint256[])= UNPACK TUPLE_1 index: 0 
+finalSeed(uint256)= UNPACK TUPLE_1 index: 1 
+TMP_466(uint256[]) = HIGH_LEVEL_CALL, dest:assetManager(IAssetManager), function:pickUniquePacks, arguments:['pickedAssets']  
+EXPRESSION:(pickedAssets,finalSeed) = getPickedAssetsAndFinalSeed(_potentialAssets,_randomHashIds,_timestamp,_iterations)	NodeType.EXPRESSION" [key=0];
+"BlockID: 780
+Call context: 
+None
+pickedAssets(uint256[])= UNPACK TUPLE_1 index: 0 
+finalSeed(uint256)= UNPACK TUPLE_1 index: 1 
+TMP_466(uint256[]) = HIGH_LEVEL_CALL, dest:assetManager(IAssetManager), function:pickUniquePacks, arguments:['pickedAssets']  
+EXPRESSION:(pickedAssets,finalSeed) = getPickedAssetsAndFinalSeed(_potentialAssets,_randomHashIds,_timestamp,_iterations)	NodeType.EXPRESSION" -> "BlockID: 781
+Call context: 
+None
+pickedAssetPacks(uint256[]) =  ['TMP_466(uint256[])']
+finalPrice(uint256) := 0(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:pickedAssetPacks = assetManager.pickUniquePacks(pickedAssets)	NodeType.VARIABLE
+pickedAssetPacks = assetManager.pickUniquePacks(pickedAssets)	NodeType.EXPRESSION
+finalPrice = 0	NodeType.VARIABLE
+finalPrice = 0	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 781
+Call context: 
+None
+pickedAssetPacks(uint256[]) =  ['TMP_466(uint256[])']
+finalPrice(uint256) := 0(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:pickedAssetPacks = assetManager.pickUniquePacks(pickedAssets)	NodeType.VARIABLE
+pickedAssetPacks = assetManager.pickUniquePacks(pickedAssets)	NodeType.EXPRESSION
+finalPrice = 0	NodeType.VARIABLE
+finalPrice = 0	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" -> "BlockID: 782
+Call context: 
+None
+BEGIN_LOOP
+REF_269 -> LENGTH pickedAssetPacks
+TMP_467(bool) = i < REF_269
+CONDITION TMP_467
+EXPRESSION:None	NodeType.STARTLOOP
+i < pickedAssetPacks.length	NodeType.IFLOOP" [key=0];
+"BlockID: 782
+Call context: 
+None
+BEGIN_LOOP
+REF_269 -> LENGTH pickedAssetPacks
+TMP_467(bool) = i < REF_269
+CONDITION TMP_467
+EXPRESSION:None	NodeType.STARTLOOP
+i < pickedAssetPacks.length	NodeType.IFLOOP" -> "BlockID: 783
+Call context: 
+True
+REF_271(uint256) -> pickedAssetPacks[i]
+TMP_468(bool) = HIGH_LEVEL_CALL, dest:assetManager(IAssetManager), function:checkHasPermissionForPack, arguments:['msg.sender', 'REF_271']  
+EXPRESSION:assetManager.checkHasPermissionForPack(msg.sender,pickedAssetPacks[i]) == false	NodeType.EXPRESSION" [key=0];
+"BlockID: 782
+Call context: 
+None
+BEGIN_LOOP
+REF_269 -> LENGTH pickedAssetPacks
+TMP_467(bool) = i < REF_269
+CONDITION TMP_467
+EXPRESSION:None	NodeType.STARTLOOP
+i < pickedAssetPacks.length	NodeType.IFLOOP" -> "BlockID: 785
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 783
+Call context: 
+True
+REF_271(uint256) -> pickedAssetPacks[i]
+TMP_468(bool) = HIGH_LEVEL_CALL, dest:assetManager(IAssetManager), function:checkHasPermissionForPack, arguments:['msg.sender', 'REF_271']  
+EXPRESSION:assetManager.checkHasPermissionForPack(msg.sender,pickedAssetPacks[i]) == false	NodeType.EXPRESSION" -> "BlockID: 784
+Call context: 
+None
+TMP_469(bool) = TMP_468 == False
+CONDITION TMP_469
+EXPRESSION:assetManager.checkHasPermissionForPack(msg.sender,pickedAssetPacks[i]) == false	NodeType.IF" [key=0];
+"BlockID: 785
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 802
+Call context: 
+None
+TMP_475(bool) = msg.value >= finalPrice
+CONDITION TMP_475
+EXPRESSION:TMP_475(bool) = msg.value >= finalPrice	NodeType.IF" [key=0];
+"BlockID: 787
+Call context: 
+True
+TMP_477(uint256) = INTERNAL_CALL, ERC721Token.totalSupply()()
+EXPRESSION:" -> "BlockID: 788
+Call context: 
+None
+id(uint256) := TMP_477(uint256)
+INTERNAL_CALL, ERC721Token._mint(address,uint256)(msg.sender,id)
+EXPRESSION:id = totalSupply()	NodeType.VARIABLE
+id = totalSupply()	NodeType.EXPRESSION
+_mint(msg.sender,id)	NodeType.EXPRESSION" [key=0];
+"BlockID: 788
+Call context: 
+None
+id(uint256) := TMP_477(uint256)
+INTERNAL_CALL, ERC721Token._mint(address,uint256)(msg.sender,id)
+EXPRESSION:id = totalSupply()	NodeType.VARIABLE
+id = totalSupply()	NodeType.EXPRESSION
+_mint(msg.sender,id)	NodeType.EXPRESSION" -> "BlockID: 789
+Call context: 
+None
+REF_279(DigitalPrintImage.ImageMetadata) -> imageMetadata[id]
+TMP_479(DigitalPrintImage.ImageMetadata) = new ImageMetadata(finalSeed,_potentialAssets,_timestamp,msg.sender,_ipfsHash,_extraData)
+REF_279(DigitalPrintImage.ImageMetadata) (->imageMetadata) := TMP_479(DigitalPrintImage.ImageMetadata)
+REF_280(string) -> idToIpfsHash[id]
+REF_280(string) (->idToIpfsHash) := _ipfsHash(string)
+REF_281(bool) -> seedExists[finalSeed]
+REF_281(bool) (->seedExists) := True(bool)
+EXPRESSION:_mint(msg.sender,id)	NodeType.EXPRESSION
+imageMetadata[id] = ImageMetadata(finalSeed,_potentialAssets,_timestamp,msg.sender,_ipfsHash,_extraData)	NodeType.EXPRESSION
+idToIpfsHash[id] = _ipfsHash	NodeType.EXPRESSION
+seedExists[finalSeed] = true	NodeType.EXPRESSION" [key=0];
+"BlockID: 784
+Call context: 
+None
+TMP_469(bool) = TMP_468 == False
+CONDITION TMP_469
+EXPRESSION:assetManager.checkHasPermissionForPack(msg.sender,pickedAssetPacks[i]) == false	NodeType.IF" -> "BlockID: 790
+Call context: 
+True
+REF_273(uint256) -> pickedAssetPacks[i]
+TMP_470(uint256) = HIGH_LEVEL_CALL, dest:assetManager(IAssetManager), function:getAssetPackPrice, arguments:['REF_273']  
+EXPRESSION:finalPrice += assetManager.getAssetPackPrice(pickedAssetPacks[i])	NodeType.EXPRESSION" [key=0];
+"BlockID: 784
+Call context: 
+None
+TMP_469(bool) = TMP_468 == False
+CONDITION TMP_469
+EXPRESSION:assetManager.checkHasPermissionForPack(msg.sender,pickedAssetPacks[i]) == false	NodeType.IF" -> "BlockID: 792
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 790
+Call context: 
+True
+REF_273(uint256) -> pickedAssetPacks[i]
+TMP_470(uint256) = HIGH_LEVEL_CALL, dest:assetManager(IAssetManager), function:getAssetPackPrice, arguments:['REF_273']  
+EXPRESSION:finalPrice += assetManager.getAssetPackPrice(pickedAssetPacks[i])	NodeType.EXPRESSION" -> "BlockID: 791
+Call context: 
+None
+finalPrice(uint256) = finalPrice + TMP_470
+REF_277(uint256) -> pickedAssetPacks[i]
+TMP_471(uint256) = HIGH_LEVEL_CALL, dest:assetManager(IAssetManager), function:getAssetPackPrice, arguments:['REF_277']  
+EXPRESSION:finalPrice += assetManager.getAssetPackPrice(pickedAssetPacks[i])	NodeType.EXPRESSION
+assetManager.buyAssetPack.value(assetManager.getAssetPackPrice(pickedAssetPacks[i]))(msg.sender,pickedAssetPacks[i])	NodeType.EXPRESSION" [key=0];
+"BlockID: 792
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 793
+Call context: 
+None
+TMP_474(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:i ++	NodeType.EXPRESSION" [key=0];
+"BlockID: 793
+Call context: 
+None
+TMP_474(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:i ++	NodeType.EXPRESSION" -> "BlockID: 782
+Call context: 
+None
+BEGIN_LOOP
+REF_269 -> LENGTH pickedAssetPacks
+TMP_467(bool) = i < REF_269
+CONDITION TMP_467
+EXPRESSION:None	NodeType.STARTLOOP
+i < pickedAssetPacks.length	NodeType.IFLOOP" [key=0];
+"BlockID: 791
+Call context: 
+None
+finalPrice(uint256) = finalPrice + TMP_470
+REF_277(uint256) -> pickedAssetPacks[i]
+TMP_471(uint256) = HIGH_LEVEL_CALL, dest:assetManager(IAssetManager), function:getAssetPackPrice, arguments:['REF_277']  
+EXPRESSION:finalPrice += assetManager.getAssetPackPrice(pickedAssetPacks[i])	NodeType.EXPRESSION
+assetManager.buyAssetPack.value(assetManager.getAssetPackPrice(pickedAssetPacks[i]))(msg.sender,pickedAssetPacks[i])	NodeType.EXPRESSION" -> "BlockID: 794
+Call context: 
+None
+REF_278(uint256) -> pickedAssetPacks[i]
+HIGH_LEVEL_CALL, dest:assetManager(IAssetManager), function:buyAssetPack, arguments:['msg.sender', 'REF_278'] value:TMP_471 
+EXPRESSION:assetManager.buyAssetPack.value(assetManager.getAssetPackPrice(pickedAssetPacks[i]))(msg.sender,pickedAssetPacks[i])	NodeType.EXPRESSION" [key=0];
+"BlockID: 794
+Call context: 
+None
+REF_278(uint256) -> pickedAssetPacks[i]
+HIGH_LEVEL_CALL, dest:assetManager(IAssetManager), function:buyAssetPack, arguments:['msg.sender', 'REF_278'] value:TMP_471 
+EXPRESSION:assetManager.buyAssetPack.value(assetManager.getAssetPackPrice(pickedAssetPacks[i]))(msg.sender,pickedAssetPacks[i])	NodeType.EXPRESSION" -> "BlockID: 792
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 796
+Call context: 
+None
+REF_264 -> LENGTH _potentialAssets
+TMP_457(bool) = REF_264 <= 5
+CONDITION TMP_457
+EXPRESSION:TMP_457(bool) = REF_264 <= 5	NodeType.IF" -> "BlockID: 797
+Call context: 
+True
+TMP_458(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 796
+Call context: 
+None
+REF_264 -> LENGTH _potentialAssets
+TMP_457(bool) = REF_264 <= 5
+CONDITION TMP_457
+EXPRESSION:TMP_457(bool) = REF_264 <= 5	NodeType.IF" -> "BlockID: 798
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 798
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 799
+Call context: 
+None
+REF_265(address) -> usernameToAddress[_author]
+TMP_459(bool) = msg.sender == REF_265
+REF_266(bool) -> usernameExists[_author]
+TMP_460 = ! REF_266 
+TMP_461(bool) = TMP_459 || TMP_460
+CONDITION TMP_461
+EXPRESSION:TMP_461(bool) = TMP_459 || TMP_460	NodeType.IF" [key=0];
+"BlockID: 799
+Call context: 
+None
+REF_265(address) -> usernameToAddress[_author]
+TMP_459(bool) = msg.sender == REF_265
+REF_266(bool) -> usernameExists[_author]
+TMP_460 = ! REF_266 
+TMP_461(bool) = TMP_459 || TMP_460
+CONDITION TMP_461
+EXPRESSION:TMP_461(bool) = TMP_459 || TMP_460	NodeType.IF" -> "BlockID: 800
+Call context: 
+True
+TMP_462(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 799
+Call context: 
+None
+REF_265(address) -> usernameToAddress[_author]
+TMP_459(bool) = msg.sender == REF_265
+REF_266(bool) -> usernameExists[_author]
+TMP_460 = ! REF_266 
+TMP_461(bool) = TMP_459 || TMP_460
+CONDITION TMP_461
+EXPRESSION:TMP_461(bool) = TMP_459 || TMP_460	NodeType.IF" -> "BlockID: 801
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 801
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 775
+Call context: 
+True
+REF_267(bool) -> usernameExists[_author]
+TMP_463 = ! REF_267 
+CONDITION TMP_463
+EXPRESSION:! usernameExists[_author]	NodeType.IF" [key=0];
+"BlockID: 802
+Call context: 
+None
+TMP_475(bool) = msg.value >= finalPrice
+CONDITION TMP_475
+EXPRESSION:TMP_475(bool) = msg.value >= finalPrice	NodeType.IF" -> "BlockID: 803
+Call context: 
+True
+TMP_476(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 802
+Call context: 
+None
+TMP_475(bool) = msg.value >= finalPrice
+CONDITION TMP_475
+EXPRESSION:TMP_475(bool) = msg.value >= finalPrice	NodeType.IF" -> "BlockID: 804
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 804
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 787
+Call context: 
+True
+TMP_477(uint256) = INTERNAL_CALL, ERC721Token.totalSupply()()
+EXPRESSION:" [key=0];
+}

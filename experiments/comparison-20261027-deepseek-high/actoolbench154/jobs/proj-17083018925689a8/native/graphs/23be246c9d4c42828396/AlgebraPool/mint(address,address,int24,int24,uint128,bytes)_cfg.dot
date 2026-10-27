@@ -1,0 +1,1095 @@
+digraph {
+"BlockID: 2936
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 2937
+Call context: 
+None
+MODIFIER_CALL, PoolState.lock()()
+EXPRESSION:lock()	NodeType.EXPRESSION";
+"BlockID: 2938
+Call context: 
+None
+MODIFIER_CALL, AlgebraPool.onlyValidTicks(int24,int24)(bottomTick,topTick)
+EXPRESSION:lock()	NodeType.EXPRESSION
+onlyValidTicks(bottomTick,topTick)	NodeType.EXPRESSION";
+"BlockID: 2940
+Call context: 
+True
+NEW VARIABLE amount0Int
+NEW VARIABLE amount1Int
+TMP_2317 = CONVERT liquidityDesired to int256
+TMP_2318(int128) = LIBRARY_CALL, dest:SafeCast, function:SafeCast.toInt128(int256), arguments:['TMP_2317'] 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0Int,amount1Int) = _getAmountsForLiquidity(bottomTick,topTick,int256(liquidityDesired).toInt128(),globalState.tick,globalState.price)	NodeType.EXPRESSION";
+"BlockID: 2941
+Call context: 
+None
+REF_1138(int24) -> globalState.tick
+REF_1139(uint160) -> globalState.price
+TUPLE_62(int256,int256,int128) = INTERNAL_CALL, AlgebraPool._getAmountsForLiquidity(int24,int24,int128,int24,uint160)(bottomTick,topTick,TMP_2318,REF_1138,REF_1139)
+EXPRESSION:(amount0Int,amount1Int) = _getAmountsForLiquidity(bottomTick,topTick,int256(liquidityDesired).toInt128(),globalState.tick,globalState.price)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2942
+Call context: 
+None
+amount0Int(int256)= UNPACK TUPLE_62 index: 0 
+amount1Int(int256)= UNPACK TUPLE_62 index: 1 
+TMP_2319 = CONVERT amount0Int to uint256
+amount0(uint256) := TMP_2319(uint256)
+TMP_2320 = CONVERT amount1Int to uint256
+amount1(uint256) := TMP_2320(uint256)
+NEW VARIABLE receivedAmount0
+NEW VARIABLE receivedAmount1
+TMP_2321(bool) = amount0 > 0
+CONDITION TMP_2321
+EXPRESSION:(amount0Int,amount1Int) = _getAmountsForLiquidity(bottomTick,topTick,int256(liquidityDesired).toInt128(),globalState.tick,globalState.price)	NodeType.EXPRESSION
+amount0 = uint256(amount0Int)	NodeType.EXPRESSION
+amount1 = uint256(amount1Int)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+amount0 > 0	NodeType.IF" [shape=box];
+"BlockID: 2943
+Call context: 
+True
+TMP_2322(uint256) = INTERNAL_CALL, AlgebraPool.balanceToken0()()
+EXPRESSION:receivedAmount0 = balanceToken0()	NodeType.EXPRESSION";
+"BlockID: 2945
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2946
+Call context: 
+None
+TMP_2323(bool) = amount1 > 0
+CONDITION TMP_2323
+EXPRESSION:amount1 > 0	NodeType.IF";
+"BlockID: 2947
+Call context: 
+True
+TMP_2324(uint256) = INTERNAL_CALL, AlgebraPool.balanceToken1()()
+EXPRESSION:receivedAmount1 = balanceToken1()	NodeType.EXPRESSION";
+"BlockID: 2949
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2950
+Call context: 
+None
+TMP_2325 = CONVERT msg.sender to IAlgebraMintCallback
+HIGH_LEVEL_CALL, dest:TMP_2325(IAlgebraMintCallback), function:algebraMintCallback, arguments:['amount0', 'amount1', 'data']  
+EXPRESSION:IAlgebraMintCallback(msg.sender).algebraMintCallback(amount0,amount1,data)	NodeType.EXPRESSION";
+"BlockID: 2951
+Call context: 
+None
+TMP_2327(bool) = amount0 > 0
+CONDITION TMP_2327
+EXPRESSION:IAlgebraMintCallback(msg.sender).algebraMintCallback(amount0,amount1,data)	NodeType.EXPRESSION
+amount0 > 0	NodeType.IF";
+"BlockID: 2952
+Call context: 
+True
+TMP_2328(uint256) = INTERNAL_CALL, AlgebraPool.balanceToken0()()
+EXPRESSION:require(bool,string)((receivedAmount0 = balanceToken0() - receivedAmount0) > 0,IIAM)	NodeType.EXPRESSION";
+"BlockID: 2954
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2955
+Call context: 
+None
+TMP_2332(bool) = amount1 > 0
+CONDITION TMP_2332
+EXPRESSION:amount1 > 0	NodeType.IF";
+"BlockID: 2956
+Call context: 
+True
+TMP_2333(uint256) = INTERNAL_CALL, AlgebraPool.balanceToken1()()
+EXPRESSION:require(bool,string)((receivedAmount1 = balanceToken1() - receivedAmount1) > 0,IIAM)	NodeType.EXPRESSION";
+"BlockID: 2958
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2959
+Call context: 
+None
+liquidityActual(uint128) := liquidityDesired(uint128)
+TMP_2337(bool) = receivedAmount0 < amount0
+CONDITION TMP_2337
+EXPRESSION:liquidityActual = liquidityDesired	NodeType.EXPRESSION
+receivedAmount0 < amount0	NodeType.IF";
+"BlockID: 2960
+Call context: 
+True
+TMP_2338 = CONVERT liquidityActual to uint256
+TMP_2339(uint256) = LIBRARY_CALL, dest:FullMath, function:FullMath.mulDiv(uint256,uint256,uint256), arguments:['TMP_2338', 'receivedAmount0', 'amount0'] 
+EXPRESSION:liquidityActual = uint128(FullMath.mulDiv(uint256(liquidityActual),receivedAmount0,amount0))	NodeType.EXPRESSION";
+"BlockID: 2962
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2963
+Call context: 
+None
+TMP_2341(bool) = receivedAmount1 < amount1
+CONDITION TMP_2341
+EXPRESSION:receivedAmount1 < amount1	NodeType.IF";
+"BlockID: 2964
+Call context: 
+True
+TMP_2342 = CONVERT liquidityActual to uint256
+TMP_2343(uint256) = LIBRARY_CALL, dest:FullMath, function:FullMath.mulDiv(uint256,uint256,uint256), arguments:['TMP_2342', 'receivedAmount1', 'amount1'] 
+EXPRESSION:";
+"BlockID: 2966
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2968
+Call context: 
+True
+NEW VARIABLE amount0Int_scope_0
+NEW VARIABLE amount1Int_scope_1
+TMP_2348 = CONVERT liquidityActual to int256
+TMP_2349(int128) = LIBRARY_CALL, dest:SafeCast, function:SafeCast.toInt128(int256), arguments:['TMP_2348'] 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0Int_scope_0,amount1Int_scope_1) = _updatePositionTicksAndFees(recipient,bottomTick,topTick,int256(liquidityActual).toInt128())	NodeType.EXPRESSION";
+"BlockID: 2969
+Call context: 
+None
+TUPLE_63(AlgebraPool.Position,int256,int256) = INTERNAL_CALL, AlgebraPool._updatePositionTicksAndFees(address,int24,int24,int128)(recipient,bottomTick,topTick,TMP_2349)
+EXPRESSION:(amount0Int_scope_0,amount1Int_scope_1) = _updatePositionTicksAndFees(recipient,bottomTick,topTick,int256(liquidityActual).toInt128())	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2972
+Call context: 
+True
+TMP_2356(bool) = receivedAmount0 > amount0
+CONDITION TMP_2356
+EXPRESSION:receivedAmount0 > amount0	NodeType.IF";
+"BlockID: 2973
+Call context: 
+True
+TMP_2357(uint256) = receivedAmount0 - amount0
+LIBRARY_CALL, dest:TransferHelper, function:TransferHelper.safeTransfer(address,address,uint256), arguments:['token0', 'sender', 'TMP_2357'] 
+EXPRESSION:TransferHelper.safeTransfer(token0,sender,receivedAmount0 - amount0)	NodeType.EXPRESSION";
+"BlockID: 2975
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2976
+Call context: 
+None
+TMP_2359(bool) = receivedAmount1 > amount1
+CONDITION TMP_2359
+EXPRESSION:receivedAmount1 > amount1	NodeType.IF";
+"BlockID: 2977
+Call context: 
+True
+TMP_2360(uint256) = receivedAmount1 - amount1
+LIBRARY_CALL, dest:TransferHelper, function:TransferHelper.safeTransfer(address,address,uint256), arguments:['token1', 'sender', 'TMP_2360'] 
+EXPRESSION:TransferHelper.safeTransfer(token1,sender,receivedAmount1 - amount1)	NodeType.EXPRESSION";
+"BlockID: 2979
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2965
+Call context: 
+None
+TMP_2344 = CONVERT TMP_2343 to uint128
+liquidityForRA1(uint128) := TMP_2344(uint128)
+TMP_2345(bool) = liquidityForRA1 < liquidityActual
+CONDITION TMP_2345
+EXPRESSION:liquidityForRA1 = uint128(FullMath.mulDiv(uint256(liquidityActual),receivedAmount1,amount1))	NodeType.VARIABLE
+liquidityForRA1 = uint128(FullMath.mulDiv(uint256(liquidityActual),receivedAmount1,amount1))	NodeType.EXPRESSION
+liquidityForRA1 < liquidityActual	NodeType.IF" [shape=box];
+"BlockID: 2981
+Call context: 
+True
+liquidityActual(uint128) := liquidityForRA1(uint128)
+EXPRESSION:liquidityActual = liquidityForRA1	NodeType.EXPRESSION";
+"BlockID: 2982
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2961
+Call context: 
+None
+TMP_2340 = CONVERT TMP_2339 to uint128
+liquidityActual(uint128) := TMP_2340(uint128)
+EXPRESSION:liquidityActual = uint128(FullMath.mulDiv(uint256(liquidityActual),receivedAmount0,amount0))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2948
+Call context: 
+None
+receivedAmount1(uint256) := TMP_2324(uint256)
+EXPRESSION:receivedAmount1 = balanceToken1()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2944
+Call context: 
+None
+receivedAmount0(uint256) := TMP_2322(uint256)
+EXPRESSION:receivedAmount0 = balanceToken0()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2984
+Call context: 
+None
+TMP_2315(bool) = liquidityDesired > 0
+CONDITION TMP_2315
+EXPRESSION:TMP_2315(bool) = liquidityDesired > 0	NodeType.IF";
+"BlockID: 2985
+Call context: 
+True
+TMP_2316(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 2986
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2987
+Call context: 
+None
+TMP_2346(bool) = liquidityActual > 0
+CONDITION TMP_2346
+EXPRESSION:TMP_2346(bool) = liquidityActual > 0	NodeType.IF";
+"BlockID: 2988
+Call context: 
+True
+TMP_2347(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 2989
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2990
+Call context: 
+None
+amount0Int_scope_0(int256)= UNPACK TUPLE_63 index: 1 
+amount1Int_scope_1(int256)= UNPACK TUPLE_63 index: 2 
+TMP_2350 = CONVERT amount0Int_scope_0 to uint256
+amount0(uint256) := TMP_2350(uint256)
+TMP_2351(bool) = amount0 <= receivedAmount0
+CONDITION TMP_2351
+EXPRESSION:TMP_2351(bool) = amount0 <= receivedAmount0	NodeType.IF";
+"BlockID: 2991
+Call context: 
+True
+TMP_2352(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 2992
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2993
+Call context: 
+None
+TMP_2353 = CONVERT amount1Int_scope_1 to uint256
+amount1(uint256) := TMP_2353(uint256)
+TMP_2354(bool) = amount1 <= receivedAmount1
+CONDITION TMP_2354
+EXPRESSION:TMP_2354(bool) = amount1 <= receivedAmount1	NodeType.IF";
+"BlockID: 2994
+Call context: 
+True
+TMP_2355(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 2995
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2996
+Call context: 
+None
+TMP_2334(uint256) = TMP_2333 - receivedAmount1
+receivedAmount1(uint256) := TMP_2334(uint256)
+TMP_2335(bool) = receivedAmount1 > 0
+CONDITION TMP_2335
+EXPRESSION:TMP_2335(bool) = receivedAmount1 > 0	NodeType.IF";
+"BlockID: 2997
+Call context: 
+True
+TMP_2336(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 2998
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2999
+Call context: 
+None
+TMP_2329(uint256) = TMP_2328 - receivedAmount0
+receivedAmount0(uint256) := TMP_2329(uint256)
+TMP_2330(bool) = receivedAmount0 > 0
+CONDITION TMP_2330
+EXPRESSION:TMP_2330(bool) = receivedAmount0 > 0	NodeType.IF";
+"BlockID: 3000
+Call context: 
+True
+TMP_2331(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 3001
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2936
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 2937
+Call context: 
+None
+MODIFIER_CALL, PoolState.lock()()
+EXPRESSION:lock()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2937
+Call context: 
+None
+MODIFIER_CALL, PoolState.lock()()
+EXPRESSION:lock()	NodeType.EXPRESSION" -> "BlockID: 2938
+Call context: 
+None
+MODIFIER_CALL, AlgebraPool.onlyValidTicks(int24,int24)(bottomTick,topTick)
+EXPRESSION:lock()	NodeType.EXPRESSION
+onlyValidTicks(bottomTick,topTick)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2938
+Call context: 
+None
+MODIFIER_CALL, AlgebraPool.onlyValidTicks(int24,int24)(bottomTick,topTick)
+EXPRESSION:lock()	NodeType.EXPRESSION
+onlyValidTicks(bottomTick,topTick)	NodeType.EXPRESSION" -> "BlockID: 2984
+Call context: 
+None
+TMP_2315(bool) = liquidityDesired > 0
+CONDITION TMP_2315
+EXPRESSION:TMP_2315(bool) = liquidityDesired > 0	NodeType.IF" [key=0];
+"BlockID: 2940
+Call context: 
+True
+NEW VARIABLE amount0Int
+NEW VARIABLE amount1Int
+TMP_2317 = CONVERT liquidityDesired to int256
+TMP_2318(int128) = LIBRARY_CALL, dest:SafeCast, function:SafeCast.toInt128(int256), arguments:['TMP_2317'] 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0Int,amount1Int) = _getAmountsForLiquidity(bottomTick,topTick,int256(liquidityDesired).toInt128(),globalState.tick,globalState.price)	NodeType.EXPRESSION" -> "BlockID: 2941
+Call context: 
+None
+REF_1138(int24) -> globalState.tick
+REF_1139(uint160) -> globalState.price
+TUPLE_62(int256,int256,int128) = INTERNAL_CALL, AlgebraPool._getAmountsForLiquidity(int24,int24,int128,int24,uint160)(bottomTick,topTick,TMP_2318,REF_1138,REF_1139)
+EXPRESSION:(amount0Int,amount1Int) = _getAmountsForLiquidity(bottomTick,topTick,int256(liquidityDesired).toInt128(),globalState.tick,globalState.price)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2941
+Call context: 
+None
+REF_1138(int24) -> globalState.tick
+REF_1139(uint160) -> globalState.price
+TUPLE_62(int256,int256,int128) = INTERNAL_CALL, AlgebraPool._getAmountsForLiquidity(int24,int24,int128,int24,uint160)(bottomTick,topTick,TMP_2318,REF_1138,REF_1139)
+EXPRESSION:(amount0Int,amount1Int) = _getAmountsForLiquidity(bottomTick,topTick,int256(liquidityDesired).toInt128(),globalState.tick,globalState.price)	NodeType.EXPRESSION" -> "BlockID: 2942
+Call context: 
+None
+amount0Int(int256)= UNPACK TUPLE_62 index: 0 
+amount1Int(int256)= UNPACK TUPLE_62 index: 1 
+TMP_2319 = CONVERT amount0Int to uint256
+amount0(uint256) := TMP_2319(uint256)
+TMP_2320 = CONVERT amount1Int to uint256
+amount1(uint256) := TMP_2320(uint256)
+NEW VARIABLE receivedAmount0
+NEW VARIABLE receivedAmount1
+TMP_2321(bool) = amount0 > 0
+CONDITION TMP_2321
+EXPRESSION:(amount0Int,amount1Int) = _getAmountsForLiquidity(bottomTick,topTick,int256(liquidityDesired).toInt128(),globalState.tick,globalState.price)	NodeType.EXPRESSION
+amount0 = uint256(amount0Int)	NodeType.EXPRESSION
+amount1 = uint256(amount1Int)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+amount0 > 0	NodeType.IF" [key=0];
+"BlockID: 2942
+Call context: 
+None
+amount0Int(int256)= UNPACK TUPLE_62 index: 0 
+amount1Int(int256)= UNPACK TUPLE_62 index: 1 
+TMP_2319 = CONVERT amount0Int to uint256
+amount0(uint256) := TMP_2319(uint256)
+TMP_2320 = CONVERT amount1Int to uint256
+amount1(uint256) := TMP_2320(uint256)
+NEW VARIABLE receivedAmount0
+NEW VARIABLE receivedAmount1
+TMP_2321(bool) = amount0 > 0
+CONDITION TMP_2321
+EXPRESSION:(amount0Int,amount1Int) = _getAmountsForLiquidity(bottomTick,topTick,int256(liquidityDesired).toInt128(),globalState.tick,globalState.price)	NodeType.EXPRESSION
+amount0 = uint256(amount0Int)	NodeType.EXPRESSION
+amount1 = uint256(amount1Int)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+amount0 > 0	NodeType.IF" -> "BlockID: 2943
+Call context: 
+True
+TMP_2322(uint256) = INTERNAL_CALL, AlgebraPool.balanceToken0()()
+EXPRESSION:receivedAmount0 = balanceToken0()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2942
+Call context: 
+None
+amount0Int(int256)= UNPACK TUPLE_62 index: 0 
+amount1Int(int256)= UNPACK TUPLE_62 index: 1 
+TMP_2319 = CONVERT amount0Int to uint256
+amount0(uint256) := TMP_2319(uint256)
+TMP_2320 = CONVERT amount1Int to uint256
+amount1(uint256) := TMP_2320(uint256)
+NEW VARIABLE receivedAmount0
+NEW VARIABLE receivedAmount1
+TMP_2321(bool) = amount0 > 0
+CONDITION TMP_2321
+EXPRESSION:(amount0Int,amount1Int) = _getAmountsForLiquidity(bottomTick,topTick,int256(liquidityDesired).toInt128(),globalState.tick,globalState.price)	NodeType.EXPRESSION
+amount0 = uint256(amount0Int)	NodeType.EXPRESSION
+amount1 = uint256(amount1Int)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+amount0 > 0	NodeType.IF" -> "BlockID: 2945
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2943
+Call context: 
+True
+TMP_2322(uint256) = INTERNAL_CALL, AlgebraPool.balanceToken0()()
+EXPRESSION:receivedAmount0 = balanceToken0()	NodeType.EXPRESSION" -> "BlockID: 2944
+Call context: 
+None
+receivedAmount0(uint256) := TMP_2322(uint256)
+EXPRESSION:receivedAmount0 = balanceToken0()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2945
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2946
+Call context: 
+None
+TMP_2323(bool) = amount1 > 0
+CONDITION TMP_2323
+EXPRESSION:amount1 > 0	NodeType.IF" [key=0];
+"BlockID: 2946
+Call context: 
+None
+TMP_2323(bool) = amount1 > 0
+CONDITION TMP_2323
+EXPRESSION:amount1 > 0	NodeType.IF" -> "BlockID: 2947
+Call context: 
+True
+TMP_2324(uint256) = INTERNAL_CALL, AlgebraPool.balanceToken1()()
+EXPRESSION:receivedAmount1 = balanceToken1()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2946
+Call context: 
+None
+TMP_2323(bool) = amount1 > 0
+CONDITION TMP_2323
+EXPRESSION:amount1 > 0	NodeType.IF" -> "BlockID: 2949
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2947
+Call context: 
+True
+TMP_2324(uint256) = INTERNAL_CALL, AlgebraPool.balanceToken1()()
+EXPRESSION:receivedAmount1 = balanceToken1()	NodeType.EXPRESSION" -> "BlockID: 2948
+Call context: 
+None
+receivedAmount1(uint256) := TMP_2324(uint256)
+EXPRESSION:receivedAmount1 = balanceToken1()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2949
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2950
+Call context: 
+None
+TMP_2325 = CONVERT msg.sender to IAlgebraMintCallback
+HIGH_LEVEL_CALL, dest:TMP_2325(IAlgebraMintCallback), function:algebraMintCallback, arguments:['amount0', 'amount1', 'data']  
+EXPRESSION:IAlgebraMintCallback(msg.sender).algebraMintCallback(amount0,amount1,data)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2950
+Call context: 
+None
+TMP_2325 = CONVERT msg.sender to IAlgebraMintCallback
+HIGH_LEVEL_CALL, dest:TMP_2325(IAlgebraMintCallback), function:algebraMintCallback, arguments:['amount0', 'amount1', 'data']  
+EXPRESSION:IAlgebraMintCallback(msg.sender).algebraMintCallback(amount0,amount1,data)	NodeType.EXPRESSION" -> "BlockID: 2951
+Call context: 
+None
+TMP_2327(bool) = amount0 > 0
+CONDITION TMP_2327
+EXPRESSION:IAlgebraMintCallback(msg.sender).algebraMintCallback(amount0,amount1,data)	NodeType.EXPRESSION
+amount0 > 0	NodeType.IF" [key=0];
+"BlockID: 2951
+Call context: 
+None
+TMP_2327(bool) = amount0 > 0
+CONDITION TMP_2327
+EXPRESSION:IAlgebraMintCallback(msg.sender).algebraMintCallback(amount0,amount1,data)	NodeType.EXPRESSION
+amount0 > 0	NodeType.IF" -> "BlockID: 2952
+Call context: 
+True
+TMP_2328(uint256) = INTERNAL_CALL, AlgebraPool.balanceToken0()()
+EXPRESSION:require(bool,string)((receivedAmount0 = balanceToken0() - receivedAmount0) > 0,IIAM)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2951
+Call context: 
+None
+TMP_2327(bool) = amount0 > 0
+CONDITION TMP_2327
+EXPRESSION:IAlgebraMintCallback(msg.sender).algebraMintCallback(amount0,amount1,data)	NodeType.EXPRESSION
+amount0 > 0	NodeType.IF" -> "BlockID: 2954
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2952
+Call context: 
+True
+TMP_2328(uint256) = INTERNAL_CALL, AlgebraPool.balanceToken0()()
+EXPRESSION:require(bool,string)((receivedAmount0 = balanceToken0() - receivedAmount0) > 0,IIAM)	NodeType.EXPRESSION" -> "BlockID: 2999
+Call context: 
+None
+TMP_2329(uint256) = TMP_2328 - receivedAmount0
+receivedAmount0(uint256) := TMP_2329(uint256)
+TMP_2330(bool) = receivedAmount0 > 0
+CONDITION TMP_2330
+EXPRESSION:TMP_2330(bool) = receivedAmount0 > 0	NodeType.IF" [key=0];
+"BlockID: 2954
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2955
+Call context: 
+None
+TMP_2332(bool) = amount1 > 0
+CONDITION TMP_2332
+EXPRESSION:amount1 > 0	NodeType.IF" [key=0];
+"BlockID: 2955
+Call context: 
+None
+TMP_2332(bool) = amount1 > 0
+CONDITION TMP_2332
+EXPRESSION:amount1 > 0	NodeType.IF" -> "BlockID: 2956
+Call context: 
+True
+TMP_2333(uint256) = INTERNAL_CALL, AlgebraPool.balanceToken1()()
+EXPRESSION:require(bool,string)((receivedAmount1 = balanceToken1() - receivedAmount1) > 0,IIAM)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2955
+Call context: 
+None
+TMP_2332(bool) = amount1 > 0
+CONDITION TMP_2332
+EXPRESSION:amount1 > 0	NodeType.IF" -> "BlockID: 2958
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2956
+Call context: 
+True
+TMP_2333(uint256) = INTERNAL_CALL, AlgebraPool.balanceToken1()()
+EXPRESSION:require(bool,string)((receivedAmount1 = balanceToken1() - receivedAmount1) > 0,IIAM)	NodeType.EXPRESSION" -> "BlockID: 2996
+Call context: 
+None
+TMP_2334(uint256) = TMP_2333 - receivedAmount1
+receivedAmount1(uint256) := TMP_2334(uint256)
+TMP_2335(bool) = receivedAmount1 > 0
+CONDITION TMP_2335
+EXPRESSION:TMP_2335(bool) = receivedAmount1 > 0	NodeType.IF" [key=0];
+"BlockID: 2958
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2959
+Call context: 
+None
+liquidityActual(uint128) := liquidityDesired(uint128)
+TMP_2337(bool) = receivedAmount0 < amount0
+CONDITION TMP_2337
+EXPRESSION:liquidityActual = liquidityDesired	NodeType.EXPRESSION
+receivedAmount0 < amount0	NodeType.IF" [key=0];
+"BlockID: 2959
+Call context: 
+None
+liquidityActual(uint128) := liquidityDesired(uint128)
+TMP_2337(bool) = receivedAmount0 < amount0
+CONDITION TMP_2337
+EXPRESSION:liquidityActual = liquidityDesired	NodeType.EXPRESSION
+receivedAmount0 < amount0	NodeType.IF" -> "BlockID: 2960
+Call context: 
+True
+TMP_2338 = CONVERT liquidityActual to uint256
+TMP_2339(uint256) = LIBRARY_CALL, dest:FullMath, function:FullMath.mulDiv(uint256,uint256,uint256), arguments:['TMP_2338', 'receivedAmount0', 'amount0'] 
+EXPRESSION:liquidityActual = uint128(FullMath.mulDiv(uint256(liquidityActual),receivedAmount0,amount0))	NodeType.EXPRESSION" [key=0];
+"BlockID: 2959
+Call context: 
+None
+liquidityActual(uint128) := liquidityDesired(uint128)
+TMP_2337(bool) = receivedAmount0 < amount0
+CONDITION TMP_2337
+EXPRESSION:liquidityActual = liquidityDesired	NodeType.EXPRESSION
+receivedAmount0 < amount0	NodeType.IF" -> "BlockID: 2962
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2960
+Call context: 
+True
+TMP_2338 = CONVERT liquidityActual to uint256
+TMP_2339(uint256) = LIBRARY_CALL, dest:FullMath, function:FullMath.mulDiv(uint256,uint256,uint256), arguments:['TMP_2338', 'receivedAmount0', 'amount0'] 
+EXPRESSION:liquidityActual = uint128(FullMath.mulDiv(uint256(liquidityActual),receivedAmount0,amount0))	NodeType.EXPRESSION" -> "BlockID: 2961
+Call context: 
+None
+TMP_2340 = CONVERT TMP_2339 to uint128
+liquidityActual(uint128) := TMP_2340(uint128)
+EXPRESSION:liquidityActual = uint128(FullMath.mulDiv(uint256(liquidityActual),receivedAmount0,amount0))	NodeType.EXPRESSION" [key=0];
+"BlockID: 2962
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2963
+Call context: 
+None
+TMP_2341(bool) = receivedAmount1 < amount1
+CONDITION TMP_2341
+EXPRESSION:receivedAmount1 < amount1	NodeType.IF" [key=0];
+"BlockID: 2963
+Call context: 
+None
+TMP_2341(bool) = receivedAmount1 < amount1
+CONDITION TMP_2341
+EXPRESSION:receivedAmount1 < amount1	NodeType.IF" -> "BlockID: 2964
+Call context: 
+True
+TMP_2342 = CONVERT liquidityActual to uint256
+TMP_2343(uint256) = LIBRARY_CALL, dest:FullMath, function:FullMath.mulDiv(uint256,uint256,uint256), arguments:['TMP_2342', 'receivedAmount1', 'amount1'] 
+EXPRESSION:" [key=0];
+"BlockID: 2963
+Call context: 
+None
+TMP_2341(bool) = receivedAmount1 < amount1
+CONDITION TMP_2341
+EXPRESSION:receivedAmount1 < amount1	NodeType.IF" -> "BlockID: 2966
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2964
+Call context: 
+True
+TMP_2342 = CONVERT liquidityActual to uint256
+TMP_2343(uint256) = LIBRARY_CALL, dest:FullMath, function:FullMath.mulDiv(uint256,uint256,uint256), arguments:['TMP_2342', 'receivedAmount1', 'amount1'] 
+EXPRESSION:" -> "BlockID: 2965
+Call context: 
+None
+TMP_2344 = CONVERT TMP_2343 to uint128
+liquidityForRA1(uint128) := TMP_2344(uint128)
+TMP_2345(bool) = liquidityForRA1 < liquidityActual
+CONDITION TMP_2345
+EXPRESSION:liquidityForRA1 = uint128(FullMath.mulDiv(uint256(liquidityActual),receivedAmount1,amount1))	NodeType.VARIABLE
+liquidityForRA1 = uint128(FullMath.mulDiv(uint256(liquidityActual),receivedAmount1,amount1))	NodeType.EXPRESSION
+liquidityForRA1 < liquidityActual	NodeType.IF" [key=0];
+"BlockID: 2966
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2987
+Call context: 
+None
+TMP_2346(bool) = liquidityActual > 0
+CONDITION TMP_2346
+EXPRESSION:TMP_2346(bool) = liquidityActual > 0	NodeType.IF" [key=0];
+"BlockID: 2968
+Call context: 
+True
+NEW VARIABLE amount0Int_scope_0
+NEW VARIABLE amount1Int_scope_1
+TMP_2348 = CONVERT liquidityActual to int256
+TMP_2349(int128) = LIBRARY_CALL, dest:SafeCast, function:SafeCast.toInt128(int256), arguments:['TMP_2348'] 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0Int_scope_0,amount1Int_scope_1) = _updatePositionTicksAndFees(recipient,bottomTick,topTick,int256(liquidityActual).toInt128())	NodeType.EXPRESSION" -> "BlockID: 2969
+Call context: 
+None
+TUPLE_63(AlgebraPool.Position,int256,int256) = INTERNAL_CALL, AlgebraPool._updatePositionTicksAndFees(address,int24,int24,int128)(recipient,bottomTick,topTick,TMP_2349)
+EXPRESSION:(amount0Int_scope_0,amount1Int_scope_1) = _updatePositionTicksAndFees(recipient,bottomTick,topTick,int256(liquidityActual).toInt128())	NodeType.EXPRESSION" [key=0];
+"BlockID: 2969
+Call context: 
+None
+TUPLE_63(AlgebraPool.Position,int256,int256) = INTERNAL_CALL, AlgebraPool._updatePositionTicksAndFees(address,int24,int24,int128)(recipient,bottomTick,topTick,TMP_2349)
+EXPRESSION:(amount0Int_scope_0,amount1Int_scope_1) = _updatePositionTicksAndFees(recipient,bottomTick,topTick,int256(liquidityActual).toInt128())	NodeType.EXPRESSION" -> "BlockID: 2990
+Call context: 
+None
+amount0Int_scope_0(int256)= UNPACK TUPLE_63 index: 1 
+amount1Int_scope_1(int256)= UNPACK TUPLE_63 index: 2 
+TMP_2350 = CONVERT amount0Int_scope_0 to uint256
+amount0(uint256) := TMP_2350(uint256)
+TMP_2351(bool) = amount0 <= receivedAmount0
+CONDITION TMP_2351
+EXPRESSION:TMP_2351(bool) = amount0 <= receivedAmount0	NodeType.IF" [key=0];
+"BlockID: 2972
+Call context: 
+True
+TMP_2356(bool) = receivedAmount0 > amount0
+CONDITION TMP_2356
+EXPRESSION:receivedAmount0 > amount0	NodeType.IF" -> "BlockID: 2973
+Call context: 
+True
+TMP_2357(uint256) = receivedAmount0 - amount0
+LIBRARY_CALL, dest:TransferHelper, function:TransferHelper.safeTransfer(address,address,uint256), arguments:['token0', 'sender', 'TMP_2357'] 
+EXPRESSION:TransferHelper.safeTransfer(token0,sender,receivedAmount0 - amount0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2972
+Call context: 
+True
+TMP_2356(bool) = receivedAmount0 > amount0
+CONDITION TMP_2356
+EXPRESSION:receivedAmount0 > amount0	NodeType.IF" -> "BlockID: 2975
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2973
+Call context: 
+True
+TMP_2357(uint256) = receivedAmount0 - amount0
+LIBRARY_CALL, dest:TransferHelper, function:TransferHelper.safeTransfer(address,address,uint256), arguments:['token0', 'sender', 'TMP_2357'] 
+EXPRESSION:TransferHelper.safeTransfer(token0,sender,receivedAmount0 - amount0)	NodeType.EXPRESSION" -> "BlockID: 2975
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2975
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2976
+Call context: 
+None
+TMP_2359(bool) = receivedAmount1 > amount1
+CONDITION TMP_2359
+EXPRESSION:receivedAmount1 > amount1	NodeType.IF" [key=0];
+"BlockID: 2976
+Call context: 
+None
+TMP_2359(bool) = receivedAmount1 > amount1
+CONDITION TMP_2359
+EXPRESSION:receivedAmount1 > amount1	NodeType.IF" -> "BlockID: 2977
+Call context: 
+True
+TMP_2360(uint256) = receivedAmount1 - amount1
+LIBRARY_CALL, dest:TransferHelper, function:TransferHelper.safeTransfer(address,address,uint256), arguments:['token1', 'sender', 'TMP_2360'] 
+EXPRESSION:TransferHelper.safeTransfer(token1,sender,receivedAmount1 - amount1)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2976
+Call context: 
+None
+TMP_2359(bool) = receivedAmount1 > amount1
+CONDITION TMP_2359
+EXPRESSION:receivedAmount1 > amount1	NodeType.IF" -> "BlockID: 2979
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2977
+Call context: 
+True
+TMP_2360(uint256) = receivedAmount1 - amount1
+LIBRARY_CALL, dest:TransferHelper, function:TransferHelper.safeTransfer(address,address,uint256), arguments:['token1', 'sender', 'TMP_2360'] 
+EXPRESSION:TransferHelper.safeTransfer(token1,sender,receivedAmount1 - amount1)	NodeType.EXPRESSION" -> "BlockID: 2979
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2965
+Call context: 
+None
+TMP_2344 = CONVERT TMP_2343 to uint128
+liquidityForRA1(uint128) := TMP_2344(uint128)
+TMP_2345(bool) = liquidityForRA1 < liquidityActual
+CONDITION TMP_2345
+EXPRESSION:liquidityForRA1 = uint128(FullMath.mulDiv(uint256(liquidityActual),receivedAmount1,amount1))	NodeType.VARIABLE
+liquidityForRA1 = uint128(FullMath.mulDiv(uint256(liquidityActual),receivedAmount1,amount1))	NodeType.EXPRESSION
+liquidityForRA1 < liquidityActual	NodeType.IF" -> "BlockID: 2981
+Call context: 
+True
+liquidityActual(uint128) := liquidityForRA1(uint128)
+EXPRESSION:liquidityActual = liquidityForRA1	NodeType.EXPRESSION" [key=0];
+"BlockID: 2965
+Call context: 
+None
+TMP_2344 = CONVERT TMP_2343 to uint128
+liquidityForRA1(uint128) := TMP_2344(uint128)
+TMP_2345(bool) = liquidityForRA1 < liquidityActual
+CONDITION TMP_2345
+EXPRESSION:liquidityForRA1 = uint128(FullMath.mulDiv(uint256(liquidityActual),receivedAmount1,amount1))	NodeType.VARIABLE
+liquidityForRA1 = uint128(FullMath.mulDiv(uint256(liquidityActual),receivedAmount1,amount1))	NodeType.EXPRESSION
+liquidityForRA1 < liquidityActual	NodeType.IF" -> "BlockID: 2982
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2981
+Call context: 
+True
+liquidityActual(uint128) := liquidityForRA1(uint128)
+EXPRESSION:liquidityActual = liquidityForRA1	NodeType.EXPRESSION" -> "BlockID: 2982
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2982
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2966
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2961
+Call context: 
+None
+TMP_2340 = CONVERT TMP_2339 to uint128
+liquidityActual(uint128) := TMP_2340(uint128)
+EXPRESSION:liquidityActual = uint128(FullMath.mulDiv(uint256(liquidityActual),receivedAmount0,amount0))	NodeType.EXPRESSION" -> "BlockID: 2962
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2948
+Call context: 
+None
+receivedAmount1(uint256) := TMP_2324(uint256)
+EXPRESSION:receivedAmount1 = balanceToken1()	NodeType.EXPRESSION" -> "BlockID: 2949
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2944
+Call context: 
+None
+receivedAmount0(uint256) := TMP_2322(uint256)
+EXPRESSION:receivedAmount0 = balanceToken0()	NodeType.EXPRESSION" -> "BlockID: 2945
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2984
+Call context: 
+None
+TMP_2315(bool) = liquidityDesired > 0
+CONDITION TMP_2315
+EXPRESSION:TMP_2315(bool) = liquidityDesired > 0	NodeType.IF" -> "BlockID: 2985
+Call context: 
+True
+TMP_2316(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2984
+Call context: 
+None
+TMP_2315(bool) = liquidityDesired > 0
+CONDITION TMP_2315
+EXPRESSION:TMP_2315(bool) = liquidityDesired > 0	NodeType.IF" -> "BlockID: 2986
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2986
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2940
+Call context: 
+True
+NEW VARIABLE amount0Int
+NEW VARIABLE amount1Int
+TMP_2317 = CONVERT liquidityDesired to int256
+TMP_2318(int128) = LIBRARY_CALL, dest:SafeCast, function:SafeCast.toInt128(int256), arguments:['TMP_2317'] 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0Int,amount1Int) = _getAmountsForLiquidity(bottomTick,topTick,int256(liquidityDesired).toInt128(),globalState.tick,globalState.price)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2987
+Call context: 
+None
+TMP_2346(bool) = liquidityActual > 0
+CONDITION TMP_2346
+EXPRESSION:TMP_2346(bool) = liquidityActual > 0	NodeType.IF" -> "BlockID: 2988
+Call context: 
+True
+TMP_2347(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2987
+Call context: 
+None
+TMP_2346(bool) = liquidityActual > 0
+CONDITION TMP_2346
+EXPRESSION:TMP_2346(bool) = liquidityActual > 0	NodeType.IF" -> "BlockID: 2989
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2989
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2968
+Call context: 
+True
+NEW VARIABLE amount0Int_scope_0
+NEW VARIABLE amount1Int_scope_1
+TMP_2348 = CONVERT liquidityActual to int256
+TMP_2349(int128) = LIBRARY_CALL, dest:SafeCast, function:SafeCast.toInt128(int256), arguments:['TMP_2348'] 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0Int_scope_0,amount1Int_scope_1) = _updatePositionTicksAndFees(recipient,bottomTick,topTick,int256(liquidityActual).toInt128())	NodeType.EXPRESSION" [key=0];
+"BlockID: 2990
+Call context: 
+None
+amount0Int_scope_0(int256)= UNPACK TUPLE_63 index: 1 
+amount1Int_scope_1(int256)= UNPACK TUPLE_63 index: 2 
+TMP_2350 = CONVERT amount0Int_scope_0 to uint256
+amount0(uint256) := TMP_2350(uint256)
+TMP_2351(bool) = amount0 <= receivedAmount0
+CONDITION TMP_2351
+EXPRESSION:TMP_2351(bool) = amount0 <= receivedAmount0	NodeType.IF" -> "BlockID: 2991
+Call context: 
+True
+TMP_2352(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2990
+Call context: 
+None
+amount0Int_scope_0(int256)= UNPACK TUPLE_63 index: 1 
+amount1Int_scope_1(int256)= UNPACK TUPLE_63 index: 2 
+TMP_2350 = CONVERT amount0Int_scope_0 to uint256
+amount0(uint256) := TMP_2350(uint256)
+TMP_2351(bool) = amount0 <= receivedAmount0
+CONDITION TMP_2351
+EXPRESSION:TMP_2351(bool) = amount0 <= receivedAmount0	NodeType.IF" -> "BlockID: 2992
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2992
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2993
+Call context: 
+None
+TMP_2353 = CONVERT amount1Int_scope_1 to uint256
+amount1(uint256) := TMP_2353(uint256)
+TMP_2354(bool) = amount1 <= receivedAmount1
+CONDITION TMP_2354
+EXPRESSION:TMP_2354(bool) = amount1 <= receivedAmount1	NodeType.IF" [key=0];
+"BlockID: 2993
+Call context: 
+None
+TMP_2353 = CONVERT amount1Int_scope_1 to uint256
+amount1(uint256) := TMP_2353(uint256)
+TMP_2354(bool) = amount1 <= receivedAmount1
+CONDITION TMP_2354
+EXPRESSION:TMP_2354(bool) = amount1 <= receivedAmount1	NodeType.IF" -> "BlockID: 2994
+Call context: 
+True
+TMP_2355(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2993
+Call context: 
+None
+TMP_2353 = CONVERT amount1Int_scope_1 to uint256
+amount1(uint256) := TMP_2353(uint256)
+TMP_2354(bool) = amount1 <= receivedAmount1
+CONDITION TMP_2354
+EXPRESSION:TMP_2354(bool) = amount1 <= receivedAmount1	NodeType.IF" -> "BlockID: 2995
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2995
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2972
+Call context: 
+True
+TMP_2356(bool) = receivedAmount0 > amount0
+CONDITION TMP_2356
+EXPRESSION:receivedAmount0 > amount0	NodeType.IF" [key=0];
+"BlockID: 2996
+Call context: 
+None
+TMP_2334(uint256) = TMP_2333 - receivedAmount1
+receivedAmount1(uint256) := TMP_2334(uint256)
+TMP_2335(bool) = receivedAmount1 > 0
+CONDITION TMP_2335
+EXPRESSION:TMP_2335(bool) = receivedAmount1 > 0	NodeType.IF" -> "BlockID: 2997
+Call context: 
+True
+TMP_2336(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2996
+Call context: 
+None
+TMP_2334(uint256) = TMP_2333 - receivedAmount1
+receivedAmount1(uint256) := TMP_2334(uint256)
+TMP_2335(bool) = receivedAmount1 > 0
+CONDITION TMP_2335
+EXPRESSION:TMP_2335(bool) = receivedAmount1 > 0	NodeType.IF" -> "BlockID: 2998
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2998
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2958
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2999
+Call context: 
+None
+TMP_2329(uint256) = TMP_2328 - receivedAmount0
+receivedAmount0(uint256) := TMP_2329(uint256)
+TMP_2330(bool) = receivedAmount0 > 0
+CONDITION TMP_2330
+EXPRESSION:TMP_2330(bool) = receivedAmount0 > 0	NodeType.IF" -> "BlockID: 3000
+Call context: 
+True
+TMP_2331(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2999
+Call context: 
+None
+TMP_2329(uint256) = TMP_2328 - receivedAmount0
+receivedAmount0(uint256) := TMP_2329(uint256)
+TMP_2330(bool) = receivedAmount0 > 0
+CONDITION TMP_2330
+EXPRESSION:TMP_2330(bool) = receivedAmount0 > 0	NodeType.IF" -> "BlockID: 3001
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3001
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2954
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

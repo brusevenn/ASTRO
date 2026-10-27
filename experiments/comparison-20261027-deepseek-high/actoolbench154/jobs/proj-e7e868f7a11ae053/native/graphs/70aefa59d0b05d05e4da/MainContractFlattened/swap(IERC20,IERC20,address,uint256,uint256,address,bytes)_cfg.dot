@@ -1,0 +1,498 @@
+digraph {
+"BlockID: 370
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 371
+Call context: 
+None
+MODIFIER_CALL, SwapXProxy.whenNotPaused()()
+EXPRESSION:whenNotPaused()	NodeType.EXPRESSION";
+"BlockID: 374
+Call context: 
+True
+TMP_197 = CONVERT 0 to address
+TMP_198(bool) = dstReceiver == TMP_197
+CONDITION TMP_198
+EXPRESSION:(dstReceiver == address(0))	NodeType.IF";
+"BlockID: 375
+Call context: 
+True
+dstReceiver(address) := msg.sender(address)
+EXPRESSION:dstReceiver = msg.sender	NodeType.EXPRESSION";
+"BlockID: 376
+Call context: 
+False
+dstReceiver(address) := dstReceiver(address)
+EXPRESSION:dstReceiver = dstReceiver	NodeType.EXPRESSION";
+"BlockID: 377
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 378
+Call context: 
+None
+TMP_181(uint256) = LIBRARY_CALL, dest:UniversalERC20, function:UniversalERC20.universalBalanceOf(IERC20,address), arguments:['srcToken', 'msg.sender'] 
+EXPRESSION:";
+"BlockID: 379
+Call context: 
+None
+initialSrcBalance(uint256) := TMP_181(uint256)
+TMP_182(uint256) = LIBRARY_CALL, dest:UniversalERC20, function:UniversalERC20.universalBalanceOf(IERC20,address), arguments:['dstToken', 'dstReceiver'] 
+EXPRESSION:initialSrcBalance = srcToken.universalBalanceOf(msg.sender)	NodeType.VARIABLE
+initialSrcBalance = srcToken.universalBalanceOf(msg.sender)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 380
+Call context: 
+None
+initialDstBalance(uint256) := TMP_182(uint256)
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_4(bool,bytes) = LOW_LEVEL_CALL, dest:swapXImpl, function:call, arguments:['data'] value:msg.value 
+EXPRESSION:initialDstBalance = dstToken.universalBalanceOf(dstReceiver)	NodeType.VARIABLE
+initialDstBalance = dstToken.universalBalanceOf(dstReceiver)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = swapXImpl.call{value: msg.value}(data)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 381
+Call context: 
+None
+success(bool)= UNPACK TUPLE_4 index: 0 
+returndata(bytes)= UNPACK TUPLE_4 index: 1 
+TMP_183 = ! success 
+CONDITION TMP_183
+EXPRESSION:(success,returndata) = swapXImpl.call{value: msg.value}(data)	NodeType.EXPRESSION
+! success	NodeType.IF" [shape=box];
+"BlockID: 382
+Call context: 
+True
+REF_50 -> LENGTH returndata
+TMP_184(bool) = REF_50 > 0
+CONDITION TMP_184
+EXPRESSION:returndata.length > 0	NodeType.IF";
+"BlockID: 383
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 384
+Call context: 
+None
+TMP_189(uint256) = LIBRARY_CALL, dest:UniversalERC20, function:UniversalERC20.universalBalanceOf(IERC20,address), arguments:['srcToken', 'msg.sender'] 
+EXPRESSION:";
+"BlockID: 385
+Call context: 
+None
+TMP_190(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['initialSrcBalance', 'TMP_189'] 
+EXPRESSION:" [shape=box];
+"BlockID: 386
+Call context: 
+None
+spentAmount(uint256) := TMP_190(uint256)
+TMP_191(uint256) = LIBRARY_CALL, dest:UniversalERC20, function:UniversalERC20.universalBalanceOf(IERC20,address), arguments:['dstToken', 'dstReceiver'] 
+EXPRESSION:spentAmount = initialSrcBalance.sub(srcToken.universalBalanceOf(msg.sender))	NodeType.VARIABLE
+spentAmount = initialSrcBalance.sub(srcToken.universalBalanceOf(msg.sender))	NodeType.EXPRESSION
+returnAmount = dstToken.universalBalanceOf(dstReceiver).sub(initialDstBalance)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 387
+Call context: 
+None
+TMP_192(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['TMP_191', 'initialDstBalance'] 
+EXPRESSION:returnAmount = dstToken.universalBalanceOf(dstReceiver).sub(initialDstBalance)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 391
+Call context: 
+True
+INLINE ASM
+NEW VARIABLE returndata_size_swap_asm_0
+TMP_185(uint256) = SOLIDITY_CALL mload(uint256)(returndata)
+returndata_size_swap_asm_0(uint256) := TMP_185(uint256)
+TMP_186(uint256) = 32 + returndata
+TMP_187(None) = SOLIDITY_CALL revert(uint256,uint256)(TMP_186,returndata_size_swap_asm_0)
+EXPRESSION:None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+returndata_size_swap_asm_0 = mload(uint256)(returndata)	NodeType.EXPRESSION
+revert(uint256,uint256)(32 + returndata,returndata_size_swap_asm_0)	NodeType.EXPRESSION";
+"BlockID: 392
+Call context: 
+False
+TMP_188(None) = SOLIDITY_CALL revert(string)(swap failed)
+EXPRESSION:revert(string)(swap failed)	NodeType.EXPRESSION";
+"BlockID: 393
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [shape=box];
+"BlockID: 395
+Call context: 
+None
+TMP_177(bool) = minReturnAmount > 0
+CONDITION TMP_177
+EXPRESSION:TMP_177(bool) = minReturnAmount > 0	NodeType.IF";
+"BlockID: 396
+Call context: 
+True
+TMP_178(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 397
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 398
+Call context: 
+None
+REF_46 -> LENGTH data
+TMP_179(bool) = REF_46 > 0
+CONDITION TMP_179
+EXPRESSION:TMP_179(bool) = REF_46 > 0	NodeType.IF";
+"BlockID: 399
+Call context: 
+True
+TMP_180(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 400
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 401
+Call context: 
+None
+returnAmount(uint256) := TMP_192(uint256)
+TMP_193(bool) = returnAmount >= minReturnAmount
+CONDITION TMP_193
+EXPRESSION:TMP_193(bool) = returnAmount >= minReturnAmount	NodeType.IF";
+"BlockID: 402
+Call context: 
+True
+TMP_194(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 403
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 370
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 371
+Call context: 
+None
+MODIFIER_CALL, SwapXProxy.whenNotPaused()()
+EXPRESSION:whenNotPaused()	NodeType.EXPRESSION" [key=0];
+"BlockID: 371
+Call context: 
+None
+MODIFIER_CALL, SwapXProxy.whenNotPaused()()
+EXPRESSION:whenNotPaused()	NodeType.EXPRESSION" -> "BlockID: 395
+Call context: 
+None
+TMP_177(bool) = minReturnAmount > 0
+CONDITION TMP_177
+EXPRESSION:TMP_177(bool) = minReturnAmount > 0	NodeType.IF" [key=0];
+"BlockID: 374
+Call context: 
+True
+TMP_197 = CONVERT 0 to address
+TMP_198(bool) = dstReceiver == TMP_197
+CONDITION TMP_198
+EXPRESSION:(dstReceiver == address(0))	NodeType.IF" -> "BlockID: 375
+Call context: 
+True
+dstReceiver(address) := msg.sender(address)
+EXPRESSION:dstReceiver = msg.sender	NodeType.EXPRESSION" [key=0];
+"BlockID: 374
+Call context: 
+True
+TMP_197 = CONVERT 0 to address
+TMP_198(bool) = dstReceiver == TMP_197
+CONDITION TMP_198
+EXPRESSION:(dstReceiver == address(0))	NodeType.IF" -> "BlockID: 376
+Call context: 
+False
+dstReceiver(address) := dstReceiver(address)
+EXPRESSION:dstReceiver = dstReceiver	NodeType.EXPRESSION" [key=0];
+"BlockID: 375
+Call context: 
+True
+dstReceiver(address) := msg.sender(address)
+EXPRESSION:dstReceiver = msg.sender	NodeType.EXPRESSION" -> "BlockID: 377
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 376
+Call context: 
+False
+dstReceiver(address) := dstReceiver(address)
+EXPRESSION:dstReceiver = dstReceiver	NodeType.EXPRESSION" -> "BlockID: 377
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 377
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 378
+Call context: 
+None
+TMP_181(uint256) = LIBRARY_CALL, dest:UniversalERC20, function:UniversalERC20.universalBalanceOf(IERC20,address), arguments:['srcToken', 'msg.sender'] 
+EXPRESSION:" [key=0];
+"BlockID: 378
+Call context: 
+None
+TMP_181(uint256) = LIBRARY_CALL, dest:UniversalERC20, function:UniversalERC20.universalBalanceOf(IERC20,address), arguments:['srcToken', 'msg.sender'] 
+EXPRESSION:" -> "BlockID: 379
+Call context: 
+None
+initialSrcBalance(uint256) := TMP_181(uint256)
+TMP_182(uint256) = LIBRARY_CALL, dest:UniversalERC20, function:UniversalERC20.universalBalanceOf(IERC20,address), arguments:['dstToken', 'dstReceiver'] 
+EXPRESSION:initialSrcBalance = srcToken.universalBalanceOf(msg.sender)	NodeType.VARIABLE
+initialSrcBalance = srcToken.universalBalanceOf(msg.sender)	NodeType.EXPRESSION" [key=0];
+"BlockID: 379
+Call context: 
+None
+initialSrcBalance(uint256) := TMP_181(uint256)
+TMP_182(uint256) = LIBRARY_CALL, dest:UniversalERC20, function:UniversalERC20.universalBalanceOf(IERC20,address), arguments:['dstToken', 'dstReceiver'] 
+EXPRESSION:initialSrcBalance = srcToken.universalBalanceOf(msg.sender)	NodeType.VARIABLE
+initialSrcBalance = srcToken.universalBalanceOf(msg.sender)	NodeType.EXPRESSION" -> "BlockID: 380
+Call context: 
+None
+initialDstBalance(uint256) := TMP_182(uint256)
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_4(bool,bytes) = LOW_LEVEL_CALL, dest:swapXImpl, function:call, arguments:['data'] value:msg.value 
+EXPRESSION:initialDstBalance = dstToken.universalBalanceOf(dstReceiver)	NodeType.VARIABLE
+initialDstBalance = dstToken.universalBalanceOf(dstReceiver)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = swapXImpl.call{value: msg.value}(data)	NodeType.EXPRESSION" [key=0];
+"BlockID: 380
+Call context: 
+None
+initialDstBalance(uint256) := TMP_182(uint256)
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_4(bool,bytes) = LOW_LEVEL_CALL, dest:swapXImpl, function:call, arguments:['data'] value:msg.value 
+EXPRESSION:initialDstBalance = dstToken.universalBalanceOf(dstReceiver)	NodeType.VARIABLE
+initialDstBalance = dstToken.universalBalanceOf(dstReceiver)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = swapXImpl.call{value: msg.value}(data)	NodeType.EXPRESSION" -> "BlockID: 381
+Call context: 
+None
+success(bool)= UNPACK TUPLE_4 index: 0 
+returndata(bytes)= UNPACK TUPLE_4 index: 1 
+TMP_183 = ! success 
+CONDITION TMP_183
+EXPRESSION:(success,returndata) = swapXImpl.call{value: msg.value}(data)	NodeType.EXPRESSION
+! success	NodeType.IF" [key=0];
+"BlockID: 381
+Call context: 
+None
+success(bool)= UNPACK TUPLE_4 index: 0 
+returndata(bytes)= UNPACK TUPLE_4 index: 1 
+TMP_183 = ! success 
+CONDITION TMP_183
+EXPRESSION:(success,returndata) = swapXImpl.call{value: msg.value}(data)	NodeType.EXPRESSION
+! success	NodeType.IF" -> "BlockID: 382
+Call context: 
+True
+REF_50 -> LENGTH returndata
+TMP_184(bool) = REF_50 > 0
+CONDITION TMP_184
+EXPRESSION:returndata.length > 0	NodeType.IF" [key=0];
+"BlockID: 381
+Call context: 
+None
+success(bool)= UNPACK TUPLE_4 index: 0 
+returndata(bytes)= UNPACK TUPLE_4 index: 1 
+TMP_183 = ! success 
+CONDITION TMP_183
+EXPRESSION:(success,returndata) = swapXImpl.call{value: msg.value}(data)	NodeType.EXPRESSION
+! success	NodeType.IF" -> "BlockID: 383
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 382
+Call context: 
+True
+REF_50 -> LENGTH returndata
+TMP_184(bool) = REF_50 > 0
+CONDITION TMP_184
+EXPRESSION:returndata.length > 0	NodeType.IF" -> "BlockID: 391
+Call context: 
+True
+INLINE ASM
+NEW VARIABLE returndata_size_swap_asm_0
+TMP_185(uint256) = SOLIDITY_CALL mload(uint256)(returndata)
+returndata_size_swap_asm_0(uint256) := TMP_185(uint256)
+TMP_186(uint256) = 32 + returndata
+TMP_187(None) = SOLIDITY_CALL revert(uint256,uint256)(TMP_186,returndata_size_swap_asm_0)
+EXPRESSION:None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+returndata_size_swap_asm_0 = mload(uint256)(returndata)	NodeType.EXPRESSION
+revert(uint256,uint256)(32 + returndata,returndata_size_swap_asm_0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 382
+Call context: 
+True
+REF_50 -> LENGTH returndata
+TMP_184(bool) = REF_50 > 0
+CONDITION TMP_184
+EXPRESSION:returndata.length > 0	NodeType.IF" -> "BlockID: 392
+Call context: 
+False
+TMP_188(None) = SOLIDITY_CALL revert(string)(swap failed)
+EXPRESSION:revert(string)(swap failed)	NodeType.EXPRESSION" [key=0];
+"BlockID: 383
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 384
+Call context: 
+None
+TMP_189(uint256) = LIBRARY_CALL, dest:UniversalERC20, function:UniversalERC20.universalBalanceOf(IERC20,address), arguments:['srcToken', 'msg.sender'] 
+EXPRESSION:" [key=0];
+"BlockID: 384
+Call context: 
+None
+TMP_189(uint256) = LIBRARY_CALL, dest:UniversalERC20, function:UniversalERC20.universalBalanceOf(IERC20,address), arguments:['srcToken', 'msg.sender'] 
+EXPRESSION:" -> "BlockID: 385
+Call context: 
+None
+TMP_190(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['initialSrcBalance', 'TMP_189'] 
+EXPRESSION:" [key=0];
+"BlockID: 385
+Call context: 
+None
+TMP_190(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['initialSrcBalance', 'TMP_189'] 
+EXPRESSION:" -> "BlockID: 386
+Call context: 
+None
+spentAmount(uint256) := TMP_190(uint256)
+TMP_191(uint256) = LIBRARY_CALL, dest:UniversalERC20, function:UniversalERC20.universalBalanceOf(IERC20,address), arguments:['dstToken', 'dstReceiver'] 
+EXPRESSION:spentAmount = initialSrcBalance.sub(srcToken.universalBalanceOf(msg.sender))	NodeType.VARIABLE
+spentAmount = initialSrcBalance.sub(srcToken.universalBalanceOf(msg.sender))	NodeType.EXPRESSION
+returnAmount = dstToken.universalBalanceOf(dstReceiver).sub(initialDstBalance)	NodeType.EXPRESSION" [key=0];
+"BlockID: 386
+Call context: 
+None
+spentAmount(uint256) := TMP_190(uint256)
+TMP_191(uint256) = LIBRARY_CALL, dest:UniversalERC20, function:UniversalERC20.universalBalanceOf(IERC20,address), arguments:['dstToken', 'dstReceiver'] 
+EXPRESSION:spentAmount = initialSrcBalance.sub(srcToken.universalBalanceOf(msg.sender))	NodeType.VARIABLE
+spentAmount = initialSrcBalance.sub(srcToken.universalBalanceOf(msg.sender))	NodeType.EXPRESSION
+returnAmount = dstToken.universalBalanceOf(dstReceiver).sub(initialDstBalance)	NodeType.EXPRESSION" -> "BlockID: 387
+Call context: 
+None
+TMP_192(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['TMP_191', 'initialDstBalance'] 
+EXPRESSION:returnAmount = dstToken.universalBalanceOf(dstReceiver).sub(initialDstBalance)	NodeType.EXPRESSION" [key=0];
+"BlockID: 387
+Call context: 
+None
+TMP_192(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['TMP_191', 'initialDstBalance'] 
+EXPRESSION:returnAmount = dstToken.universalBalanceOf(dstReceiver).sub(initialDstBalance)	NodeType.EXPRESSION" -> "BlockID: 401
+Call context: 
+None
+returnAmount(uint256) := TMP_192(uint256)
+TMP_193(bool) = returnAmount >= minReturnAmount
+CONDITION TMP_193
+EXPRESSION:TMP_193(bool) = returnAmount >= minReturnAmount	NodeType.IF" [key=0];
+"BlockID: 393
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 383
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 395
+Call context: 
+None
+TMP_177(bool) = minReturnAmount > 0
+CONDITION TMP_177
+EXPRESSION:TMP_177(bool) = minReturnAmount > 0	NodeType.IF" -> "BlockID: 396
+Call context: 
+True
+TMP_178(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 395
+Call context: 
+None
+TMP_177(bool) = minReturnAmount > 0
+CONDITION TMP_177
+EXPRESSION:TMP_177(bool) = minReturnAmount > 0	NodeType.IF" -> "BlockID: 397
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 397
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 398
+Call context: 
+None
+REF_46 -> LENGTH data
+TMP_179(bool) = REF_46 > 0
+CONDITION TMP_179
+EXPRESSION:TMP_179(bool) = REF_46 > 0	NodeType.IF" [key=0];
+"BlockID: 398
+Call context: 
+None
+REF_46 -> LENGTH data
+TMP_179(bool) = REF_46 > 0
+CONDITION TMP_179
+EXPRESSION:TMP_179(bool) = REF_46 > 0	NodeType.IF" -> "BlockID: 399
+Call context: 
+True
+TMP_180(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 398
+Call context: 
+None
+REF_46 -> LENGTH data
+TMP_179(bool) = REF_46 > 0
+CONDITION TMP_179
+EXPRESSION:TMP_179(bool) = REF_46 > 0	NodeType.IF" -> "BlockID: 400
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 400
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 374
+Call context: 
+True
+TMP_197 = CONVERT 0 to address
+TMP_198(bool) = dstReceiver == TMP_197
+CONDITION TMP_198
+EXPRESSION:(dstReceiver == address(0))	NodeType.IF" [key=0];
+"BlockID: 401
+Call context: 
+None
+returnAmount(uint256) := TMP_192(uint256)
+TMP_193(bool) = returnAmount >= minReturnAmount
+CONDITION TMP_193
+EXPRESSION:TMP_193(bool) = returnAmount >= minReturnAmount	NodeType.IF" -> "BlockID: 402
+Call context: 
+True
+TMP_194(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 401
+Call context: 
+None
+returnAmount(uint256) := TMP_192(uint256)
+TMP_193(bool) = returnAmount >= minReturnAmount
+CONDITION TMP_193
+EXPRESSION:TMP_193(bool) = returnAmount >= minReturnAmount	NodeType.IF" -> "BlockID: 403
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

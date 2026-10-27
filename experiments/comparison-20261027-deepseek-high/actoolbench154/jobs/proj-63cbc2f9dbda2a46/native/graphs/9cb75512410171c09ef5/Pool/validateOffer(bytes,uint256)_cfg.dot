@@ -1,0 +1,342 @@
+digraph {
+"BlockID: 1666
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1667
+Call context: 
+None
+MODIFIER_CALL, LoanManager.onlyAcceptedCallers()()
+EXPRESSION:onlyAcceptedCallers()	NodeType.EXPRESSION";
+"BlockID: 1668
+Call context: 
+None
+TMP_1516 = ! isActive 
+CONDITION TMP_1516
+EXPRESSION:onlyAcceptedCallers()	NodeType.EXPRESSION
+! isActive	NodeType.IF";
+"BlockID: 1669
+Call context: 
+True
+TMP_1517(None) = SOLIDITY_CALL revert PoolStatusError()()
+EXPRESSION:revert PoolStatusError()()	NodeType.EXPRESSION";
+"BlockID: 1670
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1671
+Call context: 
+None
+TMP_1518 = CONVERT this to address
+TMP_1519(uint256) = HIGH_LEVEL_CALL, dest:asset(ERC20), function:balanceOf, arguments:['TMP_1518']  
+EXPRESSION:";
+"BlockID: 1672
+Call context: 
+None
+TMP_1520(uint256) = TMP_1519 (c)- getAvailableToWithdraw
+currentBalance(uint256) := TMP_1520(uint256)
+TMP_1521 = CONVERT getBaseInterestAllocator to IBaseInterestAllocator
+TMP_1522(uint256) = HIGH_LEVEL_CALL, dest:TMP_1521(IBaseInterestAllocator), function:getAssetsAllocated, arguments:[]  
+EXPRESSION:currentBalance = asset.balanceOf(address(this)) - getAvailableToWithdraw	NodeType.VARIABLE
+currentBalance = asset.balanceOf(address(this)) - getAvailableToWithdraw	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1673
+Call context: 
+None
+baseRateBalance(uint256) := TMP_1522(uint256)
+TMP_1523(uint256) = currentBalance (c)+ baseRateBalance
+undeployedAssets(uint256) := TMP_1523(uint256)
+NEW VARIABLE principalAmount
+NEW VARIABLE apr
+TMP_1524 = CONVERT getUnderwriter to IPoolOfferHandler
+TMP_1525 = CONVERT getBaseInterestAllocator to IBaseInterestAllocator
+TMP_1526(uint256) = HIGH_LEVEL_CALL, dest:TMP_1525(IBaseInterestAllocator), function:getBaseAprWithUpdate, arguments:[]  
+EXPRESSION:baseRateBalance = IBaseInterestAllocator(getBaseInterestAllocator).getAssetsAllocated()	NodeType.VARIABLE
+baseRateBalance = IBaseInterestAllocator(getBaseInterestAllocator).getAssetsAllocated()	NodeType.EXPRESSION
+undeployedAssets = currentBalance + baseRateBalance	NodeType.VARIABLE
+undeployedAssets = currentBalance + baseRateBalance	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(principalAmount,apr) = IPoolOfferHandler(getUnderwriter).validateOffer(IBaseInterestAllocator(getBaseInterestAllocator).getBaseAprWithUpdate(),_offer)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1674
+Call context: 
+None
+TUPLE_4(uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_1524(IPoolOfferHandler), function:validateOffer, arguments:['TMP_1526', '_offer']  
+EXPRESSION:(principalAmount,apr) = IPoolOfferHandler(getUnderwriter).validateOffer(IBaseInterestAllocator(getBaseInterestAllocator).getBaseAprWithUpdate(),_offer)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1675
+Call context: 
+None
+principalAmount(uint256)= UNPACK TUPLE_4 index: 0 
+apr(uint256)= UNPACK TUPLE_4 index: 1 
+TMP_1527(bool) = principalAmount > undeployedAssets
+CONDITION TMP_1527
+EXPRESSION:(principalAmount,apr) = IPoolOfferHandler(getUnderwriter).validateOffer(IBaseInterestAllocator(getBaseInterestAllocator).getBaseAprWithUpdate(),_offer)	NodeType.EXPRESSION
+principalAmount > undeployedAssets	NodeType.IF" [shape=box];
+"BlockID: 1676
+Call context: 
+True
+TMP_1528(None) = SOLIDITY_CALL revert InsufficientAssetsError()()
+EXPRESSION:revert InsufficientAssetsError()()	NodeType.EXPRESSION";
+"BlockID: 1677
+Call context: 
+False
+TMP_1529(bool) = principalAmount > currentBalance
+CONDITION TMP_1529
+EXPRESSION:principalAmount > currentBalance	NodeType.IF";
+"BlockID: 1678
+Call context: 
+True
+TMP_1530 = CONVERT getBaseInterestAllocator to IBaseInterestAllocator
+TMP_1531(uint256) = principalAmount (c)- currentBalance
+HIGH_LEVEL_CALL, dest:TMP_1530(IBaseInterestAllocator), function:reallocate, arguments:['currentBalance', 'TMP_1531', 'True']  
+EXPRESSION:IBaseInterestAllocator(getBaseInterestAllocator).reallocate(currentBalance,principalAmount - currentBalance,true)	NodeType.EXPRESSION";
+"BlockID: 1680
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1682
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1683
+Call context: 
+None
+TMP_1533(uint256) = INTERNAL_CALL, Pool._netApr(uint256,uint256)(apr,_protocolFee)
+EXPRESSION:_outstandingValues = _getNewLoanAccounting(principalAmount,_netApr(apr,_protocolFee))	NodeType.EXPRESSION";
+"BlockID: 1684
+Call context: 
+None
+TMP_1534(Pool.OutstandingValues) = INTERNAL_CALL, Pool._getNewLoanAccounting(uint256,uint256)(principalAmount,TMP_1533)
+EXPRESSION:_outstandingValues = _getNewLoanAccounting(principalAmount,_netApr(apr,_protocolFee))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1685
+Call context: 
+None
+_outstandingValues(Pool.OutstandingValues) := TMP_1534(Pool.OutstandingValues)
+EXPRESSION:_outstandingValues = _getNewLoanAccounting(principalAmount,_netApr(apr,_protocolFee))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1666
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1667
+Call context: 
+None
+MODIFIER_CALL, LoanManager.onlyAcceptedCallers()()
+EXPRESSION:onlyAcceptedCallers()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1667
+Call context: 
+None
+MODIFIER_CALL, LoanManager.onlyAcceptedCallers()()
+EXPRESSION:onlyAcceptedCallers()	NodeType.EXPRESSION" -> "BlockID: 1668
+Call context: 
+None
+TMP_1516 = ! isActive 
+CONDITION TMP_1516
+EXPRESSION:onlyAcceptedCallers()	NodeType.EXPRESSION
+! isActive	NodeType.IF" [key=0];
+"BlockID: 1668
+Call context: 
+None
+TMP_1516 = ! isActive 
+CONDITION TMP_1516
+EXPRESSION:onlyAcceptedCallers()	NodeType.EXPRESSION
+! isActive	NodeType.IF" -> "BlockID: 1669
+Call context: 
+True
+TMP_1517(None) = SOLIDITY_CALL revert PoolStatusError()()
+EXPRESSION:revert PoolStatusError()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1668
+Call context: 
+None
+TMP_1516 = ! isActive 
+CONDITION TMP_1516
+EXPRESSION:onlyAcceptedCallers()	NodeType.EXPRESSION
+! isActive	NodeType.IF" -> "BlockID: 1670
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1670
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1671
+Call context: 
+None
+TMP_1518 = CONVERT this to address
+TMP_1519(uint256) = HIGH_LEVEL_CALL, dest:asset(ERC20), function:balanceOf, arguments:['TMP_1518']  
+EXPRESSION:" [key=0];
+"BlockID: 1671
+Call context: 
+None
+TMP_1518 = CONVERT this to address
+TMP_1519(uint256) = HIGH_LEVEL_CALL, dest:asset(ERC20), function:balanceOf, arguments:['TMP_1518']  
+EXPRESSION:" -> "BlockID: 1672
+Call context: 
+None
+TMP_1520(uint256) = TMP_1519 (c)- getAvailableToWithdraw
+currentBalance(uint256) := TMP_1520(uint256)
+TMP_1521 = CONVERT getBaseInterestAllocator to IBaseInterestAllocator
+TMP_1522(uint256) = HIGH_LEVEL_CALL, dest:TMP_1521(IBaseInterestAllocator), function:getAssetsAllocated, arguments:[]  
+EXPRESSION:currentBalance = asset.balanceOf(address(this)) - getAvailableToWithdraw	NodeType.VARIABLE
+currentBalance = asset.balanceOf(address(this)) - getAvailableToWithdraw	NodeType.EXPRESSION" [key=0];
+"BlockID: 1672
+Call context: 
+None
+TMP_1520(uint256) = TMP_1519 (c)- getAvailableToWithdraw
+currentBalance(uint256) := TMP_1520(uint256)
+TMP_1521 = CONVERT getBaseInterestAllocator to IBaseInterestAllocator
+TMP_1522(uint256) = HIGH_LEVEL_CALL, dest:TMP_1521(IBaseInterestAllocator), function:getAssetsAllocated, arguments:[]  
+EXPRESSION:currentBalance = asset.balanceOf(address(this)) - getAvailableToWithdraw	NodeType.VARIABLE
+currentBalance = asset.balanceOf(address(this)) - getAvailableToWithdraw	NodeType.EXPRESSION" -> "BlockID: 1673
+Call context: 
+None
+baseRateBalance(uint256) := TMP_1522(uint256)
+TMP_1523(uint256) = currentBalance (c)+ baseRateBalance
+undeployedAssets(uint256) := TMP_1523(uint256)
+NEW VARIABLE principalAmount
+NEW VARIABLE apr
+TMP_1524 = CONVERT getUnderwriter to IPoolOfferHandler
+TMP_1525 = CONVERT getBaseInterestAllocator to IBaseInterestAllocator
+TMP_1526(uint256) = HIGH_LEVEL_CALL, dest:TMP_1525(IBaseInterestAllocator), function:getBaseAprWithUpdate, arguments:[]  
+EXPRESSION:baseRateBalance = IBaseInterestAllocator(getBaseInterestAllocator).getAssetsAllocated()	NodeType.VARIABLE
+baseRateBalance = IBaseInterestAllocator(getBaseInterestAllocator).getAssetsAllocated()	NodeType.EXPRESSION
+undeployedAssets = currentBalance + baseRateBalance	NodeType.VARIABLE
+undeployedAssets = currentBalance + baseRateBalance	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(principalAmount,apr) = IPoolOfferHandler(getUnderwriter).validateOffer(IBaseInterestAllocator(getBaseInterestAllocator).getBaseAprWithUpdate(),_offer)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1673
+Call context: 
+None
+baseRateBalance(uint256) := TMP_1522(uint256)
+TMP_1523(uint256) = currentBalance (c)+ baseRateBalance
+undeployedAssets(uint256) := TMP_1523(uint256)
+NEW VARIABLE principalAmount
+NEW VARIABLE apr
+TMP_1524 = CONVERT getUnderwriter to IPoolOfferHandler
+TMP_1525 = CONVERT getBaseInterestAllocator to IBaseInterestAllocator
+TMP_1526(uint256) = HIGH_LEVEL_CALL, dest:TMP_1525(IBaseInterestAllocator), function:getBaseAprWithUpdate, arguments:[]  
+EXPRESSION:baseRateBalance = IBaseInterestAllocator(getBaseInterestAllocator).getAssetsAllocated()	NodeType.VARIABLE
+baseRateBalance = IBaseInterestAllocator(getBaseInterestAllocator).getAssetsAllocated()	NodeType.EXPRESSION
+undeployedAssets = currentBalance + baseRateBalance	NodeType.VARIABLE
+undeployedAssets = currentBalance + baseRateBalance	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(principalAmount,apr) = IPoolOfferHandler(getUnderwriter).validateOffer(IBaseInterestAllocator(getBaseInterestAllocator).getBaseAprWithUpdate(),_offer)	NodeType.EXPRESSION" -> "BlockID: 1674
+Call context: 
+None
+TUPLE_4(uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_1524(IPoolOfferHandler), function:validateOffer, arguments:['TMP_1526', '_offer']  
+EXPRESSION:(principalAmount,apr) = IPoolOfferHandler(getUnderwriter).validateOffer(IBaseInterestAllocator(getBaseInterestAllocator).getBaseAprWithUpdate(),_offer)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1674
+Call context: 
+None
+TUPLE_4(uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_1524(IPoolOfferHandler), function:validateOffer, arguments:['TMP_1526', '_offer']  
+EXPRESSION:(principalAmount,apr) = IPoolOfferHandler(getUnderwriter).validateOffer(IBaseInterestAllocator(getBaseInterestAllocator).getBaseAprWithUpdate(),_offer)	NodeType.EXPRESSION" -> "BlockID: 1675
+Call context: 
+None
+principalAmount(uint256)= UNPACK TUPLE_4 index: 0 
+apr(uint256)= UNPACK TUPLE_4 index: 1 
+TMP_1527(bool) = principalAmount > undeployedAssets
+CONDITION TMP_1527
+EXPRESSION:(principalAmount,apr) = IPoolOfferHandler(getUnderwriter).validateOffer(IBaseInterestAllocator(getBaseInterestAllocator).getBaseAprWithUpdate(),_offer)	NodeType.EXPRESSION
+principalAmount > undeployedAssets	NodeType.IF" [key=0];
+"BlockID: 1675
+Call context: 
+None
+principalAmount(uint256)= UNPACK TUPLE_4 index: 0 
+apr(uint256)= UNPACK TUPLE_4 index: 1 
+TMP_1527(bool) = principalAmount > undeployedAssets
+CONDITION TMP_1527
+EXPRESSION:(principalAmount,apr) = IPoolOfferHandler(getUnderwriter).validateOffer(IBaseInterestAllocator(getBaseInterestAllocator).getBaseAprWithUpdate(),_offer)	NodeType.EXPRESSION
+principalAmount > undeployedAssets	NodeType.IF" -> "BlockID: 1676
+Call context: 
+True
+TMP_1528(None) = SOLIDITY_CALL revert InsufficientAssetsError()()
+EXPRESSION:revert InsufficientAssetsError()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1675
+Call context: 
+None
+principalAmount(uint256)= UNPACK TUPLE_4 index: 0 
+apr(uint256)= UNPACK TUPLE_4 index: 1 
+TMP_1527(bool) = principalAmount > undeployedAssets
+CONDITION TMP_1527
+EXPRESSION:(principalAmount,apr) = IPoolOfferHandler(getUnderwriter).validateOffer(IBaseInterestAllocator(getBaseInterestAllocator).getBaseAprWithUpdate(),_offer)	NodeType.EXPRESSION
+principalAmount > undeployedAssets	NodeType.IF" -> "BlockID: 1677
+Call context: 
+False
+TMP_1529(bool) = principalAmount > currentBalance
+CONDITION TMP_1529
+EXPRESSION:principalAmount > currentBalance	NodeType.IF" [key=0];
+"BlockID: 1677
+Call context: 
+False
+TMP_1529(bool) = principalAmount > currentBalance
+CONDITION TMP_1529
+EXPRESSION:principalAmount > currentBalance	NodeType.IF" -> "BlockID: 1678
+Call context: 
+True
+TMP_1530 = CONVERT getBaseInterestAllocator to IBaseInterestAllocator
+TMP_1531(uint256) = principalAmount (c)- currentBalance
+HIGH_LEVEL_CALL, dest:TMP_1530(IBaseInterestAllocator), function:reallocate, arguments:['currentBalance', 'TMP_1531', 'True']  
+EXPRESSION:IBaseInterestAllocator(getBaseInterestAllocator).reallocate(currentBalance,principalAmount - currentBalance,true)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1677
+Call context: 
+False
+TMP_1529(bool) = principalAmount > currentBalance
+CONDITION TMP_1529
+EXPRESSION:principalAmount > currentBalance	NodeType.IF" -> "BlockID: 1680
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1678
+Call context: 
+True
+TMP_1530 = CONVERT getBaseInterestAllocator to IBaseInterestAllocator
+TMP_1531(uint256) = principalAmount (c)- currentBalance
+HIGH_LEVEL_CALL, dest:TMP_1530(IBaseInterestAllocator), function:reallocate, arguments:['currentBalance', 'TMP_1531', 'True']  
+EXPRESSION:IBaseInterestAllocator(getBaseInterestAllocator).reallocate(currentBalance,principalAmount - currentBalance,true)	NodeType.EXPRESSION" -> "BlockID: 1680
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1680
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1682
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1682
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1683
+Call context: 
+None
+TMP_1533(uint256) = INTERNAL_CALL, Pool._netApr(uint256,uint256)(apr,_protocolFee)
+EXPRESSION:_outstandingValues = _getNewLoanAccounting(principalAmount,_netApr(apr,_protocolFee))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1683
+Call context: 
+None
+TMP_1533(uint256) = INTERNAL_CALL, Pool._netApr(uint256,uint256)(apr,_protocolFee)
+EXPRESSION:_outstandingValues = _getNewLoanAccounting(principalAmount,_netApr(apr,_protocolFee))	NodeType.EXPRESSION" -> "BlockID: 1684
+Call context: 
+None
+TMP_1534(Pool.OutstandingValues) = INTERNAL_CALL, Pool._getNewLoanAccounting(uint256,uint256)(principalAmount,TMP_1533)
+EXPRESSION:_outstandingValues = _getNewLoanAccounting(principalAmount,_netApr(apr,_protocolFee))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1684
+Call context: 
+None
+TMP_1534(Pool.OutstandingValues) = INTERNAL_CALL, Pool._getNewLoanAccounting(uint256,uint256)(principalAmount,TMP_1533)
+EXPRESSION:_outstandingValues = _getNewLoanAccounting(principalAmount,_netApr(apr,_protocolFee))	NodeType.EXPRESSION" -> "BlockID: 1685
+Call context: 
+None
+_outstandingValues(Pool.OutstandingValues) := TMP_1534(Pool.OutstandingValues)
+EXPRESSION:_outstandingValues = _getNewLoanAccounting(principalAmount,_netApr(apr,_protocolFee))	NodeType.EXPRESSION" [key=0];
+}

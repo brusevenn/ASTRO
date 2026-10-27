@@ -1,0 +1,521 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+TMP_584(uint256) = _timestamp % WEEK
+TMP_585(bool) = TMP_584 == 0
+TMP_587(uint256) := 115792089237316195423570985008687907853269984665640564039457584007913129639935(uint256)
+TMP_588(bool) = _timestamp == TMP_587
+TMP_589(bool) = TMP_585 || TMP_588
+CONDITION TMP_589
+EXPRESSION:TMP_589(bool) = TMP_585 || TMP_588	NodeType.IF";
+"BlockID: 7
+Call context: 
+True
+TMP_512(uint256) = block.timestamp (c)/ WEEK
+TMP_513(uint256) = TMP_512 (c)* WEEK
+currEpoch(uint256) := TMP_513(uint256)
+REF_332(mapping(address => uint256)) -> lendingMarketBalancesEpoch[_market]
+REF_333(uint256) -> REF_332[_lender]
+lastUserUpdateEpoch(uint256) := REF_333(uint256)
+TMP_1(bool) = a < b
+CONDITION TMP_1
+EXPRESSION:currEpoch = (block.timestamp / WEEK) * WEEK	NodeType.VARIABLE
+currEpoch = (block.timestamp / WEEK) * WEEK	NodeType.EXPRESSION
+lastUserUpdateEpoch = lendingMarketBalancesEpoch[_market][_lender]	NodeType.VARIABLE
+a < b	NodeType.IF";
+"BlockID: 4
+Call context: 
+None
+REF_356(mapping(address => uint256)) -> lendingMarketBalancesEpoch[_market]
+REF_357(uint256) -> REF_356[_lender]
+TMP_530(bool) = REF_357 > 0
+CONDITION TMP_530
+EXPRESSION:TMP_530(bool) = REF_357 > 0	NodeType.IF";
+"BlockID: 5
+Call context: 
+True
+TMP_531(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2
+Call context: checkpoint_lender
+True
+TMP_590(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 3
+Call context: checkpoint_lender
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 10
+Call context: checkpoint_lender
+None
+updateUntilEpoch(uint256) := TMP_514(uint256)
+TMP_515(bool) = lastUserUpdateEpoch == 0
+CONDITION TMP_515
+EXPRESSION:updateUntilEpoch = Math.min(currEpoch,_forwardTimestampLimit)	NodeType.VARIABLE
+updateUntilEpoch = Math.min(currEpoch,_forwardTimestampLimit)	NodeType.EXPRESSION
+lastUserUpdateEpoch == 0	NodeType.IF" [shape=box];
+"BlockID: 11
+Call context: checkpoint_lender
+True
+REF_335(mapping(address => uint256)) -> userClaimedEpoch[_market]
+REF_336(uint256) -> REF_335[_lender]
+REF_336(uint256) (->userClaimedEpoch) := currEpoch(uint256)
+REF_337(mapping(address => uint256)) -> lendingMarketBalancesEpoch[_market]
+REF_338(uint256) -> REF_337[_lender]
+REF_338(uint256) (->lendingMarketBalancesEpoch) := currEpoch(uint256)
+EXPRESSION:userClaimedEpoch[_market][_lender] = currEpoch	NodeType.EXPRESSION
+lendingMarketBalancesEpoch[_market][_lender] = currEpoch	NodeType.EXPRESSION";
+"BlockID: 12
+Call context: checkpoint_lender
+False
+TMP_516(bool) = lastUserUpdateEpoch < currEpoch
+CONDITION TMP_516
+EXPRESSION:lastUserUpdateEpoch < currEpoch	NodeType.IF";
+"BlockID: 14
+Call context: checkpoint_lender
+True
+REF_339(mapping(address => mapping(uint256 => uint256))) -> lendingMarketBalances[_market]
+REF_340(mapping(uint256 => uint256)) -> REF_339[_lender]
+REF_341(uint256) -> REF_340[lastUserUpdateEpoch]
+lastUserBalance(uint256) := REF_341(uint256)
+i(uint256) := lastUserUpdateEpoch(uint256)
+EXPRESSION:lastUserBalance = lendingMarketBalances[_market][_lender][lastUserUpdateEpoch]	NodeType.VARIABLE
+lastUserBalance = lendingMarketBalances[_market][_lender][lastUserUpdateEpoch]	NodeType.EXPRESSION
+i = lastUserUpdateEpoch	NodeType.VARIABLE
+i = lastUserUpdateEpoch	NodeType.EXPRESSION";
+"BlockID: 15
+Call context: checkpoint_lender
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 13
+Call context: checkpoint_lender
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 16
+Call context: checkpoint_lender
+None
+BEGIN_LOOP
+TMP_517(bool) = i <= updateUntilEpoch
+CONDITION TMP_517
+EXPRESSION:None	NodeType.STARTLOOP
+i <= updateUntilEpoch	NodeType.IFLOOP";
+"BlockID: 17
+Call context: checkpoint_lender
+True
+REF_342(mapping(address => mapping(uint256 => uint256))) -> lendingMarketBalances[_market]
+REF_343(mapping(uint256 => uint256)) -> REF_342[_lender]
+REF_344(uint256) -> REF_343[i]
+REF_344(uint256) (->lendingMarketBalances) := lastUserBalance(uint256)
+i(uint256) = i (c)+ WEEK
+EXPRESSION:lendingMarketBalances[_market][_lender][i] = lastUserBalance	NodeType.EXPRESSION
+i += WEEK	NodeType.EXPRESSION";
+"BlockID: 18
+Call context: checkpoint_lender
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 19
+Call context: checkpoint_lender
+None
+TMP_518(bool) = updateUntilEpoch > lastUserUpdateEpoch
+CONDITION TMP_518
+EXPRESSION:updateUntilEpoch > lastUserUpdateEpoch	NodeType.IF";
+"BlockID: 20
+Call context: checkpoint_lender
+True
+REF_345(mapping(address => uint256)) -> lendingMarketBalancesEpoch[_market]
+REF_346(uint256) -> REF_345[_lender]
+REF_346(uint256) (->lendingMarketBalancesEpoch) := updateUntilEpoch(uint256)
+EXPRESSION:lendingMarketBalancesEpoch[_market][_lender] = updateUntilEpoch	NodeType.EXPRESSION";
+"BlockID: 21
+Call context: checkpoint_lender
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 8
+Call context: checkpoint_lender,_checkpoint_lender
+True
+TMP_603(None) := a(uint256)
+EXPRESSION:";
+"BlockID: 9
+Call context: checkpoint_lender,_checkpoint_lender
+False
+TMP_603(None) := b(uint256)
+EXPRESSION:";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+TMP_584(uint256) = _timestamp % WEEK
+TMP_585(bool) = TMP_584 == 0
+TMP_587(uint256) := 115792089237316195423570985008687907853269984665640564039457584007913129639935(uint256)
+TMP_588(bool) = _timestamp == TMP_587
+TMP_589(bool) = TMP_585 || TMP_588
+CONDITION TMP_589
+EXPRESSION:TMP_589(bool) = TMP_585 || TMP_588	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_584(uint256) = _timestamp % WEEK
+TMP_585(bool) = TMP_584 == 0
+TMP_587(uint256) := 115792089237316195423570985008687907853269984665640564039457584007913129639935(uint256)
+TMP_588(bool) = _timestamp == TMP_587
+TMP_589(bool) = TMP_585 || TMP_588
+CONDITION TMP_589
+EXPRESSION:TMP_589(bool) = TMP_585 || TMP_588	NodeType.IF" -> "BlockID: 2
+Call context: checkpoint_lender
+True
+TMP_590(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+TMP_584(uint256) = _timestamp % WEEK
+TMP_585(bool) = TMP_584 == 0
+TMP_587(uint256) := 115792089237316195423570985008687907853269984665640564039457584007913129639935(uint256)
+TMP_588(bool) = _timestamp == TMP_587
+TMP_589(bool) = TMP_585 || TMP_588
+CONDITION TMP_589
+EXPRESSION:TMP_589(bool) = TMP_585 || TMP_588	NodeType.IF" -> "BlockID: 3
+Call context: checkpoint_lender
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 7
+Call context: 
+True
+TMP_512(uint256) = block.timestamp (c)/ WEEK
+TMP_513(uint256) = TMP_512 (c)* WEEK
+currEpoch(uint256) := TMP_513(uint256)
+REF_332(mapping(address => uint256)) -> lendingMarketBalancesEpoch[_market]
+REF_333(uint256) -> REF_332[_lender]
+lastUserUpdateEpoch(uint256) := REF_333(uint256)
+TMP_1(bool) = a < b
+CONDITION TMP_1
+EXPRESSION:currEpoch = (block.timestamp / WEEK) * WEEK	NodeType.VARIABLE
+currEpoch = (block.timestamp / WEEK) * WEEK	NodeType.EXPRESSION
+lastUserUpdateEpoch = lendingMarketBalancesEpoch[_market][_lender]	NodeType.VARIABLE
+a < b	NodeType.IF" -> "BlockID: 8
+Call context: checkpoint_lender,_checkpoint_lender
+True
+TMP_603(None) := a(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 7
+Call context: 
+True
+TMP_512(uint256) = block.timestamp (c)/ WEEK
+TMP_513(uint256) = TMP_512 (c)* WEEK
+currEpoch(uint256) := TMP_513(uint256)
+REF_332(mapping(address => uint256)) -> lendingMarketBalancesEpoch[_market]
+REF_333(uint256) -> REF_332[_lender]
+lastUserUpdateEpoch(uint256) := REF_333(uint256)
+TMP_1(bool) = a < b
+CONDITION TMP_1
+EXPRESSION:currEpoch = (block.timestamp / WEEK) * WEEK	NodeType.VARIABLE
+currEpoch = (block.timestamp / WEEK) * WEEK	NodeType.EXPRESSION
+lastUserUpdateEpoch = lendingMarketBalancesEpoch[_market][_lender]	NodeType.VARIABLE
+a < b	NodeType.IF" -> "BlockID: 9
+Call context: checkpoint_lender,_checkpoint_lender
+False
+TMP_603(None) := b(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 4
+Call context: 
+None
+REF_356(mapping(address => uint256)) -> lendingMarketBalancesEpoch[_market]
+REF_357(uint256) -> REF_356[_lender]
+TMP_530(bool) = REF_357 > 0
+CONDITION TMP_530
+EXPRESSION:TMP_530(bool) = REF_357 > 0	NodeType.IF" -> "BlockID: 5
+Call context: 
+True
+TMP_531(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 4
+Call context: 
+None
+REF_356(mapping(address => uint256)) -> lendingMarketBalancesEpoch[_market]
+REF_357(uint256) -> REF_356[_lender]
+TMP_530(bool) = REF_357 > 0
+CONDITION TMP_530
+EXPRESSION:TMP_530(bool) = REF_357 > 0	NodeType.IF" -> "BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 7
+Call context: 
+True
+TMP_512(uint256) = block.timestamp (c)/ WEEK
+TMP_513(uint256) = TMP_512 (c)* WEEK
+currEpoch(uint256) := TMP_513(uint256)
+REF_332(mapping(address => uint256)) -> lendingMarketBalancesEpoch[_market]
+REF_333(uint256) -> REF_332[_lender]
+lastUserUpdateEpoch(uint256) := REF_333(uint256)
+TMP_1(bool) = a < b
+CONDITION TMP_1
+EXPRESSION:currEpoch = (block.timestamp / WEEK) * WEEK	NodeType.VARIABLE
+currEpoch = (block.timestamp / WEEK) * WEEK	NodeType.EXPRESSION
+lastUserUpdateEpoch = lendingMarketBalancesEpoch[_market][_lender]	NodeType.VARIABLE
+a < b	NodeType.IF" [key=0];
+"BlockID: 3
+Call context: checkpoint_lender
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: 
+None
+REF_356(mapping(address => uint256)) -> lendingMarketBalancesEpoch[_market]
+REF_357(uint256) -> REF_356[_lender]
+TMP_530(bool) = REF_357 > 0
+CONDITION TMP_530
+EXPRESSION:TMP_530(bool) = REF_357 > 0	NodeType.IF" [key="Exit: is_valid_epoch", ref="LendingLedger.is_valid_epoch"];
+"BlockID: 10
+Call context: checkpoint_lender
+None
+updateUntilEpoch(uint256) := TMP_514(uint256)
+TMP_515(bool) = lastUserUpdateEpoch == 0
+CONDITION TMP_515
+EXPRESSION:updateUntilEpoch = Math.min(currEpoch,_forwardTimestampLimit)	NodeType.VARIABLE
+updateUntilEpoch = Math.min(currEpoch,_forwardTimestampLimit)	NodeType.EXPRESSION
+lastUserUpdateEpoch == 0	NodeType.IF" -> "BlockID: 11
+Call context: checkpoint_lender
+True
+REF_335(mapping(address => uint256)) -> userClaimedEpoch[_market]
+REF_336(uint256) -> REF_335[_lender]
+REF_336(uint256) (->userClaimedEpoch) := currEpoch(uint256)
+REF_337(mapping(address => uint256)) -> lendingMarketBalancesEpoch[_market]
+REF_338(uint256) -> REF_337[_lender]
+REF_338(uint256) (->lendingMarketBalancesEpoch) := currEpoch(uint256)
+EXPRESSION:userClaimedEpoch[_market][_lender] = currEpoch	NodeType.EXPRESSION
+lendingMarketBalancesEpoch[_market][_lender] = currEpoch	NodeType.EXPRESSION" [key=0];
+"BlockID: 10
+Call context: checkpoint_lender
+None
+updateUntilEpoch(uint256) := TMP_514(uint256)
+TMP_515(bool) = lastUserUpdateEpoch == 0
+CONDITION TMP_515
+EXPRESSION:updateUntilEpoch = Math.min(currEpoch,_forwardTimestampLimit)	NodeType.VARIABLE
+updateUntilEpoch = Math.min(currEpoch,_forwardTimestampLimit)	NodeType.EXPRESSION
+lastUserUpdateEpoch == 0	NodeType.IF" -> "BlockID: 12
+Call context: checkpoint_lender
+False
+TMP_516(bool) = lastUserUpdateEpoch < currEpoch
+CONDITION TMP_516
+EXPRESSION:lastUserUpdateEpoch < currEpoch	NodeType.IF" [key=0];
+"BlockID: 11
+Call context: checkpoint_lender
+True
+REF_335(mapping(address => uint256)) -> userClaimedEpoch[_market]
+REF_336(uint256) -> REF_335[_lender]
+REF_336(uint256) (->userClaimedEpoch) := currEpoch(uint256)
+REF_337(mapping(address => uint256)) -> lendingMarketBalancesEpoch[_market]
+REF_338(uint256) -> REF_337[_lender]
+REF_338(uint256) (->lendingMarketBalancesEpoch) := currEpoch(uint256)
+EXPRESSION:userClaimedEpoch[_market][_lender] = currEpoch	NodeType.EXPRESSION
+lendingMarketBalancesEpoch[_market][_lender] = currEpoch	NodeType.EXPRESSION" -> "BlockID: 13
+Call context: checkpoint_lender
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 12
+Call context: checkpoint_lender
+False
+TMP_516(bool) = lastUserUpdateEpoch < currEpoch
+CONDITION TMP_516
+EXPRESSION:lastUserUpdateEpoch < currEpoch	NodeType.IF" -> "BlockID: 14
+Call context: checkpoint_lender
+True
+REF_339(mapping(address => mapping(uint256 => uint256))) -> lendingMarketBalances[_market]
+REF_340(mapping(uint256 => uint256)) -> REF_339[_lender]
+REF_341(uint256) -> REF_340[lastUserUpdateEpoch]
+lastUserBalance(uint256) := REF_341(uint256)
+i(uint256) := lastUserUpdateEpoch(uint256)
+EXPRESSION:lastUserBalance = lendingMarketBalances[_market][_lender][lastUserUpdateEpoch]	NodeType.VARIABLE
+lastUserBalance = lendingMarketBalances[_market][_lender][lastUserUpdateEpoch]	NodeType.EXPRESSION
+i = lastUserUpdateEpoch	NodeType.VARIABLE
+i = lastUserUpdateEpoch	NodeType.EXPRESSION" [key=0];
+"BlockID: 12
+Call context: checkpoint_lender
+False
+TMP_516(bool) = lastUserUpdateEpoch < currEpoch
+CONDITION TMP_516
+EXPRESSION:lastUserUpdateEpoch < currEpoch	NodeType.IF" -> "BlockID: 15
+Call context: checkpoint_lender
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 14
+Call context: checkpoint_lender
+True
+REF_339(mapping(address => mapping(uint256 => uint256))) -> lendingMarketBalances[_market]
+REF_340(mapping(uint256 => uint256)) -> REF_339[_lender]
+REF_341(uint256) -> REF_340[lastUserUpdateEpoch]
+lastUserBalance(uint256) := REF_341(uint256)
+i(uint256) := lastUserUpdateEpoch(uint256)
+EXPRESSION:lastUserBalance = lendingMarketBalances[_market][_lender][lastUserUpdateEpoch]	NodeType.VARIABLE
+lastUserBalance = lendingMarketBalances[_market][_lender][lastUserUpdateEpoch]	NodeType.EXPRESSION
+i = lastUserUpdateEpoch	NodeType.VARIABLE
+i = lastUserUpdateEpoch	NodeType.EXPRESSION" -> "BlockID: 16
+Call context: checkpoint_lender
+None
+BEGIN_LOOP
+TMP_517(bool) = i <= updateUntilEpoch
+CONDITION TMP_517
+EXPRESSION:None	NodeType.STARTLOOP
+i <= updateUntilEpoch	NodeType.IFLOOP" [key=0];
+"BlockID: 15
+Call context: checkpoint_lender
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 13
+Call context: checkpoint_lender
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 16
+Call context: checkpoint_lender
+None
+BEGIN_LOOP
+TMP_517(bool) = i <= updateUntilEpoch
+CONDITION TMP_517
+EXPRESSION:None	NodeType.STARTLOOP
+i <= updateUntilEpoch	NodeType.IFLOOP" -> "BlockID: 17
+Call context: checkpoint_lender
+True
+REF_342(mapping(address => mapping(uint256 => uint256))) -> lendingMarketBalances[_market]
+REF_343(mapping(uint256 => uint256)) -> REF_342[_lender]
+REF_344(uint256) -> REF_343[i]
+REF_344(uint256) (->lendingMarketBalances) := lastUserBalance(uint256)
+i(uint256) = i (c)+ WEEK
+EXPRESSION:lendingMarketBalances[_market][_lender][i] = lastUserBalance	NodeType.EXPRESSION
+i += WEEK	NodeType.EXPRESSION" [key=0];
+"BlockID: 16
+Call context: checkpoint_lender
+None
+BEGIN_LOOP
+TMP_517(bool) = i <= updateUntilEpoch
+CONDITION TMP_517
+EXPRESSION:None	NodeType.STARTLOOP
+i <= updateUntilEpoch	NodeType.IFLOOP" -> "BlockID: 18
+Call context: checkpoint_lender
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 17
+Call context: checkpoint_lender
+True
+REF_342(mapping(address => mapping(uint256 => uint256))) -> lendingMarketBalances[_market]
+REF_343(mapping(uint256 => uint256)) -> REF_342[_lender]
+REF_344(uint256) -> REF_343[i]
+REF_344(uint256) (->lendingMarketBalances) := lastUserBalance(uint256)
+i(uint256) = i (c)+ WEEK
+EXPRESSION:lendingMarketBalances[_market][_lender][i] = lastUserBalance	NodeType.EXPRESSION
+i += WEEK	NodeType.EXPRESSION" -> "BlockID: 16
+Call context: checkpoint_lender
+None
+BEGIN_LOOP
+TMP_517(bool) = i <= updateUntilEpoch
+CONDITION TMP_517
+EXPRESSION:None	NodeType.STARTLOOP
+i <= updateUntilEpoch	NodeType.IFLOOP" [key=0];
+"BlockID: 18
+Call context: checkpoint_lender
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 19
+Call context: checkpoint_lender
+None
+TMP_518(bool) = updateUntilEpoch > lastUserUpdateEpoch
+CONDITION TMP_518
+EXPRESSION:updateUntilEpoch > lastUserUpdateEpoch	NodeType.IF" [key=0];
+"BlockID: 19
+Call context: checkpoint_lender
+None
+TMP_518(bool) = updateUntilEpoch > lastUserUpdateEpoch
+CONDITION TMP_518
+EXPRESSION:updateUntilEpoch > lastUserUpdateEpoch	NodeType.IF" -> "BlockID: 20
+Call context: checkpoint_lender
+True
+REF_345(mapping(address => uint256)) -> lendingMarketBalancesEpoch[_market]
+REF_346(uint256) -> REF_345[_lender]
+REF_346(uint256) (->lendingMarketBalancesEpoch) := updateUntilEpoch(uint256)
+EXPRESSION:lendingMarketBalancesEpoch[_market][_lender] = updateUntilEpoch	NodeType.EXPRESSION" [key=0];
+"BlockID: 19
+Call context: checkpoint_lender
+None
+TMP_518(bool) = updateUntilEpoch > lastUserUpdateEpoch
+CONDITION TMP_518
+EXPRESSION:updateUntilEpoch > lastUserUpdateEpoch	NodeType.IF" -> "BlockID: 21
+Call context: checkpoint_lender
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 20
+Call context: checkpoint_lender
+True
+REF_345(mapping(address => uint256)) -> lendingMarketBalancesEpoch[_market]
+REF_346(uint256) -> REF_345[_lender]
+REF_346(uint256) (->lendingMarketBalancesEpoch) := updateUntilEpoch(uint256)
+EXPRESSION:lendingMarketBalancesEpoch[_market][_lender] = updateUntilEpoch	NodeType.EXPRESSION" -> "BlockID: 21
+Call context: checkpoint_lender
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 21
+Call context: checkpoint_lender
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 15
+Call context: checkpoint_lender
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 8
+Call context: checkpoint_lender,_checkpoint_lender
+True
+TMP_603(None) := a(uint256)
+EXPRESSION:" -> "BlockID: 10
+Call context: checkpoint_lender
+None
+updateUntilEpoch(uint256) := TMP_514(uint256)
+TMP_515(bool) = lastUserUpdateEpoch == 0
+CONDITION TMP_515
+EXPRESSION:updateUntilEpoch = Math.min(currEpoch,_forwardTimestampLimit)	NodeType.VARIABLE
+updateUntilEpoch = Math.min(currEpoch,_forwardTimestampLimit)	NodeType.EXPRESSION
+lastUserUpdateEpoch == 0	NodeType.IF" [key="successor_5", ref="Math.min"];
+"BlockID: 9
+Call context: checkpoint_lender,_checkpoint_lender
+False
+TMP_603(None) := b(uint256)
+EXPRESSION:" -> "BlockID: 10
+Call context: checkpoint_lender
+None
+updateUntilEpoch(uint256) := TMP_514(uint256)
+TMP_515(bool) = lastUserUpdateEpoch == 0
+CONDITION TMP_515
+EXPRESSION:updateUntilEpoch = Math.min(currEpoch,_forwardTimestampLimit)	NodeType.VARIABLE
+updateUntilEpoch = Math.min(currEpoch,_forwardTimestampLimit)	NodeType.EXPRESSION
+lastUserUpdateEpoch == 0	NodeType.IF" [key="successor_5", ref="Math.min"];
+}

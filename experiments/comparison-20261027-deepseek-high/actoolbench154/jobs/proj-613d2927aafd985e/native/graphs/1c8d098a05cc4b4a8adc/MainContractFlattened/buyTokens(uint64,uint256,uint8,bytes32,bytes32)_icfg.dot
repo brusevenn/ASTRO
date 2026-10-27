@@ -1,0 +1,901 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+TMP_44 = CONVERT 0 to address
+TMP_45(bytes32) = SOLIDITY_CALL sha256()(Eidoo icoengine authorization,TMP_44,buyerAddress,buyerId,maxAmount)
+hash(bytes32) := TMP_45(bytes32)
+TMP_46(address) = SOLIDITY_CALL ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)
+signer(address) := TMP_46(address)
+REF_10(bool) -> isKycSigner[signer]
+TMP_47 = ! REF_10 
+CONDITION TMP_47
+EXPRESSION:hash = sha256()(Eidoo icoengine authorization,address(0),buyerAddress,buyerId,maxAmount)	NodeType.VARIABLE
+hash = sha256()(Eidoo icoengine authorization,address(0),buyerAddress,buyerId,maxAmount)	NodeType.EXPRESSION
+signer = ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)	NodeType.VARIABLE
+signer = ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)	NodeType.EXPRESSION
+! isKycSigner[signer]	NodeType.IF";
+"BlockID: 2
+Call context: buyTokens
+True
+TMP_48(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 3
+Call context: buyTokens
+False
+REF_11(uint256) -> alreadyPayed[buyerId]
+TMP_49(uint256) = a + b
+totalPayed(uint256) := TMP_49(uint256)
+TMP_50(bool) = totalPayed <= maxAmount
+CONDITION TMP_50
+EXPRESSION:TMP_50(bool) = totalPayed <= maxAmount	NodeType.IF";
+"BlockID: 6
+Call context: buyTokens
+True
+REF_13(uint256) -> alreadyPayed[buyerId]
+REF_13(uint256) (->alreadyPayed) := totalPayed(uint256)
+TMP_76(bool) = msg.value > 0
+CONDITION TMP_76
+EXPRESSION:alreadyPayed[buyerId] = totalPayed	NodeType.EXPRESSION
+msg.value > 0	NodeType.IF";
+"BlockID: 4
+Call context: buyTokens
+True
+TMP_51(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 5
+Call context: buyTokens
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 7
+Call context: buyTokens,buyImplementation
+True
+TMP_96(bool) = now > startTime
+CONDITION TMP_96
+EXPRESSION:TMP_96(bool) = now > startTime	NodeType.IF";
+"BlockID: 8
+Call context: buyTokens,buyImplementation
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 11
+Call context: buyTokens,buyImplementation
+None
+REF_41(uint256) -> pendingTokenUser[_buyer]
+TMP_124(bool) = REF_41 > 0
+CONDITION TMP_124
+EXPRESSION:TMP_124(bool) = REF_41 > 0	NodeType.IF";
+"BlockID: 28
+Call context: buyTokens,buyImplementation,releaseTokensTo
+True
+TMP_104(uint256) = HIGH_LEVEL_CALL, dest:tokenSaleContract(TokenSale), function:decimals, arguments:[]  
+EXPRESSION:";
+"BlockID: 30
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+TMP_105 = CONVERT TMP_104 to uint256
+TMP_106(uint256) = 10 ** TMP_105
+oneToken(uint256) := TMP_106(uint256)
+TMP_107(uint256) = HIGH_LEVEL_CALL, dest:tokenSaleContract(TokenSale), function:tokenValueInEther, arguments:['oneTokenInFiatWei']  
+EXPRESSION:oneToken = 10 ** uint256(tokenSaleContract.decimals())	NodeType.VARIABLE
+oneToken = 10 ** uint256(tokenSaleContract.decimals())	NodeType.EXPRESSION" [shape=box];
+"BlockID: 31
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+tokenValue(uint256) := TMP_107(uint256)
+TMP_108(uint256) = a * b
+TMP_109(uint256) = a / b
+EXPRESSION:tokenValue = tokenSaleContract.tokenValueInEther(oneTokenInFiatWei)	NodeType.VARIABLE
+tokenValue = tokenSaleContract.tokenValueInEther(oneTokenInFiatWei)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 32
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+tokenAmount(uint256) := TMP_109(uint256)
+TMP_110(tokenInterface) = HIGH_LEVEL_CALL, dest:tokenSaleContract(TokenSale), function:tokenContract, arguments:[]  
+EXPRESSION:tokenAmount = msg.value.mul(oneToken).div(tokenValue)	NodeType.VARIABLE
+tokenAmount = msg.value.mul(oneToken).div(tokenValue)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 33
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+TMP_111 = CONVERT TMP_110 to tokenInterface
+TMP_112(uint256) = HIGH_LEVEL_CALL, dest:TMP_111(tokenInterface), function:balanceOf, arguments:['tokenSaleContract']  
+EXPRESSION:" [shape=box];
+"BlockID: 34
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+unboughtTokens(uint256) := TMP_112(uint256)
+TMP_113(bool) = unboughtTokens > remainingTokens
+CONDITION TMP_113
+EXPRESSION:unboughtTokens = tokenInterface(tokenSaleContract.tokenContract()).balanceOf(tokenSaleContract)	NodeType.VARIABLE
+unboughtTokens = tokenInterface(tokenSaleContract.tokenContract()).balanceOf(tokenSaleContract)	NodeType.EXPRESSION
+unboughtTokens > remainingTokens	NodeType.IF" [shape=box];
+"BlockID: 35
+Call context: buyTokens,buyImplementation,releaseTokensTo
+True
+unboughtTokens(uint256) := remainingTokens(uint256)
+EXPRESSION:unboughtTokens = remainingTokens	NodeType.EXPRESSION";
+"BlockID: 36
+Call context: buyTokens,buyImplementation,releaseTokensTo
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 37
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+refund(uint256) := 0(uint256)
+TMP_114(bool) = unboughtTokens < tokenAmount
+CONDITION TMP_114
+EXPRESSION:refund = 0	NodeType.VARIABLE
+refund = 0	NodeType.EXPRESSION
+unboughtTokens < tokenAmount	NodeType.IF";
+"BlockID: 38
+Call context: buyTokens,buyImplementation,releaseTokensTo
+True
+TMP_115(uint256) = tokenAmount - unboughtTokens
+TMP_116(uint256) = a * b
+TMP_117(uint256) = a / b
+refund(uint256) := TMP_117(uint256)
+tokenAmount(uint256) := unboughtTokens(uint256)
+remainingTokens(uint256) := 0(uint256)
+Transfer dest:_buyer value:refund
+EXPRESSION:refund = (tokenAmount - unboughtTokens).mul(tokenValue).div(oneToken)	NodeType.EXPRESSION
+refund = (tokenAmount - unboughtTokens).mul(tokenValue).div(oneToken)	NodeType.EXPRESSION
+refund = (tokenAmount - unboughtTokens).mul(tokenValue).div(oneToken)	NodeType.EXPRESSION
+tokenAmount = unboughtTokens	NodeType.EXPRESSION
+remainingTokens = 0	NodeType.EXPRESSION
+_buyer.transfer(refund)	NodeType.EXPRESSION";
+"BlockID: 39
+Call context: buyTokens,buyImplementation,releaseTokensTo
+False
+TMP_119(uint256) = a - b
+remainingTokens(uint256) := TMP_119(uint256)
+EXPRESSION:remainingTokens = remainingTokens.sub(tokenAmount)	NodeType.EXPRESSION
+remainingTokens = remainingTokens.sub(tokenAmount)	NodeType.EXPRESSION";
+"BlockID: 40
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 41
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+REF_34(uint256) -> etherUser[_buyer]
+REF_35(uint256) -> etherUser[_buyer]
+TMP_120(uint256) = a - b
+TMP_121(uint256) = a + b
+REF_34(uint256) (->etherUser) := TMP_121(uint256)
+REF_38(uint256) -> pendingTokenUser[_buyer]
+REF_39(uint256) -> pendingTokenUser[_buyer]
+TMP_122(uint256) = a + b
+REF_38(uint256) (->pendingTokenUser) := TMP_122(uint256)
+EXPRESSION:etherUser[_buyer] = etherUser[_buyer].add(msg.value.sub(refund))	NodeType.EXPRESSION
+etherUser[_buyer] = etherUser[_buyer].add(msg.value.sub(refund))	NodeType.EXPRESSION
+etherUser[_buyer] = etherUser[_buyer].add(msg.value.sub(refund))	NodeType.EXPRESSION
+pendingTokenUser[_buyer] = pendingTokenUser[_buyer].add(tokenAmount)	NodeType.EXPRESSION
+pendingTokenUser[_buyer] = pendingTokenUser[_buyer].add(tokenAmount)	NodeType.EXPRESSION";
+"BlockID: 9
+Call context: buyTokens,buyImplementation,releaseTokensTo
+True
+TMP_97(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 10
+Call context: buyTokens,buyImplementation,releaseTokensTo
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 12
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+TMP_98(bool) = now < endTime
+CONDITION TMP_98
+EXPRESSION:TMP_98(bool) = now < endTime	NodeType.IF";
+"BlockID: 15
+Call context: buyTokens,buyImplementation,releaseTokensTo
+True
+TMP_99(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 16
+Call context: buyTokens,buyImplementation,releaseTokensTo
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 18
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+TMP_100(bool) = msg.value >= etherMinimum
+CONDITION TMP_100
+EXPRESSION:TMP_100(bool) = msg.value >= etherMinimum	NodeType.IF";
+"BlockID: 20
+Call context: buyTokens,buyImplementation,releaseTokensTo
+True
+TMP_101(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 21
+Call context: buyTokens,buyImplementation,releaseTokensTo
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 23
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+TMP_102(bool) = remainingTokens > 0
+CONDITION TMP_102
+EXPRESSION:TMP_102(bool) = remainingTokens > 0	NodeType.IF";
+"BlockID: 25
+Call context: buyTokens,buyImplementation,releaseTokensTo
+True
+TMP_103(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 26
+Call context: buyTokens,buyImplementation,releaseTokensTo
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 17
+Call context: buyTokens,buyImplementation,releaseTokensTo
+True
+REF_42(uint256) -> tokenUser[_buyer]
+REF_43(uint256) -> tokenUser[_buyer]
+REF_45(uint256) -> pendingTokenUser[_buyer]
+TMP_126(uint256) = a + b
+EXPRESSION:tokenUser[_buyer] = tokenUser[_buyer].add(pendingTokenUser[_buyer])	NodeType.EXPRESSION";
+"BlockID: 19
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+REF_42(uint256) (->tokenUser) := TMP_126(uint256)
+REF_47(uint256) -> pendingTokenUser[_buyer]
+TMP_127(bool) = HIGH_LEVEL_CALL, dest:tokenSaleContract(TokenSale), function:claim, arguments:['_buyer', 'REF_47']  
+EXPRESSION:tokenUser[_buyer] = tokenUser[_buyer].add(pendingTokenUser[_buyer])	NodeType.EXPRESSION
+tokenSaleContract.claim(_buyer,pendingTokenUser[_buyer])	NodeType.EXPRESSION" [shape=box];
+"BlockID: 22
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+REF_49(uint256) -> pendingTokenUser[_buyer]
+TMP_128(uint256) = a + b
+EXPRESSION:tokenSaleContract.claim(_buyer,pendingTokenUser[_buyer])	NodeType.EXPRESSION
+soldTokens = soldTokens.add(pendingTokenUser[_buyer])	NodeType.EXPRESSION";
+"BlockID: 24
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+soldTokens(uint256) := TMP_128(uint256)
+REF_50(uint256) -> pendingTokenUser[_buyer]
+REF_50(uint256) (->pendingTokenUser) := 0(uint256)
+TMP_129(address) = HIGH_LEVEL_CALL, dest:tokenSaleContract(TokenSale), function:wallet, arguments:[]  
+EXPRESSION:soldTokens = soldTokens.add(pendingTokenUser[_buyer])	NodeType.EXPRESSION
+pendingTokenUser[_buyer] = 0	NodeType.EXPRESSION
+tokenSaleContract.wallet().transfer(etherUser[_buyer])	NodeType.EXPRESSION" [shape=box];
+"BlockID: 27
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+REF_53(uint256) -> etherUser[_buyer]
+Transfer dest:TMP_129 value:REF_53
+EXPRESSION:tokenSaleContract.wallet().transfer(etherUser[_buyer])	NodeType.EXPRESSION" [shape=box];
+"BlockID: 29
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+REF_54(uint256) -> etherUser[_buyer]
+REF_54(uint256) (->etherUser) := 0(uint256)
+TMP_373(None) := True(bool)
+TMP_368(None) := TMP_53(bool)
+RETURN TMP_43
+EXPRESSION:tokenSaleContract.wallet().transfer(etherUser[_buyer])	NodeType.EXPRESSION
+etherUser[_buyer] = 0	NodeType.EXPRESSION
+giveToken(buyer)	NodeType.EXPRESSION
+buyImplementation(msg.sender,buyerId,maxAmount,v,r,s)	NodeType.RETURN";
+"BlockID: 13
+Call context: buyTokens,buyImplementation,releaseTokensTo
+True
+TMP_125(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 14
+Call context: buyTokens,buyImplementation,releaseTokensTo
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+TMP_44 = CONVERT 0 to address
+TMP_45(bytes32) = SOLIDITY_CALL sha256()(Eidoo icoengine authorization,TMP_44,buyerAddress,buyerId,maxAmount)
+hash(bytes32) := TMP_45(bytes32)
+TMP_46(address) = SOLIDITY_CALL ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)
+signer(address) := TMP_46(address)
+REF_10(bool) -> isKycSigner[signer]
+TMP_47 = ! REF_10 
+CONDITION TMP_47
+EXPRESSION:hash = sha256()(Eidoo icoengine authorization,address(0),buyerAddress,buyerId,maxAmount)	NodeType.VARIABLE
+hash = sha256()(Eidoo icoengine authorization,address(0),buyerAddress,buyerId,maxAmount)	NodeType.EXPRESSION
+signer = ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)	NodeType.VARIABLE
+signer = ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)	NodeType.EXPRESSION
+! isKycSigner[signer]	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_44 = CONVERT 0 to address
+TMP_45(bytes32) = SOLIDITY_CALL sha256()(Eidoo icoengine authorization,TMP_44,buyerAddress,buyerId,maxAmount)
+hash(bytes32) := TMP_45(bytes32)
+TMP_46(address) = SOLIDITY_CALL ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)
+signer(address) := TMP_46(address)
+REF_10(bool) -> isKycSigner[signer]
+TMP_47 = ! REF_10 
+CONDITION TMP_47
+EXPRESSION:hash = sha256()(Eidoo icoengine authorization,address(0),buyerAddress,buyerId,maxAmount)	NodeType.VARIABLE
+hash = sha256()(Eidoo icoengine authorization,address(0),buyerAddress,buyerId,maxAmount)	NodeType.EXPRESSION
+signer = ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)	NodeType.VARIABLE
+signer = ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)	NodeType.EXPRESSION
+! isKycSigner[signer]	NodeType.IF" -> "BlockID: 2
+Call context: buyTokens
+True
+TMP_48(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+TMP_44 = CONVERT 0 to address
+TMP_45(bytes32) = SOLIDITY_CALL sha256()(Eidoo icoengine authorization,TMP_44,buyerAddress,buyerId,maxAmount)
+hash(bytes32) := TMP_45(bytes32)
+TMP_46(address) = SOLIDITY_CALL ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)
+signer(address) := TMP_46(address)
+REF_10(bool) -> isKycSigner[signer]
+TMP_47 = ! REF_10 
+CONDITION TMP_47
+EXPRESSION:hash = sha256()(Eidoo icoengine authorization,address(0),buyerAddress,buyerId,maxAmount)	NodeType.VARIABLE
+hash = sha256()(Eidoo icoengine authorization,address(0),buyerAddress,buyerId,maxAmount)	NodeType.EXPRESSION
+signer = ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)	NodeType.VARIABLE
+signer = ecrecover(bytes32,uint8,bytes32,bytes32)(hash,v,r,s)	NodeType.EXPRESSION
+! isKycSigner[signer]	NodeType.IF" -> "BlockID: 3
+Call context: buyTokens
+False
+REF_11(uint256) -> alreadyPayed[buyerId]
+TMP_49(uint256) = a + b
+totalPayed(uint256) := TMP_49(uint256)
+TMP_50(bool) = totalPayed <= maxAmount
+CONDITION TMP_50
+EXPRESSION:TMP_50(bool) = totalPayed <= maxAmount	NodeType.IF" [key="successor_5"];
+"BlockID: 3
+Call context: buyTokens
+False
+REF_11(uint256) -> alreadyPayed[buyerId]
+TMP_49(uint256) = a + b
+totalPayed(uint256) := TMP_49(uint256)
+TMP_50(bool) = totalPayed <= maxAmount
+CONDITION TMP_50
+EXPRESSION:TMP_50(bool) = totalPayed <= maxAmount	NodeType.IF" -> "BlockID: 4
+Call context: buyTokens
+True
+TMP_51(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 3
+Call context: buyTokens
+False
+REF_11(uint256) -> alreadyPayed[buyerId]
+TMP_49(uint256) = a + b
+totalPayed(uint256) := TMP_49(uint256)
+TMP_50(bool) = totalPayed <= maxAmount
+CONDITION TMP_50
+EXPRESSION:TMP_50(bool) = totalPayed <= maxAmount	NodeType.IF" -> "BlockID: 5
+Call context: buyTokens
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 6
+Call context: buyTokens
+True
+REF_13(uint256) -> alreadyPayed[buyerId]
+REF_13(uint256) (->alreadyPayed) := totalPayed(uint256)
+TMP_76(bool) = msg.value > 0
+CONDITION TMP_76
+EXPRESSION:alreadyPayed[buyerId] = totalPayed	NodeType.EXPRESSION
+msg.value > 0	NodeType.IF" -> "BlockID: 7
+Call context: buyTokens,buyImplementation
+True
+TMP_96(bool) = now > startTime
+CONDITION TMP_96
+EXPRESSION:TMP_96(bool) = now > startTime	NodeType.IF" [key="successor_5"];
+"BlockID: 6
+Call context: buyTokens
+True
+REF_13(uint256) -> alreadyPayed[buyerId]
+REF_13(uint256) (->alreadyPayed) := totalPayed(uint256)
+TMP_76(bool) = msg.value > 0
+CONDITION TMP_76
+EXPRESSION:alreadyPayed[buyerId] = totalPayed	NodeType.EXPRESSION
+msg.value > 0	NodeType.IF" -> "BlockID: 8
+Call context: buyTokens,buyImplementation
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 5
+Call context: buyTokens
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 6
+Call context: buyTokens
+True
+REF_13(uint256) -> alreadyPayed[buyerId]
+REF_13(uint256) (->alreadyPayed) := totalPayed(uint256)
+TMP_76(bool) = msg.value > 0
+CONDITION TMP_76
+EXPRESSION:alreadyPayed[buyerId] = totalPayed	NodeType.EXPRESSION
+msg.value > 0	NodeType.IF" [key=0];
+"BlockID: 7
+Call context: buyTokens,buyImplementation
+True
+TMP_96(bool) = now > startTime
+CONDITION TMP_96
+EXPRESSION:TMP_96(bool) = now > startTime	NodeType.IF" -> "BlockID: 9
+Call context: buyTokens,buyImplementation,releaseTokensTo
+True
+TMP_97(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 7
+Call context: buyTokens,buyImplementation
+True
+TMP_96(bool) = now > startTime
+CONDITION TMP_96
+EXPRESSION:TMP_96(bool) = now > startTime	NodeType.IF" -> "BlockID: 10
+Call context: buyTokens,buyImplementation,releaseTokensTo
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 8
+Call context: buyTokens,buyImplementation
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 11
+Call context: buyTokens,buyImplementation
+None
+REF_41(uint256) -> pendingTokenUser[_buyer]
+TMP_124(bool) = REF_41 > 0
+CONDITION TMP_124
+EXPRESSION:TMP_124(bool) = REF_41 > 0	NodeType.IF" [key=0];
+"BlockID: 11
+Call context: buyTokens,buyImplementation
+None
+REF_41(uint256) -> pendingTokenUser[_buyer]
+TMP_124(bool) = REF_41 > 0
+CONDITION TMP_124
+EXPRESSION:TMP_124(bool) = REF_41 > 0	NodeType.IF" -> "BlockID: 13
+Call context: buyTokens,buyImplementation,releaseTokensTo
+True
+TMP_125(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 11
+Call context: buyTokens,buyImplementation
+None
+REF_41(uint256) -> pendingTokenUser[_buyer]
+TMP_124(bool) = REF_41 > 0
+CONDITION TMP_124
+EXPRESSION:TMP_124(bool) = REF_41 > 0	NodeType.IF" -> "BlockID: 14
+Call context: buyTokens,buyImplementation,releaseTokensTo
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 28
+Call context: buyTokens,buyImplementation,releaseTokensTo
+True
+TMP_104(uint256) = HIGH_LEVEL_CALL, dest:tokenSaleContract(TokenSale), function:decimals, arguments:[]  
+EXPRESSION:" -> "BlockID: 30
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+TMP_105 = CONVERT TMP_104 to uint256
+TMP_106(uint256) = 10 ** TMP_105
+oneToken(uint256) := TMP_106(uint256)
+TMP_107(uint256) = HIGH_LEVEL_CALL, dest:tokenSaleContract(TokenSale), function:tokenValueInEther, arguments:['oneTokenInFiatWei']  
+EXPRESSION:oneToken = 10 ** uint256(tokenSaleContract.decimals())	NodeType.VARIABLE
+oneToken = 10 ** uint256(tokenSaleContract.decimals())	NodeType.EXPRESSION" [key=0];
+"BlockID: 30
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+TMP_105 = CONVERT TMP_104 to uint256
+TMP_106(uint256) = 10 ** TMP_105
+oneToken(uint256) := TMP_106(uint256)
+TMP_107(uint256) = HIGH_LEVEL_CALL, dest:tokenSaleContract(TokenSale), function:tokenValueInEther, arguments:['oneTokenInFiatWei']  
+EXPRESSION:oneToken = 10 ** uint256(tokenSaleContract.decimals())	NodeType.VARIABLE
+oneToken = 10 ** uint256(tokenSaleContract.decimals())	NodeType.EXPRESSION" -> "BlockID: 31
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+tokenValue(uint256) := TMP_107(uint256)
+TMP_108(uint256) = a * b
+TMP_109(uint256) = a / b
+EXPRESSION:tokenValue = tokenSaleContract.tokenValueInEther(oneTokenInFiatWei)	NodeType.VARIABLE
+tokenValue = tokenSaleContract.tokenValueInEther(oneTokenInFiatWei)	NodeType.EXPRESSION" [key=0];
+"BlockID: 31
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+tokenValue(uint256) := TMP_107(uint256)
+TMP_108(uint256) = a * b
+TMP_109(uint256) = a / b
+EXPRESSION:tokenValue = tokenSaleContract.tokenValueInEther(oneTokenInFiatWei)	NodeType.VARIABLE
+tokenValue = tokenSaleContract.tokenValueInEther(oneTokenInFiatWei)	NodeType.EXPRESSION" -> "BlockID: 32
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+tokenAmount(uint256) := TMP_109(uint256)
+TMP_110(tokenInterface) = HIGH_LEVEL_CALL, dest:tokenSaleContract(TokenSale), function:tokenContract, arguments:[]  
+EXPRESSION:tokenAmount = msg.value.mul(oneToken).div(tokenValue)	NodeType.VARIABLE
+tokenAmount = msg.value.mul(oneToken).div(tokenValue)	NodeType.EXPRESSION" [key="successor_1"];
+"BlockID: 32
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+tokenAmount(uint256) := TMP_109(uint256)
+TMP_110(tokenInterface) = HIGH_LEVEL_CALL, dest:tokenSaleContract(TokenSale), function:tokenContract, arguments:[]  
+EXPRESSION:tokenAmount = msg.value.mul(oneToken).div(tokenValue)	NodeType.VARIABLE
+tokenAmount = msg.value.mul(oneToken).div(tokenValue)	NodeType.EXPRESSION" -> "BlockID: 33
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+TMP_111 = CONVERT TMP_110 to tokenInterface
+TMP_112(uint256) = HIGH_LEVEL_CALL, dest:TMP_111(tokenInterface), function:balanceOf, arguments:['tokenSaleContract']  
+EXPRESSION:" [key=0];
+"BlockID: 33
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+TMP_111 = CONVERT TMP_110 to tokenInterface
+TMP_112(uint256) = HIGH_LEVEL_CALL, dest:TMP_111(tokenInterface), function:balanceOf, arguments:['tokenSaleContract']  
+EXPRESSION:" -> "BlockID: 34
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+unboughtTokens(uint256) := TMP_112(uint256)
+TMP_113(bool) = unboughtTokens > remainingTokens
+CONDITION TMP_113
+EXPRESSION:unboughtTokens = tokenInterface(tokenSaleContract.tokenContract()).balanceOf(tokenSaleContract)	NodeType.VARIABLE
+unboughtTokens = tokenInterface(tokenSaleContract.tokenContract()).balanceOf(tokenSaleContract)	NodeType.EXPRESSION
+unboughtTokens > remainingTokens	NodeType.IF" [key=0];
+"BlockID: 34
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+unboughtTokens(uint256) := TMP_112(uint256)
+TMP_113(bool) = unboughtTokens > remainingTokens
+CONDITION TMP_113
+EXPRESSION:unboughtTokens = tokenInterface(tokenSaleContract.tokenContract()).balanceOf(tokenSaleContract)	NodeType.VARIABLE
+unboughtTokens = tokenInterface(tokenSaleContract.tokenContract()).balanceOf(tokenSaleContract)	NodeType.EXPRESSION
+unboughtTokens > remainingTokens	NodeType.IF" -> "BlockID: 35
+Call context: buyTokens,buyImplementation,releaseTokensTo
+True
+unboughtTokens(uint256) := remainingTokens(uint256)
+EXPRESSION:unboughtTokens = remainingTokens	NodeType.EXPRESSION" [key=0];
+"BlockID: 34
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+unboughtTokens(uint256) := TMP_112(uint256)
+TMP_113(bool) = unboughtTokens > remainingTokens
+CONDITION TMP_113
+EXPRESSION:unboughtTokens = tokenInterface(tokenSaleContract.tokenContract()).balanceOf(tokenSaleContract)	NodeType.VARIABLE
+unboughtTokens = tokenInterface(tokenSaleContract.tokenContract()).balanceOf(tokenSaleContract)	NodeType.EXPRESSION
+unboughtTokens > remainingTokens	NodeType.IF" -> "BlockID: 36
+Call context: buyTokens,buyImplementation,releaseTokensTo
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 35
+Call context: buyTokens,buyImplementation,releaseTokensTo
+True
+unboughtTokens(uint256) := remainingTokens(uint256)
+EXPRESSION:unboughtTokens = remainingTokens	NodeType.EXPRESSION" -> "BlockID: 36
+Call context: buyTokens,buyImplementation,releaseTokensTo
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 36
+Call context: buyTokens,buyImplementation,releaseTokensTo
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 37
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+refund(uint256) := 0(uint256)
+TMP_114(bool) = unboughtTokens < tokenAmount
+CONDITION TMP_114
+EXPRESSION:refund = 0	NodeType.VARIABLE
+refund = 0	NodeType.EXPRESSION
+unboughtTokens < tokenAmount	NodeType.IF" [key=0];
+"BlockID: 37
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+refund(uint256) := 0(uint256)
+TMP_114(bool) = unboughtTokens < tokenAmount
+CONDITION TMP_114
+EXPRESSION:refund = 0	NodeType.VARIABLE
+refund = 0	NodeType.EXPRESSION
+unboughtTokens < tokenAmount	NodeType.IF" -> "BlockID: 38
+Call context: buyTokens,buyImplementation,releaseTokensTo
+True
+TMP_115(uint256) = tokenAmount - unboughtTokens
+TMP_116(uint256) = a * b
+TMP_117(uint256) = a / b
+refund(uint256) := TMP_117(uint256)
+tokenAmount(uint256) := unboughtTokens(uint256)
+remainingTokens(uint256) := 0(uint256)
+Transfer dest:_buyer value:refund
+EXPRESSION:refund = (tokenAmount - unboughtTokens).mul(tokenValue).div(oneToken)	NodeType.EXPRESSION
+refund = (tokenAmount - unboughtTokens).mul(tokenValue).div(oneToken)	NodeType.EXPRESSION
+refund = (tokenAmount - unboughtTokens).mul(tokenValue).div(oneToken)	NodeType.EXPRESSION
+tokenAmount = unboughtTokens	NodeType.EXPRESSION
+remainingTokens = 0	NodeType.EXPRESSION
+_buyer.transfer(refund)	NodeType.EXPRESSION" [key=0];
+"BlockID: 37
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+refund(uint256) := 0(uint256)
+TMP_114(bool) = unboughtTokens < tokenAmount
+CONDITION TMP_114
+EXPRESSION:refund = 0	NodeType.VARIABLE
+refund = 0	NodeType.EXPRESSION
+unboughtTokens < tokenAmount	NodeType.IF" -> "BlockID: 39
+Call context: buyTokens,buyImplementation,releaseTokensTo
+False
+TMP_119(uint256) = a - b
+remainingTokens(uint256) := TMP_119(uint256)
+EXPRESSION:remainingTokens = remainingTokens.sub(tokenAmount)	NodeType.EXPRESSION
+remainingTokens = remainingTokens.sub(tokenAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 38
+Call context: buyTokens,buyImplementation,releaseTokensTo
+True
+TMP_115(uint256) = tokenAmount - unboughtTokens
+TMP_116(uint256) = a * b
+TMP_117(uint256) = a / b
+refund(uint256) := TMP_117(uint256)
+tokenAmount(uint256) := unboughtTokens(uint256)
+remainingTokens(uint256) := 0(uint256)
+Transfer dest:_buyer value:refund
+EXPRESSION:refund = (tokenAmount - unboughtTokens).mul(tokenValue).div(oneToken)	NodeType.EXPRESSION
+refund = (tokenAmount - unboughtTokens).mul(tokenValue).div(oneToken)	NodeType.EXPRESSION
+refund = (tokenAmount - unboughtTokens).mul(tokenValue).div(oneToken)	NodeType.EXPRESSION
+tokenAmount = unboughtTokens	NodeType.EXPRESSION
+remainingTokens = 0	NodeType.EXPRESSION
+_buyer.transfer(refund)	NodeType.EXPRESSION" -> "BlockID: 40
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_1"];
+"BlockID: 39
+Call context: buyTokens,buyImplementation,releaseTokensTo
+False
+TMP_119(uint256) = a - b
+remainingTokens(uint256) := TMP_119(uint256)
+EXPRESSION:remainingTokens = remainingTokens.sub(tokenAmount)	NodeType.EXPRESSION
+remainingTokens = remainingTokens.sub(tokenAmount)	NodeType.EXPRESSION" -> "BlockID: 40
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 40
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 41
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+REF_34(uint256) -> etherUser[_buyer]
+REF_35(uint256) -> etherUser[_buyer]
+TMP_120(uint256) = a - b
+TMP_121(uint256) = a + b
+REF_34(uint256) (->etherUser) := TMP_121(uint256)
+REF_38(uint256) -> pendingTokenUser[_buyer]
+REF_39(uint256) -> pendingTokenUser[_buyer]
+TMP_122(uint256) = a + b
+REF_38(uint256) (->pendingTokenUser) := TMP_122(uint256)
+EXPRESSION:etherUser[_buyer] = etherUser[_buyer].add(msg.value.sub(refund))	NodeType.EXPRESSION
+etherUser[_buyer] = etherUser[_buyer].add(msg.value.sub(refund))	NodeType.EXPRESSION
+etherUser[_buyer] = etherUser[_buyer].add(msg.value.sub(refund))	NodeType.EXPRESSION
+pendingTokenUser[_buyer] = pendingTokenUser[_buyer].add(tokenAmount)	NodeType.EXPRESSION
+pendingTokenUser[_buyer] = pendingTokenUser[_buyer].add(tokenAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 41
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+REF_34(uint256) -> etherUser[_buyer]
+REF_35(uint256) -> etherUser[_buyer]
+TMP_120(uint256) = a - b
+TMP_121(uint256) = a + b
+REF_34(uint256) (->etherUser) := TMP_121(uint256)
+REF_38(uint256) -> pendingTokenUser[_buyer]
+REF_39(uint256) -> pendingTokenUser[_buyer]
+TMP_122(uint256) = a + b
+REF_38(uint256) (->pendingTokenUser) := TMP_122(uint256)
+EXPRESSION:etherUser[_buyer] = etherUser[_buyer].add(msg.value.sub(refund))	NodeType.EXPRESSION
+etherUser[_buyer] = etherUser[_buyer].add(msg.value.sub(refund))	NodeType.EXPRESSION
+etherUser[_buyer] = etherUser[_buyer].add(msg.value.sub(refund))	NodeType.EXPRESSION
+pendingTokenUser[_buyer] = pendingTokenUser[_buyer].add(tokenAmount)	NodeType.EXPRESSION
+pendingTokenUser[_buyer] = pendingTokenUser[_buyer].add(tokenAmount)	NodeType.EXPRESSION" -> "BlockID: 8
+Call context: buyTokens,buyImplementation
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="Exit: takeEther", ref="RC.takeEther"];
+"BlockID: 10
+Call context: buyTokens,buyImplementation,releaseTokensTo
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 12
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+TMP_98(bool) = now < endTime
+CONDITION TMP_98
+EXPRESSION:TMP_98(bool) = now < endTime	NodeType.IF" [key=0];
+"BlockID: 12
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+TMP_98(bool) = now < endTime
+CONDITION TMP_98
+EXPRESSION:TMP_98(bool) = now < endTime	NodeType.IF" -> "BlockID: 15
+Call context: buyTokens,buyImplementation,releaseTokensTo
+True
+TMP_99(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 12
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+TMP_98(bool) = now < endTime
+CONDITION TMP_98
+EXPRESSION:TMP_98(bool) = now < endTime	NodeType.IF" -> "BlockID: 16
+Call context: buyTokens,buyImplementation,releaseTokensTo
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 16
+Call context: buyTokens,buyImplementation,releaseTokensTo
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 18
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+TMP_100(bool) = msg.value >= etherMinimum
+CONDITION TMP_100
+EXPRESSION:TMP_100(bool) = msg.value >= etherMinimum	NodeType.IF" [key=0];
+"BlockID: 18
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+TMP_100(bool) = msg.value >= etherMinimum
+CONDITION TMP_100
+EXPRESSION:TMP_100(bool) = msg.value >= etherMinimum	NodeType.IF" -> "BlockID: 20
+Call context: buyTokens,buyImplementation,releaseTokensTo
+True
+TMP_101(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 18
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+TMP_100(bool) = msg.value >= etherMinimum
+CONDITION TMP_100
+EXPRESSION:TMP_100(bool) = msg.value >= etherMinimum	NodeType.IF" -> "BlockID: 21
+Call context: buyTokens,buyImplementation,releaseTokensTo
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 21
+Call context: buyTokens,buyImplementation,releaseTokensTo
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 23
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+TMP_102(bool) = remainingTokens > 0
+CONDITION TMP_102
+EXPRESSION:TMP_102(bool) = remainingTokens > 0	NodeType.IF" [key=0];
+"BlockID: 23
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+TMP_102(bool) = remainingTokens > 0
+CONDITION TMP_102
+EXPRESSION:TMP_102(bool) = remainingTokens > 0	NodeType.IF" -> "BlockID: 25
+Call context: buyTokens,buyImplementation,releaseTokensTo
+True
+TMP_103(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 23
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+TMP_102(bool) = remainingTokens > 0
+CONDITION TMP_102
+EXPRESSION:TMP_102(bool) = remainingTokens > 0	NodeType.IF" -> "BlockID: 26
+Call context: buyTokens,buyImplementation,releaseTokensTo
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 26
+Call context: buyTokens,buyImplementation,releaseTokensTo
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 28
+Call context: buyTokens,buyImplementation,releaseTokensTo
+True
+TMP_104(uint256) = HIGH_LEVEL_CALL, dest:tokenSaleContract(TokenSale), function:decimals, arguments:[]  
+EXPRESSION:" [key=0];
+"BlockID: 17
+Call context: buyTokens,buyImplementation,releaseTokensTo
+True
+REF_42(uint256) -> tokenUser[_buyer]
+REF_43(uint256) -> tokenUser[_buyer]
+REF_45(uint256) -> pendingTokenUser[_buyer]
+TMP_126(uint256) = a + b
+EXPRESSION:tokenUser[_buyer] = tokenUser[_buyer].add(pendingTokenUser[_buyer])	NodeType.EXPRESSION" -> "BlockID: 19
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+REF_42(uint256) (->tokenUser) := TMP_126(uint256)
+REF_47(uint256) -> pendingTokenUser[_buyer]
+TMP_127(bool) = HIGH_LEVEL_CALL, dest:tokenSaleContract(TokenSale), function:claim, arguments:['_buyer', 'REF_47']  
+EXPRESSION:tokenUser[_buyer] = tokenUser[_buyer].add(pendingTokenUser[_buyer])	NodeType.EXPRESSION
+tokenSaleContract.claim(_buyer,pendingTokenUser[_buyer])	NodeType.EXPRESSION" [key=0];
+"BlockID: 19
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+REF_42(uint256) (->tokenUser) := TMP_126(uint256)
+REF_47(uint256) -> pendingTokenUser[_buyer]
+TMP_127(bool) = HIGH_LEVEL_CALL, dest:tokenSaleContract(TokenSale), function:claim, arguments:['_buyer', 'REF_47']  
+EXPRESSION:tokenUser[_buyer] = tokenUser[_buyer].add(pendingTokenUser[_buyer])	NodeType.EXPRESSION
+tokenSaleContract.claim(_buyer,pendingTokenUser[_buyer])	NodeType.EXPRESSION" -> "BlockID: 22
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+REF_49(uint256) -> pendingTokenUser[_buyer]
+TMP_128(uint256) = a + b
+EXPRESSION:tokenSaleContract.claim(_buyer,pendingTokenUser[_buyer])	NodeType.EXPRESSION
+soldTokens = soldTokens.add(pendingTokenUser[_buyer])	NodeType.EXPRESSION" [key=0];
+"BlockID: 22
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+REF_49(uint256) -> pendingTokenUser[_buyer]
+TMP_128(uint256) = a + b
+EXPRESSION:tokenSaleContract.claim(_buyer,pendingTokenUser[_buyer])	NodeType.EXPRESSION
+soldTokens = soldTokens.add(pendingTokenUser[_buyer])	NodeType.EXPRESSION" -> "BlockID: 24
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+soldTokens(uint256) := TMP_128(uint256)
+REF_50(uint256) -> pendingTokenUser[_buyer]
+REF_50(uint256) (->pendingTokenUser) := 0(uint256)
+TMP_129(address) = HIGH_LEVEL_CALL, dest:tokenSaleContract(TokenSale), function:wallet, arguments:[]  
+EXPRESSION:soldTokens = soldTokens.add(pendingTokenUser[_buyer])	NodeType.EXPRESSION
+pendingTokenUser[_buyer] = 0	NodeType.EXPRESSION
+tokenSaleContract.wallet().transfer(etherUser[_buyer])	NodeType.EXPRESSION" [key=0];
+"BlockID: 24
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+soldTokens(uint256) := TMP_128(uint256)
+REF_50(uint256) -> pendingTokenUser[_buyer]
+REF_50(uint256) (->pendingTokenUser) := 0(uint256)
+TMP_129(address) = HIGH_LEVEL_CALL, dest:tokenSaleContract(TokenSale), function:wallet, arguments:[]  
+EXPRESSION:soldTokens = soldTokens.add(pendingTokenUser[_buyer])	NodeType.EXPRESSION
+pendingTokenUser[_buyer] = 0	NodeType.EXPRESSION
+tokenSaleContract.wallet().transfer(etherUser[_buyer])	NodeType.EXPRESSION" -> "BlockID: 27
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+REF_53(uint256) -> etherUser[_buyer]
+Transfer dest:TMP_129 value:REF_53
+EXPRESSION:tokenSaleContract.wallet().transfer(etherUser[_buyer])	NodeType.EXPRESSION" [key=0];
+"BlockID: 27
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+REF_53(uint256) -> etherUser[_buyer]
+Transfer dest:TMP_129 value:REF_53
+EXPRESSION:tokenSaleContract.wallet().transfer(etherUser[_buyer])	NodeType.EXPRESSION" -> "BlockID: 29
+Call context: buyTokens,buyImplementation,releaseTokensTo
+None
+REF_54(uint256) -> etherUser[_buyer]
+REF_54(uint256) (->etherUser) := 0(uint256)
+TMP_373(None) := True(bool)
+TMP_368(None) := TMP_53(bool)
+RETURN TMP_43
+EXPRESSION:tokenSaleContract.wallet().transfer(etherUser[_buyer])	NodeType.EXPRESSION
+etherUser[_buyer] = 0	NodeType.EXPRESSION
+giveToken(buyer)	NodeType.EXPRESSION
+buyImplementation(msg.sender,buyerId,maxAmount,v,r,s)	NodeType.RETURN" [key=0];
+"BlockID: 14
+Call context: buyTokens,buyImplementation,releaseTokensTo
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 17
+Call context: buyTokens,buyImplementation,releaseTokensTo
+True
+REF_42(uint256) -> tokenUser[_buyer]
+REF_43(uint256) -> tokenUser[_buyer]
+REF_45(uint256) -> pendingTokenUser[_buyer]
+TMP_126(uint256) = a + b
+EXPRESSION:tokenUser[_buyer] = tokenUser[_buyer].add(pendingTokenUser[_buyer])	NodeType.EXPRESSION" [key=0];
+}

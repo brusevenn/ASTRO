@@ -1,0 +1,1567 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+TMP_156uint256[])  = new uint256[](points)
+_prices(uint256[]) =  ['TMP_156(uint256[])']
+REF_60 -> LENGTH observations
+TMP_157(uint256) = REF_60 (c)- 1
+length(uint256) := TMP_157(uint256)
+TMP_158(uint256) = points (c)* window
+TMP_159(uint256) = length (c)- TMP_158
+i(uint256) := TMP_159(uint256)
+nextIndex(uint256) := 0(uint256)
+index(uint256) := 0(uint256)
+EXPRESSION:_prices = new uint256[](points)	NodeType.VARIABLE
+_prices = new uint256[](points)	NodeType.EXPRESSION
+length = observations.length - 1	NodeType.VARIABLE
+length = observations.length - 1	NodeType.EXPRESSION
+i = length - (points * window)	NodeType.VARIABLE
+i = length - (points * window)	NodeType.EXPRESSION
+nextIndex = 0	NodeType.VARIABLE
+nextIndex = 0	NodeType.EXPRESSION
+index = 0	NodeType.VARIABLE
+index = 0	NodeType.EXPRESSION";
+"BlockID: 2
+Call context: 
+None
+BEGIN_LOOP
+TMP_160(bool) = i < length
+CONDITION TMP_160
+EXPRESSION:None	NodeType.STARTLOOP
+i < length	NodeType.IFLOOP";
+"BlockID: 3
+Call context: 
+True
+TMP_161(uint256) = i (c)+ window
+nextIndex(uint256) := TMP_161(uint256)
+REF_61(LeetSwapV2Pair.Observation) -> observations[nextIndex]
+REF_62(uint256) -> REF_61.timestamp
+REF_63(LeetSwapV2Pair.Observation) -> observations[i]
+REF_64(uint256) -> REF_63.timestamp
+TMP_162(uint256) = REF_62 (c)- REF_64
+timeElapsed(uint256) := TMP_162(uint256)
+REF_65(LeetSwapV2Pair.Observation) -> observations[nextIndex]
+REF_66(uint256) -> REF_65.reserve0Cumulative
+REF_67(LeetSwapV2Pair.Observation) -> observations[i]
+REF_68(uint256) -> REF_67.reserve0Cumulative
+TMP_163(uint256) = REF_66 (c)- REF_68
+TMP_164(uint256) = TMP_163 (c)/ timeElapsed
+_reserve0(uint256) := TMP_164(uint256)
+REF_69(LeetSwapV2Pair.Observation) -> observations[nextIndex]
+REF_70(uint256) -> REF_69.reserve1Cumulative
+REF_71(LeetSwapV2Pair.Observation) -> observations[i]
+REF_72(uint256) -> REF_71.reserve1Cumulative
+TMP_165(uint256) = REF_70 (c)- REF_72
+TMP_166(uint256) = TMP_165 (c)/ timeElapsed
+_reserve1(uint256) := TMP_166(uint256)
+REF_73(uint256) -> _prices[index]
+CONDITION stable
+EXPRESSION:nextIndex = i + window	NodeType.EXPRESSION
+timeElapsed = observations[nextIndex].timestamp - observations[i].timestamp	NodeType.VARIABLE
+timeElapsed = observations[nextIndex].timestamp - observations[i].timestamp	NodeType.EXPRESSION
+_reserve0 = (observations[nextIndex].reserve0Cumulative - observations[i].reserve0Cumulative) / timeElapsed	NodeType.VARIABLE
+_reserve0 = (observations[nextIndex].reserve0Cumulative - observations[i].reserve0Cumulative) / timeElapsed	NodeType.EXPRESSION
+_reserve1 = (observations[nextIndex].reserve1Cumulative - observations[i].reserve1Cumulative) / timeElapsed	NodeType.VARIABLE
+_reserve1 = (observations[nextIndex].reserve1Cumulative - observations[i].reserve1Cumulative) / timeElapsed	NodeType.EXPRESSION
+stable	NodeType.IF";
+"BlockID: 4
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 7
+Call context: 
+None
+RETURN _prices
+EXPRESSION:_prices	NodeType.RETURN";
+"BlockID: 19
+Call context: 
+None
+REF_73(uint256) (->_prices) := TMP_167(uint256)
+TMP_168(uint256) = index (c)+ 1
+index(uint256) := TMP_168(uint256)
+i(uint256) = i (c)+ window
+EXPRESSION:_prices[index] = _getAmountOut(amountIn,tokenIn,_reserve0,_reserve1)	NodeType.EXPRESSION
+index = index + 1	NodeType.EXPRESSION
+i += window	NodeType.EXPRESSION" [shape=box];
+"BlockID: 5
+Call context: quote,sample
+True
+CONDITION stable
+EXPRESSION:stable	NodeType.IF";
+"BlockID: 6
+Call context: quote,sample
+False
+NEW VARIABLE reserveA_scope_0
+NEW VARIABLE reserveB_scope_1
+TMP_382(bool) = tokenIn == token0
+CONDITION TMP_382
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+tokenIn == token0	NodeType.IF";
+"BlockID: 10
+Call context: quote,sample
+True
+reserveA_scope_0(uint256) := _reserve0(uint256)
+reserveB_scope_1(uint256) := _reserve1(uint256)
+EXPRESSION:(reserveA_scope_0,reserveB_scope_1) = (_reserve0,_reserve1)	NodeType.EXPRESSION";
+"BlockID: 11
+Call context: quote,sample
+False
+reserveA_scope_0(uint256) := _reserve1(uint256)
+reserveB_scope_1(uint256) := _reserve0(uint256)
+EXPRESSION:(reserveA_scope_0,reserveB_scope_1) = (_reserve1,_reserve0)	NodeType.EXPRESSION";
+"BlockID: 14
+Call context: quote,sample
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 17
+Call context: quote,sample
+None
+TMP_364(uint256) = amountIn (c)* reserveB_scope_1
+TMP_365(uint256) = reserveA_scope_0 (c)+ amountIn
+TMP_366(uint256) = TMP_364 (c)/ TMP_365
+TMP_491(None) := TMP_366(uint256)
+EXPRESSION:";
+"BlockID: 13
+Call context: quote,sample
+None
+xy(uint256) := TMP_354(uint256)
+TMP_355(uint256) = _reserve0 (c)* 1000000000000000000
+TMP_30 = CONVERT token0 to IERC20Metadata
+TMP_31(uint8) = HIGH_LEVEL_CALL, dest:TMP_30(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:xy = _k(_reserve0,_reserve1)	NodeType.VARIABLE
+xy = _k(_reserve0,_reserve1)	NodeType.EXPRESSION
+10 ** IERC20Metadata(token0).decimals()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 20
+Call context: quote,sample
+True
+reserveA(uint256) := _reserve0(uint256)
+reserveB(uint256) := _reserve1(uint256)
+EXPRESSION:(reserveA,reserveB) = (_reserve0,_reserve1)	NodeType.EXPRESSION";
+"BlockID: 21
+Call context: quote,sample
+False
+reserveA(uint256) := _reserve1(uint256)
+reserveB(uint256) := _reserve0(uint256)
+EXPRESSION:(reserveA,reserveB) = (_reserve1,_reserve0)	NodeType.EXPRESSION";
+"BlockID: 22
+Call context: quote,sample
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 23
+Call context: quote,sample
+None
+TMP_368(bool) = tokenIn == token0
+CONDITION TMP_368
+EXPRESSION:tokenIn == token0	NodeType.IF";
+"BlockID: 24
+Call context: quote,sample
+True
+TMP_369(uint256) = amountIn (c)* 1000000000000000000
+TMP_30 = CONVERT token0 to IERC20Metadata
+TMP_31(uint8) = HIGH_LEVEL_CALL, dest:TMP_30(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:10 ** IERC20Metadata(token0).decimals()	NodeType.EXPRESSION";
+"BlockID: 25
+Call context: quote,sample
+False
+TMP_372(uint256) = amountIn (c)* 1000000000000000000
+TMP_33 = CONVERT token1 to IERC20Metadata
+TMP_34(uint8) = HIGH_LEVEL_CALL, dest:TMP_33(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:10 ** IERC20Metadata(token1).decimals()	NodeType.EXPRESSION";
+"BlockID: 28
+Call context: quote,sample
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 29
+Call context: quote,sample
+None
+TMP_361(uint256) = amountIn (c)+ reserveA
+i(uint256) := 0(uint256)
+EXPRESSION:i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION";
+"BlockID: 37
+Call context: quote,sample
+None
+TMP_363(uint256) = reserveB (c)- TMP_362
+y(uint256) := TMP_363(uint256)
+TMP_375(bool) = tokenIn == token0
+CONDITION TMP_375
+EXPRESSION:y = reserveB - _get_y(amountIn + reserveA,xy,reserveB)	NodeType.VARIABLE
+y = reserveB - _get_y(amountIn + reserveA,xy,reserveB)	NodeType.EXPRESSION
+tokenIn == token0	NodeType.IF" [shape=box];
+"BlockID: 39
+Call context: quote,sample
+True
+TMP_33 = CONVERT token1 to IERC20Metadata
+TMP_34(uint8) = HIGH_LEVEL_CALL, dest:TMP_33(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:10 ** IERC20Metadata(token1).decimals()	NodeType.EXPRESSION";
+"BlockID: 40
+Call context: quote,sample
+False
+TMP_30 = CONVERT token0 to IERC20Metadata
+TMP_31(uint8) = HIGH_LEVEL_CALL, dest:TMP_30(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:10 ** IERC20Metadata(token0).decimals()	NodeType.EXPRESSION";
+"BlockID: 8
+Call context: quote,sample,_getAmountOut
+True
+TMP_383(uint256) = x (c)* 1000000000000000000
+TMP_30 = CONVERT token0 to IERC20Metadata
+TMP_31(uint8) = HIGH_LEVEL_CALL, dest:TMP_30(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:10 ** IERC20Metadata(token0).decimals()	NodeType.EXPRESSION";
+"BlockID: 9
+Call context: quote,sample,_getAmountOut
+False
+TMP_398(uint256) = x (c)* y
+TMP_492(None) := TMP_398(uint256)
+EXPRESSION:";
+"BlockID: 12
+Call context: quote,sample,_getAmountOut,_k
+None
+TMP_32(uint256) = 10 (c)** TMP_31
+TMP_458(None) := TMP_32(uint256)
+TMP_385(uint256) = TMP_383 (c)/ TMP_384
+_x(uint256) := TMP_385(uint256)
+TMP_386(uint256) = y (c)* 1000000000000000000
+TMP_33 = CONVERT token1 to IERC20Metadata
+TMP_34(uint8) = HIGH_LEVEL_CALL, dest:TMP_33(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:_x = (x * 1e18) / decimals0()	NodeType.VARIABLE
+10 ** IERC20Metadata(token1).decimals()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 15
+Call context: quote,sample,_getAmountOut,_k
+None
+TMP_35(uint256) = 10 (c)** TMP_34
+TMP_459(None) := TMP_35(uint256)
+TMP_388(uint256) = TMP_386 (c)/ TMP_387
+_y(uint256) := TMP_388(uint256)
+TMP_389(uint256) = _x (c)* _y
+TMP_390(uint256) = TMP_389 (c)/ 1000000000000000000
+_a(uint256) := TMP_390(uint256)
+TMP_391(uint256) = _x (c)* _x
+TMP_392(uint256) = TMP_391 (c)/ 1000000000000000000
+TMP_393(uint256) = _y (c)* _y
+TMP_394(uint256) = TMP_393 (c)/ 1000000000000000000
+TMP_395(uint256) = TMP_392 (c)+ TMP_394
+_b(uint256) := TMP_395(uint256)
+TMP_396(uint256) = _a (c)* _b
+TMP_397(uint256) = TMP_396 (c)/ 1000000000000000000
+TMP_492(None) := TMP_397(uint256)
+EXPRESSION:_y = (y * 1e18) / decimals1()	NodeType.VARIABLE
+_y = (y * 1e18) / decimals1()	NodeType.EXPRESSION
+_a = (_x * _y) / 1e18	NodeType.VARIABLE
+_a = (_x * _y) / 1e18	NodeType.EXPRESSION
+_b = ((_x * _x) / 1e18 + (_y * _y) / 1e18)	NodeType.VARIABLE
+_b = ((_x * _x) / 1e18 + (_y * _y) / 1e18)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 16
+Call context: quote,sample,_getAmountOut
+None
+TMP_32(uint256) = 10 (c)** TMP_31
+TMP_458(None) := TMP_32(uint256)
+TMP_357(uint256) = TMP_355 (c)/ TMP_356
+_reserve0(uint256) := TMP_357(uint256)
+TMP_358(uint256) = _reserve1 (c)* 1000000000000000000
+TMP_33 = CONVERT token1 to IERC20Metadata
+TMP_34(uint8) = HIGH_LEVEL_CALL, dest:TMP_33(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:_reserve0 = (_reserve0 * 1e18) / decimals0()	NodeType.EXPRESSION
+10 ** IERC20Metadata(token1).decimals()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 18
+Call context: quote,sample,_getAmountOut
+None
+TMP_35(uint256) = 10 (c)** TMP_34
+TMP_459(None) := TMP_35(uint256)
+TMP_360(uint256) = TMP_358 (c)/ TMP_359
+_reserve1(uint256) := TMP_360(uint256)
+NEW VARIABLE reserveA
+NEW VARIABLE reserveB
+TMP_367(bool) = tokenIn == token0
+CONDITION TMP_367
+EXPRESSION:_reserve1 = (_reserve1 * 1e18) / decimals1()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+tokenIn == token0	NodeType.IF" [shape=box];
+"BlockID: 26
+Call context: quote,sample,_getAmountOut
+None
+TMP_32(uint256) = 10 (c)** TMP_31
+TMP_458(None) := TMP_32(uint256)
+TMP_371(uint256) = TMP_369 (c)/ TMP_370
+amountIn(uint256) := TMP_371(uint256)
+EXPRESSION:amountIn = (amountIn * 1e18) / decimals0()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 27
+Call context: quote,sample,_getAmountOut
+None
+TMP_35(uint256) = 10 (c)** TMP_34
+TMP_459(None) := TMP_35(uint256)
+TMP_374(uint256) = TMP_372 (c)/ TMP_373
+amountIn(uint256) := TMP_374(uint256)
+EXPRESSION:amountIn = (amountIn * 1e18) / decimals1()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 30
+Call context: quote,sample,_getAmountOut
+None
+BEGIN_LOOP
+TMP_328(bool) = i < 255
+CONDITION TMP_328
+EXPRESSION:None	NodeType.STARTLOOP
+i < 255	NodeType.IFLOOP";
+"BlockID: 31
+Call context: quote,sample,_getAmountOut
+True
+y_prev(uint256) := y(uint256)
+TMP_305(uint256) = y (c)* y
+TMP_306(uint256) = TMP_305 (c)/ 1000000000000000000
+TMP_307(uint256) = TMP_306 (c)* y
+TMP_308(uint256) = TMP_307 (c)/ 1000000000000000000
+TMP_309(uint256) = x0 (c)* TMP_308
+TMP_310(uint256) = TMP_309 (c)/ 1000000000000000000
+TMP_311(uint256) = x0 (c)* x0
+TMP_312(uint256) = TMP_311 (c)/ 1000000000000000000
+TMP_313(uint256) = TMP_312 (c)* x0
+TMP_314(uint256) = TMP_313 (c)/ 1000000000000000000
+TMP_315(uint256) = TMP_314 (c)* y
+TMP_316(uint256) = TMP_315 (c)/ 1000000000000000000
+TMP_317(uint256) = TMP_310 (c)+ TMP_316
+TMP_486(None) := TMP_317(uint256)
+k(uint256) := TMP_329(uint256)
+TMP_330(bool) = k < xy
+CONDITION TMP_330
+EXPRESSION:y_prev = y	NodeType.VARIABLE
+k = _f(x0,y)	NodeType.VARIABLE
+k = _f(x0,y)	NodeType.EXPRESSION
+k < xy	NodeType.IF";
+"BlockID: 32
+Call context: quote,sample,_getAmountOut
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 35
+Call context: quote,sample,_getAmountOut
+None
+TMP_488(None) := y(uint256)
+EXPRESSION:";
+"BlockID: 33
+Call context: quote,sample,_getAmountOut
+True
+TMP_331(uint256) = xy (c)- k
+TMP_332(uint256) = TMP_331 (c)* 1000000000000000000
+TMP_318(uint256) = 3 (c)* x0
+TMP_319(uint256) = y (c)* y
+TMP_320(uint256) = TMP_319 (c)/ 1000000000000000000
+TMP_321(uint256) = TMP_318 (c)* TMP_320
+TMP_322(uint256) = TMP_321 (c)/ 1000000000000000000
+TMP_323(uint256) = x0 (c)* x0
+TMP_324(uint256) = TMP_323 (c)/ 1000000000000000000
+TMP_325(uint256) = TMP_324 (c)* x0
+TMP_326(uint256) = TMP_325 (c)/ 1000000000000000000
+TMP_327(uint256) = TMP_322 (c)+ TMP_326
+TMP_487(None) := TMP_327(uint256)
+TMP_334(uint256) = TMP_332 (c)/ TMP_333
+dy(uint256) := TMP_334(uint256)
+TMP_335(uint256) = y (c)+ dy
+y(uint256) := TMP_335(uint256)
+EXPRESSION:dy = ((xy - k) * 1e18) / _d(x0,y)	NodeType.VARIABLE
+dy = ((xy - k) * 1e18) / _d(x0,y)	NodeType.EXPRESSION
+y = y + dy	NodeType.EXPRESSION";
+"BlockID: 34
+Call context: quote,sample,_getAmountOut
+False
+TMP_336(uint256) = k (c)- xy
+TMP_337(uint256) = TMP_336 (c)* 1000000000000000000
+TMP_318(uint256) = 3 (c)* x0
+TMP_319(uint256) = y (c)* y
+TMP_320(uint256) = TMP_319 (c)/ 1000000000000000000
+TMP_321(uint256) = TMP_318 (c)* TMP_320
+TMP_322(uint256) = TMP_321 (c)/ 1000000000000000000
+TMP_323(uint256) = x0 (c)* x0
+TMP_324(uint256) = TMP_323 (c)/ 1000000000000000000
+TMP_325(uint256) = TMP_324 (c)* x0
+TMP_326(uint256) = TMP_325 (c)/ 1000000000000000000
+TMP_327(uint256) = TMP_322 (c)+ TMP_326
+TMP_487(None) := TMP_327(uint256)
+TMP_339(uint256) = TMP_337 (c)/ TMP_338
+dy_scope_0(uint256) := TMP_339(uint256)
+TMP_340(uint256) = y (c)- dy_scope_0
+y(uint256) := TMP_340(uint256)
+EXPRESSION:dy_scope_0 = ((k - xy) * 1e18) / _d(x0,y)	NodeType.VARIABLE
+dy_scope_0 = ((k - xy) * 1e18) / _d(x0,y)	NodeType.EXPRESSION
+y = y - dy_scope_0	NodeType.EXPRESSION";
+"BlockID: 36
+Call context: quote,sample,_getAmountOut
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 38
+Call context: quote,sample,_getAmountOut
+None
+TMP_341(bool) = y > y_prev
+CONDITION TMP_341
+EXPRESSION:y > y_prev	NodeType.IF";
+"BlockID: 41
+Call context: quote,sample,_getAmountOut
+True
+TMP_342(uint256) = y (c)- y_prev
+TMP_343(bool) = TMP_342 <= 1
+CONDITION TMP_343
+EXPRESSION:y - y_prev <= 1	NodeType.IF";
+"BlockID: 42
+Call context: quote,sample,_getAmountOut
+False
+TMP_344(uint256) = y_prev (c)- y
+TMP_345(bool) = TMP_344 <= 1
+CONDITION TMP_345
+EXPRESSION:y_prev - y <= 1	NodeType.IF";
+"BlockID: 47
+Call context: quote,sample,_getAmountOut
+True
+TMP_488(None) := y(uint256)
+EXPRESSION:";
+"BlockID: 48
+Call context: quote,sample,_getAmountOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 49
+Call context: quote,sample,_getAmountOut
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 50
+Call context: quote,sample,_getAmountOut
+None
+TMP_346(uint256) := i(uint256)
+i(uint256) = i (c)+ 1
+EXPRESSION:i ++	NodeType.EXPRESSION";
+"BlockID: 45
+Call context: quote,sample,_getAmountOut
+True
+TMP_488(None) := y(uint256)
+EXPRESSION:";
+"BlockID: 46
+Call context: quote,sample,_getAmountOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 43
+Call context: quote,sample,_getAmountOut
+None
+TMP_35(uint256) = 10 (c)** TMP_34
+TMP_459(None) := TMP_35(uint256)
+TMP_377(uint256) = y (c)* TMP_376
+TMP_378(uint256) = TMP_377 (c)/ 1000000000000000000
+TMP_491(None) := TMP_378(uint256)
+EXPRESSION:" [shape=box];
+"BlockID: 44
+Call context: quote,sample,_getAmountOut
+None
+TMP_32(uint256) = 10 (c)** TMP_31
+TMP_458(None) := TMP_32(uint256)
+TMP_380(uint256) = y (c)* TMP_379
+TMP_381(uint256) = TMP_380 (c)/ 1000000000000000000
+TMP_491(None) := TMP_381(uint256)
+EXPRESSION:" [shape=box];
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+TMP_156uint256[])  = new uint256[](points)
+_prices(uint256[]) =  ['TMP_156(uint256[])']
+REF_60 -> LENGTH observations
+TMP_157(uint256) = REF_60 (c)- 1
+length(uint256) := TMP_157(uint256)
+TMP_158(uint256) = points (c)* window
+TMP_159(uint256) = length (c)- TMP_158
+i(uint256) := TMP_159(uint256)
+nextIndex(uint256) := 0(uint256)
+index(uint256) := 0(uint256)
+EXPRESSION:_prices = new uint256[](points)	NodeType.VARIABLE
+_prices = new uint256[](points)	NodeType.EXPRESSION
+length = observations.length - 1	NodeType.VARIABLE
+length = observations.length - 1	NodeType.EXPRESSION
+i = length - (points * window)	NodeType.VARIABLE
+i = length - (points * window)	NodeType.EXPRESSION
+nextIndex = 0	NodeType.VARIABLE
+nextIndex = 0	NodeType.EXPRESSION
+index = 0	NodeType.VARIABLE
+index = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_156uint256[])  = new uint256[](points)
+_prices(uint256[]) =  ['TMP_156(uint256[])']
+REF_60 -> LENGTH observations
+TMP_157(uint256) = REF_60 (c)- 1
+length(uint256) := TMP_157(uint256)
+TMP_158(uint256) = points (c)* window
+TMP_159(uint256) = length (c)- TMP_158
+i(uint256) := TMP_159(uint256)
+nextIndex(uint256) := 0(uint256)
+index(uint256) := 0(uint256)
+EXPRESSION:_prices = new uint256[](points)	NodeType.VARIABLE
+_prices = new uint256[](points)	NodeType.EXPRESSION
+length = observations.length - 1	NodeType.VARIABLE
+length = observations.length - 1	NodeType.EXPRESSION
+i = length - (points * window)	NodeType.VARIABLE
+i = length - (points * window)	NodeType.EXPRESSION
+nextIndex = 0	NodeType.VARIABLE
+nextIndex = 0	NodeType.EXPRESSION
+index = 0	NodeType.VARIABLE
+index = 0	NodeType.EXPRESSION" -> "BlockID: 2
+Call context: 
+None
+BEGIN_LOOP
+TMP_160(bool) = i < length
+CONDITION TMP_160
+EXPRESSION:None	NodeType.STARTLOOP
+i < length	NodeType.IFLOOP" [key=0];
+"BlockID: 2
+Call context: 
+None
+BEGIN_LOOP
+TMP_160(bool) = i < length
+CONDITION TMP_160
+EXPRESSION:None	NodeType.STARTLOOP
+i < length	NodeType.IFLOOP" -> "BlockID: 3
+Call context: 
+True
+TMP_161(uint256) = i (c)+ window
+nextIndex(uint256) := TMP_161(uint256)
+REF_61(LeetSwapV2Pair.Observation) -> observations[nextIndex]
+REF_62(uint256) -> REF_61.timestamp
+REF_63(LeetSwapV2Pair.Observation) -> observations[i]
+REF_64(uint256) -> REF_63.timestamp
+TMP_162(uint256) = REF_62 (c)- REF_64
+timeElapsed(uint256) := TMP_162(uint256)
+REF_65(LeetSwapV2Pair.Observation) -> observations[nextIndex]
+REF_66(uint256) -> REF_65.reserve0Cumulative
+REF_67(LeetSwapV2Pair.Observation) -> observations[i]
+REF_68(uint256) -> REF_67.reserve0Cumulative
+TMP_163(uint256) = REF_66 (c)- REF_68
+TMP_164(uint256) = TMP_163 (c)/ timeElapsed
+_reserve0(uint256) := TMP_164(uint256)
+REF_69(LeetSwapV2Pair.Observation) -> observations[nextIndex]
+REF_70(uint256) -> REF_69.reserve1Cumulative
+REF_71(LeetSwapV2Pair.Observation) -> observations[i]
+REF_72(uint256) -> REF_71.reserve1Cumulative
+TMP_165(uint256) = REF_70 (c)- REF_72
+TMP_166(uint256) = TMP_165 (c)/ timeElapsed
+_reserve1(uint256) := TMP_166(uint256)
+REF_73(uint256) -> _prices[index]
+CONDITION stable
+EXPRESSION:nextIndex = i + window	NodeType.EXPRESSION
+timeElapsed = observations[nextIndex].timestamp - observations[i].timestamp	NodeType.VARIABLE
+timeElapsed = observations[nextIndex].timestamp - observations[i].timestamp	NodeType.EXPRESSION
+_reserve0 = (observations[nextIndex].reserve0Cumulative - observations[i].reserve0Cumulative) / timeElapsed	NodeType.VARIABLE
+_reserve0 = (observations[nextIndex].reserve0Cumulative - observations[i].reserve0Cumulative) / timeElapsed	NodeType.EXPRESSION
+_reserve1 = (observations[nextIndex].reserve1Cumulative - observations[i].reserve1Cumulative) / timeElapsed	NodeType.VARIABLE
+_reserve1 = (observations[nextIndex].reserve1Cumulative - observations[i].reserve1Cumulative) / timeElapsed	NodeType.EXPRESSION
+stable	NodeType.IF" [key=0];
+"BlockID: 2
+Call context: 
+None
+BEGIN_LOOP
+TMP_160(bool) = i < length
+CONDITION TMP_160
+EXPRESSION:None	NodeType.STARTLOOP
+i < length	NodeType.IFLOOP" -> "BlockID: 4
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 3
+Call context: 
+True
+TMP_161(uint256) = i (c)+ window
+nextIndex(uint256) := TMP_161(uint256)
+REF_61(LeetSwapV2Pair.Observation) -> observations[nextIndex]
+REF_62(uint256) -> REF_61.timestamp
+REF_63(LeetSwapV2Pair.Observation) -> observations[i]
+REF_64(uint256) -> REF_63.timestamp
+TMP_162(uint256) = REF_62 (c)- REF_64
+timeElapsed(uint256) := TMP_162(uint256)
+REF_65(LeetSwapV2Pair.Observation) -> observations[nextIndex]
+REF_66(uint256) -> REF_65.reserve0Cumulative
+REF_67(LeetSwapV2Pair.Observation) -> observations[i]
+REF_68(uint256) -> REF_67.reserve0Cumulative
+TMP_163(uint256) = REF_66 (c)- REF_68
+TMP_164(uint256) = TMP_163 (c)/ timeElapsed
+_reserve0(uint256) := TMP_164(uint256)
+REF_69(LeetSwapV2Pair.Observation) -> observations[nextIndex]
+REF_70(uint256) -> REF_69.reserve1Cumulative
+REF_71(LeetSwapV2Pair.Observation) -> observations[i]
+REF_72(uint256) -> REF_71.reserve1Cumulative
+TMP_165(uint256) = REF_70 (c)- REF_72
+TMP_166(uint256) = TMP_165 (c)/ timeElapsed
+_reserve1(uint256) := TMP_166(uint256)
+REF_73(uint256) -> _prices[index]
+CONDITION stable
+EXPRESSION:nextIndex = i + window	NodeType.EXPRESSION
+timeElapsed = observations[nextIndex].timestamp - observations[i].timestamp	NodeType.VARIABLE
+timeElapsed = observations[nextIndex].timestamp - observations[i].timestamp	NodeType.EXPRESSION
+_reserve0 = (observations[nextIndex].reserve0Cumulative - observations[i].reserve0Cumulative) / timeElapsed	NodeType.VARIABLE
+_reserve0 = (observations[nextIndex].reserve0Cumulative - observations[i].reserve0Cumulative) / timeElapsed	NodeType.EXPRESSION
+_reserve1 = (observations[nextIndex].reserve1Cumulative - observations[i].reserve1Cumulative) / timeElapsed	NodeType.VARIABLE
+_reserve1 = (observations[nextIndex].reserve1Cumulative - observations[i].reserve1Cumulative) / timeElapsed	NodeType.EXPRESSION
+stable	NodeType.IF" -> "BlockID: 5
+Call context: quote,sample
+True
+CONDITION stable
+EXPRESSION:stable	NodeType.IF" [key="successor_5"];
+"BlockID: 3
+Call context: 
+True
+TMP_161(uint256) = i (c)+ window
+nextIndex(uint256) := TMP_161(uint256)
+REF_61(LeetSwapV2Pair.Observation) -> observations[nextIndex]
+REF_62(uint256) -> REF_61.timestamp
+REF_63(LeetSwapV2Pair.Observation) -> observations[i]
+REF_64(uint256) -> REF_63.timestamp
+TMP_162(uint256) = REF_62 (c)- REF_64
+timeElapsed(uint256) := TMP_162(uint256)
+REF_65(LeetSwapV2Pair.Observation) -> observations[nextIndex]
+REF_66(uint256) -> REF_65.reserve0Cumulative
+REF_67(LeetSwapV2Pair.Observation) -> observations[i]
+REF_68(uint256) -> REF_67.reserve0Cumulative
+TMP_163(uint256) = REF_66 (c)- REF_68
+TMP_164(uint256) = TMP_163 (c)/ timeElapsed
+_reserve0(uint256) := TMP_164(uint256)
+REF_69(LeetSwapV2Pair.Observation) -> observations[nextIndex]
+REF_70(uint256) -> REF_69.reserve1Cumulative
+REF_71(LeetSwapV2Pair.Observation) -> observations[i]
+REF_72(uint256) -> REF_71.reserve1Cumulative
+TMP_165(uint256) = REF_70 (c)- REF_72
+TMP_166(uint256) = TMP_165 (c)/ timeElapsed
+_reserve1(uint256) := TMP_166(uint256)
+REF_73(uint256) -> _prices[index]
+CONDITION stable
+EXPRESSION:nextIndex = i + window	NodeType.EXPRESSION
+timeElapsed = observations[nextIndex].timestamp - observations[i].timestamp	NodeType.VARIABLE
+timeElapsed = observations[nextIndex].timestamp - observations[i].timestamp	NodeType.EXPRESSION
+_reserve0 = (observations[nextIndex].reserve0Cumulative - observations[i].reserve0Cumulative) / timeElapsed	NodeType.VARIABLE
+_reserve0 = (observations[nextIndex].reserve0Cumulative - observations[i].reserve0Cumulative) / timeElapsed	NodeType.EXPRESSION
+_reserve1 = (observations[nextIndex].reserve1Cumulative - observations[i].reserve1Cumulative) / timeElapsed	NodeType.VARIABLE
+_reserve1 = (observations[nextIndex].reserve1Cumulative - observations[i].reserve1Cumulative) / timeElapsed	NodeType.EXPRESSION
+stable	NodeType.IF" -> "BlockID: 6
+Call context: quote,sample
+False
+NEW VARIABLE reserveA_scope_0
+NEW VARIABLE reserveB_scope_1
+TMP_382(bool) = tokenIn == token0
+CONDITION TMP_382
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+tokenIn == token0	NodeType.IF" [key="successor_5"];
+"BlockID: 4
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 7
+Call context: 
+None
+RETURN _prices
+EXPRESSION:_prices	NodeType.RETURN" [key=0];
+"BlockID: 19
+Call context: 
+None
+REF_73(uint256) (->_prices) := TMP_167(uint256)
+TMP_168(uint256) = index (c)+ 1
+index(uint256) := TMP_168(uint256)
+i(uint256) = i (c)+ window
+EXPRESSION:_prices[index] = _getAmountOut(amountIn,tokenIn,_reserve0,_reserve1)	NodeType.EXPRESSION
+index = index + 1	NodeType.EXPRESSION
+i += window	NodeType.EXPRESSION" -> "BlockID: 2
+Call context: 
+None
+BEGIN_LOOP
+TMP_160(bool) = i < length
+CONDITION TMP_160
+EXPRESSION:None	NodeType.STARTLOOP
+i < length	NodeType.IFLOOP" [key=0];
+"BlockID: 5
+Call context: quote,sample
+True
+CONDITION stable
+EXPRESSION:stable	NodeType.IF" -> "BlockID: 8
+Call context: quote,sample,_getAmountOut
+True
+TMP_383(uint256) = x (c)* 1000000000000000000
+TMP_30 = CONVERT token0 to IERC20Metadata
+TMP_31(uint8) = HIGH_LEVEL_CALL, dest:TMP_30(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:10 ** IERC20Metadata(token0).decimals()	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 5
+Call context: quote,sample
+True
+CONDITION stable
+EXPRESSION:stable	NodeType.IF" -> "BlockID: 9
+Call context: quote,sample,_getAmountOut
+False
+TMP_398(uint256) = x (c)* y
+TMP_492(None) := TMP_398(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 6
+Call context: quote,sample
+False
+NEW VARIABLE reserveA_scope_0
+NEW VARIABLE reserveB_scope_1
+TMP_382(bool) = tokenIn == token0
+CONDITION TMP_382
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+tokenIn == token0	NodeType.IF" -> "BlockID: 10
+Call context: quote,sample
+True
+reserveA_scope_0(uint256) := _reserve0(uint256)
+reserveB_scope_1(uint256) := _reserve1(uint256)
+EXPRESSION:(reserveA_scope_0,reserveB_scope_1) = (_reserve0,_reserve1)	NodeType.EXPRESSION" [key=0];
+"BlockID: 6
+Call context: quote,sample
+False
+NEW VARIABLE reserveA_scope_0
+NEW VARIABLE reserveB_scope_1
+TMP_382(bool) = tokenIn == token0
+CONDITION TMP_382
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+tokenIn == token0	NodeType.IF" -> "BlockID: 11
+Call context: quote,sample
+False
+reserveA_scope_0(uint256) := _reserve1(uint256)
+reserveB_scope_1(uint256) := _reserve0(uint256)
+EXPRESSION:(reserveA_scope_0,reserveB_scope_1) = (_reserve1,_reserve0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 10
+Call context: quote,sample
+True
+reserveA_scope_0(uint256) := _reserve0(uint256)
+reserveB_scope_1(uint256) := _reserve1(uint256)
+EXPRESSION:(reserveA_scope_0,reserveB_scope_1) = (_reserve0,_reserve1)	NodeType.EXPRESSION" -> "BlockID: 14
+Call context: quote,sample
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 11
+Call context: quote,sample
+False
+reserveA_scope_0(uint256) := _reserve1(uint256)
+reserveB_scope_1(uint256) := _reserve0(uint256)
+EXPRESSION:(reserveA_scope_0,reserveB_scope_1) = (_reserve1,_reserve0)	NodeType.EXPRESSION" -> "BlockID: 14
+Call context: quote,sample
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 14
+Call context: quote,sample
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 17
+Call context: quote,sample
+None
+TMP_364(uint256) = amountIn (c)* reserveB_scope_1
+TMP_365(uint256) = reserveA_scope_0 (c)+ amountIn
+TMP_366(uint256) = TMP_364 (c)/ TMP_365
+TMP_491(None) := TMP_366(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 17
+Call context: quote,sample
+None
+TMP_364(uint256) = amountIn (c)* reserveB_scope_1
+TMP_365(uint256) = reserveA_scope_0 (c)+ amountIn
+TMP_366(uint256) = TMP_364 (c)/ TMP_365
+TMP_491(None) := TMP_366(uint256)
+EXPRESSION:" -> "BlockID: 19
+Call context: 
+None
+REF_73(uint256) (->_prices) := TMP_167(uint256)
+TMP_168(uint256) = index (c)+ 1
+index(uint256) := TMP_168(uint256)
+i(uint256) = i (c)+ window
+EXPRESSION:_prices[index] = _getAmountOut(amountIn,tokenIn,_reserve0,_reserve1)	NodeType.EXPRESSION
+index = index + 1	NodeType.EXPRESSION
+i += window	NodeType.EXPRESSION" [key="successor_5", ref="LeetSwapV2Pair._getAmountOut"];
+"BlockID: 13
+Call context: quote,sample
+None
+xy(uint256) := TMP_354(uint256)
+TMP_355(uint256) = _reserve0 (c)* 1000000000000000000
+TMP_30 = CONVERT token0 to IERC20Metadata
+TMP_31(uint8) = HIGH_LEVEL_CALL, dest:TMP_30(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:xy = _k(_reserve0,_reserve1)	NodeType.VARIABLE
+xy = _k(_reserve0,_reserve1)	NodeType.EXPRESSION
+10 ** IERC20Metadata(token0).decimals()	NodeType.EXPRESSION" -> "BlockID: 16
+Call context: quote,sample,_getAmountOut
+None
+TMP_32(uint256) = 10 (c)** TMP_31
+TMP_458(None) := TMP_32(uint256)
+TMP_357(uint256) = TMP_355 (c)/ TMP_356
+_reserve0(uint256) := TMP_357(uint256)
+TMP_358(uint256) = _reserve1 (c)* 1000000000000000000
+TMP_33 = CONVERT token1 to IERC20Metadata
+TMP_34(uint8) = HIGH_LEVEL_CALL, dest:TMP_33(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:_reserve0 = (_reserve0 * 1e18) / decimals0()	NodeType.EXPRESSION
+10 ** IERC20Metadata(token1).decimals()	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 20
+Call context: quote,sample
+True
+reserveA(uint256) := _reserve0(uint256)
+reserveB(uint256) := _reserve1(uint256)
+EXPRESSION:(reserveA,reserveB) = (_reserve0,_reserve1)	NodeType.EXPRESSION" -> "BlockID: 22
+Call context: quote,sample
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 21
+Call context: quote,sample
+False
+reserveA(uint256) := _reserve1(uint256)
+reserveB(uint256) := _reserve0(uint256)
+EXPRESSION:(reserveA,reserveB) = (_reserve1,_reserve0)	NodeType.EXPRESSION" -> "BlockID: 22
+Call context: quote,sample
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 22
+Call context: quote,sample
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 23
+Call context: quote,sample
+None
+TMP_368(bool) = tokenIn == token0
+CONDITION TMP_368
+EXPRESSION:tokenIn == token0	NodeType.IF" [key=0];
+"BlockID: 23
+Call context: quote,sample
+None
+TMP_368(bool) = tokenIn == token0
+CONDITION TMP_368
+EXPRESSION:tokenIn == token0	NodeType.IF" -> "BlockID: 24
+Call context: quote,sample
+True
+TMP_369(uint256) = amountIn (c)* 1000000000000000000
+TMP_30 = CONVERT token0 to IERC20Metadata
+TMP_31(uint8) = HIGH_LEVEL_CALL, dest:TMP_30(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:10 ** IERC20Metadata(token0).decimals()	NodeType.EXPRESSION" [key=0];
+"BlockID: 23
+Call context: quote,sample
+None
+TMP_368(bool) = tokenIn == token0
+CONDITION TMP_368
+EXPRESSION:tokenIn == token0	NodeType.IF" -> "BlockID: 25
+Call context: quote,sample
+False
+TMP_372(uint256) = amountIn (c)* 1000000000000000000
+TMP_33 = CONVERT token1 to IERC20Metadata
+TMP_34(uint8) = HIGH_LEVEL_CALL, dest:TMP_33(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:10 ** IERC20Metadata(token1).decimals()	NodeType.EXPRESSION" [key=0];
+"BlockID: 24
+Call context: quote,sample
+True
+TMP_369(uint256) = amountIn (c)* 1000000000000000000
+TMP_30 = CONVERT token0 to IERC20Metadata
+TMP_31(uint8) = HIGH_LEVEL_CALL, dest:TMP_30(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:10 ** IERC20Metadata(token0).decimals()	NodeType.EXPRESSION" -> "BlockID: 26
+Call context: quote,sample,_getAmountOut
+None
+TMP_32(uint256) = 10 (c)** TMP_31
+TMP_458(None) := TMP_32(uint256)
+TMP_371(uint256) = TMP_369 (c)/ TMP_370
+amountIn(uint256) := TMP_371(uint256)
+EXPRESSION:amountIn = (amountIn * 1e18) / decimals0()	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 25
+Call context: quote,sample
+False
+TMP_372(uint256) = amountIn (c)* 1000000000000000000
+TMP_33 = CONVERT token1 to IERC20Metadata
+TMP_34(uint8) = HIGH_LEVEL_CALL, dest:TMP_33(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:10 ** IERC20Metadata(token1).decimals()	NodeType.EXPRESSION" -> "BlockID: 27
+Call context: quote,sample,_getAmountOut
+None
+TMP_35(uint256) = 10 (c)** TMP_34
+TMP_459(None) := TMP_35(uint256)
+TMP_374(uint256) = TMP_372 (c)/ TMP_373
+amountIn(uint256) := TMP_374(uint256)
+EXPRESSION:amountIn = (amountIn * 1e18) / decimals1()	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 28
+Call context: quote,sample
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 29
+Call context: quote,sample
+None
+TMP_361(uint256) = amountIn (c)+ reserveA
+i(uint256) := 0(uint256)
+EXPRESSION:i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 29
+Call context: quote,sample
+None
+TMP_361(uint256) = amountIn (c)+ reserveA
+i(uint256) := 0(uint256)
+EXPRESSION:i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" -> "BlockID: 30
+Call context: quote,sample,_getAmountOut
+None
+BEGIN_LOOP
+TMP_328(bool) = i < 255
+CONDITION TMP_328
+EXPRESSION:None	NodeType.STARTLOOP
+i < 255	NodeType.IFLOOP" [key="successor_5"];
+"BlockID: 37
+Call context: quote,sample
+None
+TMP_363(uint256) = reserveB (c)- TMP_362
+y(uint256) := TMP_363(uint256)
+TMP_375(bool) = tokenIn == token0
+CONDITION TMP_375
+EXPRESSION:y = reserveB - _get_y(amountIn + reserveA,xy,reserveB)	NodeType.VARIABLE
+y = reserveB - _get_y(amountIn + reserveA,xy,reserveB)	NodeType.EXPRESSION
+tokenIn == token0	NodeType.IF" -> "BlockID: 39
+Call context: quote,sample
+True
+TMP_33 = CONVERT token1 to IERC20Metadata
+TMP_34(uint8) = HIGH_LEVEL_CALL, dest:TMP_33(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:10 ** IERC20Metadata(token1).decimals()	NodeType.EXPRESSION" [key=0];
+"BlockID: 37
+Call context: quote,sample
+None
+TMP_363(uint256) = reserveB (c)- TMP_362
+y(uint256) := TMP_363(uint256)
+TMP_375(bool) = tokenIn == token0
+CONDITION TMP_375
+EXPRESSION:y = reserveB - _get_y(amountIn + reserveA,xy,reserveB)	NodeType.VARIABLE
+y = reserveB - _get_y(amountIn + reserveA,xy,reserveB)	NodeType.EXPRESSION
+tokenIn == token0	NodeType.IF" -> "BlockID: 40
+Call context: quote,sample
+False
+TMP_30 = CONVERT token0 to IERC20Metadata
+TMP_31(uint8) = HIGH_LEVEL_CALL, dest:TMP_30(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:10 ** IERC20Metadata(token0).decimals()	NodeType.EXPRESSION" [key=0];
+"BlockID: 39
+Call context: quote,sample
+True
+TMP_33 = CONVERT token1 to IERC20Metadata
+TMP_34(uint8) = HIGH_LEVEL_CALL, dest:TMP_33(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:10 ** IERC20Metadata(token1).decimals()	NodeType.EXPRESSION" -> "BlockID: 43
+Call context: quote,sample,_getAmountOut
+None
+TMP_35(uint256) = 10 (c)** TMP_34
+TMP_459(None) := TMP_35(uint256)
+TMP_377(uint256) = y (c)* TMP_376
+TMP_378(uint256) = TMP_377 (c)/ 1000000000000000000
+TMP_491(None) := TMP_378(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 40
+Call context: quote,sample
+False
+TMP_30 = CONVERT token0 to IERC20Metadata
+TMP_31(uint8) = HIGH_LEVEL_CALL, dest:TMP_30(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:10 ** IERC20Metadata(token0).decimals()	NodeType.EXPRESSION" -> "BlockID: 44
+Call context: quote,sample,_getAmountOut
+None
+TMP_32(uint256) = 10 (c)** TMP_31
+TMP_458(None) := TMP_32(uint256)
+TMP_380(uint256) = y (c)* TMP_379
+TMP_381(uint256) = TMP_380 (c)/ 1000000000000000000
+TMP_491(None) := TMP_381(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 8
+Call context: quote,sample,_getAmountOut
+True
+TMP_383(uint256) = x (c)* 1000000000000000000
+TMP_30 = CONVERT token0 to IERC20Metadata
+TMP_31(uint8) = HIGH_LEVEL_CALL, dest:TMP_30(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:10 ** IERC20Metadata(token0).decimals()	NodeType.EXPRESSION" -> "BlockID: 12
+Call context: quote,sample,_getAmountOut,_k
+None
+TMP_32(uint256) = 10 (c)** TMP_31
+TMP_458(None) := TMP_32(uint256)
+TMP_385(uint256) = TMP_383 (c)/ TMP_384
+_x(uint256) := TMP_385(uint256)
+TMP_386(uint256) = y (c)* 1000000000000000000
+TMP_33 = CONVERT token1 to IERC20Metadata
+TMP_34(uint8) = HIGH_LEVEL_CALL, dest:TMP_33(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:_x = (x * 1e18) / decimals0()	NodeType.VARIABLE
+10 ** IERC20Metadata(token1).decimals()	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 9
+Call context: quote,sample,_getAmountOut
+False
+TMP_398(uint256) = x (c)* y
+TMP_492(None) := TMP_398(uint256)
+EXPRESSION:" -> "BlockID: 13
+Call context: quote,sample
+None
+xy(uint256) := TMP_354(uint256)
+TMP_355(uint256) = _reserve0 (c)* 1000000000000000000
+TMP_30 = CONVERT token0 to IERC20Metadata
+TMP_31(uint8) = HIGH_LEVEL_CALL, dest:TMP_30(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:xy = _k(_reserve0,_reserve1)	NodeType.VARIABLE
+xy = _k(_reserve0,_reserve1)	NodeType.EXPRESSION
+10 ** IERC20Metadata(token0).decimals()	NodeType.EXPRESSION" [key="successor_5", ref="LeetSwapV2Pair._k"];
+"BlockID: 12
+Call context: quote,sample,_getAmountOut,_k
+None
+TMP_32(uint256) = 10 (c)** TMP_31
+TMP_458(None) := TMP_32(uint256)
+TMP_385(uint256) = TMP_383 (c)/ TMP_384
+_x(uint256) := TMP_385(uint256)
+TMP_386(uint256) = y (c)* 1000000000000000000
+TMP_33 = CONVERT token1 to IERC20Metadata
+TMP_34(uint8) = HIGH_LEVEL_CALL, dest:TMP_33(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:_x = (x * 1e18) / decimals0()	NodeType.VARIABLE
+10 ** IERC20Metadata(token1).decimals()	NodeType.EXPRESSION" -> "BlockID: 15
+Call context: quote,sample,_getAmountOut,_k
+None
+TMP_35(uint256) = 10 (c)** TMP_34
+TMP_459(None) := TMP_35(uint256)
+TMP_388(uint256) = TMP_386 (c)/ TMP_387
+_y(uint256) := TMP_388(uint256)
+TMP_389(uint256) = _x (c)* _y
+TMP_390(uint256) = TMP_389 (c)/ 1000000000000000000
+_a(uint256) := TMP_390(uint256)
+TMP_391(uint256) = _x (c)* _x
+TMP_392(uint256) = TMP_391 (c)/ 1000000000000000000
+TMP_393(uint256) = _y (c)* _y
+TMP_394(uint256) = TMP_393 (c)/ 1000000000000000000
+TMP_395(uint256) = TMP_392 (c)+ TMP_394
+_b(uint256) := TMP_395(uint256)
+TMP_396(uint256) = _a (c)* _b
+TMP_397(uint256) = TMP_396 (c)/ 1000000000000000000
+TMP_492(None) := TMP_397(uint256)
+EXPRESSION:_y = (y * 1e18) / decimals1()	NodeType.VARIABLE
+_y = (y * 1e18) / decimals1()	NodeType.EXPRESSION
+_a = (_x * _y) / 1e18	NodeType.VARIABLE
+_a = (_x * _y) / 1e18	NodeType.EXPRESSION
+_b = ((_x * _x) / 1e18 + (_y * _y) / 1e18)	NodeType.VARIABLE
+_b = ((_x * _x) / 1e18 + (_y * _y) / 1e18)	NodeType.EXPRESSION" [key="successor_1"];
+"BlockID: 15
+Call context: quote,sample,_getAmountOut,_k
+None
+TMP_35(uint256) = 10 (c)** TMP_34
+TMP_459(None) := TMP_35(uint256)
+TMP_388(uint256) = TMP_386 (c)/ TMP_387
+_y(uint256) := TMP_388(uint256)
+TMP_389(uint256) = _x (c)* _y
+TMP_390(uint256) = TMP_389 (c)/ 1000000000000000000
+_a(uint256) := TMP_390(uint256)
+TMP_391(uint256) = _x (c)* _x
+TMP_392(uint256) = TMP_391 (c)/ 1000000000000000000
+TMP_393(uint256) = _y (c)* _y
+TMP_394(uint256) = TMP_393 (c)/ 1000000000000000000
+TMP_395(uint256) = TMP_392 (c)+ TMP_394
+_b(uint256) := TMP_395(uint256)
+TMP_396(uint256) = _a (c)* _b
+TMP_397(uint256) = TMP_396 (c)/ 1000000000000000000
+TMP_492(None) := TMP_397(uint256)
+EXPRESSION:_y = (y * 1e18) / decimals1()	NodeType.VARIABLE
+_y = (y * 1e18) / decimals1()	NodeType.EXPRESSION
+_a = (_x * _y) / 1e18	NodeType.VARIABLE
+_a = (_x * _y) / 1e18	NodeType.EXPRESSION
+_b = ((_x * _x) / 1e18 + (_y * _y) / 1e18)	NodeType.VARIABLE
+_b = ((_x * _x) / 1e18 + (_y * _y) / 1e18)	NodeType.EXPRESSION" -> "BlockID: 13
+Call context: quote,sample
+None
+xy(uint256) := TMP_354(uint256)
+TMP_355(uint256) = _reserve0 (c)* 1000000000000000000
+TMP_30 = CONVERT token0 to IERC20Metadata
+TMP_31(uint8) = HIGH_LEVEL_CALL, dest:TMP_30(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:xy = _k(_reserve0,_reserve1)	NodeType.VARIABLE
+xy = _k(_reserve0,_reserve1)	NodeType.EXPRESSION
+10 ** IERC20Metadata(token0).decimals()	NodeType.EXPRESSION" [key="successor_5", ref="LeetSwapV2Pair._k"];
+"BlockID: 16
+Call context: quote,sample,_getAmountOut
+None
+TMP_32(uint256) = 10 (c)** TMP_31
+TMP_458(None) := TMP_32(uint256)
+TMP_357(uint256) = TMP_355 (c)/ TMP_356
+_reserve0(uint256) := TMP_357(uint256)
+TMP_358(uint256) = _reserve1 (c)* 1000000000000000000
+TMP_33 = CONVERT token1 to IERC20Metadata
+TMP_34(uint8) = HIGH_LEVEL_CALL, dest:TMP_33(IERC20Metadata), function:decimals, arguments:[]  
+EXPRESSION:_reserve0 = (_reserve0 * 1e18) / decimals0()	NodeType.EXPRESSION
+10 ** IERC20Metadata(token1).decimals()	NodeType.EXPRESSION" -> "BlockID: 18
+Call context: quote,sample,_getAmountOut
+None
+TMP_35(uint256) = 10 (c)** TMP_34
+TMP_459(None) := TMP_35(uint256)
+TMP_360(uint256) = TMP_358 (c)/ TMP_359
+_reserve1(uint256) := TMP_360(uint256)
+NEW VARIABLE reserveA
+NEW VARIABLE reserveB
+TMP_367(bool) = tokenIn == token0
+CONDITION TMP_367
+EXPRESSION:_reserve1 = (_reserve1 * 1e18) / decimals1()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+tokenIn == token0	NodeType.IF" [key="successor_1"];
+"BlockID: 18
+Call context: quote,sample,_getAmountOut
+None
+TMP_35(uint256) = 10 (c)** TMP_34
+TMP_459(None) := TMP_35(uint256)
+TMP_360(uint256) = TMP_358 (c)/ TMP_359
+_reserve1(uint256) := TMP_360(uint256)
+NEW VARIABLE reserveA
+NEW VARIABLE reserveB
+TMP_367(bool) = tokenIn == token0
+CONDITION TMP_367
+EXPRESSION:_reserve1 = (_reserve1 * 1e18) / decimals1()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+tokenIn == token0	NodeType.IF" -> "BlockID: 20
+Call context: quote,sample
+True
+reserveA(uint256) := _reserve0(uint256)
+reserveB(uint256) := _reserve1(uint256)
+EXPRESSION:(reserveA,reserveB) = (_reserve0,_reserve1)	NodeType.EXPRESSION" [key="successor_2"];
+"BlockID: 18
+Call context: quote,sample,_getAmountOut
+None
+TMP_35(uint256) = 10 (c)** TMP_34
+TMP_459(None) := TMP_35(uint256)
+TMP_360(uint256) = TMP_358 (c)/ TMP_359
+_reserve1(uint256) := TMP_360(uint256)
+NEW VARIABLE reserveA
+NEW VARIABLE reserveB
+TMP_367(bool) = tokenIn == token0
+CONDITION TMP_367
+EXPRESSION:_reserve1 = (_reserve1 * 1e18) / decimals1()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+tokenIn == token0	NodeType.IF" -> "BlockID: 21
+Call context: quote,sample
+False
+reserveA(uint256) := _reserve1(uint256)
+reserveB(uint256) := _reserve0(uint256)
+EXPRESSION:(reserveA,reserveB) = (_reserve1,_reserve0)	NodeType.EXPRESSION" [key="successor_2"];
+"BlockID: 26
+Call context: quote,sample,_getAmountOut
+None
+TMP_32(uint256) = 10 (c)** TMP_31
+TMP_458(None) := TMP_32(uint256)
+TMP_371(uint256) = TMP_369 (c)/ TMP_370
+amountIn(uint256) := TMP_371(uint256)
+EXPRESSION:amountIn = (amountIn * 1e18) / decimals0()	NodeType.EXPRESSION" -> "BlockID: 28
+Call context: quote,sample
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+"BlockID: 27
+Call context: quote,sample,_getAmountOut
+None
+TMP_35(uint256) = 10 (c)** TMP_34
+TMP_459(None) := TMP_35(uint256)
+TMP_374(uint256) = TMP_372 (c)/ TMP_373
+amountIn(uint256) := TMP_374(uint256)
+EXPRESSION:amountIn = (amountIn * 1e18) / decimals1()	NodeType.EXPRESSION" -> "BlockID: 28
+Call context: quote,sample
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+"BlockID: 30
+Call context: quote,sample,_getAmountOut
+None
+BEGIN_LOOP
+TMP_328(bool) = i < 255
+CONDITION TMP_328
+EXPRESSION:None	NodeType.STARTLOOP
+i < 255	NodeType.IFLOOP" -> "BlockID: 31
+Call context: quote,sample,_getAmountOut
+True
+y_prev(uint256) := y(uint256)
+TMP_305(uint256) = y (c)* y
+TMP_306(uint256) = TMP_305 (c)/ 1000000000000000000
+TMP_307(uint256) = TMP_306 (c)* y
+TMP_308(uint256) = TMP_307 (c)/ 1000000000000000000
+TMP_309(uint256) = x0 (c)* TMP_308
+TMP_310(uint256) = TMP_309 (c)/ 1000000000000000000
+TMP_311(uint256) = x0 (c)* x0
+TMP_312(uint256) = TMP_311 (c)/ 1000000000000000000
+TMP_313(uint256) = TMP_312 (c)* x0
+TMP_314(uint256) = TMP_313 (c)/ 1000000000000000000
+TMP_315(uint256) = TMP_314 (c)* y
+TMP_316(uint256) = TMP_315 (c)/ 1000000000000000000
+TMP_317(uint256) = TMP_310 (c)+ TMP_316
+TMP_486(None) := TMP_317(uint256)
+k(uint256) := TMP_329(uint256)
+TMP_330(bool) = k < xy
+CONDITION TMP_330
+EXPRESSION:y_prev = y	NodeType.VARIABLE
+k = _f(x0,y)	NodeType.VARIABLE
+k = _f(x0,y)	NodeType.EXPRESSION
+k < xy	NodeType.IF" [key=0];
+"BlockID: 30
+Call context: quote,sample,_getAmountOut
+None
+BEGIN_LOOP
+TMP_328(bool) = i < 255
+CONDITION TMP_328
+EXPRESSION:None	NodeType.STARTLOOP
+i < 255	NodeType.IFLOOP" -> "BlockID: 32
+Call context: quote,sample,_getAmountOut
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 31
+Call context: quote,sample,_getAmountOut
+True
+y_prev(uint256) := y(uint256)
+TMP_305(uint256) = y (c)* y
+TMP_306(uint256) = TMP_305 (c)/ 1000000000000000000
+TMP_307(uint256) = TMP_306 (c)* y
+TMP_308(uint256) = TMP_307 (c)/ 1000000000000000000
+TMP_309(uint256) = x0 (c)* TMP_308
+TMP_310(uint256) = TMP_309 (c)/ 1000000000000000000
+TMP_311(uint256) = x0 (c)* x0
+TMP_312(uint256) = TMP_311 (c)/ 1000000000000000000
+TMP_313(uint256) = TMP_312 (c)* x0
+TMP_314(uint256) = TMP_313 (c)/ 1000000000000000000
+TMP_315(uint256) = TMP_314 (c)* y
+TMP_316(uint256) = TMP_315 (c)/ 1000000000000000000
+TMP_317(uint256) = TMP_310 (c)+ TMP_316
+TMP_486(None) := TMP_317(uint256)
+k(uint256) := TMP_329(uint256)
+TMP_330(bool) = k < xy
+CONDITION TMP_330
+EXPRESSION:y_prev = y	NodeType.VARIABLE
+k = _f(x0,y)	NodeType.VARIABLE
+k = _f(x0,y)	NodeType.EXPRESSION
+k < xy	NodeType.IF" -> "BlockID: 33
+Call context: quote,sample,_getAmountOut
+True
+TMP_331(uint256) = xy (c)- k
+TMP_332(uint256) = TMP_331 (c)* 1000000000000000000
+TMP_318(uint256) = 3 (c)* x0
+TMP_319(uint256) = y (c)* y
+TMP_320(uint256) = TMP_319 (c)/ 1000000000000000000
+TMP_321(uint256) = TMP_318 (c)* TMP_320
+TMP_322(uint256) = TMP_321 (c)/ 1000000000000000000
+TMP_323(uint256) = x0 (c)* x0
+TMP_324(uint256) = TMP_323 (c)/ 1000000000000000000
+TMP_325(uint256) = TMP_324 (c)* x0
+TMP_326(uint256) = TMP_325 (c)/ 1000000000000000000
+TMP_327(uint256) = TMP_322 (c)+ TMP_326
+TMP_487(None) := TMP_327(uint256)
+TMP_334(uint256) = TMP_332 (c)/ TMP_333
+dy(uint256) := TMP_334(uint256)
+TMP_335(uint256) = y (c)+ dy
+y(uint256) := TMP_335(uint256)
+EXPRESSION:dy = ((xy - k) * 1e18) / _d(x0,y)	NodeType.VARIABLE
+dy = ((xy - k) * 1e18) / _d(x0,y)	NodeType.EXPRESSION
+y = y + dy	NodeType.EXPRESSION" [key="successor_3"];
+"BlockID: 31
+Call context: quote,sample,_getAmountOut
+True
+y_prev(uint256) := y(uint256)
+TMP_305(uint256) = y (c)* y
+TMP_306(uint256) = TMP_305 (c)/ 1000000000000000000
+TMP_307(uint256) = TMP_306 (c)* y
+TMP_308(uint256) = TMP_307 (c)/ 1000000000000000000
+TMP_309(uint256) = x0 (c)* TMP_308
+TMP_310(uint256) = TMP_309 (c)/ 1000000000000000000
+TMP_311(uint256) = x0 (c)* x0
+TMP_312(uint256) = TMP_311 (c)/ 1000000000000000000
+TMP_313(uint256) = TMP_312 (c)* x0
+TMP_314(uint256) = TMP_313 (c)/ 1000000000000000000
+TMP_315(uint256) = TMP_314 (c)* y
+TMP_316(uint256) = TMP_315 (c)/ 1000000000000000000
+TMP_317(uint256) = TMP_310 (c)+ TMP_316
+TMP_486(None) := TMP_317(uint256)
+k(uint256) := TMP_329(uint256)
+TMP_330(bool) = k < xy
+CONDITION TMP_330
+EXPRESSION:y_prev = y	NodeType.VARIABLE
+k = _f(x0,y)	NodeType.VARIABLE
+k = _f(x0,y)	NodeType.EXPRESSION
+k < xy	NodeType.IF" -> "BlockID: 34
+Call context: quote,sample,_getAmountOut
+False
+TMP_336(uint256) = k (c)- xy
+TMP_337(uint256) = TMP_336 (c)* 1000000000000000000
+TMP_318(uint256) = 3 (c)* x0
+TMP_319(uint256) = y (c)* y
+TMP_320(uint256) = TMP_319 (c)/ 1000000000000000000
+TMP_321(uint256) = TMP_318 (c)* TMP_320
+TMP_322(uint256) = TMP_321 (c)/ 1000000000000000000
+TMP_323(uint256) = x0 (c)* x0
+TMP_324(uint256) = TMP_323 (c)/ 1000000000000000000
+TMP_325(uint256) = TMP_324 (c)* x0
+TMP_326(uint256) = TMP_325 (c)/ 1000000000000000000
+TMP_327(uint256) = TMP_322 (c)+ TMP_326
+TMP_487(None) := TMP_327(uint256)
+TMP_339(uint256) = TMP_337 (c)/ TMP_338
+dy_scope_0(uint256) := TMP_339(uint256)
+TMP_340(uint256) = y (c)- dy_scope_0
+y(uint256) := TMP_340(uint256)
+EXPRESSION:dy_scope_0 = ((k - xy) * 1e18) / _d(x0,y)	NodeType.VARIABLE
+dy_scope_0 = ((k - xy) * 1e18) / _d(x0,y)	NodeType.EXPRESSION
+y = y - dy_scope_0	NodeType.EXPRESSION" [key="successor_3"];
+"BlockID: 32
+Call context: quote,sample,_getAmountOut
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 35
+Call context: quote,sample,_getAmountOut
+None
+TMP_488(None) := y(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 35
+Call context: quote,sample,_getAmountOut
+None
+TMP_488(None) := y(uint256)
+EXPRESSION:" -> "BlockID: 37
+Call context: quote,sample
+None
+TMP_363(uint256) = reserveB (c)- TMP_362
+y(uint256) := TMP_363(uint256)
+TMP_375(bool) = tokenIn == token0
+CONDITION TMP_375
+EXPRESSION:y = reserveB - _get_y(amountIn + reserveA,xy,reserveB)	NodeType.VARIABLE
+y = reserveB - _get_y(amountIn + reserveA,xy,reserveB)	NodeType.EXPRESSION
+tokenIn == token0	NodeType.IF" [key="successor_5", ref="LeetSwapV2Pair._get_y"];
+"BlockID: 33
+Call context: quote,sample,_getAmountOut
+True
+TMP_331(uint256) = xy (c)- k
+TMP_332(uint256) = TMP_331 (c)* 1000000000000000000
+TMP_318(uint256) = 3 (c)* x0
+TMP_319(uint256) = y (c)* y
+TMP_320(uint256) = TMP_319 (c)/ 1000000000000000000
+TMP_321(uint256) = TMP_318 (c)* TMP_320
+TMP_322(uint256) = TMP_321 (c)/ 1000000000000000000
+TMP_323(uint256) = x0 (c)* x0
+TMP_324(uint256) = TMP_323 (c)/ 1000000000000000000
+TMP_325(uint256) = TMP_324 (c)* x0
+TMP_326(uint256) = TMP_325 (c)/ 1000000000000000000
+TMP_327(uint256) = TMP_322 (c)+ TMP_326
+TMP_487(None) := TMP_327(uint256)
+TMP_334(uint256) = TMP_332 (c)/ TMP_333
+dy(uint256) := TMP_334(uint256)
+TMP_335(uint256) = y (c)+ dy
+y(uint256) := TMP_335(uint256)
+EXPRESSION:dy = ((xy - k) * 1e18) / _d(x0,y)	NodeType.VARIABLE
+dy = ((xy - k) * 1e18) / _d(x0,y)	NodeType.EXPRESSION
+y = y + dy	NodeType.EXPRESSION" -> "BlockID: 36
+Call context: quote,sample,_getAmountOut
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_3"];
+"BlockID: 34
+Call context: quote,sample,_getAmountOut
+False
+TMP_336(uint256) = k (c)- xy
+TMP_337(uint256) = TMP_336 (c)* 1000000000000000000
+TMP_318(uint256) = 3 (c)* x0
+TMP_319(uint256) = y (c)* y
+TMP_320(uint256) = TMP_319 (c)/ 1000000000000000000
+TMP_321(uint256) = TMP_318 (c)* TMP_320
+TMP_322(uint256) = TMP_321 (c)/ 1000000000000000000
+TMP_323(uint256) = x0 (c)* x0
+TMP_324(uint256) = TMP_323 (c)/ 1000000000000000000
+TMP_325(uint256) = TMP_324 (c)* x0
+TMP_326(uint256) = TMP_325 (c)/ 1000000000000000000
+TMP_327(uint256) = TMP_322 (c)+ TMP_326
+TMP_487(None) := TMP_327(uint256)
+TMP_339(uint256) = TMP_337 (c)/ TMP_338
+dy_scope_0(uint256) := TMP_339(uint256)
+TMP_340(uint256) = y (c)- dy_scope_0
+y(uint256) := TMP_340(uint256)
+EXPRESSION:dy_scope_0 = ((k - xy) * 1e18) / _d(x0,y)	NodeType.VARIABLE
+dy_scope_0 = ((k - xy) * 1e18) / _d(x0,y)	NodeType.EXPRESSION
+y = y - dy_scope_0	NodeType.EXPRESSION" -> "BlockID: 36
+Call context: quote,sample,_getAmountOut
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_3"];
+"BlockID: 36
+Call context: quote,sample,_getAmountOut
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 38
+Call context: quote,sample,_getAmountOut
+None
+TMP_341(bool) = y > y_prev
+CONDITION TMP_341
+EXPRESSION:y > y_prev	NodeType.IF" [key=0];
+"BlockID: 38
+Call context: quote,sample,_getAmountOut
+None
+TMP_341(bool) = y > y_prev
+CONDITION TMP_341
+EXPRESSION:y > y_prev	NodeType.IF" -> "BlockID: 41
+Call context: quote,sample,_getAmountOut
+True
+TMP_342(uint256) = y (c)- y_prev
+TMP_343(bool) = TMP_342 <= 1
+CONDITION TMP_343
+EXPRESSION:y - y_prev <= 1	NodeType.IF" [key=0];
+"BlockID: 38
+Call context: quote,sample,_getAmountOut
+None
+TMP_341(bool) = y > y_prev
+CONDITION TMP_341
+EXPRESSION:y > y_prev	NodeType.IF" -> "BlockID: 42
+Call context: quote,sample,_getAmountOut
+False
+TMP_344(uint256) = y_prev (c)- y
+TMP_345(bool) = TMP_344 <= 1
+CONDITION TMP_345
+EXPRESSION:y_prev - y <= 1	NodeType.IF" [key=0];
+"BlockID: 41
+Call context: quote,sample,_getAmountOut
+True
+TMP_342(uint256) = y (c)- y_prev
+TMP_343(bool) = TMP_342 <= 1
+CONDITION TMP_343
+EXPRESSION:y - y_prev <= 1	NodeType.IF" -> "BlockID: 45
+Call context: quote,sample,_getAmountOut
+True
+TMP_488(None) := y(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 41
+Call context: quote,sample,_getAmountOut
+True
+TMP_342(uint256) = y (c)- y_prev
+TMP_343(bool) = TMP_342 <= 1
+CONDITION TMP_343
+EXPRESSION:y - y_prev <= 1	NodeType.IF" -> "BlockID: 46
+Call context: quote,sample,_getAmountOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 42
+Call context: quote,sample,_getAmountOut
+False
+TMP_344(uint256) = y_prev (c)- y
+TMP_345(bool) = TMP_344 <= 1
+CONDITION TMP_345
+EXPRESSION:y_prev - y <= 1	NodeType.IF" -> "BlockID: 47
+Call context: quote,sample,_getAmountOut
+True
+TMP_488(None) := y(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 42
+Call context: quote,sample,_getAmountOut
+False
+TMP_344(uint256) = y_prev (c)- y
+TMP_345(bool) = TMP_344 <= 1
+CONDITION TMP_345
+EXPRESSION:y_prev - y <= 1	NodeType.IF" -> "BlockID: 48
+Call context: quote,sample,_getAmountOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 47
+Call context: quote,sample,_getAmountOut
+True
+TMP_488(None) := y(uint256)
+EXPRESSION:" -> "BlockID: 37
+Call context: quote,sample
+None
+TMP_363(uint256) = reserveB (c)- TMP_362
+y(uint256) := TMP_363(uint256)
+TMP_375(bool) = tokenIn == token0
+CONDITION TMP_375
+EXPRESSION:y = reserveB - _get_y(amountIn + reserveA,xy,reserveB)	NodeType.VARIABLE
+y = reserveB - _get_y(amountIn + reserveA,xy,reserveB)	NodeType.EXPRESSION
+tokenIn == token0	NodeType.IF" [key="successor_5", ref="LeetSwapV2Pair._get_y"];
+"BlockID: 48
+Call context: quote,sample,_getAmountOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 49
+Call context: quote,sample,_getAmountOut
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 49
+Call context: quote,sample,_getAmountOut
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 50
+Call context: quote,sample,_getAmountOut
+None
+TMP_346(uint256) := i(uint256)
+i(uint256) = i (c)+ 1
+EXPRESSION:i ++	NodeType.EXPRESSION" [key=0];
+"BlockID: 50
+Call context: quote,sample,_getAmountOut
+None
+TMP_346(uint256) := i(uint256)
+i(uint256) = i (c)+ 1
+EXPRESSION:i ++	NodeType.EXPRESSION" -> "BlockID: 30
+Call context: quote,sample,_getAmountOut
+None
+BEGIN_LOOP
+TMP_328(bool) = i < 255
+CONDITION TMP_328
+EXPRESSION:None	NodeType.STARTLOOP
+i < 255	NodeType.IFLOOP" [key=0];
+"BlockID: 45
+Call context: quote,sample,_getAmountOut
+True
+TMP_488(None) := y(uint256)
+EXPRESSION:" -> "BlockID: 37
+Call context: quote,sample
+None
+TMP_363(uint256) = reserveB (c)- TMP_362
+y(uint256) := TMP_363(uint256)
+TMP_375(bool) = tokenIn == token0
+CONDITION TMP_375
+EXPRESSION:y = reserveB - _get_y(amountIn + reserveA,xy,reserveB)	NodeType.VARIABLE
+y = reserveB - _get_y(amountIn + reserveA,xy,reserveB)	NodeType.EXPRESSION
+tokenIn == token0	NodeType.IF" [key="successor_5", ref="LeetSwapV2Pair._get_y"];
+"BlockID: 46
+Call context: quote,sample,_getAmountOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 49
+Call context: quote,sample,_getAmountOut
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 43
+Call context: quote,sample,_getAmountOut
+None
+TMP_35(uint256) = 10 (c)** TMP_34
+TMP_459(None) := TMP_35(uint256)
+TMP_377(uint256) = y (c)* TMP_376
+TMP_378(uint256) = TMP_377 (c)/ 1000000000000000000
+TMP_491(None) := TMP_378(uint256)
+EXPRESSION:" -> "BlockID: 19
+Call context: 
+None
+REF_73(uint256) (->_prices) := TMP_167(uint256)
+TMP_168(uint256) = index (c)+ 1
+index(uint256) := TMP_168(uint256)
+i(uint256) = i (c)+ window
+EXPRESSION:_prices[index] = _getAmountOut(amountIn,tokenIn,_reserve0,_reserve1)	NodeType.EXPRESSION
+index = index + 1	NodeType.EXPRESSION
+i += window	NodeType.EXPRESSION" [key="successor_5", ref="LeetSwapV2Pair._getAmountOut"];
+"BlockID: 44
+Call context: quote,sample,_getAmountOut
+None
+TMP_32(uint256) = 10 (c)** TMP_31
+TMP_458(None) := TMP_32(uint256)
+TMP_380(uint256) = y (c)* TMP_379
+TMP_381(uint256) = TMP_380 (c)/ 1000000000000000000
+TMP_491(None) := TMP_381(uint256)
+EXPRESSION:" -> "BlockID: 19
+Call context: 
+None
+REF_73(uint256) (->_prices) := TMP_167(uint256)
+TMP_168(uint256) = index (c)+ 1
+index(uint256) := TMP_168(uint256)
+i(uint256) = i (c)+ window
+EXPRESSION:_prices[index] = _getAmountOut(amountIn,tokenIn,_reserve0,_reserve1)	NodeType.EXPRESSION
+index = index + 1	NodeType.EXPRESSION
+i += window	NodeType.EXPRESSION" [key="successor_5", ref="LeetSwapV2Pair._getAmountOut"];
+}

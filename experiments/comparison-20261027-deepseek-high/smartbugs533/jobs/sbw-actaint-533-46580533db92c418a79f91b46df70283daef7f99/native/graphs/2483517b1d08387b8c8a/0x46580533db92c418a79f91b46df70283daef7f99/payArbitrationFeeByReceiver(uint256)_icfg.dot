@@ -1,0 +1,510 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+REF_164(MultipleArbitrableTransaction.Transaction) -> transactions[_transactionID]
+transaction(MultipleArbitrableTransaction.Transaction) := REF_164(MultipleArbitrableTransaction.Transaction)
+TMP_189(uint256) = HIGH_LEVEL_CALL, dest:arbitrator(Arbitrator), function:arbitrationCost, arguments:['arbitratorExtraData']  
+EXPRESSION:transaction = transactions[_transactionID]	NodeType.VARIABLE
+transaction = transactions[_transactionID]	NodeType.EXPRESSION";
+"BlockID: 11
+Call context: 
+True
+REF_171(uint256) -> transaction.lastInteraction
+REF_171(uint256) (->transaction) := now(uint256)
+REF_172(uint256) -> transaction.senderFee
+TMP_196(bool) = REF_172 < arbitrationCost
+CONDITION TMP_196
+EXPRESSION:transaction.lastInteraction = now	NodeType.EXPRESSION
+transaction.senderFee < arbitrationCost	NodeType.IF";
+"BlockID: 12
+Call context: 
+True
+REF_173(MultipleArbitrableTransaction.Status) -> transaction.status
+REF_174(MultipleArbitrableTransaction.Status) -> Status.WaitingSender
+REF_173(MultipleArbitrableTransaction.Status) (->transaction) := REF_174(MultipleArbitrableTransaction.Status)
+EXPRESSION:transaction.status = Status.WaitingSender	NodeType.EXPRESSION";
+"BlockID: 13
+Call context: 
+False
+REF_176(MultipleArbitrableTransaction.Transaction) -> transactions[_transactionID]
+transaction(MultipleArbitrableTransaction.Transaction) := REF_176(MultipleArbitrableTransaction.Transaction)
+REF_177(MultipleArbitrableTransaction.Status) -> transaction.status
+REF_178(MultipleArbitrableTransaction.Status) -> Status.DisputeCreated
+REF_177(MultipleArbitrableTransaction.Status) (->transaction) := REF_178(MultipleArbitrableTransaction.Status)
+REF_179(uint256) -> transaction.disputeId
+TMP_200(uint256) = HIGH_LEVEL_CALL, dest:arbitrator(Arbitrator), function:createDispute, arguments:['AMOUNT_OF_CHOICES', 'arbitratorExtraData'] value:_arbitrationCost 
+EXPRESSION:transaction = transactions[_transactionID]	NodeType.VARIABLE
+transaction = transactions[_transactionID]	NodeType.EXPRESSION
+transaction.status = Status.DisputeCreated	NodeType.EXPRESSION
+transaction.disputeId = arbitrator.createDispute.value(_arbitrationCost)(AMOUNT_OF_CHOICES,arbitratorExtraData)	NodeType.EXPRESSION";
+"BlockID: 14
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2
+Call context: 
+None
+arbitrationCost(uint256) := TMP_189(uint256)
+REF_166(MultipleArbitrableTransaction.Status) -> transaction.status
+REF_167(MultipleArbitrableTransaction.Status) -> Status.DisputeCreated
+TMP_190(bool) = REF_166 < REF_167
+CONDITION TMP_190
+EXPRESSION:TMP_190(bool) = REF_166 < REF_167	NodeType.IF";
+"BlockID: 3
+Call context: 
+True
+TMP_191(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 4
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 5
+Call context: 
+None
+REF_168(address) -> transaction.receiver
+TMP_192(bool) = msg.sender == REF_168
+CONDITION TMP_192
+EXPRESSION:TMP_192(bool) = msg.sender == REF_168	NodeType.IF";
+"BlockID: 6
+Call context: 
+True
+TMP_193(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 7
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 8
+Call context: 
+None
+REF_169(uint256) -> transaction.receiverFee
+REF_169(-> transaction) = REF_169 + msg.value
+REF_170(uint256) -> transaction.receiverFee
+TMP_194(bool) = REF_170 >= arbitrationCost
+CONDITION TMP_194
+EXPRESSION:TMP_194(bool) = REF_170 >= arbitrationCost	NodeType.IF";
+"BlockID: 9
+Call context: 
+True
+TMP_195(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 10
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 15
+Call context: payArbitrationFeeByReceiver
+None
+REF_179(uint256) (->transaction) := TMP_200(uint256)
+REF_182(uint256) -> transaction.disputeId
+REF_183(uint256) -> disputeIDtoTransactionID[REF_182]
+REF_183(uint256) (->disputeIDtoTransactionID) := _transactionID(uint256)
+REF_185(uint256) -> transaction.senderFee
+TMP_202(bool) = REF_185 > _arbitrationCost
+CONDITION TMP_202
+EXPRESSION:transaction.disputeId = arbitrator.createDispute.value(_arbitrationCost)(AMOUNT_OF_CHOICES,arbitratorExtraData)	NodeType.EXPRESSION
+disputeIDtoTransactionID[transaction.disputeId] = _transactionID	NodeType.EXPRESSION
+transaction.senderFee > _arbitrationCost	NodeType.IF" [shape=box];
+"BlockID: 16
+Call context: payArbitrationFeeByReceiver
+True
+REF_186(uint256) -> transaction.senderFee
+TMP_203(uint256) = REF_186 - _arbitrationCost
+extraFeeSender(uint256) := TMP_203(uint256)
+REF_187(uint256) -> transaction.senderFee
+REF_187(uint256) (->transaction) := _arbitrationCost(uint256)
+REF_188(address) -> transaction.sender
+TMP_204 = SEND dest:REF_188 value:extraFeeSender
+EXPRESSION:extraFeeSender = transaction.senderFee - _arbitrationCost	NodeType.VARIABLE
+extraFeeSender = transaction.senderFee - _arbitrationCost	NodeType.EXPRESSION
+transaction.senderFee = _arbitrationCost	NodeType.EXPRESSION
+transaction.sender.send(extraFeeSender)	NodeType.EXPRESSION";
+"BlockID: 17
+Call context: payArbitrationFeeByReceiver
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 18
+Call context: payArbitrationFeeByReceiver
+None
+REF_190(uint256) -> transaction.receiverFee
+TMP_205(bool) = REF_190 > _arbitrationCost
+CONDITION TMP_205
+EXPRESSION:transaction.receiverFee > _arbitrationCost	NodeType.IF";
+"BlockID: 19
+Call context: payArbitrationFeeByReceiver
+True
+REF_191(uint256) -> transaction.receiverFee
+TMP_206(uint256) = REF_191 - _arbitrationCost
+extraFeeReceiver(uint256) := TMP_206(uint256)
+REF_192(uint256) -> transaction.receiverFee
+REF_192(uint256) (->transaction) := _arbitrationCost(uint256)
+REF_193(address) -> transaction.receiver
+TMP_207 = SEND dest:REF_193 value:extraFeeReceiver
+EXPRESSION:extraFeeReceiver = transaction.receiverFee - _arbitrationCost	NodeType.VARIABLE
+extraFeeReceiver = transaction.receiverFee - _arbitrationCost	NodeType.EXPRESSION
+transaction.receiverFee = _arbitrationCost	NodeType.EXPRESSION
+transaction.receiver.send(extraFeeReceiver)	NodeType.EXPRESSION";
+"BlockID: 20
+Call context: payArbitrationFeeByReceiver
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+REF_164(MultipleArbitrableTransaction.Transaction) -> transactions[_transactionID]
+transaction(MultipleArbitrableTransaction.Transaction) := REF_164(MultipleArbitrableTransaction.Transaction)
+TMP_189(uint256) = HIGH_LEVEL_CALL, dest:arbitrator(Arbitrator), function:arbitrationCost, arguments:['arbitratorExtraData']  
+EXPRESSION:transaction = transactions[_transactionID]	NodeType.VARIABLE
+transaction = transactions[_transactionID]	NodeType.EXPRESSION" [key=0];
+"BlockID: 1
+Call context: 
+None
+REF_164(MultipleArbitrableTransaction.Transaction) -> transactions[_transactionID]
+transaction(MultipleArbitrableTransaction.Transaction) := REF_164(MultipleArbitrableTransaction.Transaction)
+TMP_189(uint256) = HIGH_LEVEL_CALL, dest:arbitrator(Arbitrator), function:arbitrationCost, arguments:['arbitratorExtraData']  
+EXPRESSION:transaction = transactions[_transactionID]	NodeType.VARIABLE
+transaction = transactions[_transactionID]	NodeType.EXPRESSION" -> "BlockID: 2
+Call context: 
+None
+arbitrationCost(uint256) := TMP_189(uint256)
+REF_166(MultipleArbitrableTransaction.Status) -> transaction.status
+REF_167(MultipleArbitrableTransaction.Status) -> Status.DisputeCreated
+TMP_190(bool) = REF_166 < REF_167
+CONDITION TMP_190
+EXPRESSION:TMP_190(bool) = REF_166 < REF_167	NodeType.IF" [key=0];
+"BlockID: 11
+Call context: 
+True
+REF_171(uint256) -> transaction.lastInteraction
+REF_171(uint256) (->transaction) := now(uint256)
+REF_172(uint256) -> transaction.senderFee
+TMP_196(bool) = REF_172 < arbitrationCost
+CONDITION TMP_196
+EXPRESSION:transaction.lastInteraction = now	NodeType.EXPRESSION
+transaction.senderFee < arbitrationCost	NodeType.IF" -> "BlockID: 12
+Call context: 
+True
+REF_173(MultipleArbitrableTransaction.Status) -> transaction.status
+REF_174(MultipleArbitrableTransaction.Status) -> Status.WaitingSender
+REF_173(MultipleArbitrableTransaction.Status) (->transaction) := REF_174(MultipleArbitrableTransaction.Status)
+EXPRESSION:transaction.status = Status.WaitingSender	NodeType.EXPRESSION" [key=0];
+"BlockID: 11
+Call context: 
+True
+REF_171(uint256) -> transaction.lastInteraction
+REF_171(uint256) (->transaction) := now(uint256)
+REF_172(uint256) -> transaction.senderFee
+TMP_196(bool) = REF_172 < arbitrationCost
+CONDITION TMP_196
+EXPRESSION:transaction.lastInteraction = now	NodeType.EXPRESSION
+transaction.senderFee < arbitrationCost	NodeType.IF" -> "BlockID: 13
+Call context: 
+False
+REF_176(MultipleArbitrableTransaction.Transaction) -> transactions[_transactionID]
+transaction(MultipleArbitrableTransaction.Transaction) := REF_176(MultipleArbitrableTransaction.Transaction)
+REF_177(MultipleArbitrableTransaction.Status) -> transaction.status
+REF_178(MultipleArbitrableTransaction.Status) -> Status.DisputeCreated
+REF_177(MultipleArbitrableTransaction.Status) (->transaction) := REF_178(MultipleArbitrableTransaction.Status)
+REF_179(uint256) -> transaction.disputeId
+TMP_200(uint256) = HIGH_LEVEL_CALL, dest:arbitrator(Arbitrator), function:createDispute, arguments:['AMOUNT_OF_CHOICES', 'arbitratorExtraData'] value:_arbitrationCost 
+EXPRESSION:transaction = transactions[_transactionID]	NodeType.VARIABLE
+transaction = transactions[_transactionID]	NodeType.EXPRESSION
+transaction.status = Status.DisputeCreated	NodeType.EXPRESSION
+transaction.disputeId = arbitrator.createDispute.value(_arbitrationCost)(AMOUNT_OF_CHOICES,arbitratorExtraData)	NodeType.EXPRESSION" [key=0];
+"BlockID: 12
+Call context: 
+True
+REF_173(MultipleArbitrableTransaction.Status) -> transaction.status
+REF_174(MultipleArbitrableTransaction.Status) -> Status.WaitingSender
+REF_173(MultipleArbitrableTransaction.Status) (->transaction) := REF_174(MultipleArbitrableTransaction.Status)
+EXPRESSION:transaction.status = Status.WaitingSender	NodeType.EXPRESSION" -> "BlockID: 14
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 13
+Call context: 
+False
+REF_176(MultipleArbitrableTransaction.Transaction) -> transactions[_transactionID]
+transaction(MultipleArbitrableTransaction.Transaction) := REF_176(MultipleArbitrableTransaction.Transaction)
+REF_177(MultipleArbitrableTransaction.Status) -> transaction.status
+REF_178(MultipleArbitrableTransaction.Status) -> Status.DisputeCreated
+REF_177(MultipleArbitrableTransaction.Status) (->transaction) := REF_178(MultipleArbitrableTransaction.Status)
+REF_179(uint256) -> transaction.disputeId
+TMP_200(uint256) = HIGH_LEVEL_CALL, dest:arbitrator(Arbitrator), function:createDispute, arguments:['AMOUNT_OF_CHOICES', 'arbitratorExtraData'] value:_arbitrationCost 
+EXPRESSION:transaction = transactions[_transactionID]	NodeType.VARIABLE
+transaction = transactions[_transactionID]	NodeType.EXPRESSION
+transaction.status = Status.DisputeCreated	NodeType.EXPRESSION
+transaction.disputeId = arbitrator.createDispute.value(_arbitrationCost)(AMOUNT_OF_CHOICES,arbitratorExtraData)	NodeType.EXPRESSION" -> "BlockID: 15
+Call context: payArbitrationFeeByReceiver
+None
+REF_179(uint256) (->transaction) := TMP_200(uint256)
+REF_182(uint256) -> transaction.disputeId
+REF_183(uint256) -> disputeIDtoTransactionID[REF_182]
+REF_183(uint256) (->disputeIDtoTransactionID) := _transactionID(uint256)
+REF_185(uint256) -> transaction.senderFee
+TMP_202(bool) = REF_185 > _arbitrationCost
+CONDITION TMP_202
+EXPRESSION:transaction.disputeId = arbitrator.createDispute.value(_arbitrationCost)(AMOUNT_OF_CHOICES,arbitratorExtraData)	NodeType.EXPRESSION
+disputeIDtoTransactionID[transaction.disputeId] = _transactionID	NodeType.EXPRESSION
+transaction.senderFee > _arbitrationCost	NodeType.IF" [key="successor_5"];
+"BlockID: 2
+Call context: 
+None
+arbitrationCost(uint256) := TMP_189(uint256)
+REF_166(MultipleArbitrableTransaction.Status) -> transaction.status
+REF_167(MultipleArbitrableTransaction.Status) -> Status.DisputeCreated
+TMP_190(bool) = REF_166 < REF_167
+CONDITION TMP_190
+EXPRESSION:TMP_190(bool) = REF_166 < REF_167	NodeType.IF" -> "BlockID: 3
+Call context: 
+True
+TMP_191(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 2
+Call context: 
+None
+arbitrationCost(uint256) := TMP_189(uint256)
+REF_166(MultipleArbitrableTransaction.Status) -> transaction.status
+REF_167(MultipleArbitrableTransaction.Status) -> Status.DisputeCreated
+TMP_190(bool) = REF_166 < REF_167
+CONDITION TMP_190
+EXPRESSION:TMP_190(bool) = REF_166 < REF_167	NodeType.IF" -> "BlockID: 4
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 4
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 5
+Call context: 
+None
+REF_168(address) -> transaction.receiver
+TMP_192(bool) = msg.sender == REF_168
+CONDITION TMP_192
+EXPRESSION:TMP_192(bool) = msg.sender == REF_168	NodeType.IF" [key=0];
+"BlockID: 5
+Call context: 
+None
+REF_168(address) -> transaction.receiver
+TMP_192(bool) = msg.sender == REF_168
+CONDITION TMP_192
+EXPRESSION:TMP_192(bool) = msg.sender == REF_168	NodeType.IF" -> "BlockID: 6
+Call context: 
+True
+TMP_193(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 5
+Call context: 
+None
+REF_168(address) -> transaction.receiver
+TMP_192(bool) = msg.sender == REF_168
+CONDITION TMP_192
+EXPRESSION:TMP_192(bool) = msg.sender == REF_168	NodeType.IF" -> "BlockID: 7
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 7
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 8
+Call context: 
+None
+REF_169(uint256) -> transaction.receiverFee
+REF_169(-> transaction) = REF_169 + msg.value
+REF_170(uint256) -> transaction.receiverFee
+TMP_194(bool) = REF_170 >= arbitrationCost
+CONDITION TMP_194
+EXPRESSION:TMP_194(bool) = REF_170 >= arbitrationCost	NodeType.IF" [key=0];
+"BlockID: 8
+Call context: 
+None
+REF_169(uint256) -> transaction.receiverFee
+REF_169(-> transaction) = REF_169 + msg.value
+REF_170(uint256) -> transaction.receiverFee
+TMP_194(bool) = REF_170 >= arbitrationCost
+CONDITION TMP_194
+EXPRESSION:TMP_194(bool) = REF_170 >= arbitrationCost	NodeType.IF" -> "BlockID: 9
+Call context: 
+True
+TMP_195(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 8
+Call context: 
+None
+REF_169(uint256) -> transaction.receiverFee
+REF_169(-> transaction) = REF_169 + msg.value
+REF_170(uint256) -> transaction.receiverFee
+TMP_194(bool) = REF_170 >= arbitrationCost
+CONDITION TMP_194
+EXPRESSION:TMP_194(bool) = REF_170 >= arbitrationCost	NodeType.IF" -> "BlockID: 10
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 10
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 11
+Call context: 
+True
+REF_171(uint256) -> transaction.lastInteraction
+REF_171(uint256) (->transaction) := now(uint256)
+REF_172(uint256) -> transaction.senderFee
+TMP_196(bool) = REF_172 < arbitrationCost
+CONDITION TMP_196
+EXPRESSION:transaction.lastInteraction = now	NodeType.EXPRESSION
+transaction.senderFee < arbitrationCost	NodeType.IF" [key=0];
+"BlockID: 15
+Call context: payArbitrationFeeByReceiver
+None
+REF_179(uint256) (->transaction) := TMP_200(uint256)
+REF_182(uint256) -> transaction.disputeId
+REF_183(uint256) -> disputeIDtoTransactionID[REF_182]
+REF_183(uint256) (->disputeIDtoTransactionID) := _transactionID(uint256)
+REF_185(uint256) -> transaction.senderFee
+TMP_202(bool) = REF_185 > _arbitrationCost
+CONDITION TMP_202
+EXPRESSION:transaction.disputeId = arbitrator.createDispute.value(_arbitrationCost)(AMOUNT_OF_CHOICES,arbitratorExtraData)	NodeType.EXPRESSION
+disputeIDtoTransactionID[transaction.disputeId] = _transactionID	NodeType.EXPRESSION
+transaction.senderFee > _arbitrationCost	NodeType.IF" -> "BlockID: 16
+Call context: payArbitrationFeeByReceiver
+True
+REF_186(uint256) -> transaction.senderFee
+TMP_203(uint256) = REF_186 - _arbitrationCost
+extraFeeSender(uint256) := TMP_203(uint256)
+REF_187(uint256) -> transaction.senderFee
+REF_187(uint256) (->transaction) := _arbitrationCost(uint256)
+REF_188(address) -> transaction.sender
+TMP_204 = SEND dest:REF_188 value:extraFeeSender
+EXPRESSION:extraFeeSender = transaction.senderFee - _arbitrationCost	NodeType.VARIABLE
+extraFeeSender = transaction.senderFee - _arbitrationCost	NodeType.EXPRESSION
+transaction.senderFee = _arbitrationCost	NodeType.EXPRESSION
+transaction.sender.send(extraFeeSender)	NodeType.EXPRESSION" [key=0];
+"BlockID: 15
+Call context: payArbitrationFeeByReceiver
+None
+REF_179(uint256) (->transaction) := TMP_200(uint256)
+REF_182(uint256) -> transaction.disputeId
+REF_183(uint256) -> disputeIDtoTransactionID[REF_182]
+REF_183(uint256) (->disputeIDtoTransactionID) := _transactionID(uint256)
+REF_185(uint256) -> transaction.senderFee
+TMP_202(bool) = REF_185 > _arbitrationCost
+CONDITION TMP_202
+EXPRESSION:transaction.disputeId = arbitrator.createDispute.value(_arbitrationCost)(AMOUNT_OF_CHOICES,arbitratorExtraData)	NodeType.EXPRESSION
+disputeIDtoTransactionID[transaction.disputeId] = _transactionID	NodeType.EXPRESSION
+transaction.senderFee > _arbitrationCost	NodeType.IF" -> "BlockID: 17
+Call context: payArbitrationFeeByReceiver
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 16
+Call context: payArbitrationFeeByReceiver
+True
+REF_186(uint256) -> transaction.senderFee
+TMP_203(uint256) = REF_186 - _arbitrationCost
+extraFeeSender(uint256) := TMP_203(uint256)
+REF_187(uint256) -> transaction.senderFee
+REF_187(uint256) (->transaction) := _arbitrationCost(uint256)
+REF_188(address) -> transaction.sender
+TMP_204 = SEND dest:REF_188 value:extraFeeSender
+EXPRESSION:extraFeeSender = transaction.senderFee - _arbitrationCost	NodeType.VARIABLE
+extraFeeSender = transaction.senderFee - _arbitrationCost	NodeType.EXPRESSION
+transaction.senderFee = _arbitrationCost	NodeType.EXPRESSION
+transaction.sender.send(extraFeeSender)	NodeType.EXPRESSION" -> "BlockID: 17
+Call context: payArbitrationFeeByReceiver
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 17
+Call context: payArbitrationFeeByReceiver
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 18
+Call context: payArbitrationFeeByReceiver
+None
+REF_190(uint256) -> transaction.receiverFee
+TMP_205(bool) = REF_190 > _arbitrationCost
+CONDITION TMP_205
+EXPRESSION:transaction.receiverFee > _arbitrationCost	NodeType.IF" [key=0];
+"BlockID: 18
+Call context: payArbitrationFeeByReceiver
+None
+REF_190(uint256) -> transaction.receiverFee
+TMP_205(bool) = REF_190 > _arbitrationCost
+CONDITION TMP_205
+EXPRESSION:transaction.receiverFee > _arbitrationCost	NodeType.IF" -> "BlockID: 19
+Call context: payArbitrationFeeByReceiver
+True
+REF_191(uint256) -> transaction.receiverFee
+TMP_206(uint256) = REF_191 - _arbitrationCost
+extraFeeReceiver(uint256) := TMP_206(uint256)
+REF_192(uint256) -> transaction.receiverFee
+REF_192(uint256) (->transaction) := _arbitrationCost(uint256)
+REF_193(address) -> transaction.receiver
+TMP_207 = SEND dest:REF_193 value:extraFeeReceiver
+EXPRESSION:extraFeeReceiver = transaction.receiverFee - _arbitrationCost	NodeType.VARIABLE
+extraFeeReceiver = transaction.receiverFee - _arbitrationCost	NodeType.EXPRESSION
+transaction.receiverFee = _arbitrationCost	NodeType.EXPRESSION
+transaction.receiver.send(extraFeeReceiver)	NodeType.EXPRESSION" [key=0];
+"BlockID: 18
+Call context: payArbitrationFeeByReceiver
+None
+REF_190(uint256) -> transaction.receiverFee
+TMP_205(bool) = REF_190 > _arbitrationCost
+CONDITION TMP_205
+EXPRESSION:transaction.receiverFee > _arbitrationCost	NodeType.IF" -> "BlockID: 20
+Call context: payArbitrationFeeByReceiver
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 19
+Call context: payArbitrationFeeByReceiver
+True
+REF_191(uint256) -> transaction.receiverFee
+TMP_206(uint256) = REF_191 - _arbitrationCost
+extraFeeReceiver(uint256) := TMP_206(uint256)
+REF_192(uint256) -> transaction.receiverFee
+REF_192(uint256) (->transaction) := _arbitrationCost(uint256)
+REF_193(address) -> transaction.receiver
+TMP_207 = SEND dest:REF_193 value:extraFeeReceiver
+EXPRESSION:extraFeeReceiver = transaction.receiverFee - _arbitrationCost	NodeType.VARIABLE
+extraFeeReceiver = transaction.receiverFee - _arbitrationCost	NodeType.EXPRESSION
+transaction.receiverFee = _arbitrationCost	NodeType.EXPRESSION
+transaction.receiver.send(extraFeeReceiver)	NodeType.EXPRESSION" -> "BlockID: 20
+Call context: payArbitrationFeeByReceiver
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 20
+Call context: payArbitrationFeeByReceiver
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 14
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="Exit: raiseDispute", ref="MultipleArbitrableTransaction.raiseDispute"];
+}

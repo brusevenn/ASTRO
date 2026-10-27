@@ -1,0 +1,468 @@
+digraph {
+"BlockID: 2246
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 2247
+Call context: 
+None
+MODIFIER_CALL, PausableUpgradeable.whenNotPaused()()
+EXPRESSION:whenNotPaused()	NodeType.EXPRESSION";
+"BlockID: 2248
+Call context: 
+None
+REF_268 -> LENGTH withdrawalRequests
+_withdrawalRequestsLength(uint256) := REF_268(uint256)
+EXPRESSION:whenNotPaused()	NodeType.EXPRESSION
+_withdrawalRequestsLength = withdrawalRequests.length	NodeType.VARIABLE
+_withdrawalRequestsLength = withdrawalRequests.length	NodeType.EXPRESSION";
+"BlockID: 2249
+Call context: 
+None
+BEGIN_LOOP
+TMP_993(bool) = withdrawalProcessingCurrentIndex < _withdrawalRequestsLength
+CONDITION TMP_993
+EXPRESSION:None	NodeType.STARTLOOP
+withdrawalProcessingCurrentIndex < _withdrawalRequestsLength	NodeType.IFLOOP";
+"BlockID: 2251
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 2253
+Call context: 
+True
+REF_272(address) -> request.restakedTokenAddress
+_restakedTokenAddress(address) := REF_272(address)
+TMP_996 = CONVERT _restakedTokenAddress to IRestakedETH
+TMP_997(address) = HIGH_LEVEL_CALL, dest:TMP_996(IRestakedETH), function:stakedTokenAddress, arguments:[]  
+EXPRESSION:_restakedTokenAddress = request.restakedTokenAddress	NodeType.VARIABLE
+_restakedTokenAddress = request.restakedTokenAddress	NodeType.EXPRESSION";
+"BlockID: 2254
+Call context: 
+None
+_stakedTokenAddress(address) := TMP_997(address)
+TMP_998 = CONVERT _restakedTokenAddress to IRestakedETH
+REF_275(uint256) -> request.requestedRestakedTokenShares
+TMP_999(uint256) = HIGH_LEVEL_CALL, dest:TMP_998(IRestakedETH), function:scaledBalanceToBalance, arguments:['REF_275']  
+EXPRESSION:_stakedTokenAddress = IRestakedETH(_restakedTokenAddress).stakedTokenAddress()	NodeType.VARIABLE
+_stakedTokenAddress = IRestakedETH(_restakedTokenAddress).stakedTokenAddress()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2255
+Call context: 
+None
+requestedAmount(uint256) := TMP_999(uint256)
+TMP_1000 = CONVERT _stakedTokenAddress to IERC20
+TMP_1001 = CONVERT this to address
+TMP_1002(uint256) = HIGH_LEVEL_CALL, dest:TMP_1000(IERC20), function:balanceOf, arguments:['TMP_1001']  
+EXPRESSION:requestedAmount = IRestakedETH(_restakedTokenAddress).scaledBalanceToBalance(request.requestedRestakedTokenShares)	NodeType.VARIABLE
+requestedAmount = IRestakedETH(_restakedTokenAddress).scaledBalanceToBalance(request.requestedRestakedTokenShares)	NodeType.EXPRESSION
+requestedAmount > IERC20(_stakedTokenAddress).balanceOf(address(this)) - totalClaimableWithdrawals[_stakedTokenAddress]	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2256
+Call context: 
+None
+REF_277(uint256) -> totalClaimableWithdrawals[_stakedTokenAddress]
+TMP_1003(uint256) = TMP_1002 (c)- REF_277
+TMP_1004(bool) = requestedAmount > TMP_1003
+CONDITION TMP_1004
+EXPRESSION:requestedAmount > IERC20(_stakedTokenAddress).balanceOf(address(this)) - totalClaimableWithdrawals[_stakedTokenAddress]	NodeType.IF" [shape=box];
+"BlockID: 2257
+Call context: 
+True
+BREAK
+EXPRESSION:None	NodeType.BREAK";
+"BlockID: 2258
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2259
+Call context: 
+None
+REF_278(uint256) -> totalWithdrawalRequests[_restakedTokenAddress]
+REF_279(uint256) -> request.requestedRestakedTokenShares
+REF_278(-> totalWithdrawalRequests) = REF_278 (c)- REF_279
+TMP_1005 = CONVERT _restakedTokenAddress to IRestakedETH
+TMP_1006 = CONVERT this to address
+HIGH_LEVEL_CALL, dest:TMP_1005(IRestakedETH), function:burn, arguments:['TMP_1006', 'requestedAmount']  
+EXPRESSION:totalWithdrawalRequests[_restakedTokenAddress] -= request.requestedRestakedTokenShares	NodeType.EXPRESSION
+IRestakedETH(_restakedTokenAddress).burn(address(this),requestedAmount)	NodeType.EXPRESSION";
+"BlockID: 2260
+Call context: 
+None
+REF_281(uint256) -> totalClaimableWithdrawals[_stakedTokenAddress]
+REF_281(-> totalClaimableWithdrawals) = REF_281 (c)+ requestedAmount
+REF_282(AstridProtocol.WithdrawalRequest) -> withdrawalRequests[withdrawalProcessingCurrentIndex]
+REF_283(uint256) -> REF_282.claimableStakedTokenAmount
+REF_283(uint256) (->withdrawalRequests) := requestedAmount(uint256)
+REF_284(AstridProtocol.WithdrawalRequest) -> withdrawalRequests[withdrawalProcessingCurrentIndex]
+REF_285(AstridProtocol.WithdrawalStatus) -> REF_284.status
+REF_286(AstridProtocol.WithdrawalStatus) -> WithdrawalStatus.PROCESSED
+REF_285(AstridProtocol.WithdrawalStatus) (->withdrawalRequests) := REF_286(AstridProtocol.WithdrawalStatus)
+REF_287(AstridProtocol.WithdrawalRequest) -> withdrawalRequests[withdrawalProcessingCurrentIndex]
+REF_288(uint256) -> REF_287.withdrawProcessedAt
+REF_288(uint256) (->withdrawalRequests) := block.timestamp(uint256)
+REF_289(uint256) -> request.withdrawalRequestsByUserIndex
+withdrawerIndex(uint256) := REF_289(uint256)
+REF_290(address) -> request.withdrawer
+REF_291(AstridProtocol.WithdrawalRequest[]) -> withdrawalRequestsByUser[REF_290]
+REF_292(AstridProtocol.WithdrawalRequest) -> REF_291[withdrawerIndex]
+REF_293(uint256) -> REF_292.claimableStakedTokenAmount
+REF_293(uint256) (->withdrawalRequestsByUser) := requestedAmount(uint256)
+REF_294(address) -> request.withdrawer
+REF_295(AstridProtocol.WithdrawalRequest[]) -> withdrawalRequestsByUser[REF_294]
+REF_296(AstridProtocol.WithdrawalRequest) -> REF_295[withdrawerIndex]
+REF_297(AstridProtocol.WithdrawalStatus) -> REF_296.status
+REF_298(AstridProtocol.WithdrawalStatus) -> WithdrawalStatus.PROCESSED
+REF_297(AstridProtocol.WithdrawalStatus) (->withdrawalRequestsByUser) := REF_298(AstridProtocol.WithdrawalStatus)
+REF_299(address) -> request.withdrawer
+REF_300(AstridProtocol.WithdrawalRequest[]) -> withdrawalRequestsByUser[REF_299]
+REF_301(AstridProtocol.WithdrawalRequest) -> REF_300[withdrawerIndex]
+REF_302(uint256) -> REF_301.withdrawProcessedAt
+REF_302(uint256) (->withdrawalRequestsByUser) := block.timestamp(uint256)
+withdrawalProcessingCurrentIndex(uint256) = withdrawalProcessingCurrentIndex (c)+ 1
+EXPRESSION:IRestakedETH(_restakedTokenAddress).burn(address(this),requestedAmount)	NodeType.EXPRESSION
+totalClaimableWithdrawals[_stakedTokenAddress] += requestedAmount	NodeType.EXPRESSION
+withdrawalRequests[withdrawalProcessingCurrentIndex].claimableStakedTokenAmount = requestedAmount	NodeType.EXPRESSION
+withdrawalRequests[withdrawalProcessingCurrentIndex].status = WithdrawalStatus.PROCESSED	NodeType.EXPRESSION
+withdrawalRequests[withdrawalProcessingCurrentIndex].withdrawProcessedAt = block.timestamp	NodeType.EXPRESSION
+withdrawerIndex = request.withdrawalRequestsByUserIndex	NodeType.VARIABLE
+withdrawerIndex = request.withdrawalRequestsByUserIndex	NodeType.EXPRESSION
+withdrawalRequestsByUser[request.withdrawer][withdrawerIndex].claimableStakedTokenAmount = requestedAmount	NodeType.EXPRESSION
+withdrawalRequestsByUser[request.withdrawer][withdrawerIndex].status = WithdrawalStatus.PROCESSED	NodeType.EXPRESSION
+withdrawalRequestsByUser[request.withdrawer][withdrawerIndex].withdrawProcessedAt = block.timestamp	NodeType.EXPRESSION
+withdrawalProcessingCurrentIndex += 1	NodeType.EXPRESSION";
+"BlockID: 2261
+Call context: 
+None
+REF_269(AstridProtocol.WithdrawalRequest) -> withdrawalRequests[withdrawalProcessingCurrentIndex]
+request(AstridProtocol.WithdrawalRequest) := REF_269(AstridProtocol.WithdrawalRequest)
+REF_270(AstridProtocol.WithdrawalStatus) -> request.status
+REF_271(AstridProtocol.WithdrawalStatus) -> WithdrawalStatus.REQUESTED
+TMP_994(bool) = REF_270 == REF_271
+CONDITION TMP_994
+EXPRESSION:TMP_994(bool) = REF_270 == REF_271	NodeType.IF";
+"BlockID: 2262
+Call context: 
+True
+TMP_995(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 2263
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2246
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 2247
+Call context: 
+None
+MODIFIER_CALL, PausableUpgradeable.whenNotPaused()()
+EXPRESSION:whenNotPaused()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2247
+Call context: 
+None
+MODIFIER_CALL, PausableUpgradeable.whenNotPaused()()
+EXPRESSION:whenNotPaused()	NodeType.EXPRESSION" -> "BlockID: 2248
+Call context: 
+None
+REF_268 -> LENGTH withdrawalRequests
+_withdrawalRequestsLength(uint256) := REF_268(uint256)
+EXPRESSION:whenNotPaused()	NodeType.EXPRESSION
+_withdrawalRequestsLength = withdrawalRequests.length	NodeType.VARIABLE
+_withdrawalRequestsLength = withdrawalRequests.length	NodeType.EXPRESSION" [key=0];
+"BlockID: 2248
+Call context: 
+None
+REF_268 -> LENGTH withdrawalRequests
+_withdrawalRequestsLength(uint256) := REF_268(uint256)
+EXPRESSION:whenNotPaused()	NodeType.EXPRESSION
+_withdrawalRequestsLength = withdrawalRequests.length	NodeType.VARIABLE
+_withdrawalRequestsLength = withdrawalRequests.length	NodeType.EXPRESSION" -> "BlockID: 2249
+Call context: 
+None
+BEGIN_LOOP
+TMP_993(bool) = withdrawalProcessingCurrentIndex < _withdrawalRequestsLength
+CONDITION TMP_993
+EXPRESSION:None	NodeType.STARTLOOP
+withdrawalProcessingCurrentIndex < _withdrawalRequestsLength	NodeType.IFLOOP" [key=0];
+"BlockID: 2249
+Call context: 
+None
+BEGIN_LOOP
+TMP_993(bool) = withdrawalProcessingCurrentIndex < _withdrawalRequestsLength
+CONDITION TMP_993
+EXPRESSION:None	NodeType.STARTLOOP
+withdrawalProcessingCurrentIndex < _withdrawalRequestsLength	NodeType.IFLOOP" -> "BlockID: 2251
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 2249
+Call context: 
+None
+BEGIN_LOOP
+TMP_993(bool) = withdrawalProcessingCurrentIndex < _withdrawalRequestsLength
+CONDITION TMP_993
+EXPRESSION:None	NodeType.STARTLOOP
+withdrawalProcessingCurrentIndex < _withdrawalRequestsLength	NodeType.IFLOOP" -> "BlockID: 2261
+Call context: 
+None
+REF_269(AstridProtocol.WithdrawalRequest) -> withdrawalRequests[withdrawalProcessingCurrentIndex]
+request(AstridProtocol.WithdrawalRequest) := REF_269(AstridProtocol.WithdrawalRequest)
+REF_270(AstridProtocol.WithdrawalStatus) -> request.status
+REF_271(AstridProtocol.WithdrawalStatus) -> WithdrawalStatus.REQUESTED
+TMP_994(bool) = REF_270 == REF_271
+CONDITION TMP_994
+EXPRESSION:TMP_994(bool) = REF_270 == REF_271	NodeType.IF" [key=0];
+"BlockID: 2253
+Call context: 
+True
+REF_272(address) -> request.restakedTokenAddress
+_restakedTokenAddress(address) := REF_272(address)
+TMP_996 = CONVERT _restakedTokenAddress to IRestakedETH
+TMP_997(address) = HIGH_LEVEL_CALL, dest:TMP_996(IRestakedETH), function:stakedTokenAddress, arguments:[]  
+EXPRESSION:_restakedTokenAddress = request.restakedTokenAddress	NodeType.VARIABLE
+_restakedTokenAddress = request.restakedTokenAddress	NodeType.EXPRESSION" -> "BlockID: 2254
+Call context: 
+None
+_stakedTokenAddress(address) := TMP_997(address)
+TMP_998 = CONVERT _restakedTokenAddress to IRestakedETH
+REF_275(uint256) -> request.requestedRestakedTokenShares
+TMP_999(uint256) = HIGH_LEVEL_CALL, dest:TMP_998(IRestakedETH), function:scaledBalanceToBalance, arguments:['REF_275']  
+EXPRESSION:_stakedTokenAddress = IRestakedETH(_restakedTokenAddress).stakedTokenAddress()	NodeType.VARIABLE
+_stakedTokenAddress = IRestakedETH(_restakedTokenAddress).stakedTokenAddress()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2254
+Call context: 
+None
+_stakedTokenAddress(address) := TMP_997(address)
+TMP_998 = CONVERT _restakedTokenAddress to IRestakedETH
+REF_275(uint256) -> request.requestedRestakedTokenShares
+TMP_999(uint256) = HIGH_LEVEL_CALL, dest:TMP_998(IRestakedETH), function:scaledBalanceToBalance, arguments:['REF_275']  
+EXPRESSION:_stakedTokenAddress = IRestakedETH(_restakedTokenAddress).stakedTokenAddress()	NodeType.VARIABLE
+_stakedTokenAddress = IRestakedETH(_restakedTokenAddress).stakedTokenAddress()	NodeType.EXPRESSION" -> "BlockID: 2255
+Call context: 
+None
+requestedAmount(uint256) := TMP_999(uint256)
+TMP_1000 = CONVERT _stakedTokenAddress to IERC20
+TMP_1001 = CONVERT this to address
+TMP_1002(uint256) = HIGH_LEVEL_CALL, dest:TMP_1000(IERC20), function:balanceOf, arguments:['TMP_1001']  
+EXPRESSION:requestedAmount = IRestakedETH(_restakedTokenAddress).scaledBalanceToBalance(request.requestedRestakedTokenShares)	NodeType.VARIABLE
+requestedAmount = IRestakedETH(_restakedTokenAddress).scaledBalanceToBalance(request.requestedRestakedTokenShares)	NodeType.EXPRESSION
+requestedAmount > IERC20(_stakedTokenAddress).balanceOf(address(this)) - totalClaimableWithdrawals[_stakedTokenAddress]	NodeType.EXPRESSION" [key=0];
+"BlockID: 2255
+Call context: 
+None
+requestedAmount(uint256) := TMP_999(uint256)
+TMP_1000 = CONVERT _stakedTokenAddress to IERC20
+TMP_1001 = CONVERT this to address
+TMP_1002(uint256) = HIGH_LEVEL_CALL, dest:TMP_1000(IERC20), function:balanceOf, arguments:['TMP_1001']  
+EXPRESSION:requestedAmount = IRestakedETH(_restakedTokenAddress).scaledBalanceToBalance(request.requestedRestakedTokenShares)	NodeType.VARIABLE
+requestedAmount = IRestakedETH(_restakedTokenAddress).scaledBalanceToBalance(request.requestedRestakedTokenShares)	NodeType.EXPRESSION
+requestedAmount > IERC20(_stakedTokenAddress).balanceOf(address(this)) - totalClaimableWithdrawals[_stakedTokenAddress]	NodeType.EXPRESSION" -> "BlockID: 2256
+Call context: 
+None
+REF_277(uint256) -> totalClaimableWithdrawals[_stakedTokenAddress]
+TMP_1003(uint256) = TMP_1002 (c)- REF_277
+TMP_1004(bool) = requestedAmount > TMP_1003
+CONDITION TMP_1004
+EXPRESSION:requestedAmount > IERC20(_stakedTokenAddress).balanceOf(address(this)) - totalClaimableWithdrawals[_stakedTokenAddress]	NodeType.IF" [key=0];
+"BlockID: 2256
+Call context: 
+None
+REF_277(uint256) -> totalClaimableWithdrawals[_stakedTokenAddress]
+TMP_1003(uint256) = TMP_1002 (c)- REF_277
+TMP_1004(bool) = requestedAmount > TMP_1003
+CONDITION TMP_1004
+EXPRESSION:requestedAmount > IERC20(_stakedTokenAddress).balanceOf(address(this)) - totalClaimableWithdrawals[_stakedTokenAddress]	NodeType.IF" -> "BlockID: 2257
+Call context: 
+True
+BREAK
+EXPRESSION:None	NodeType.BREAK" [key=0];
+"BlockID: 2256
+Call context: 
+None
+REF_277(uint256) -> totalClaimableWithdrawals[_stakedTokenAddress]
+TMP_1003(uint256) = TMP_1002 (c)- REF_277
+TMP_1004(bool) = requestedAmount > TMP_1003
+CONDITION TMP_1004
+EXPRESSION:requestedAmount > IERC20(_stakedTokenAddress).balanceOf(address(this)) - totalClaimableWithdrawals[_stakedTokenAddress]	NodeType.IF" -> "BlockID: 2258
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2257
+Call context: 
+True
+BREAK
+EXPRESSION:None	NodeType.BREAK" -> "BlockID: 2251
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 2258
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2259
+Call context: 
+None
+REF_278(uint256) -> totalWithdrawalRequests[_restakedTokenAddress]
+REF_279(uint256) -> request.requestedRestakedTokenShares
+REF_278(-> totalWithdrawalRequests) = REF_278 (c)- REF_279
+TMP_1005 = CONVERT _restakedTokenAddress to IRestakedETH
+TMP_1006 = CONVERT this to address
+HIGH_LEVEL_CALL, dest:TMP_1005(IRestakedETH), function:burn, arguments:['TMP_1006', 'requestedAmount']  
+EXPRESSION:totalWithdrawalRequests[_restakedTokenAddress] -= request.requestedRestakedTokenShares	NodeType.EXPRESSION
+IRestakedETH(_restakedTokenAddress).burn(address(this),requestedAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2259
+Call context: 
+None
+REF_278(uint256) -> totalWithdrawalRequests[_restakedTokenAddress]
+REF_279(uint256) -> request.requestedRestakedTokenShares
+REF_278(-> totalWithdrawalRequests) = REF_278 (c)- REF_279
+TMP_1005 = CONVERT _restakedTokenAddress to IRestakedETH
+TMP_1006 = CONVERT this to address
+HIGH_LEVEL_CALL, dest:TMP_1005(IRestakedETH), function:burn, arguments:['TMP_1006', 'requestedAmount']  
+EXPRESSION:totalWithdrawalRequests[_restakedTokenAddress] -= request.requestedRestakedTokenShares	NodeType.EXPRESSION
+IRestakedETH(_restakedTokenAddress).burn(address(this),requestedAmount)	NodeType.EXPRESSION" -> "BlockID: 2260
+Call context: 
+None
+REF_281(uint256) -> totalClaimableWithdrawals[_stakedTokenAddress]
+REF_281(-> totalClaimableWithdrawals) = REF_281 (c)+ requestedAmount
+REF_282(AstridProtocol.WithdrawalRequest) -> withdrawalRequests[withdrawalProcessingCurrentIndex]
+REF_283(uint256) -> REF_282.claimableStakedTokenAmount
+REF_283(uint256) (->withdrawalRequests) := requestedAmount(uint256)
+REF_284(AstridProtocol.WithdrawalRequest) -> withdrawalRequests[withdrawalProcessingCurrentIndex]
+REF_285(AstridProtocol.WithdrawalStatus) -> REF_284.status
+REF_286(AstridProtocol.WithdrawalStatus) -> WithdrawalStatus.PROCESSED
+REF_285(AstridProtocol.WithdrawalStatus) (->withdrawalRequests) := REF_286(AstridProtocol.WithdrawalStatus)
+REF_287(AstridProtocol.WithdrawalRequest) -> withdrawalRequests[withdrawalProcessingCurrentIndex]
+REF_288(uint256) -> REF_287.withdrawProcessedAt
+REF_288(uint256) (->withdrawalRequests) := block.timestamp(uint256)
+REF_289(uint256) -> request.withdrawalRequestsByUserIndex
+withdrawerIndex(uint256) := REF_289(uint256)
+REF_290(address) -> request.withdrawer
+REF_291(AstridProtocol.WithdrawalRequest[]) -> withdrawalRequestsByUser[REF_290]
+REF_292(AstridProtocol.WithdrawalRequest) -> REF_291[withdrawerIndex]
+REF_293(uint256) -> REF_292.claimableStakedTokenAmount
+REF_293(uint256) (->withdrawalRequestsByUser) := requestedAmount(uint256)
+REF_294(address) -> request.withdrawer
+REF_295(AstridProtocol.WithdrawalRequest[]) -> withdrawalRequestsByUser[REF_294]
+REF_296(AstridProtocol.WithdrawalRequest) -> REF_295[withdrawerIndex]
+REF_297(AstridProtocol.WithdrawalStatus) -> REF_296.status
+REF_298(AstridProtocol.WithdrawalStatus) -> WithdrawalStatus.PROCESSED
+REF_297(AstridProtocol.WithdrawalStatus) (->withdrawalRequestsByUser) := REF_298(AstridProtocol.WithdrawalStatus)
+REF_299(address) -> request.withdrawer
+REF_300(AstridProtocol.WithdrawalRequest[]) -> withdrawalRequestsByUser[REF_299]
+REF_301(AstridProtocol.WithdrawalRequest) -> REF_300[withdrawerIndex]
+REF_302(uint256) -> REF_301.withdrawProcessedAt
+REF_302(uint256) (->withdrawalRequestsByUser) := block.timestamp(uint256)
+withdrawalProcessingCurrentIndex(uint256) = withdrawalProcessingCurrentIndex (c)+ 1
+EXPRESSION:IRestakedETH(_restakedTokenAddress).burn(address(this),requestedAmount)	NodeType.EXPRESSION
+totalClaimableWithdrawals[_stakedTokenAddress] += requestedAmount	NodeType.EXPRESSION
+withdrawalRequests[withdrawalProcessingCurrentIndex].claimableStakedTokenAmount = requestedAmount	NodeType.EXPRESSION
+withdrawalRequests[withdrawalProcessingCurrentIndex].status = WithdrawalStatus.PROCESSED	NodeType.EXPRESSION
+withdrawalRequests[withdrawalProcessingCurrentIndex].withdrawProcessedAt = block.timestamp	NodeType.EXPRESSION
+withdrawerIndex = request.withdrawalRequestsByUserIndex	NodeType.VARIABLE
+withdrawerIndex = request.withdrawalRequestsByUserIndex	NodeType.EXPRESSION
+withdrawalRequestsByUser[request.withdrawer][withdrawerIndex].claimableStakedTokenAmount = requestedAmount	NodeType.EXPRESSION
+withdrawalRequestsByUser[request.withdrawer][withdrawerIndex].status = WithdrawalStatus.PROCESSED	NodeType.EXPRESSION
+withdrawalRequestsByUser[request.withdrawer][withdrawerIndex].withdrawProcessedAt = block.timestamp	NodeType.EXPRESSION
+withdrawalProcessingCurrentIndex += 1	NodeType.EXPRESSION" [key=0];
+"BlockID: 2260
+Call context: 
+None
+REF_281(uint256) -> totalClaimableWithdrawals[_stakedTokenAddress]
+REF_281(-> totalClaimableWithdrawals) = REF_281 (c)+ requestedAmount
+REF_282(AstridProtocol.WithdrawalRequest) -> withdrawalRequests[withdrawalProcessingCurrentIndex]
+REF_283(uint256) -> REF_282.claimableStakedTokenAmount
+REF_283(uint256) (->withdrawalRequests) := requestedAmount(uint256)
+REF_284(AstridProtocol.WithdrawalRequest) -> withdrawalRequests[withdrawalProcessingCurrentIndex]
+REF_285(AstridProtocol.WithdrawalStatus) -> REF_284.status
+REF_286(AstridProtocol.WithdrawalStatus) -> WithdrawalStatus.PROCESSED
+REF_285(AstridProtocol.WithdrawalStatus) (->withdrawalRequests) := REF_286(AstridProtocol.WithdrawalStatus)
+REF_287(AstridProtocol.WithdrawalRequest) -> withdrawalRequests[withdrawalProcessingCurrentIndex]
+REF_288(uint256) -> REF_287.withdrawProcessedAt
+REF_288(uint256) (->withdrawalRequests) := block.timestamp(uint256)
+REF_289(uint256) -> request.withdrawalRequestsByUserIndex
+withdrawerIndex(uint256) := REF_289(uint256)
+REF_290(address) -> request.withdrawer
+REF_291(AstridProtocol.WithdrawalRequest[]) -> withdrawalRequestsByUser[REF_290]
+REF_292(AstridProtocol.WithdrawalRequest) -> REF_291[withdrawerIndex]
+REF_293(uint256) -> REF_292.claimableStakedTokenAmount
+REF_293(uint256) (->withdrawalRequestsByUser) := requestedAmount(uint256)
+REF_294(address) -> request.withdrawer
+REF_295(AstridProtocol.WithdrawalRequest[]) -> withdrawalRequestsByUser[REF_294]
+REF_296(AstridProtocol.WithdrawalRequest) -> REF_295[withdrawerIndex]
+REF_297(AstridProtocol.WithdrawalStatus) -> REF_296.status
+REF_298(AstridProtocol.WithdrawalStatus) -> WithdrawalStatus.PROCESSED
+REF_297(AstridProtocol.WithdrawalStatus) (->withdrawalRequestsByUser) := REF_298(AstridProtocol.WithdrawalStatus)
+REF_299(address) -> request.withdrawer
+REF_300(AstridProtocol.WithdrawalRequest[]) -> withdrawalRequestsByUser[REF_299]
+REF_301(AstridProtocol.WithdrawalRequest) -> REF_300[withdrawerIndex]
+REF_302(uint256) -> REF_301.withdrawProcessedAt
+REF_302(uint256) (->withdrawalRequestsByUser) := block.timestamp(uint256)
+withdrawalProcessingCurrentIndex(uint256) = withdrawalProcessingCurrentIndex (c)+ 1
+EXPRESSION:IRestakedETH(_restakedTokenAddress).burn(address(this),requestedAmount)	NodeType.EXPRESSION
+totalClaimableWithdrawals[_stakedTokenAddress] += requestedAmount	NodeType.EXPRESSION
+withdrawalRequests[withdrawalProcessingCurrentIndex].claimableStakedTokenAmount = requestedAmount	NodeType.EXPRESSION
+withdrawalRequests[withdrawalProcessingCurrentIndex].status = WithdrawalStatus.PROCESSED	NodeType.EXPRESSION
+withdrawalRequests[withdrawalProcessingCurrentIndex].withdrawProcessedAt = block.timestamp	NodeType.EXPRESSION
+withdrawerIndex = request.withdrawalRequestsByUserIndex	NodeType.VARIABLE
+withdrawerIndex = request.withdrawalRequestsByUserIndex	NodeType.EXPRESSION
+withdrawalRequestsByUser[request.withdrawer][withdrawerIndex].claimableStakedTokenAmount = requestedAmount	NodeType.EXPRESSION
+withdrawalRequestsByUser[request.withdrawer][withdrawerIndex].status = WithdrawalStatus.PROCESSED	NodeType.EXPRESSION
+withdrawalRequestsByUser[request.withdrawer][withdrawerIndex].withdrawProcessedAt = block.timestamp	NodeType.EXPRESSION
+withdrawalProcessingCurrentIndex += 1	NodeType.EXPRESSION" -> "BlockID: 2249
+Call context: 
+None
+BEGIN_LOOP
+TMP_993(bool) = withdrawalProcessingCurrentIndex < _withdrawalRequestsLength
+CONDITION TMP_993
+EXPRESSION:None	NodeType.STARTLOOP
+withdrawalProcessingCurrentIndex < _withdrawalRequestsLength	NodeType.IFLOOP" [key=0];
+"BlockID: 2261
+Call context: 
+None
+REF_269(AstridProtocol.WithdrawalRequest) -> withdrawalRequests[withdrawalProcessingCurrentIndex]
+request(AstridProtocol.WithdrawalRequest) := REF_269(AstridProtocol.WithdrawalRequest)
+REF_270(AstridProtocol.WithdrawalStatus) -> request.status
+REF_271(AstridProtocol.WithdrawalStatus) -> WithdrawalStatus.REQUESTED
+TMP_994(bool) = REF_270 == REF_271
+CONDITION TMP_994
+EXPRESSION:TMP_994(bool) = REF_270 == REF_271	NodeType.IF" -> "BlockID: 2262
+Call context: 
+True
+TMP_995(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2261
+Call context: 
+None
+REF_269(AstridProtocol.WithdrawalRequest) -> withdrawalRequests[withdrawalProcessingCurrentIndex]
+request(AstridProtocol.WithdrawalRequest) := REF_269(AstridProtocol.WithdrawalRequest)
+REF_270(AstridProtocol.WithdrawalStatus) -> request.status
+REF_271(AstridProtocol.WithdrawalStatus) -> WithdrawalStatus.REQUESTED
+TMP_994(bool) = REF_270 == REF_271
+CONDITION TMP_994
+EXPRESSION:TMP_994(bool) = REF_270 == REF_271	NodeType.IF" -> "BlockID: 2263
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2263
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2253
+Call context: 
+True
+REF_272(address) -> request.restakedTokenAddress
+_restakedTokenAddress(address) := REF_272(address)
+TMP_996 = CONVERT _restakedTokenAddress to IRestakedETH
+TMP_997(address) = HIGH_LEVEL_CALL, dest:TMP_996(IRestakedETH), function:stakedTokenAddress, arguments:[]  
+EXPRESSION:_restakedTokenAddress = request.restakedTokenAddress	NodeType.VARIABLE
+_restakedTokenAddress = request.restakedTokenAddress	NodeType.EXPRESSION" [key=0];
+}

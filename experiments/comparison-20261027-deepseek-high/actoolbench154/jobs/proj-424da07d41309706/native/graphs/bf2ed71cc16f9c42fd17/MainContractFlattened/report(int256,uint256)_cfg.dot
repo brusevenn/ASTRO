@@ -1,0 +1,818 @@
+digraph {
+"BlockID: 1414
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1416
+Call context: 
+True
+loss(uint256) := 0(uint256)
+gain(uint256) := 0(uint256)
+TMP_751(bool) = roi < 0
+CONDITION TMP_751
+EXPRESSION:loss = 0	NodeType.VARIABLE
+loss = 0	NodeType.EXPRESSION
+gain = 0	NodeType.VARIABLE
+gain = 0	NodeType.EXPRESSION
+roi < 0	NodeType.IF";
+"BlockID: 1417
+Call context: 
+True
+TMP_752(int256) = 0 (c)- roi
+TMP_753 = CONVERT TMP_752 to uint256
+loss(uint256) := TMP_753(uint256)
+INTERNAL_CALL, ReaperVaultV2._reportLoss(address,uint256)(stratAddr,loss)
+EXPRESSION:loss = uint256(- roi)	NodeType.EXPRESSION
+_reportLoss(stratAddr,loss)	NodeType.EXPRESSION";
+"BlockID: 1418
+Call context: 
+False
+TMP_755 = CONVERT roi to uint256
+gain(uint256) := TMP_755(uint256)
+REF_248(uint256) -> strategy.gains
+TMP_756 = CONVERT roi to uint256
+REF_248(-> strategy) = REF_248 (c)+ TMP_756
+EXPRESSION:gain = uint256(roi)	NodeType.EXPRESSION
+strategy.gains += uint256(roi)	NodeType.EXPRESSION";
+"BlockID: 1419
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1420
+Call context: 
+None
+TMP_757(int256) = INTERNAL_CALL, ReaperVaultV2.availableCapital()()
+EXPRESSION:";
+"BlockID: 1421
+Call context: 
+None
+available(int256) := TMP_757(int256)
+debt(uint256) := 0(uint256)
+credit(uint256) := 0(uint256)
+TMP_758(bool) = available < 0
+CONDITION TMP_758
+EXPRESSION:available = availableCapital()	NodeType.VARIABLE
+available = availableCapital()	NodeType.EXPRESSION
+debt = 0	NodeType.VARIABLE
+debt = 0	NodeType.EXPRESSION
+credit = 0	NodeType.VARIABLE
+credit = 0	NodeType.EXPRESSION
+available < 0	NodeType.IF" [shape=box];
+"BlockID: 1422
+Call context: 
+True
+TMP_759(int256) = 0 (c)- available
+TMP_760 = CONVERT TMP_759 to uint256
+debt(uint256) := TMP_760(uint256)
+TMP_761(uint256) = LIBRARY_CALL, dest:Math, function:Math.min(uint256,uint256), arguments:['debt', 'repayment'] 
+EXPRESSION:debt = uint256(- available)	NodeType.EXPRESSION
+repayment = Math.min(debt,repayment)	NodeType.EXPRESSION";
+"BlockID: 1423
+Call context: 
+False
+TMP_763 = CONVERT available to uint256
+credit(uint256) := TMP_763(uint256)
+REF_251(uint256) -> strategy.allocated
+REF_251(-> strategy) = REF_251 (c)+ credit
+totalAllocated(uint256) = totalAllocated (c)+ credit
+EXPRESSION:credit = uint256(available)	NodeType.EXPRESSION
+strategy.allocated += credit	NodeType.EXPRESSION
+totalAllocated += credit	NodeType.EXPRESSION";
+"BlockID: 1424
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1425
+Call context: 
+None
+freeWantInStrat(uint256) := repayment(uint256)
+TMP_764(bool) = roi > 0
+CONDITION TMP_764
+EXPRESSION:freeWantInStrat = repayment	NodeType.VARIABLE
+freeWantInStrat = repayment	NodeType.EXPRESSION
+roi > 0	NodeType.IF";
+"BlockID: 1426
+Call context: 
+True
+TMP_765 = CONVERT roi to uint256
+freeWantInStrat(uint256) = freeWantInStrat (c)+ TMP_765
+EXPRESSION:freeWantInStrat += uint256(roi)	NodeType.EXPRESSION";
+"BlockID: 1427
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1428
+Call context: 
+None
+TMP_766(bool) = credit > freeWantInStrat
+CONDITION TMP_766
+EXPRESSION:credit > freeWantInStrat	NodeType.IF";
+"BlockID: 1429
+Call context: 
+True
+TMP_767 = CONVERT asset to IERC20Metadata
+TMP_768(uint256) = credit (c)- freeWantInStrat
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['TMP_767', 'stratAddr', 'TMP_768'] 
+EXPRESSION:IERC20Metadata(asset).safeTransfer(stratAddr,credit - freeWantInStrat)	NodeType.EXPRESSION";
+"BlockID: 1431
+Call context: 
+False
+TMP_770(bool) = credit < freeWantInStrat
+CONDITION TMP_770
+EXPRESSION:credit < freeWantInStrat	NodeType.IF";
+"BlockID: 1432
+Call context: 
+True
+TMP_771 = CONVERT asset to IERC20Metadata
+TMP_772 = CONVERT this to address
+TMP_773(uint256) = freeWantInStrat (c)- credit
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransferFrom(IERC20,address,address,uint256), arguments:['TMP_771', 'stratAddr', 'TMP_772', 'TMP_773'] 
+EXPRESSION:IERC20Metadata(asset).safeTransferFrom(stratAddr,address(this),freeWantInStrat - credit)	NodeType.EXPRESSION";
+"BlockID: 1434
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1436
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1437
+Call context: 
+None
+TMP_775(uint256) = INTERNAL_CALL, ReaperVaultV2._calculateLockedProfit()()
+EXPRESSION:";
+"BlockID: 1438
+Call context: 
+None
+TMP_776(uint256) = TMP_775 (c)+ gain
+lockedProfitBeforeLoss(uint256) := TMP_776(uint256)
+TMP_777(bool) = lockedProfitBeforeLoss > loss
+CONDITION TMP_777
+EXPRESSION:lockedProfitBeforeLoss = _calculateLockedProfit() + gain	NodeType.VARIABLE
+lockedProfitBeforeLoss = _calculateLockedProfit() + gain	NodeType.EXPRESSION
+lockedProfitBeforeLoss > loss	NodeType.IF" [shape=box];
+"BlockID: 1439
+Call context: 
+True
+TMP_778(uint256) = lockedProfitBeforeLoss (c)- loss
+lockedProfit(uint256) := TMP_778(uint256)
+EXPRESSION:lockedProfit = lockedProfitBeforeLoss - loss	NodeType.EXPRESSION";
+"BlockID: 1440
+Call context: 
+False
+lockedProfit(uint256) := 0(uint256)
+EXPRESSION:lockedProfit = 0	NodeType.EXPRESSION";
+"BlockID: 1441
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1442
+Call context: 
+None
+REF_254(uint256) -> strategy.lastReport
+REF_254(uint256) (->strategy) := block.timestamp(uint256)
+lastReport(uint256) := block.timestamp(uint256)
+REF_259(uint256) -> strategy.allocBPS
+TMP_780(bool) = REF_259 == 0
+TMP_781(bool) = TMP_780 || emergencyShutdown
+CONDITION TMP_781
+EXPRESSION:strategy.lastReport = block.timestamp	NodeType.EXPRESSION
+lastReport = block.timestamp	NodeType.EXPRESSION
+strategy.allocBPS == 0 || emergencyShutdown	NodeType.IF";
+"BlockID: 1443
+Call context: 
+True
+TMP_782 = CONVERT stratAddr to IStrategy
+TMP_783(uint256) = HIGH_LEVEL_CALL, dest:TMP_782(IStrategy), function:balanceOf, arguments:[]  
+EXPRESSION:IStrategy(stratAddr).balanceOf()	NodeType.EXPRESSION";
+"BlockID: 1445
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1446
+Call context: 
+None
+RETURN debt
+EXPRESSION:debt	NodeType.RETURN";
+"BlockID: 1444
+Call context: 
+None
+RETURN TMP_783
+EXPRESSION:IStrategy(stratAddr).balanceOf()	NodeType.RETURN" [shape=box];
+"BlockID: 1447
+Call context: 
+None
+repayment(uint256) := TMP_761(uint256)
+TMP_762(bool) = repayment != 0
+CONDITION TMP_762
+EXPRESSION:repayment = Math.min(debt,repayment)	NodeType.EXPRESSION
+repayment != 0	NodeType.IF" [shape=box];
+"BlockID: 1448
+Call context: 
+True
+REF_250(uint256) -> strategy.allocated
+REF_250(-> strategy) = REF_250 (c)- repayment
+totalAllocated(uint256) = totalAllocated (c)- repayment
+debt(uint256) = debt (c)- repayment
+EXPRESSION:strategy.allocated -= repayment	NodeType.EXPRESSION
+totalAllocated -= repayment	NodeType.EXPRESSION
+debt -= repayment	NodeType.EXPRESSION";
+"BlockID: 1449
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1452
+Call context: 
+None
+stratAddr(address) := msg.sender(address)
+REF_246(ReaperVaultV2.StrategyParams) -> strategies[stratAddr]
+strategy(ReaperVaultV2.StrategyParams) := REF_246(ReaperVaultV2.StrategyParams)
+REF_247(uint256) -> strategy.activation
+TMP_749(bool) = REF_247 != 0
+CONDITION TMP_749
+EXPRESSION:TMP_749(bool) = REF_247 != 0	NodeType.IF";
+"BlockID: 1453
+Call context: 
+True
+TMP_750(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 1454
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1414
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1452
+Call context: 
+None
+stratAddr(address) := msg.sender(address)
+REF_246(ReaperVaultV2.StrategyParams) -> strategies[stratAddr]
+strategy(ReaperVaultV2.StrategyParams) := REF_246(ReaperVaultV2.StrategyParams)
+REF_247(uint256) -> strategy.activation
+TMP_749(bool) = REF_247 != 0
+CONDITION TMP_749
+EXPRESSION:TMP_749(bool) = REF_247 != 0	NodeType.IF" [key=0];
+"BlockID: 1416
+Call context: 
+True
+loss(uint256) := 0(uint256)
+gain(uint256) := 0(uint256)
+TMP_751(bool) = roi < 0
+CONDITION TMP_751
+EXPRESSION:loss = 0	NodeType.VARIABLE
+loss = 0	NodeType.EXPRESSION
+gain = 0	NodeType.VARIABLE
+gain = 0	NodeType.EXPRESSION
+roi < 0	NodeType.IF" -> "BlockID: 1417
+Call context: 
+True
+TMP_752(int256) = 0 (c)- roi
+TMP_753 = CONVERT TMP_752 to uint256
+loss(uint256) := TMP_753(uint256)
+INTERNAL_CALL, ReaperVaultV2._reportLoss(address,uint256)(stratAddr,loss)
+EXPRESSION:loss = uint256(- roi)	NodeType.EXPRESSION
+_reportLoss(stratAddr,loss)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1416
+Call context: 
+True
+loss(uint256) := 0(uint256)
+gain(uint256) := 0(uint256)
+TMP_751(bool) = roi < 0
+CONDITION TMP_751
+EXPRESSION:loss = 0	NodeType.VARIABLE
+loss = 0	NodeType.EXPRESSION
+gain = 0	NodeType.VARIABLE
+gain = 0	NodeType.EXPRESSION
+roi < 0	NodeType.IF" -> "BlockID: 1418
+Call context: 
+False
+TMP_755 = CONVERT roi to uint256
+gain(uint256) := TMP_755(uint256)
+REF_248(uint256) -> strategy.gains
+TMP_756 = CONVERT roi to uint256
+REF_248(-> strategy) = REF_248 (c)+ TMP_756
+EXPRESSION:gain = uint256(roi)	NodeType.EXPRESSION
+strategy.gains += uint256(roi)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1417
+Call context: 
+True
+TMP_752(int256) = 0 (c)- roi
+TMP_753 = CONVERT TMP_752 to uint256
+loss(uint256) := TMP_753(uint256)
+INTERNAL_CALL, ReaperVaultV2._reportLoss(address,uint256)(stratAddr,loss)
+EXPRESSION:loss = uint256(- roi)	NodeType.EXPRESSION
+_reportLoss(stratAddr,loss)	NodeType.EXPRESSION" -> "BlockID: 1419
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1418
+Call context: 
+False
+TMP_755 = CONVERT roi to uint256
+gain(uint256) := TMP_755(uint256)
+REF_248(uint256) -> strategy.gains
+TMP_756 = CONVERT roi to uint256
+REF_248(-> strategy) = REF_248 (c)+ TMP_756
+EXPRESSION:gain = uint256(roi)	NodeType.EXPRESSION
+strategy.gains += uint256(roi)	NodeType.EXPRESSION" -> "BlockID: 1419
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1419
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1420
+Call context: 
+None
+TMP_757(int256) = INTERNAL_CALL, ReaperVaultV2.availableCapital()()
+EXPRESSION:" [key=0];
+"BlockID: 1420
+Call context: 
+None
+TMP_757(int256) = INTERNAL_CALL, ReaperVaultV2.availableCapital()()
+EXPRESSION:" -> "BlockID: 1421
+Call context: 
+None
+available(int256) := TMP_757(int256)
+debt(uint256) := 0(uint256)
+credit(uint256) := 0(uint256)
+TMP_758(bool) = available < 0
+CONDITION TMP_758
+EXPRESSION:available = availableCapital()	NodeType.VARIABLE
+available = availableCapital()	NodeType.EXPRESSION
+debt = 0	NodeType.VARIABLE
+debt = 0	NodeType.EXPRESSION
+credit = 0	NodeType.VARIABLE
+credit = 0	NodeType.EXPRESSION
+available < 0	NodeType.IF" [key=0];
+"BlockID: 1421
+Call context: 
+None
+available(int256) := TMP_757(int256)
+debt(uint256) := 0(uint256)
+credit(uint256) := 0(uint256)
+TMP_758(bool) = available < 0
+CONDITION TMP_758
+EXPRESSION:available = availableCapital()	NodeType.VARIABLE
+available = availableCapital()	NodeType.EXPRESSION
+debt = 0	NodeType.VARIABLE
+debt = 0	NodeType.EXPRESSION
+credit = 0	NodeType.VARIABLE
+credit = 0	NodeType.EXPRESSION
+available < 0	NodeType.IF" -> "BlockID: 1422
+Call context: 
+True
+TMP_759(int256) = 0 (c)- available
+TMP_760 = CONVERT TMP_759 to uint256
+debt(uint256) := TMP_760(uint256)
+TMP_761(uint256) = LIBRARY_CALL, dest:Math, function:Math.min(uint256,uint256), arguments:['debt', 'repayment'] 
+EXPRESSION:debt = uint256(- available)	NodeType.EXPRESSION
+repayment = Math.min(debt,repayment)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1421
+Call context: 
+None
+available(int256) := TMP_757(int256)
+debt(uint256) := 0(uint256)
+credit(uint256) := 0(uint256)
+TMP_758(bool) = available < 0
+CONDITION TMP_758
+EXPRESSION:available = availableCapital()	NodeType.VARIABLE
+available = availableCapital()	NodeType.EXPRESSION
+debt = 0	NodeType.VARIABLE
+debt = 0	NodeType.EXPRESSION
+credit = 0	NodeType.VARIABLE
+credit = 0	NodeType.EXPRESSION
+available < 0	NodeType.IF" -> "BlockID: 1423
+Call context: 
+False
+TMP_763 = CONVERT available to uint256
+credit(uint256) := TMP_763(uint256)
+REF_251(uint256) -> strategy.allocated
+REF_251(-> strategy) = REF_251 (c)+ credit
+totalAllocated(uint256) = totalAllocated (c)+ credit
+EXPRESSION:credit = uint256(available)	NodeType.EXPRESSION
+strategy.allocated += credit	NodeType.EXPRESSION
+totalAllocated += credit	NodeType.EXPRESSION" [key=0];
+"BlockID: 1422
+Call context: 
+True
+TMP_759(int256) = 0 (c)- available
+TMP_760 = CONVERT TMP_759 to uint256
+debt(uint256) := TMP_760(uint256)
+TMP_761(uint256) = LIBRARY_CALL, dest:Math, function:Math.min(uint256,uint256), arguments:['debt', 'repayment'] 
+EXPRESSION:debt = uint256(- available)	NodeType.EXPRESSION
+repayment = Math.min(debt,repayment)	NodeType.EXPRESSION" -> "BlockID: 1447
+Call context: 
+None
+repayment(uint256) := TMP_761(uint256)
+TMP_762(bool) = repayment != 0
+CONDITION TMP_762
+EXPRESSION:repayment = Math.min(debt,repayment)	NodeType.EXPRESSION
+repayment != 0	NodeType.IF" [key=0];
+"BlockID: 1423
+Call context: 
+False
+TMP_763 = CONVERT available to uint256
+credit(uint256) := TMP_763(uint256)
+REF_251(uint256) -> strategy.allocated
+REF_251(-> strategy) = REF_251 (c)+ credit
+totalAllocated(uint256) = totalAllocated (c)+ credit
+EXPRESSION:credit = uint256(available)	NodeType.EXPRESSION
+strategy.allocated += credit	NodeType.EXPRESSION
+totalAllocated += credit	NodeType.EXPRESSION" -> "BlockID: 1424
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1424
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1425
+Call context: 
+None
+freeWantInStrat(uint256) := repayment(uint256)
+TMP_764(bool) = roi > 0
+CONDITION TMP_764
+EXPRESSION:freeWantInStrat = repayment	NodeType.VARIABLE
+freeWantInStrat = repayment	NodeType.EXPRESSION
+roi > 0	NodeType.IF" [key=0];
+"BlockID: 1425
+Call context: 
+None
+freeWantInStrat(uint256) := repayment(uint256)
+TMP_764(bool) = roi > 0
+CONDITION TMP_764
+EXPRESSION:freeWantInStrat = repayment	NodeType.VARIABLE
+freeWantInStrat = repayment	NodeType.EXPRESSION
+roi > 0	NodeType.IF" -> "BlockID: 1426
+Call context: 
+True
+TMP_765 = CONVERT roi to uint256
+freeWantInStrat(uint256) = freeWantInStrat (c)+ TMP_765
+EXPRESSION:freeWantInStrat += uint256(roi)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1425
+Call context: 
+None
+freeWantInStrat(uint256) := repayment(uint256)
+TMP_764(bool) = roi > 0
+CONDITION TMP_764
+EXPRESSION:freeWantInStrat = repayment	NodeType.VARIABLE
+freeWantInStrat = repayment	NodeType.EXPRESSION
+roi > 0	NodeType.IF" -> "BlockID: 1427
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1426
+Call context: 
+True
+TMP_765 = CONVERT roi to uint256
+freeWantInStrat(uint256) = freeWantInStrat (c)+ TMP_765
+EXPRESSION:freeWantInStrat += uint256(roi)	NodeType.EXPRESSION" -> "BlockID: 1427
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1427
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1428
+Call context: 
+None
+TMP_766(bool) = credit > freeWantInStrat
+CONDITION TMP_766
+EXPRESSION:credit > freeWantInStrat	NodeType.IF" [key=0];
+"BlockID: 1428
+Call context: 
+None
+TMP_766(bool) = credit > freeWantInStrat
+CONDITION TMP_766
+EXPRESSION:credit > freeWantInStrat	NodeType.IF" -> "BlockID: 1429
+Call context: 
+True
+TMP_767 = CONVERT asset to IERC20Metadata
+TMP_768(uint256) = credit (c)- freeWantInStrat
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['TMP_767', 'stratAddr', 'TMP_768'] 
+EXPRESSION:IERC20Metadata(asset).safeTransfer(stratAddr,credit - freeWantInStrat)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1428
+Call context: 
+None
+TMP_766(bool) = credit > freeWantInStrat
+CONDITION TMP_766
+EXPRESSION:credit > freeWantInStrat	NodeType.IF" -> "BlockID: 1431
+Call context: 
+False
+TMP_770(bool) = credit < freeWantInStrat
+CONDITION TMP_770
+EXPRESSION:credit < freeWantInStrat	NodeType.IF" [key=0];
+"BlockID: 1429
+Call context: 
+True
+TMP_767 = CONVERT asset to IERC20Metadata
+TMP_768(uint256) = credit (c)- freeWantInStrat
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['TMP_767', 'stratAddr', 'TMP_768'] 
+EXPRESSION:IERC20Metadata(asset).safeTransfer(stratAddr,credit - freeWantInStrat)	NodeType.EXPRESSION" -> "BlockID: 1436
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1431
+Call context: 
+False
+TMP_770(bool) = credit < freeWantInStrat
+CONDITION TMP_770
+EXPRESSION:credit < freeWantInStrat	NodeType.IF" -> "BlockID: 1432
+Call context: 
+True
+TMP_771 = CONVERT asset to IERC20Metadata
+TMP_772 = CONVERT this to address
+TMP_773(uint256) = freeWantInStrat (c)- credit
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransferFrom(IERC20,address,address,uint256), arguments:['TMP_771', 'stratAddr', 'TMP_772', 'TMP_773'] 
+EXPRESSION:IERC20Metadata(asset).safeTransferFrom(stratAddr,address(this),freeWantInStrat - credit)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1431
+Call context: 
+False
+TMP_770(bool) = credit < freeWantInStrat
+CONDITION TMP_770
+EXPRESSION:credit < freeWantInStrat	NodeType.IF" -> "BlockID: 1434
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1432
+Call context: 
+True
+TMP_771 = CONVERT asset to IERC20Metadata
+TMP_772 = CONVERT this to address
+TMP_773(uint256) = freeWantInStrat (c)- credit
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransferFrom(IERC20,address,address,uint256), arguments:['TMP_771', 'stratAddr', 'TMP_772', 'TMP_773'] 
+EXPRESSION:IERC20Metadata(asset).safeTransferFrom(stratAddr,address(this),freeWantInStrat - credit)	NodeType.EXPRESSION" -> "BlockID: 1434
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1434
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1436
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1436
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1437
+Call context: 
+None
+TMP_775(uint256) = INTERNAL_CALL, ReaperVaultV2._calculateLockedProfit()()
+EXPRESSION:" [key=0];
+"BlockID: 1437
+Call context: 
+None
+TMP_775(uint256) = INTERNAL_CALL, ReaperVaultV2._calculateLockedProfit()()
+EXPRESSION:" -> "BlockID: 1438
+Call context: 
+None
+TMP_776(uint256) = TMP_775 (c)+ gain
+lockedProfitBeforeLoss(uint256) := TMP_776(uint256)
+TMP_777(bool) = lockedProfitBeforeLoss > loss
+CONDITION TMP_777
+EXPRESSION:lockedProfitBeforeLoss = _calculateLockedProfit() + gain	NodeType.VARIABLE
+lockedProfitBeforeLoss = _calculateLockedProfit() + gain	NodeType.EXPRESSION
+lockedProfitBeforeLoss > loss	NodeType.IF" [key=0];
+"BlockID: 1438
+Call context: 
+None
+TMP_776(uint256) = TMP_775 (c)+ gain
+lockedProfitBeforeLoss(uint256) := TMP_776(uint256)
+TMP_777(bool) = lockedProfitBeforeLoss > loss
+CONDITION TMP_777
+EXPRESSION:lockedProfitBeforeLoss = _calculateLockedProfit() + gain	NodeType.VARIABLE
+lockedProfitBeforeLoss = _calculateLockedProfit() + gain	NodeType.EXPRESSION
+lockedProfitBeforeLoss > loss	NodeType.IF" -> "BlockID: 1439
+Call context: 
+True
+TMP_778(uint256) = lockedProfitBeforeLoss (c)- loss
+lockedProfit(uint256) := TMP_778(uint256)
+EXPRESSION:lockedProfit = lockedProfitBeforeLoss - loss	NodeType.EXPRESSION" [key=0];
+"BlockID: 1438
+Call context: 
+None
+TMP_776(uint256) = TMP_775 (c)+ gain
+lockedProfitBeforeLoss(uint256) := TMP_776(uint256)
+TMP_777(bool) = lockedProfitBeforeLoss > loss
+CONDITION TMP_777
+EXPRESSION:lockedProfitBeforeLoss = _calculateLockedProfit() + gain	NodeType.VARIABLE
+lockedProfitBeforeLoss = _calculateLockedProfit() + gain	NodeType.EXPRESSION
+lockedProfitBeforeLoss > loss	NodeType.IF" -> "BlockID: 1440
+Call context: 
+False
+lockedProfit(uint256) := 0(uint256)
+EXPRESSION:lockedProfit = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 1439
+Call context: 
+True
+TMP_778(uint256) = lockedProfitBeforeLoss (c)- loss
+lockedProfit(uint256) := TMP_778(uint256)
+EXPRESSION:lockedProfit = lockedProfitBeforeLoss - loss	NodeType.EXPRESSION" -> "BlockID: 1441
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1440
+Call context: 
+False
+lockedProfit(uint256) := 0(uint256)
+EXPRESSION:lockedProfit = 0	NodeType.EXPRESSION" -> "BlockID: 1441
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1441
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1442
+Call context: 
+None
+REF_254(uint256) -> strategy.lastReport
+REF_254(uint256) (->strategy) := block.timestamp(uint256)
+lastReport(uint256) := block.timestamp(uint256)
+REF_259(uint256) -> strategy.allocBPS
+TMP_780(bool) = REF_259 == 0
+TMP_781(bool) = TMP_780 || emergencyShutdown
+CONDITION TMP_781
+EXPRESSION:strategy.lastReport = block.timestamp	NodeType.EXPRESSION
+lastReport = block.timestamp	NodeType.EXPRESSION
+strategy.allocBPS == 0 || emergencyShutdown	NodeType.IF" [key=0];
+"BlockID: 1442
+Call context: 
+None
+REF_254(uint256) -> strategy.lastReport
+REF_254(uint256) (->strategy) := block.timestamp(uint256)
+lastReport(uint256) := block.timestamp(uint256)
+REF_259(uint256) -> strategy.allocBPS
+TMP_780(bool) = REF_259 == 0
+TMP_781(bool) = TMP_780 || emergencyShutdown
+CONDITION TMP_781
+EXPRESSION:strategy.lastReport = block.timestamp	NodeType.EXPRESSION
+lastReport = block.timestamp	NodeType.EXPRESSION
+strategy.allocBPS == 0 || emergencyShutdown	NodeType.IF" -> "BlockID: 1443
+Call context: 
+True
+TMP_782 = CONVERT stratAddr to IStrategy
+TMP_783(uint256) = HIGH_LEVEL_CALL, dest:TMP_782(IStrategy), function:balanceOf, arguments:[]  
+EXPRESSION:IStrategy(stratAddr).balanceOf()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1442
+Call context: 
+None
+REF_254(uint256) -> strategy.lastReport
+REF_254(uint256) (->strategy) := block.timestamp(uint256)
+lastReport(uint256) := block.timestamp(uint256)
+REF_259(uint256) -> strategy.allocBPS
+TMP_780(bool) = REF_259 == 0
+TMP_781(bool) = TMP_780 || emergencyShutdown
+CONDITION TMP_781
+EXPRESSION:strategy.lastReport = block.timestamp	NodeType.EXPRESSION
+lastReport = block.timestamp	NodeType.EXPRESSION
+strategy.allocBPS == 0 || emergencyShutdown	NodeType.IF" -> "BlockID: 1445
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1443
+Call context: 
+True
+TMP_782 = CONVERT stratAddr to IStrategy
+TMP_783(uint256) = HIGH_LEVEL_CALL, dest:TMP_782(IStrategy), function:balanceOf, arguments:[]  
+EXPRESSION:IStrategy(stratAddr).balanceOf()	NodeType.EXPRESSION" -> "BlockID: 1444
+Call context: 
+None
+RETURN TMP_783
+EXPRESSION:IStrategy(stratAddr).balanceOf()	NodeType.RETURN" [key=0];
+"BlockID: 1445
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1446
+Call context: 
+None
+RETURN debt
+EXPRESSION:debt	NodeType.RETURN" [key=0];
+"BlockID: 1447
+Call context: 
+None
+repayment(uint256) := TMP_761(uint256)
+TMP_762(bool) = repayment != 0
+CONDITION TMP_762
+EXPRESSION:repayment = Math.min(debt,repayment)	NodeType.EXPRESSION
+repayment != 0	NodeType.IF" -> "BlockID: 1448
+Call context: 
+True
+REF_250(uint256) -> strategy.allocated
+REF_250(-> strategy) = REF_250 (c)- repayment
+totalAllocated(uint256) = totalAllocated (c)- repayment
+debt(uint256) = debt (c)- repayment
+EXPRESSION:strategy.allocated -= repayment	NodeType.EXPRESSION
+totalAllocated -= repayment	NodeType.EXPRESSION
+debt -= repayment	NodeType.EXPRESSION" [key=0];
+"BlockID: 1447
+Call context: 
+None
+repayment(uint256) := TMP_761(uint256)
+TMP_762(bool) = repayment != 0
+CONDITION TMP_762
+EXPRESSION:repayment = Math.min(debt,repayment)	NodeType.EXPRESSION
+repayment != 0	NodeType.IF" -> "BlockID: 1449
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1448
+Call context: 
+True
+REF_250(uint256) -> strategy.allocated
+REF_250(-> strategy) = REF_250 (c)- repayment
+totalAllocated(uint256) = totalAllocated (c)- repayment
+debt(uint256) = debt (c)- repayment
+EXPRESSION:strategy.allocated -= repayment	NodeType.EXPRESSION
+totalAllocated -= repayment	NodeType.EXPRESSION
+debt -= repayment	NodeType.EXPRESSION" -> "BlockID: 1449
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1449
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1424
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1452
+Call context: 
+None
+stratAddr(address) := msg.sender(address)
+REF_246(ReaperVaultV2.StrategyParams) -> strategies[stratAddr]
+strategy(ReaperVaultV2.StrategyParams) := REF_246(ReaperVaultV2.StrategyParams)
+REF_247(uint256) -> strategy.activation
+TMP_749(bool) = REF_247 != 0
+CONDITION TMP_749
+EXPRESSION:TMP_749(bool) = REF_247 != 0	NodeType.IF" -> "BlockID: 1453
+Call context: 
+True
+TMP_750(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1452
+Call context: 
+None
+stratAddr(address) := msg.sender(address)
+REF_246(ReaperVaultV2.StrategyParams) -> strategies[stratAddr]
+strategy(ReaperVaultV2.StrategyParams) := REF_246(ReaperVaultV2.StrategyParams)
+REF_247(uint256) -> strategy.activation
+TMP_749(bool) = REF_247 != 0
+CONDITION TMP_749
+EXPRESSION:TMP_749(bool) = REF_247 != 0	NodeType.IF" -> "BlockID: 1454
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1454
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1416
+Call context: 
+True
+loss(uint256) := 0(uint256)
+gain(uint256) := 0(uint256)
+TMP_751(bool) = roi < 0
+CONDITION TMP_751
+EXPRESSION:loss = 0	NodeType.VARIABLE
+loss = 0	NodeType.EXPRESSION
+gain = 0	NodeType.VARIABLE
+gain = 0	NodeType.EXPRESSION
+roi < 0	NodeType.IF" [key=0];
+}

@@ -1,0 +1,420 @@
+digraph {
+"BlockID: 1147
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1148
+Call context: 
+None
+TMP_667 = CONVERT this to address
+TMP_668(uint256) = HIGH_LEVEL_CALL, dest:cointroller(CointrollerInterface), function:seizeAllowed, arguments:['TMP_667', 'seizerToken', 'liquidator', 'borrower', 'seizeTokens']  
+EXPRESSION:";
+"BlockID: 1149
+Call context: 
+None
+allowed(uint256) := TMP_668(uint256)
+TMP_669(bool) = allowed != 0
+CONDITION TMP_669
+EXPRESSION:allowed = cointroller.seizeAllowed(address(this),seizerToken,liquidator,borrower,seizeTokens)	NodeType.VARIABLE
+allowed = cointroller.seizeAllowed(address(this),seizerToken,liquidator,borrower,seizeTokens)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" [shape=box];
+"BlockID: 1150
+Call context: 
+True
+REF_483(TokenErrorReporter.Error) -> Error.COINTROLLER_REJECTION
+REF_484(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_SEIZE_COINTROLLER_REJECTION
+TMP_670(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_483,REF_484,allowed)
+EXPRESSION:failOpaque(Error.COINTROLLER_REJECTION,FailureInfo.LIQUIDATE_SEIZE_COINTROLLER_REJECTION,allowed)	NodeType.EXPRESSION";
+"BlockID: 1152
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1153
+Call context: 
+None
+TMP_671(bool) = borrower == liquidator
+CONDITION TMP_671
+EXPRESSION:borrower == liquidator	NodeType.IF";
+"BlockID: 1154
+Call context: 
+True
+REF_485(TokenErrorReporter.Error) -> Error.INVALID_ACCOUNT_PAIR
+REF_486(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_SEIZE_LIQUIDATOR_IS_BORROWER
+TMP_672(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_485,REF_486)
+EXPRESSION:fail(Error.INVALID_ACCOUNT_PAIR,FailureInfo.LIQUIDATE_SEIZE_LIQUIDATOR_IS_BORROWER)	NodeType.EXPRESSION";
+"BlockID: 1156
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1157
+Call context: 
+None
+NEW VARIABLE mathErr
+NEW VARIABLE borrowerTokensNew
+NEW VARIABLE liquidatorTokensNew
+REF_487(uint256) -> accountTokens[borrower]
+TUPLE_83(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.subUInt(uint256,uint256)(REF_487,seizeTokens)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(mathErr,borrowerTokensNew) = subUInt(accountTokens[borrower],seizeTokens)	NodeType.EXPRESSION";
+"BlockID: 1158
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_83 index: 0 
+borrowerTokensNew(uint256)= UNPACK TUPLE_83 index: 1 
+REF_488(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_673(bool) = mathErr != REF_488
+CONDITION TMP_673
+EXPRESSION:(mathErr,borrowerTokensNew) = subUInt(accountTokens[borrower],seizeTokens)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 1159
+Call context: 
+True
+REF_489(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_490(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_SEIZE_BALANCE_DECREMENT_FAILED
+TMP_674 = CONVERT mathErr to uint256
+TMP_675(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_489,REF_490,TMP_674)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.LIQUIDATE_SEIZE_BALANCE_DECREMENT_FAILED,uint256(mathErr))	NodeType.EXPRESSION";
+"BlockID: 1161
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1162
+Call context: 
+None
+REF_491(uint256) -> accountTokens[liquidator]
+TUPLE_84(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.addUInt(uint256,uint256)(REF_491,seizeTokens)
+EXPRESSION:(mathErr,liquidatorTokensNew) = addUInt(accountTokens[liquidator],seizeTokens)	NodeType.EXPRESSION";
+"BlockID: 1163
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_84 index: 0 
+liquidatorTokensNew(uint256)= UNPACK TUPLE_84 index: 1 
+REF_492(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_676(bool) = mathErr != REF_492
+CONDITION TMP_676
+EXPRESSION:(mathErr,liquidatorTokensNew) = addUInt(accountTokens[liquidator],seizeTokens)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 1164
+Call context: 
+True
+REF_493(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_494(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_SEIZE_BALANCE_INCREMENT_FAILED
+TMP_677 = CONVERT mathErr to uint256
+TMP_678(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_493,REF_494,TMP_677)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.LIQUIDATE_SEIZE_BALANCE_INCREMENT_FAILED,uint256(mathErr))	NodeType.EXPRESSION";
+"BlockID: 1166
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1167
+Call context: 
+None
+REF_495(uint256) -> accountTokens[borrower]
+REF_495(uint256) (->accountTokens) := borrowerTokensNew(uint256)
+REF_496(uint256) -> accountTokens[liquidator]
+REF_496(uint256) (->accountTokens) := liquidatorTokensNew(uint256)
+REF_497(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_680 = CONVERT REF_497 to uint256
+RETURN TMP_680
+EXPRESSION:accountTokens[borrower] = borrowerTokensNew	NodeType.EXPRESSION
+accountTokens[liquidator] = liquidatorTokensNew	NodeType.EXPRESSION
+uint256(Error.NO_ERROR)	NodeType.RETURN";
+"BlockID: 1165
+Call context: 
+None
+RETURN TMP_678
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.LIQUIDATE_SEIZE_BALANCE_INCREMENT_FAILED,uint256(mathErr))	NodeType.RETURN" [shape=box];
+"BlockID: 1160
+Call context: 
+None
+RETURN TMP_675
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.LIQUIDATE_SEIZE_BALANCE_DECREMENT_FAILED,uint256(mathErr))	NodeType.RETURN" [shape=box];
+"BlockID: 1155
+Call context: 
+None
+RETURN TMP_672
+EXPRESSION:fail(Error.INVALID_ACCOUNT_PAIR,FailureInfo.LIQUIDATE_SEIZE_LIQUIDATOR_IS_BORROWER)	NodeType.RETURN" [shape=box];
+"BlockID: 1151
+Call context: 
+None
+RETURN TMP_670
+EXPRESSION:failOpaque(Error.COINTROLLER_REJECTION,FailureInfo.LIQUIDATE_SEIZE_COINTROLLER_REJECTION,allowed)	NodeType.RETURN" [shape=box];
+"BlockID: 1147
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1148
+Call context: 
+None
+TMP_667 = CONVERT this to address
+TMP_668(uint256) = HIGH_LEVEL_CALL, dest:cointroller(CointrollerInterface), function:seizeAllowed, arguments:['TMP_667', 'seizerToken', 'liquidator', 'borrower', 'seizeTokens']  
+EXPRESSION:" [key=0];
+"BlockID: 1148
+Call context: 
+None
+TMP_667 = CONVERT this to address
+TMP_668(uint256) = HIGH_LEVEL_CALL, dest:cointroller(CointrollerInterface), function:seizeAllowed, arguments:['TMP_667', 'seizerToken', 'liquidator', 'borrower', 'seizeTokens']  
+EXPRESSION:" -> "BlockID: 1149
+Call context: 
+None
+allowed(uint256) := TMP_668(uint256)
+TMP_669(bool) = allowed != 0
+CONDITION TMP_669
+EXPRESSION:allowed = cointroller.seizeAllowed(address(this),seizerToken,liquidator,borrower,seizeTokens)	NodeType.VARIABLE
+allowed = cointroller.seizeAllowed(address(this),seizerToken,liquidator,borrower,seizeTokens)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" [key=0];
+"BlockID: 1149
+Call context: 
+None
+allowed(uint256) := TMP_668(uint256)
+TMP_669(bool) = allowed != 0
+CONDITION TMP_669
+EXPRESSION:allowed = cointroller.seizeAllowed(address(this),seizerToken,liquidator,borrower,seizeTokens)	NodeType.VARIABLE
+allowed = cointroller.seizeAllowed(address(this),seizerToken,liquidator,borrower,seizeTokens)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" -> "BlockID: 1150
+Call context: 
+True
+REF_483(TokenErrorReporter.Error) -> Error.COINTROLLER_REJECTION
+REF_484(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_SEIZE_COINTROLLER_REJECTION
+TMP_670(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_483,REF_484,allowed)
+EXPRESSION:failOpaque(Error.COINTROLLER_REJECTION,FailureInfo.LIQUIDATE_SEIZE_COINTROLLER_REJECTION,allowed)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1149
+Call context: 
+None
+allowed(uint256) := TMP_668(uint256)
+TMP_669(bool) = allowed != 0
+CONDITION TMP_669
+EXPRESSION:allowed = cointroller.seizeAllowed(address(this),seizerToken,liquidator,borrower,seizeTokens)	NodeType.VARIABLE
+allowed = cointroller.seizeAllowed(address(this),seizerToken,liquidator,borrower,seizeTokens)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" -> "BlockID: 1152
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1150
+Call context: 
+True
+REF_483(TokenErrorReporter.Error) -> Error.COINTROLLER_REJECTION
+REF_484(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_SEIZE_COINTROLLER_REJECTION
+TMP_670(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_483,REF_484,allowed)
+EXPRESSION:failOpaque(Error.COINTROLLER_REJECTION,FailureInfo.LIQUIDATE_SEIZE_COINTROLLER_REJECTION,allowed)	NodeType.EXPRESSION" -> "BlockID: 1151
+Call context: 
+None
+RETURN TMP_670
+EXPRESSION:failOpaque(Error.COINTROLLER_REJECTION,FailureInfo.LIQUIDATE_SEIZE_COINTROLLER_REJECTION,allowed)	NodeType.RETURN" [key=0];
+"BlockID: 1152
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1153
+Call context: 
+None
+TMP_671(bool) = borrower == liquidator
+CONDITION TMP_671
+EXPRESSION:borrower == liquidator	NodeType.IF" [key=0];
+"BlockID: 1153
+Call context: 
+None
+TMP_671(bool) = borrower == liquidator
+CONDITION TMP_671
+EXPRESSION:borrower == liquidator	NodeType.IF" -> "BlockID: 1154
+Call context: 
+True
+REF_485(TokenErrorReporter.Error) -> Error.INVALID_ACCOUNT_PAIR
+REF_486(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_SEIZE_LIQUIDATOR_IS_BORROWER
+TMP_672(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_485,REF_486)
+EXPRESSION:fail(Error.INVALID_ACCOUNT_PAIR,FailureInfo.LIQUIDATE_SEIZE_LIQUIDATOR_IS_BORROWER)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1153
+Call context: 
+None
+TMP_671(bool) = borrower == liquidator
+CONDITION TMP_671
+EXPRESSION:borrower == liquidator	NodeType.IF" -> "BlockID: 1156
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1154
+Call context: 
+True
+REF_485(TokenErrorReporter.Error) -> Error.INVALID_ACCOUNT_PAIR
+REF_486(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_SEIZE_LIQUIDATOR_IS_BORROWER
+TMP_672(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_485,REF_486)
+EXPRESSION:fail(Error.INVALID_ACCOUNT_PAIR,FailureInfo.LIQUIDATE_SEIZE_LIQUIDATOR_IS_BORROWER)	NodeType.EXPRESSION" -> "BlockID: 1155
+Call context: 
+None
+RETURN TMP_672
+EXPRESSION:fail(Error.INVALID_ACCOUNT_PAIR,FailureInfo.LIQUIDATE_SEIZE_LIQUIDATOR_IS_BORROWER)	NodeType.RETURN" [key=0];
+"BlockID: 1156
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1157
+Call context: 
+None
+NEW VARIABLE mathErr
+NEW VARIABLE borrowerTokensNew
+NEW VARIABLE liquidatorTokensNew
+REF_487(uint256) -> accountTokens[borrower]
+TUPLE_83(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.subUInt(uint256,uint256)(REF_487,seizeTokens)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(mathErr,borrowerTokensNew) = subUInt(accountTokens[borrower],seizeTokens)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1157
+Call context: 
+None
+NEW VARIABLE mathErr
+NEW VARIABLE borrowerTokensNew
+NEW VARIABLE liquidatorTokensNew
+REF_487(uint256) -> accountTokens[borrower]
+TUPLE_83(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.subUInt(uint256,uint256)(REF_487,seizeTokens)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(mathErr,borrowerTokensNew) = subUInt(accountTokens[borrower],seizeTokens)	NodeType.EXPRESSION" -> "BlockID: 1158
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_83 index: 0 
+borrowerTokensNew(uint256)= UNPACK TUPLE_83 index: 1 
+REF_488(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_673(bool) = mathErr != REF_488
+CONDITION TMP_673
+EXPRESSION:(mathErr,borrowerTokensNew) = subUInt(accountTokens[borrower],seizeTokens)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key=0];
+"BlockID: 1158
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_83 index: 0 
+borrowerTokensNew(uint256)= UNPACK TUPLE_83 index: 1 
+REF_488(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_673(bool) = mathErr != REF_488
+CONDITION TMP_673
+EXPRESSION:(mathErr,borrowerTokensNew) = subUInt(accountTokens[borrower],seizeTokens)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 1159
+Call context: 
+True
+REF_489(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_490(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_SEIZE_BALANCE_DECREMENT_FAILED
+TMP_674 = CONVERT mathErr to uint256
+TMP_675(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_489,REF_490,TMP_674)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.LIQUIDATE_SEIZE_BALANCE_DECREMENT_FAILED,uint256(mathErr))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1158
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_83 index: 0 
+borrowerTokensNew(uint256)= UNPACK TUPLE_83 index: 1 
+REF_488(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_673(bool) = mathErr != REF_488
+CONDITION TMP_673
+EXPRESSION:(mathErr,borrowerTokensNew) = subUInt(accountTokens[borrower],seizeTokens)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 1161
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1159
+Call context: 
+True
+REF_489(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_490(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_SEIZE_BALANCE_DECREMENT_FAILED
+TMP_674 = CONVERT mathErr to uint256
+TMP_675(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_489,REF_490,TMP_674)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.LIQUIDATE_SEIZE_BALANCE_DECREMENT_FAILED,uint256(mathErr))	NodeType.EXPRESSION" -> "BlockID: 1160
+Call context: 
+None
+RETURN TMP_675
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.LIQUIDATE_SEIZE_BALANCE_DECREMENT_FAILED,uint256(mathErr))	NodeType.RETURN" [key=0];
+"BlockID: 1161
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1162
+Call context: 
+None
+REF_491(uint256) -> accountTokens[liquidator]
+TUPLE_84(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.addUInt(uint256,uint256)(REF_491,seizeTokens)
+EXPRESSION:(mathErr,liquidatorTokensNew) = addUInt(accountTokens[liquidator],seizeTokens)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1162
+Call context: 
+None
+REF_491(uint256) -> accountTokens[liquidator]
+TUPLE_84(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.addUInt(uint256,uint256)(REF_491,seizeTokens)
+EXPRESSION:(mathErr,liquidatorTokensNew) = addUInt(accountTokens[liquidator],seizeTokens)	NodeType.EXPRESSION" -> "BlockID: 1163
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_84 index: 0 
+liquidatorTokensNew(uint256)= UNPACK TUPLE_84 index: 1 
+REF_492(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_676(bool) = mathErr != REF_492
+CONDITION TMP_676
+EXPRESSION:(mathErr,liquidatorTokensNew) = addUInt(accountTokens[liquidator],seizeTokens)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key=0];
+"BlockID: 1163
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_84 index: 0 
+liquidatorTokensNew(uint256)= UNPACK TUPLE_84 index: 1 
+REF_492(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_676(bool) = mathErr != REF_492
+CONDITION TMP_676
+EXPRESSION:(mathErr,liquidatorTokensNew) = addUInt(accountTokens[liquidator],seizeTokens)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 1164
+Call context: 
+True
+REF_493(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_494(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_SEIZE_BALANCE_INCREMENT_FAILED
+TMP_677 = CONVERT mathErr to uint256
+TMP_678(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_493,REF_494,TMP_677)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.LIQUIDATE_SEIZE_BALANCE_INCREMENT_FAILED,uint256(mathErr))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1163
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_84 index: 0 
+liquidatorTokensNew(uint256)= UNPACK TUPLE_84 index: 1 
+REF_492(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_676(bool) = mathErr != REF_492
+CONDITION TMP_676
+EXPRESSION:(mathErr,liquidatorTokensNew) = addUInt(accountTokens[liquidator],seizeTokens)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 1166
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1164
+Call context: 
+True
+REF_493(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_494(TokenErrorReporter.FailureInfo) -> FailureInfo.LIQUIDATE_SEIZE_BALANCE_INCREMENT_FAILED
+TMP_677 = CONVERT mathErr to uint256
+TMP_678(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_493,REF_494,TMP_677)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.LIQUIDATE_SEIZE_BALANCE_INCREMENT_FAILED,uint256(mathErr))	NodeType.EXPRESSION" -> "BlockID: 1165
+Call context: 
+None
+RETURN TMP_678
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.LIQUIDATE_SEIZE_BALANCE_INCREMENT_FAILED,uint256(mathErr))	NodeType.RETURN" [key=0];
+"BlockID: 1166
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1167
+Call context: 
+None
+REF_495(uint256) -> accountTokens[borrower]
+REF_495(uint256) (->accountTokens) := borrowerTokensNew(uint256)
+REF_496(uint256) -> accountTokens[liquidator]
+REF_496(uint256) (->accountTokens) := liquidatorTokensNew(uint256)
+REF_497(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_680 = CONVERT REF_497 to uint256
+RETURN TMP_680
+EXPRESSION:accountTokens[borrower] = borrowerTokensNew	NodeType.EXPRESSION
+accountTokens[liquidator] = liquidatorTokensNew	NodeType.EXPRESSION
+uint256(Error.NO_ERROR)	NodeType.RETURN" [key=0];
+}

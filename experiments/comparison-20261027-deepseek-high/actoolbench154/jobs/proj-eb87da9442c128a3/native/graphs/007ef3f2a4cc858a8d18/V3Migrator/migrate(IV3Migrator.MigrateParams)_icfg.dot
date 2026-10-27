@@ -1,0 +1,1718 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+REF_71(address) -> params.pair
+TMP_168 = CONVERT REF_71 to IBiswapPair
+REF_73(address) -> params.recipient
+REF_74(address) -> params.pair
+REF_75(uint256) -> params.liquidityToMigrate
+TMP_169(bool) = HIGH_LEVEL_CALL, dest:TMP_168(IBiswapPair), function:transferFrom, arguments:['REF_73', 'REF_74', 'REF_75']  
+EXPRESSION:IBiswapPair(params.pair).transferFrom(params.recipient,params.pair,params.liquidityToMigrate)	NodeType.EXPRESSION";
+"BlockID: 2
+Call context: 
+None
+NEW VARIABLE amount0V2
+NEW VARIABLE amount1V2
+REF_76(address) -> params.pair
+TMP_170 = CONVERT REF_76 to IBiswapPair
+TMP_171 = CONVERT this to address
+TUPLE_11(uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_170(IBiswapPair), function:burn, arguments:['TMP_171']  
+EXPRESSION:IBiswapPair(params.pair).transferFrom(params.recipient,params.pair,params.liquidityToMigrate)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0V2,amount1V2) = IBiswapPair(params.pair).burn(address(this))	NodeType.EXPRESSION";
+"BlockID: 3
+Call context: 
+None
+amount0V2(uint256)= UNPACK TUPLE_11 index: 0 
+amount1V2(uint256)= UNPACK TUPLE_11 index: 1 
+TMP_172 = CONVERT amount0V2 to uint128
+amount0V2ToMigrate(uint128) := TMP_172(uint128)
+TMP_173 = CONVERT amount1V2 to uint128
+amount1V2ToMigrate(uint128) := TMP_173(uint128)
+REF_78(address) -> params.token0
+NEW VARIABLE success
+NEW VARIABLE data
+REF_58(bytes4) (->None) := 157198259(uint256)
+TMP_109(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_58,to,value)
+TUPLE_8(bool,bytes) = LOW_LEVEL_CALL, dest:token, function:call, arguments:['TMP_109']  
+EXPRESSION:(amount0V2,amount1V2) = IBiswapPair(params.pair).burn(address(this))	NodeType.EXPRESSION
+amount0V2ToMigrate = uint128(amount0V2)	NodeType.VARIABLE
+amount0V2ToMigrate = uint128(amount0V2)	NodeType.EXPRESSION
+amount1V2ToMigrate = uint128(amount1V2)	NodeType.VARIABLE
+amount1V2ToMigrate = uint128(amount1V2)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,data) = token.call(abi.encodeWithSelector(IERC20.approve.selector,to,value))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 10
+Call context: 
+None
+REF_79(address) -> params.token1
+NEW VARIABLE success
+NEW VARIABLE data
+REF_58(bytes4) (->None) := 157198259(uint256)
+TMP_109(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_58,to,value)
+TUPLE_8(bool,bytes) = LOW_LEVEL_CALL, dest:token, function:call, arguments:['TMP_109']  
+EXPRESSION:safeApprove(params.token0,liquidityManager,amount0V2ToMigrate)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,data) = token.call(abi.encodeWithSelector(IERC20.approve.selector,to,value))	NodeType.EXPRESSION";
+"BlockID: 17
+Call context: 
+None
+NEW VARIABLE amount0V3
+NEW VARIABLE amount1V3
+TMP_176 = CONVERT liquidityManager to ILiquidityManager
+REF_82(address) -> params.recipient
+REF_83(address) -> params.token0
+REF_84(address) -> params.token1
+REF_85(uint16) -> params.fee
+REF_86(int24) -> params.tickLower
+REF_87(int24) -> params.tickUpper
+REF_88(uint128) -> params.amount0Min
+REF_89(uint128) -> params.amount1Min
+REF_90(uint256) -> params.deadline
+TMP_177(ILiquidityManager.MintParam) = new MintParam(REF_82,REF_83,REF_84,REF_85,REF_86,REF_87,amount0V2ToMigrate,amount1V2ToMigrate,REF_88,REF_89,REF_90)
+TUPLE_12(uint256,uint128,uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_176(ILiquidityManager), function:mint, arguments:['TMP_177']  
+EXPRESSION:safeApprove(params.token1,liquidityManager,amount1V2ToMigrate)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0V3,amount1V3) = ILiquidityManager(liquidityManager).mint(ILiquidityManager.MintParam(params.recipient,params.token0,params.token1,params.fee,params.tickLower,params.tickUpper,amount0V2ToMigrate,amount1V2ToMigrate,params.amount0Min,params.amount1Min,params.deadline))	NodeType.EXPRESSION";
+"BlockID: 18
+Call context: 
+None
+amount0V3(uint256)= UNPACK TUPLE_12 index: 2 
+amount1V3(uint256)= UNPACK TUPLE_12 index: 3 
+TMP_178(bool) = amount0V3 < amount0V2
+CONDITION TMP_178
+EXPRESSION:(amount0V3,amount1V3) = ILiquidityManager(liquidityManager).mint(ILiquidityManager.MintParam(params.recipient,params.token0,params.token1,params.fee,params.tickLower,params.tickUpper,amount0V2ToMigrate,amount1V2ToMigrate,params.amount0Min,params.amount1Min,params.deadline))	NodeType.EXPRESSION
+amount0V3 < amount0V2	NodeType.IF" [shape=box];
+"BlockID: 19
+Call context: 
+True
+TMP_179(bool) = amount0V3 < amount0V2ToMigrate
+CONDITION TMP_179
+EXPRESSION:amount0V3 < amount0V2ToMigrate	NodeType.IF";
+"BlockID: 20
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 23
+Call context: 
+None
+TMP_188(bool) = amount1V3 < amount1V2
+CONDITION TMP_188
+EXPRESSION:amount1V3 < amount1V2	NodeType.IF";
+"BlockID: 26
+Call context: 
+True
+TMP_189(bool) = amount1V3 < amount1V2ToMigrate
+CONDITION TMP_189
+EXPRESSION:amount1V3 < amount1V2ToMigrate	NodeType.IF";
+"BlockID: 27
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 32
+Call context: 
+True
+REF_98(address) -> params.token1
+NEW VARIABLE success
+NEW VARIABLE data
+REF_58(bytes4) (->None) := 157198259(uint256)
+TMP_109(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_58,to,value)
+TUPLE_8(bool,bytes) = LOW_LEVEL_CALL, dest:token, function:call, arguments:['TMP_109']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,data) = token.call(abi.encodeWithSelector(IERC20.approve.selector,to,value))	NodeType.EXPRESSION";
+"BlockID: 33
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 38
+Call context: 
+None
+TMP_191(uint256) = amount1V2 (c)- amount1V3
+refund1(uint256) := TMP_191(uint256)
+REF_99(bool) -> params.refundAsETH
+REF_100(address) -> params.token1
+TMP_192(bool) = REF_100 == WETH9
+TMP_193(bool) = REF_99 && TMP_192
+CONDITION TMP_193
+EXPRESSION:refund1 = amount1V2 - amount1V3	NodeType.EXPRESSION
+params.refundAsETH && params.token1 == WETH9	NodeType.IF";
+"BlockID: 46
+Call context: 
+True
+TMP_194 = CONVERT WETH9 to IWETH9
+HIGH_LEVEL_CALL, dest:TMP_194(IWETH9), function:withdraw, arguments:['refund1']  
+EXPRESSION:IWETH9(WETH9).withdraw(refund1)	NodeType.EXPRESSION";
+"BlockID: 47
+Call context: 
+False
+REF_103(address) -> params.token1
+REF_104(address) -> params.recipient
+NEW VARIABLE success
+NEW VARIABLE data
+REF_52(bytes4) (->None) := 2835717307(uint256)
+TMP_103(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_52,to,value)
+TUPLE_7(bool,bytes) = LOW_LEVEL_CALL, dest:token, function:call, arguments:['TMP_103']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,data) = token.call(abi.encodeWithSelector(IERC20.transfer.selector,to,value))	NodeType.EXPRESSION";
+"BlockID: 65
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 52
+Call context: 
+None
+REF_102(address) -> params.recipient
+NEW VARIABLE success
+TMP_116 = new bytes(0)
+TUPLE_9(bool,bytes) = LOW_LEVEL_CALL, dest:to, function:call, arguments:['TMP_116'] value:value 
+EXPRESSION:IWETH9(WETH9).withdraw(refund1)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+(success) = to.call{value: value}(new bytes(0))	NodeType.EXPRESSION";
+"BlockID: 21
+Call context: 
+True
+REF_91(address) -> params.token0
+NEW VARIABLE success
+NEW VARIABLE data
+REF_58(bytes4) (->None) := 157198259(uint256)
+TMP_109(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_58,to,value)
+TUPLE_8(bool,bytes) = LOW_LEVEL_CALL, dest:token, function:call, arguments:['TMP_109']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,data) = token.call(abi.encodeWithSelector(IERC20.approve.selector,to,value))	NodeType.EXPRESSION";
+"BlockID: 22
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 25
+Call context: 
+None
+TMP_181(uint256) = amount0V2 (c)- amount0V3
+refund0(uint256) := TMP_181(uint256)
+REF_92(bool) -> params.refundAsETH
+REF_93(address) -> params.token0
+TMP_182(bool) = REF_93 == WETH9
+TMP_183(bool) = REF_92 && TMP_182
+CONDITION TMP_183
+EXPRESSION:refund0 = amount0V2 - amount0V3	NodeType.EXPRESSION
+params.refundAsETH && params.token0 == WETH9	NodeType.IF";
+"BlockID: 30
+Call context: 
+True
+TMP_184 = CONVERT WETH9 to IWETH9
+HIGH_LEVEL_CALL, dest:TMP_184(IWETH9), function:withdraw, arguments:['refund0']  
+EXPRESSION:IWETH9(WETH9).withdraw(refund0)	NodeType.EXPRESSION";
+"BlockID: 31
+Call context: 
+False
+REF_96(address) -> params.token0
+REF_97(address) -> params.recipient
+NEW VARIABLE success
+NEW VARIABLE data
+REF_52(bytes4) (->None) := 2835717307(uint256)
+TMP_103(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_52,to,value)
+TUPLE_7(bool,bytes) = LOW_LEVEL_CALL, dest:token, function:call, arguments:['TMP_103']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,data) = token.call(abi.encodeWithSelector(IERC20.transfer.selector,to,value))	NodeType.EXPRESSION";
+"BlockID: 54
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 35
+Call context: 
+None
+REF_95(address) -> params.recipient
+NEW VARIABLE success
+TMP_116 = new bytes(0)
+TUPLE_9(bool,bytes) = LOW_LEVEL_CALL, dest:to, function:call, arguments:['TMP_116'] value:value 
+EXPRESSION:IWETH9(WETH9).withdraw(refund0)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+(success) = to.call{value: value}(new bytes(0))	NodeType.EXPRESSION";
+"BlockID: 4
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF";
+"BlockID: 5
+Call context: migrate
+True
+TMP_114(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 6
+Call context: migrate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 11
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF";
+"BlockID: 12
+Call context: migrate
+True
+TMP_114(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 13
+Call context: migrate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 37
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF";
+"BlockID: 44
+Call context: migrate
+True
+TMP_114(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 45
+Call context: migrate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 53
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_7 index: 0 
+data(bytes)= UNPACK TUPLE_7 index: 1 
+REF_53 -> LENGTH data
+TMP_104(bool) = REF_53 == 0
+TMP_105(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_106(bool) = TMP_104 || TMP_105
+TMP_107(bool) = success && TMP_106
+CONDITION TMP_107
+EXPRESSION:TMP_107(bool) = success && TMP_106	NodeType.IF";
+"BlockID: 60
+Call context: migrate
+True
+TMP_108(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 61
+Call context: migrate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 59
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_9 index: 0 
+CONDITION success
+EXPRESSION:success(bool)= UNPACK TUPLE_9 index: 0 	NodeType.IF";
+"BlockID: 62
+Call context: migrate
+True
+TMP_117(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 63
+Call context: migrate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 24
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF";
+"BlockID: 28
+Call context: migrate
+True
+TMP_114(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 29
+Call context: migrate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 36
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_7 index: 0 
+data(bytes)= UNPACK TUPLE_7 index: 1 
+REF_53 -> LENGTH data
+TMP_104(bool) = REF_53 == 0
+TMP_105(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_106(bool) = TMP_104 || TMP_105
+TMP_107(bool) = success && TMP_106
+CONDITION TMP_107
+EXPRESSION:TMP_107(bool) = success && TMP_106	NodeType.IF";
+"BlockID: 42
+Call context: migrate
+True
+TMP_108(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 43
+Call context: migrate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 41
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_9 index: 0 
+CONDITION success
+EXPRESSION:success(bool)= UNPACK TUPLE_9 index: 0 	NodeType.IF";
+"BlockID: 48
+Call context: migrate
+True
+TMP_117(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 49
+Call context: migrate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 7
+Call context: 
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF";
+"BlockID: 8
+Call context: 
+True
+TMP_113(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 14
+Call context: 
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF";
+"BlockID: 15
+Call context: 
+True
+TMP_113(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 16
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 51
+Call context: 
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF";
+"BlockID: 57
+Call context: 
+True
+TMP_113(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 58
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 64
+Call context: 
+None
+success(bool)= UNPACK TUPLE_7 index: 0 
+data(bytes)= UNPACK TUPLE_7 index: 1 
+REF_53 -> LENGTH data
+TMP_104(bool) = REF_53 == 0
+TMP_105(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_106(bool) = TMP_104 || TMP_105
+TMP_107(bool) = success && TMP_106
+CONDITION TMP_107
+EXPRESSION:TMP_107(bool) = success && TMP_106	NodeType.IF";
+"BlockID: 66
+Call context: 
+True
+TMP_107(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 67
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 34
+Call context: 
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF";
+"BlockID: 39
+Call context: 
+True
+TMP_113(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 40
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 50
+Call context: 
+None
+success(bool)= UNPACK TUPLE_7 index: 0 
+data(bytes)= UNPACK TUPLE_7 index: 1 
+REF_53 -> LENGTH data
+TMP_104(bool) = REF_53 == 0
+TMP_105(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_106(bool) = TMP_104 || TMP_105
+TMP_107(bool) = success && TMP_106
+CONDITION TMP_107
+EXPRESSION:TMP_107(bool) = success && TMP_106	NodeType.IF";
+"BlockID: 55
+Call context: 
+True
+TMP_107(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 56
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+REF_71(address) -> params.pair
+TMP_168 = CONVERT REF_71 to IBiswapPair
+REF_73(address) -> params.recipient
+REF_74(address) -> params.pair
+REF_75(uint256) -> params.liquidityToMigrate
+TMP_169(bool) = HIGH_LEVEL_CALL, dest:TMP_168(IBiswapPair), function:transferFrom, arguments:['REF_73', 'REF_74', 'REF_75']  
+EXPRESSION:IBiswapPair(params.pair).transferFrom(params.recipient,params.pair,params.liquidityToMigrate)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1
+Call context: 
+None
+REF_71(address) -> params.pair
+TMP_168 = CONVERT REF_71 to IBiswapPair
+REF_73(address) -> params.recipient
+REF_74(address) -> params.pair
+REF_75(uint256) -> params.liquidityToMigrate
+TMP_169(bool) = HIGH_LEVEL_CALL, dest:TMP_168(IBiswapPair), function:transferFrom, arguments:['REF_73', 'REF_74', 'REF_75']  
+EXPRESSION:IBiswapPair(params.pair).transferFrom(params.recipient,params.pair,params.liquidityToMigrate)	NodeType.EXPRESSION" -> "BlockID: 2
+Call context: 
+None
+NEW VARIABLE amount0V2
+NEW VARIABLE amount1V2
+REF_76(address) -> params.pair
+TMP_170 = CONVERT REF_76 to IBiswapPair
+TMP_171 = CONVERT this to address
+TUPLE_11(uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_170(IBiswapPair), function:burn, arguments:['TMP_171']  
+EXPRESSION:IBiswapPair(params.pair).transferFrom(params.recipient,params.pair,params.liquidityToMigrate)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0V2,amount1V2) = IBiswapPair(params.pair).burn(address(this))	NodeType.EXPRESSION" [key=0];
+"BlockID: 2
+Call context: 
+None
+NEW VARIABLE amount0V2
+NEW VARIABLE amount1V2
+REF_76(address) -> params.pair
+TMP_170 = CONVERT REF_76 to IBiswapPair
+TMP_171 = CONVERT this to address
+TUPLE_11(uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_170(IBiswapPair), function:burn, arguments:['TMP_171']  
+EXPRESSION:IBiswapPair(params.pair).transferFrom(params.recipient,params.pair,params.liquidityToMigrate)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0V2,amount1V2) = IBiswapPair(params.pair).burn(address(this))	NodeType.EXPRESSION" -> "BlockID: 3
+Call context: 
+None
+amount0V2(uint256)= UNPACK TUPLE_11 index: 0 
+amount1V2(uint256)= UNPACK TUPLE_11 index: 1 
+TMP_172 = CONVERT amount0V2 to uint128
+amount0V2ToMigrate(uint128) := TMP_172(uint128)
+TMP_173 = CONVERT amount1V2 to uint128
+amount1V2ToMigrate(uint128) := TMP_173(uint128)
+REF_78(address) -> params.token0
+NEW VARIABLE success
+NEW VARIABLE data
+REF_58(bytes4) (->None) := 157198259(uint256)
+TMP_109(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_58,to,value)
+TUPLE_8(bool,bytes) = LOW_LEVEL_CALL, dest:token, function:call, arguments:['TMP_109']  
+EXPRESSION:(amount0V2,amount1V2) = IBiswapPair(params.pair).burn(address(this))	NodeType.EXPRESSION
+amount0V2ToMigrate = uint128(amount0V2)	NodeType.VARIABLE
+amount0V2ToMigrate = uint128(amount0V2)	NodeType.EXPRESSION
+amount1V2ToMigrate = uint128(amount1V2)	NodeType.VARIABLE
+amount1V2ToMigrate = uint128(amount1V2)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,data) = token.call(abi.encodeWithSelector(IERC20.approve.selector,to,value))	NodeType.EXPRESSION" [key=0];
+"BlockID: 3
+Call context: 
+None
+amount0V2(uint256)= UNPACK TUPLE_11 index: 0 
+amount1V2(uint256)= UNPACK TUPLE_11 index: 1 
+TMP_172 = CONVERT amount0V2 to uint128
+amount0V2ToMigrate(uint128) := TMP_172(uint128)
+TMP_173 = CONVERT amount1V2 to uint128
+amount1V2ToMigrate(uint128) := TMP_173(uint128)
+REF_78(address) -> params.token0
+NEW VARIABLE success
+NEW VARIABLE data
+REF_58(bytes4) (->None) := 157198259(uint256)
+TMP_109(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_58,to,value)
+TUPLE_8(bool,bytes) = LOW_LEVEL_CALL, dest:token, function:call, arguments:['TMP_109']  
+EXPRESSION:(amount0V2,amount1V2) = IBiswapPair(params.pair).burn(address(this))	NodeType.EXPRESSION
+amount0V2ToMigrate = uint128(amount0V2)	NodeType.VARIABLE
+amount0V2ToMigrate = uint128(amount0V2)	NodeType.EXPRESSION
+amount1V2ToMigrate = uint128(amount1V2)	NodeType.VARIABLE
+amount1V2ToMigrate = uint128(amount1V2)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,data) = token.call(abi.encodeWithSelector(IERC20.approve.selector,to,value))	NodeType.EXPRESSION" -> "BlockID: 4
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF" [key="successor_5"];
+"BlockID: 10
+Call context: 
+None
+REF_79(address) -> params.token1
+NEW VARIABLE success
+NEW VARIABLE data
+REF_58(bytes4) (->None) := 157198259(uint256)
+TMP_109(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_58,to,value)
+TUPLE_8(bool,bytes) = LOW_LEVEL_CALL, dest:token, function:call, arguments:['TMP_109']  
+EXPRESSION:safeApprove(params.token0,liquidityManager,amount0V2ToMigrate)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,data) = token.call(abi.encodeWithSelector(IERC20.approve.selector,to,value))	NodeType.EXPRESSION" -> "BlockID: 11
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF" [key="successor_5"];
+"BlockID: 17
+Call context: 
+None
+NEW VARIABLE amount0V3
+NEW VARIABLE amount1V3
+TMP_176 = CONVERT liquidityManager to ILiquidityManager
+REF_82(address) -> params.recipient
+REF_83(address) -> params.token0
+REF_84(address) -> params.token1
+REF_85(uint16) -> params.fee
+REF_86(int24) -> params.tickLower
+REF_87(int24) -> params.tickUpper
+REF_88(uint128) -> params.amount0Min
+REF_89(uint128) -> params.amount1Min
+REF_90(uint256) -> params.deadline
+TMP_177(ILiquidityManager.MintParam) = new MintParam(REF_82,REF_83,REF_84,REF_85,REF_86,REF_87,amount0V2ToMigrate,amount1V2ToMigrate,REF_88,REF_89,REF_90)
+TUPLE_12(uint256,uint128,uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_176(ILiquidityManager), function:mint, arguments:['TMP_177']  
+EXPRESSION:safeApprove(params.token1,liquidityManager,amount1V2ToMigrate)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0V3,amount1V3) = ILiquidityManager(liquidityManager).mint(ILiquidityManager.MintParam(params.recipient,params.token0,params.token1,params.fee,params.tickLower,params.tickUpper,amount0V2ToMigrate,amount1V2ToMigrate,params.amount0Min,params.amount1Min,params.deadline))	NodeType.EXPRESSION" -> "BlockID: 18
+Call context: 
+None
+amount0V3(uint256)= UNPACK TUPLE_12 index: 2 
+amount1V3(uint256)= UNPACK TUPLE_12 index: 3 
+TMP_178(bool) = amount0V3 < amount0V2
+CONDITION TMP_178
+EXPRESSION:(amount0V3,amount1V3) = ILiquidityManager(liquidityManager).mint(ILiquidityManager.MintParam(params.recipient,params.token0,params.token1,params.fee,params.tickLower,params.tickUpper,amount0V2ToMigrate,amount1V2ToMigrate,params.amount0Min,params.amount1Min,params.deadline))	NodeType.EXPRESSION
+amount0V3 < amount0V2	NodeType.IF" [key=0];
+"BlockID: 18
+Call context: 
+None
+amount0V3(uint256)= UNPACK TUPLE_12 index: 2 
+amount1V3(uint256)= UNPACK TUPLE_12 index: 3 
+TMP_178(bool) = amount0V3 < amount0V2
+CONDITION TMP_178
+EXPRESSION:(amount0V3,amount1V3) = ILiquidityManager(liquidityManager).mint(ILiquidityManager.MintParam(params.recipient,params.token0,params.token1,params.fee,params.tickLower,params.tickUpper,amount0V2ToMigrate,amount1V2ToMigrate,params.amount0Min,params.amount1Min,params.deadline))	NodeType.EXPRESSION
+amount0V3 < amount0V2	NodeType.IF" -> "BlockID: 19
+Call context: 
+True
+TMP_179(bool) = amount0V3 < amount0V2ToMigrate
+CONDITION TMP_179
+EXPRESSION:amount0V3 < amount0V2ToMigrate	NodeType.IF" [key=0];
+"BlockID: 18
+Call context: 
+None
+amount0V3(uint256)= UNPACK TUPLE_12 index: 2 
+amount1V3(uint256)= UNPACK TUPLE_12 index: 3 
+TMP_178(bool) = amount0V3 < amount0V2
+CONDITION TMP_178
+EXPRESSION:(amount0V3,amount1V3) = ILiquidityManager(liquidityManager).mint(ILiquidityManager.MintParam(params.recipient,params.token0,params.token1,params.fee,params.tickLower,params.tickUpper,amount0V2ToMigrate,amount1V2ToMigrate,params.amount0Min,params.amount1Min,params.deadline))	NodeType.EXPRESSION
+amount0V3 < amount0V2	NodeType.IF" -> "BlockID: 20
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 19
+Call context: 
+True
+TMP_179(bool) = amount0V3 < amount0V2ToMigrate
+CONDITION TMP_179
+EXPRESSION:amount0V3 < amount0V2ToMigrate	NodeType.IF" -> "BlockID: 21
+Call context: 
+True
+REF_91(address) -> params.token0
+NEW VARIABLE success
+NEW VARIABLE data
+REF_58(bytes4) (->None) := 157198259(uint256)
+TMP_109(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_58,to,value)
+TUPLE_8(bool,bytes) = LOW_LEVEL_CALL, dest:token, function:call, arguments:['TMP_109']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,data) = token.call(abi.encodeWithSelector(IERC20.approve.selector,to,value))	NodeType.EXPRESSION" [key=0];
+"BlockID: 19
+Call context: 
+True
+TMP_179(bool) = amount0V3 < amount0V2ToMigrate
+CONDITION TMP_179
+EXPRESSION:amount0V3 < amount0V2ToMigrate	NodeType.IF" -> "BlockID: 22
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 20
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 23
+Call context: 
+None
+TMP_188(bool) = amount1V3 < amount1V2
+CONDITION TMP_188
+EXPRESSION:amount1V3 < amount1V2	NodeType.IF" [key=0];
+"BlockID: 23
+Call context: 
+None
+TMP_188(bool) = amount1V3 < amount1V2
+CONDITION TMP_188
+EXPRESSION:amount1V3 < amount1V2	NodeType.IF" -> "BlockID: 26
+Call context: 
+True
+TMP_189(bool) = amount1V3 < amount1V2ToMigrate
+CONDITION TMP_189
+EXPRESSION:amount1V3 < amount1V2ToMigrate	NodeType.IF" [key=0];
+"BlockID: 23
+Call context: 
+None
+TMP_188(bool) = amount1V3 < amount1V2
+CONDITION TMP_188
+EXPRESSION:amount1V3 < amount1V2	NodeType.IF" -> "BlockID: 27
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 26
+Call context: 
+True
+TMP_189(bool) = amount1V3 < amount1V2ToMigrate
+CONDITION TMP_189
+EXPRESSION:amount1V3 < amount1V2ToMigrate	NodeType.IF" -> "BlockID: 32
+Call context: 
+True
+REF_98(address) -> params.token1
+NEW VARIABLE success
+NEW VARIABLE data
+REF_58(bytes4) (->None) := 157198259(uint256)
+TMP_109(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_58,to,value)
+TUPLE_8(bool,bytes) = LOW_LEVEL_CALL, dest:token, function:call, arguments:['TMP_109']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,data) = token.call(abi.encodeWithSelector(IERC20.approve.selector,to,value))	NodeType.EXPRESSION" [key=0];
+"BlockID: 26
+Call context: 
+True
+TMP_189(bool) = amount1V3 < amount1V2ToMigrate
+CONDITION TMP_189
+EXPRESSION:amount1V3 < amount1V2ToMigrate	NodeType.IF" -> "BlockID: 33
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 32
+Call context: 
+True
+REF_98(address) -> params.token1
+NEW VARIABLE success
+NEW VARIABLE data
+REF_58(bytes4) (->None) := 157198259(uint256)
+TMP_109(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_58,to,value)
+TUPLE_8(bool,bytes) = LOW_LEVEL_CALL, dest:token, function:call, arguments:['TMP_109']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,data) = token.call(abi.encodeWithSelector(IERC20.approve.selector,to,value))	NodeType.EXPRESSION" -> "BlockID: 37
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF" [key="successor_5"];
+"BlockID: 33
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 38
+Call context: 
+None
+TMP_191(uint256) = amount1V2 (c)- amount1V3
+refund1(uint256) := TMP_191(uint256)
+REF_99(bool) -> params.refundAsETH
+REF_100(address) -> params.token1
+TMP_192(bool) = REF_100 == WETH9
+TMP_193(bool) = REF_99 && TMP_192
+CONDITION TMP_193
+EXPRESSION:refund1 = amount1V2 - amount1V3	NodeType.EXPRESSION
+params.refundAsETH && params.token1 == WETH9	NodeType.IF" [key=0];
+"BlockID: 38
+Call context: 
+None
+TMP_191(uint256) = amount1V2 (c)- amount1V3
+refund1(uint256) := TMP_191(uint256)
+REF_99(bool) -> params.refundAsETH
+REF_100(address) -> params.token1
+TMP_192(bool) = REF_100 == WETH9
+TMP_193(bool) = REF_99 && TMP_192
+CONDITION TMP_193
+EXPRESSION:refund1 = amount1V2 - amount1V3	NodeType.EXPRESSION
+params.refundAsETH && params.token1 == WETH9	NodeType.IF" -> "BlockID: 46
+Call context: 
+True
+TMP_194 = CONVERT WETH9 to IWETH9
+HIGH_LEVEL_CALL, dest:TMP_194(IWETH9), function:withdraw, arguments:['refund1']  
+EXPRESSION:IWETH9(WETH9).withdraw(refund1)	NodeType.EXPRESSION" [key=0];
+"BlockID: 38
+Call context: 
+None
+TMP_191(uint256) = amount1V2 (c)- amount1V3
+refund1(uint256) := TMP_191(uint256)
+REF_99(bool) -> params.refundAsETH
+REF_100(address) -> params.token1
+TMP_192(bool) = REF_100 == WETH9
+TMP_193(bool) = REF_99 && TMP_192
+CONDITION TMP_193
+EXPRESSION:refund1 = amount1V2 - amount1V3	NodeType.EXPRESSION
+params.refundAsETH && params.token1 == WETH9	NodeType.IF" -> "BlockID: 47
+Call context: 
+False
+REF_103(address) -> params.token1
+REF_104(address) -> params.recipient
+NEW VARIABLE success
+NEW VARIABLE data
+REF_52(bytes4) (->None) := 2835717307(uint256)
+TMP_103(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_52,to,value)
+TUPLE_7(bool,bytes) = LOW_LEVEL_CALL, dest:token, function:call, arguments:['TMP_103']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,data) = token.call(abi.encodeWithSelector(IERC20.transfer.selector,to,value))	NodeType.EXPRESSION" [key=0];
+"BlockID: 46
+Call context: 
+True
+TMP_194 = CONVERT WETH9 to IWETH9
+HIGH_LEVEL_CALL, dest:TMP_194(IWETH9), function:withdraw, arguments:['refund1']  
+EXPRESSION:IWETH9(WETH9).withdraw(refund1)	NodeType.EXPRESSION" -> "BlockID: 52
+Call context: 
+None
+REF_102(address) -> params.recipient
+NEW VARIABLE success
+TMP_116 = new bytes(0)
+TUPLE_9(bool,bytes) = LOW_LEVEL_CALL, dest:to, function:call, arguments:['TMP_116'] value:value 
+EXPRESSION:IWETH9(WETH9).withdraw(refund1)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+(success) = to.call{value: value}(new bytes(0))	NodeType.EXPRESSION" [key=0];
+"BlockID: 47
+Call context: 
+False
+REF_103(address) -> params.token1
+REF_104(address) -> params.recipient
+NEW VARIABLE success
+NEW VARIABLE data
+REF_52(bytes4) (->None) := 2835717307(uint256)
+TMP_103(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_52,to,value)
+TUPLE_7(bool,bytes) = LOW_LEVEL_CALL, dest:token, function:call, arguments:['TMP_103']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,data) = token.call(abi.encodeWithSelector(IERC20.transfer.selector,to,value))	NodeType.EXPRESSION" -> "BlockID: 53
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_7 index: 0 
+data(bytes)= UNPACK TUPLE_7 index: 1 
+REF_53 -> LENGTH data
+TMP_104(bool) = REF_53 == 0
+TMP_105(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_106(bool) = TMP_104 || TMP_105
+TMP_107(bool) = success && TMP_106
+CONDITION TMP_107
+EXPRESSION:TMP_107(bool) = success && TMP_106	NodeType.IF" [key="successor_5"];
+"BlockID: 65
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 27
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 52
+Call context: 
+None
+REF_102(address) -> params.recipient
+NEW VARIABLE success
+TMP_116 = new bytes(0)
+TUPLE_9(bool,bytes) = LOW_LEVEL_CALL, dest:to, function:call, arguments:['TMP_116'] value:value 
+EXPRESSION:IWETH9(WETH9).withdraw(refund1)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+(success) = to.call{value: value}(new bytes(0))	NodeType.EXPRESSION" -> "BlockID: 59
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_9 index: 0 
+CONDITION success
+EXPRESSION:success(bool)= UNPACK TUPLE_9 index: 0 	NodeType.IF" [key="successor_5"];
+"BlockID: 21
+Call context: 
+True
+REF_91(address) -> params.token0
+NEW VARIABLE success
+NEW VARIABLE data
+REF_58(bytes4) (->None) := 157198259(uint256)
+TMP_109(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_58,to,value)
+TUPLE_8(bool,bytes) = LOW_LEVEL_CALL, dest:token, function:call, arguments:['TMP_109']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,data) = token.call(abi.encodeWithSelector(IERC20.approve.selector,to,value))	NodeType.EXPRESSION" -> "BlockID: 24
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF" [key="successor_5"];
+"BlockID: 22
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 25
+Call context: 
+None
+TMP_181(uint256) = amount0V2 (c)- amount0V3
+refund0(uint256) := TMP_181(uint256)
+REF_92(bool) -> params.refundAsETH
+REF_93(address) -> params.token0
+TMP_182(bool) = REF_93 == WETH9
+TMP_183(bool) = REF_92 && TMP_182
+CONDITION TMP_183
+EXPRESSION:refund0 = amount0V2 - amount0V3	NodeType.EXPRESSION
+params.refundAsETH && params.token0 == WETH9	NodeType.IF" [key=0];
+"BlockID: 25
+Call context: 
+None
+TMP_181(uint256) = amount0V2 (c)- amount0V3
+refund0(uint256) := TMP_181(uint256)
+REF_92(bool) -> params.refundAsETH
+REF_93(address) -> params.token0
+TMP_182(bool) = REF_93 == WETH9
+TMP_183(bool) = REF_92 && TMP_182
+CONDITION TMP_183
+EXPRESSION:refund0 = amount0V2 - amount0V3	NodeType.EXPRESSION
+params.refundAsETH && params.token0 == WETH9	NodeType.IF" -> "BlockID: 30
+Call context: 
+True
+TMP_184 = CONVERT WETH9 to IWETH9
+HIGH_LEVEL_CALL, dest:TMP_184(IWETH9), function:withdraw, arguments:['refund0']  
+EXPRESSION:IWETH9(WETH9).withdraw(refund0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 25
+Call context: 
+None
+TMP_181(uint256) = amount0V2 (c)- amount0V3
+refund0(uint256) := TMP_181(uint256)
+REF_92(bool) -> params.refundAsETH
+REF_93(address) -> params.token0
+TMP_182(bool) = REF_93 == WETH9
+TMP_183(bool) = REF_92 && TMP_182
+CONDITION TMP_183
+EXPRESSION:refund0 = amount0V2 - amount0V3	NodeType.EXPRESSION
+params.refundAsETH && params.token0 == WETH9	NodeType.IF" -> "BlockID: 31
+Call context: 
+False
+REF_96(address) -> params.token0
+REF_97(address) -> params.recipient
+NEW VARIABLE success
+NEW VARIABLE data
+REF_52(bytes4) (->None) := 2835717307(uint256)
+TMP_103(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_52,to,value)
+TUPLE_7(bool,bytes) = LOW_LEVEL_CALL, dest:token, function:call, arguments:['TMP_103']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,data) = token.call(abi.encodeWithSelector(IERC20.transfer.selector,to,value))	NodeType.EXPRESSION" [key=0];
+"BlockID: 30
+Call context: 
+True
+TMP_184 = CONVERT WETH9 to IWETH9
+HIGH_LEVEL_CALL, dest:TMP_184(IWETH9), function:withdraw, arguments:['refund0']  
+EXPRESSION:IWETH9(WETH9).withdraw(refund0)	NodeType.EXPRESSION" -> "BlockID: 35
+Call context: 
+None
+REF_95(address) -> params.recipient
+NEW VARIABLE success
+TMP_116 = new bytes(0)
+TUPLE_9(bool,bytes) = LOW_LEVEL_CALL, dest:to, function:call, arguments:['TMP_116'] value:value 
+EXPRESSION:IWETH9(WETH9).withdraw(refund0)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+(success) = to.call{value: value}(new bytes(0))	NodeType.EXPRESSION" [key=0];
+"BlockID: 31
+Call context: 
+False
+REF_96(address) -> params.token0
+REF_97(address) -> params.recipient
+NEW VARIABLE success
+NEW VARIABLE data
+REF_52(bytes4) (->None) := 2835717307(uint256)
+TMP_103(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_52,to,value)
+TUPLE_7(bool,bytes) = LOW_LEVEL_CALL, dest:token, function:call, arguments:['TMP_103']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,data) = token.call(abi.encodeWithSelector(IERC20.transfer.selector,to,value))	NodeType.EXPRESSION" -> "BlockID: 36
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_7 index: 0 
+data(bytes)= UNPACK TUPLE_7 index: 1 
+REF_53 -> LENGTH data
+TMP_104(bool) = REF_53 == 0
+TMP_105(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_106(bool) = TMP_104 || TMP_105
+TMP_107(bool) = success && TMP_106
+CONDITION TMP_107
+EXPRESSION:TMP_107(bool) = success && TMP_106	NodeType.IF" [key="successor_5"];
+"BlockID: 54
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 20
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 35
+Call context: 
+None
+REF_95(address) -> params.recipient
+NEW VARIABLE success
+TMP_116 = new bytes(0)
+TUPLE_9(bool,bytes) = LOW_LEVEL_CALL, dest:to, function:call, arguments:['TMP_116'] value:value 
+EXPRESSION:IWETH9(WETH9).withdraw(refund0)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+(success) = to.call{value: value}(new bytes(0))	NodeType.EXPRESSION" -> "BlockID: 41
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_9 index: 0 
+CONDITION success
+EXPRESSION:success(bool)= UNPACK TUPLE_9 index: 0 	NodeType.IF" [key="successor_5"];
+"BlockID: 4
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF" -> "BlockID: 5
+Call context: migrate
+True
+TMP_114(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 4
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF" -> "BlockID: 6
+Call context: migrate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 6
+Call context: migrate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 7
+Call context: 
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF" [key=0];
+"BlockID: 11
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF" -> "BlockID: 12
+Call context: migrate
+True
+TMP_114(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 11
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF" -> "BlockID: 13
+Call context: migrate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 13
+Call context: migrate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 14
+Call context: 
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF" [key=0];
+"BlockID: 37
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF" -> "BlockID: 44
+Call context: migrate
+True
+TMP_114(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 37
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF" -> "BlockID: 45
+Call context: migrate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 45
+Call context: migrate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 51
+Call context: 
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF" [key=0];
+"BlockID: 53
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_7 index: 0 
+data(bytes)= UNPACK TUPLE_7 index: 1 
+REF_53 -> LENGTH data
+TMP_104(bool) = REF_53 == 0
+TMP_105(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_106(bool) = TMP_104 || TMP_105
+TMP_107(bool) = success && TMP_106
+CONDITION TMP_107
+EXPRESSION:TMP_107(bool) = success && TMP_106	NodeType.IF" -> "BlockID: 60
+Call context: migrate
+True
+TMP_108(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 53
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_7 index: 0 
+data(bytes)= UNPACK TUPLE_7 index: 1 
+REF_53 -> LENGTH data
+TMP_104(bool) = REF_53 == 0
+TMP_105(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_106(bool) = TMP_104 || TMP_105
+TMP_107(bool) = success && TMP_106
+CONDITION TMP_107
+EXPRESSION:TMP_107(bool) = success && TMP_106	NodeType.IF" -> "BlockID: 61
+Call context: migrate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 61
+Call context: migrate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 64
+Call context: 
+None
+success(bool)= UNPACK TUPLE_7 index: 0 
+data(bytes)= UNPACK TUPLE_7 index: 1 
+REF_53 -> LENGTH data
+TMP_104(bool) = REF_53 == 0
+TMP_105(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_106(bool) = TMP_104 || TMP_105
+TMP_107(bool) = success && TMP_106
+CONDITION TMP_107
+EXPRESSION:TMP_107(bool) = success && TMP_106	NodeType.IF" [key=0];
+"BlockID: 59
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_9 index: 0 
+CONDITION success
+EXPRESSION:success(bool)= UNPACK TUPLE_9 index: 0 	NodeType.IF" -> "BlockID: 62
+Call context: migrate
+True
+TMP_117(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 59
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_9 index: 0 
+CONDITION success
+EXPRESSION:success(bool)= UNPACK TUPLE_9 index: 0 	NodeType.IF" -> "BlockID: 63
+Call context: migrate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 63
+Call context: migrate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 65
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="Exit: safeTransferETH", ref="V3Migrator.safeTransferETH"];
+"BlockID: 24
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF" -> "BlockID: 28
+Call context: migrate
+True
+TMP_114(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 24
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF" -> "BlockID: 29
+Call context: migrate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 29
+Call context: migrate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 34
+Call context: 
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF" [key=0];
+"BlockID: 36
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_7 index: 0 
+data(bytes)= UNPACK TUPLE_7 index: 1 
+REF_53 -> LENGTH data
+TMP_104(bool) = REF_53 == 0
+TMP_105(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_106(bool) = TMP_104 || TMP_105
+TMP_107(bool) = success && TMP_106
+CONDITION TMP_107
+EXPRESSION:TMP_107(bool) = success && TMP_106	NodeType.IF" -> "BlockID: 42
+Call context: migrate
+True
+TMP_108(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 36
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_7 index: 0 
+data(bytes)= UNPACK TUPLE_7 index: 1 
+REF_53 -> LENGTH data
+TMP_104(bool) = REF_53 == 0
+TMP_105(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_106(bool) = TMP_104 || TMP_105
+TMP_107(bool) = success && TMP_106
+CONDITION TMP_107
+EXPRESSION:TMP_107(bool) = success && TMP_106	NodeType.IF" -> "BlockID: 43
+Call context: migrate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 43
+Call context: migrate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 50
+Call context: 
+None
+success(bool)= UNPACK TUPLE_7 index: 0 
+data(bytes)= UNPACK TUPLE_7 index: 1 
+REF_53 -> LENGTH data
+TMP_104(bool) = REF_53 == 0
+TMP_105(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_106(bool) = TMP_104 || TMP_105
+TMP_107(bool) = success && TMP_106
+CONDITION TMP_107
+EXPRESSION:TMP_107(bool) = success && TMP_106	NodeType.IF" [key=0];
+"BlockID: 41
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_9 index: 0 
+CONDITION success
+EXPRESSION:success(bool)= UNPACK TUPLE_9 index: 0 	NodeType.IF" -> "BlockID: 48
+Call context: migrate
+True
+TMP_117(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 41
+Call context: migrate
+None
+success(bool)= UNPACK TUPLE_9 index: 0 
+CONDITION success
+EXPRESSION:success(bool)= UNPACK TUPLE_9 index: 0 	NodeType.IF" -> "BlockID: 49
+Call context: migrate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 49
+Call context: migrate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 54
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="Exit: safeTransferETH", ref="V3Migrator.safeTransferETH"];
+"BlockID: 7
+Call context: 
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF" -> "BlockID: 8
+Call context: 
+True
+TMP_113(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 7
+Call context: 
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF" -> "BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 10
+Call context: 
+None
+REF_79(address) -> params.token1
+NEW VARIABLE success
+NEW VARIABLE data
+REF_58(bytes4) (->None) := 157198259(uint256)
+TMP_109(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_58,to,value)
+TUPLE_8(bool,bytes) = LOW_LEVEL_CALL, dest:token, function:call, arguments:['TMP_109']  
+EXPRESSION:safeApprove(params.token0,liquidityManager,amount0V2ToMigrate)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,data) = token.call(abi.encodeWithSelector(IERC20.approve.selector,to,value))	NodeType.EXPRESSION" [key=0];
+"BlockID: 14
+Call context: 
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF" -> "BlockID: 15
+Call context: 
+True
+TMP_113(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 14
+Call context: 
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF" -> "BlockID: 16
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 16
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 17
+Call context: 
+None
+NEW VARIABLE amount0V3
+NEW VARIABLE amount1V3
+TMP_176 = CONVERT liquidityManager to ILiquidityManager
+REF_82(address) -> params.recipient
+REF_83(address) -> params.token0
+REF_84(address) -> params.token1
+REF_85(uint16) -> params.fee
+REF_86(int24) -> params.tickLower
+REF_87(int24) -> params.tickUpper
+REF_88(uint128) -> params.amount0Min
+REF_89(uint128) -> params.amount1Min
+REF_90(uint256) -> params.deadline
+TMP_177(ILiquidityManager.MintParam) = new MintParam(REF_82,REF_83,REF_84,REF_85,REF_86,REF_87,amount0V2ToMigrate,amount1V2ToMigrate,REF_88,REF_89,REF_90)
+TUPLE_12(uint256,uint128,uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_176(ILiquidityManager), function:mint, arguments:['TMP_177']  
+EXPRESSION:safeApprove(params.token1,liquidityManager,amount1V2ToMigrate)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0V3,amount1V3) = ILiquidityManager(liquidityManager).mint(ILiquidityManager.MintParam(params.recipient,params.token0,params.token1,params.fee,params.tickLower,params.tickUpper,amount0V2ToMigrate,amount1V2ToMigrate,params.amount0Min,params.amount1Min,params.deadline))	NodeType.EXPRESSION" [key=0];
+"BlockID: 51
+Call context: 
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF" -> "BlockID: 57
+Call context: 
+True
+TMP_113(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 51
+Call context: 
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF" -> "BlockID: 58
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 58
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 33
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 64
+Call context: 
+None
+success(bool)= UNPACK TUPLE_7 index: 0 
+data(bytes)= UNPACK TUPLE_7 index: 1 
+REF_53 -> LENGTH data
+TMP_104(bool) = REF_53 == 0
+TMP_105(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_106(bool) = TMP_104 || TMP_105
+TMP_107(bool) = success && TMP_106
+CONDITION TMP_107
+EXPRESSION:TMP_107(bool) = success && TMP_106	NodeType.IF" -> "BlockID: 66
+Call context: 
+True
+TMP_107(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 64
+Call context: 
+None
+success(bool)= UNPACK TUPLE_7 index: 0 
+data(bytes)= UNPACK TUPLE_7 index: 1 
+REF_53 -> LENGTH data
+TMP_104(bool) = REF_53 == 0
+TMP_105(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_106(bool) = TMP_104 || TMP_105
+TMP_107(bool) = success && TMP_106
+CONDITION TMP_107
+EXPRESSION:TMP_107(bool) = success && TMP_106	NodeType.IF" -> "BlockID: 67
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 67
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 65
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 34
+Call context: 
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF" -> "BlockID: 39
+Call context: 
+True
+TMP_113(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 34
+Call context: 
+None
+success(bool)= UNPACK TUPLE_8 index: 0 
+data(bytes)= UNPACK TUPLE_8 index: 1 
+REF_59 -> LENGTH data
+TMP_110(bool) = REF_59 == 0
+TMP_111(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_112(bool) = TMP_110 || TMP_111
+TMP_113(bool) = success && TMP_112
+CONDITION TMP_113
+EXPRESSION:TMP_113(bool) = success && TMP_112	NodeType.IF" -> "BlockID: 40
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 40
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 22
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 50
+Call context: 
+None
+success(bool)= UNPACK TUPLE_7 index: 0 
+data(bytes)= UNPACK TUPLE_7 index: 1 
+REF_53 -> LENGTH data
+TMP_104(bool) = REF_53 == 0
+TMP_105(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_106(bool) = TMP_104 || TMP_105
+TMP_107(bool) = success && TMP_106
+CONDITION TMP_107
+EXPRESSION:TMP_107(bool) = success && TMP_106	NodeType.IF" -> "BlockID: 55
+Call context: 
+True
+TMP_107(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 50
+Call context: 
+None
+success(bool)= UNPACK TUPLE_7 index: 0 
+data(bytes)= UNPACK TUPLE_7 index: 1 
+REF_53 -> LENGTH data
+TMP_104(bool) = REF_53 == 0
+TMP_105(bool) = SOLIDITY_CALL abi.decode()(data,bool)
+TMP_106(bool) = TMP_104 || TMP_105
+TMP_107(bool) = success && TMP_106
+CONDITION TMP_107
+EXPRESSION:TMP_107(bool) = success && TMP_106	NodeType.IF" -> "BlockID: 56
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 56
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 54
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

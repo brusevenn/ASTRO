@@ -1,0 +1,539 @@
+digraph {
+"BlockID: 2210
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 2211
+Call context: 
+None
+MODIFIER_CALL, ReentrancyGuard.nonReentrant()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION";
+"BlockID: 2212
+Call context: 
+None
+MODIFIER_CALL, PausableUpgradeable.whenNotPaused()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION
+whenNotPaused()	NodeType.EXPRESSION";
+"BlockID: 2213
+Call context: 
+None
+TMP_957 = CONVERT _restakedTokenAddress to IRestakedETH
+TMP_958(address) = HIGH_LEVEL_CALL, dest:TMP_957(IRestakedETH), function:stakedTokenAddress, arguments:[]  
+EXPRESSION:whenNotPaused()	NodeType.EXPRESSION";
+"BlockID: 2215
+Call context: 
+True
+TMP_960 = CONVERT _restakedTokenAddress to IERC20
+TMP_961(uint256) = HIGH_LEVEL_CALL, dest:TMP_960(IERC20), function:balanceOf, arguments:['msg.sender']  
+EXPRESSION:require(bool,string)(IERC20(_restakedTokenAddress).balanceOf(msg.sender) >= amount,AstridProtocol: Insufficient balance of restaked token)	NodeType.EXPRESSION";
+"BlockID: 2217
+Call context: 
+True
+TMP_964 = CONVERT _restakedTokenAddress to IERC20
+TMP_965 = CONVERT this to address
+TMP_966(uint256) = HIGH_LEVEL_CALL, dest:TMP_964(IERC20), function:allowance, arguments:['msg.sender', 'TMP_965']  
+EXPRESSION:require(bool,string)(IERC20(_restakedTokenAddress).allowance(msg.sender,address(this)) >= amount,AstridProtocol: Insufficient allowance of restaked token)	NodeType.EXPRESSION";
+"BlockID: 2219
+Call context: 
+True
+TMP_969 = CONVERT _restakedTokenAddress to IRestakedETH
+TMP_970 = CONVERT this to address
+TMP_971(uint256) = HIGH_LEVEL_CALL, dest:TMP_969(IRestakedETH), function:scaledBalanceOf, arguments:['TMP_970']  
+EXPRESSION:";
+"BlockID: 2220
+Call context: 
+None
+sharesBefore(uint256) := TMP_971(uint256)
+TMP_972(bool) = LIBRARY_CALL, dest:Utils, function:Utils.payMe(address,uint256,address), arguments:['msg.sender', 'amount', '_restakedTokenAddress'] 
+EXPRESSION:sharesBefore = IRestakedETH(_restakedTokenAddress).scaledBalanceOf(address(this))	NodeType.VARIABLE
+sharesBefore = IRestakedETH(_restakedTokenAddress).scaledBalanceOf(address(this))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2222
+Call context: 
+True
+TMP_974 = CONVERT _restakedTokenAddress to IRestakedETH
+TMP_975 = CONVERT this to address
+TMP_976(uint256) = HIGH_LEVEL_CALL, dest:TMP_974(IRestakedETH), function:scaledBalanceOf, arguments:['TMP_975']  
+EXPRESSION:";
+"BlockID: 2223
+Call context: 
+None
+sharesAfter(uint256) := TMP_976(uint256)
+TMP_977(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['sharesAfter', 'sharesBefore'] 
+EXPRESSION:sharesAfter = IRestakedETH(_restakedTokenAddress).scaledBalanceOf(address(this))	NodeType.VARIABLE
+sharesAfter = IRestakedETH(_restakedTokenAddress).scaledBalanceOf(address(this))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2224
+Call context: 
+None
+shares(uint256) := TMP_977(uint256)
+REF_256(AstridProtocol.WithdrawalStatus) -> WithdrawalStatus.REQUESTED
+TMP_978 = CONVERT block.number to uint32
+REF_257 -> LENGTH withdrawalRequests
+REF_258(AstridProtocol.WithdrawalRequest[]) -> withdrawalRequestsByUser[msg.sender]
+REF_259 -> LENGTH REF_258
+TMP_979(AstridProtocol.WithdrawalRequest) = new WithdrawalRequest(msg.sender,_restakedTokenAddress,amount,shares,0,REF_256,TMP_978,block.timestamp,0,0,REF_257,REF_259)
+request(AstridProtocol.WithdrawalRequest) := TMP_979(AstridProtocol.WithdrawalRequest)
+REF_260(uint256) -> totalWithdrawalRequests[_restakedTokenAddress]
+REF_260(-> totalWithdrawalRequests) = REF_260 (c)+ shares
+REF_262 -> LENGTH withdrawalRequests
+TMP_981(uint256) := REF_262(uint256)
+TMP_982(uint256) = TMP_981 (c)+ 1
+REF_262(uint256) (->withdrawalRequests) := TMP_982(uint256)
+REF_263(AstridProtocol.WithdrawalRequest) -> withdrawalRequests[TMP_981]
+REF_263(AstridProtocol.WithdrawalRequest) (->withdrawalRequests) := request(AstridProtocol.WithdrawalRequest)
+REF_264(AstridProtocol.WithdrawalRequest[]) -> withdrawalRequestsByUser[msg.sender]
+REF_266 -> LENGTH REF_264
+TMP_984(uint256) := REF_266(uint256)
+TMP_985(uint256) = TMP_984 (c)+ 1
+REF_266(uint256) (->withdrawalRequestsByUser) := TMP_985(uint256)
+REF_267(AstridProtocol.WithdrawalRequest) -> REF_264[TMP_984]
+REF_267(AstridProtocol.WithdrawalRequest) (->withdrawalRequestsByUser) := request(AstridProtocol.WithdrawalRequest)
+CONDITION processWithdrawalsOnWithdraw
+EXPRESSION:shares = sharesAfter.sub(sharesBefore)	NodeType.VARIABLE
+shares = sharesAfter.sub(sharesBefore)	NodeType.EXPRESSION
+request = WithdrawalRequest(msg.sender,_restakedTokenAddress,amount,shares,0,WithdrawalStatus.REQUESTED,uint32(block.number),block.timestamp,0,0,withdrawalRequests.length,withdrawalRequestsByUser[msg.sender].length)	NodeType.VARIABLE
+request = WithdrawalRequest(msg.sender,_restakedTokenAddress,amount,shares,0,WithdrawalStatus.REQUESTED,uint32(block.number),block.timestamp,0,0,withdrawalRequests.length,withdrawalRequestsByUser[msg.sender].length)	NodeType.EXPRESSION
+totalWithdrawalRequests[_restakedTokenAddress] += shares	NodeType.EXPRESSION
+withdrawalRequests.push(request)	NodeType.EXPRESSION
+withdrawalRequestsByUser[msg.sender].push(request)	NodeType.EXPRESSION
+processWithdrawalsOnWithdraw	NodeType.IF" [shape=box];
+"BlockID: 2225
+Call context: 
+True
+INTERNAL_CALL, AstridProtocol._processWithdrawals()()
+EXPRESSION:_processWithdrawals()	NodeType.EXPRESSION";
+"BlockID: 2227
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2229
+Call context: 
+None
+_stakedTokenAddress(address) := TMP_958(address)
+REF_248(AstridProtocol.StakedTokenMapping) -> stakedTokens[_stakedTokenAddress]
+stakedTokenMapping(AstridProtocol.StakedTokenMapping) := REF_248(AstridProtocol.StakedTokenMapping)
+REF_249(bool) -> stakedTokenMapping.whitelisted
+CONDITION REF_249
+EXPRESSION:REF_249(bool) -> stakedTokenMapping.whitelisted	NodeType.IF";
+"BlockID: 2230
+Call context: 
+True
+TMP_959(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 2231
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2232
+Call context: 
+None
+TMP_962(bool) = TMP_961 >= amount
+CONDITION TMP_962
+EXPRESSION:TMP_962(bool) = TMP_961 >= amount	NodeType.IF";
+"BlockID: 2233
+Call context: 
+True
+TMP_963(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 2234
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2235
+Call context: 
+None
+TMP_967(bool) = TMP_966 >= amount
+CONDITION TMP_967
+EXPRESSION:TMP_967(bool) = TMP_966 >= amount	NodeType.IF";
+"BlockID: 2236
+Call context: 
+True
+TMP_968(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 2237
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2238
+Call context: 
+None
+amountSent(bool) := TMP_972(bool)
+CONDITION amountSent
+EXPRESSION:amountSent(bool) := TMP_972(bool)	NodeType.IF";
+"BlockID: 2239
+Call context: 
+True
+TMP_973(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 2240
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2210
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 2211
+Call context: 
+None
+MODIFIER_CALL, ReentrancyGuard.nonReentrant()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2211
+Call context: 
+None
+MODIFIER_CALL, ReentrancyGuard.nonReentrant()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION" -> "BlockID: 2212
+Call context: 
+None
+MODIFIER_CALL, PausableUpgradeable.whenNotPaused()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION
+whenNotPaused()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2212
+Call context: 
+None
+MODIFIER_CALL, PausableUpgradeable.whenNotPaused()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION
+whenNotPaused()	NodeType.EXPRESSION" -> "BlockID: 2213
+Call context: 
+None
+TMP_957 = CONVERT _restakedTokenAddress to IRestakedETH
+TMP_958(address) = HIGH_LEVEL_CALL, dest:TMP_957(IRestakedETH), function:stakedTokenAddress, arguments:[]  
+EXPRESSION:whenNotPaused()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2213
+Call context: 
+None
+TMP_957 = CONVERT _restakedTokenAddress to IRestakedETH
+TMP_958(address) = HIGH_LEVEL_CALL, dest:TMP_957(IRestakedETH), function:stakedTokenAddress, arguments:[]  
+EXPRESSION:whenNotPaused()	NodeType.EXPRESSION" -> "BlockID: 2229
+Call context: 
+None
+_stakedTokenAddress(address) := TMP_958(address)
+REF_248(AstridProtocol.StakedTokenMapping) -> stakedTokens[_stakedTokenAddress]
+stakedTokenMapping(AstridProtocol.StakedTokenMapping) := REF_248(AstridProtocol.StakedTokenMapping)
+REF_249(bool) -> stakedTokenMapping.whitelisted
+CONDITION REF_249
+EXPRESSION:REF_249(bool) -> stakedTokenMapping.whitelisted	NodeType.IF" [key=0];
+"BlockID: 2215
+Call context: 
+True
+TMP_960 = CONVERT _restakedTokenAddress to IERC20
+TMP_961(uint256) = HIGH_LEVEL_CALL, dest:TMP_960(IERC20), function:balanceOf, arguments:['msg.sender']  
+EXPRESSION:require(bool,string)(IERC20(_restakedTokenAddress).balanceOf(msg.sender) >= amount,AstridProtocol: Insufficient balance of restaked token)	NodeType.EXPRESSION" -> "BlockID: 2232
+Call context: 
+None
+TMP_962(bool) = TMP_961 >= amount
+CONDITION TMP_962
+EXPRESSION:TMP_962(bool) = TMP_961 >= amount	NodeType.IF" [key=0];
+"BlockID: 2217
+Call context: 
+True
+TMP_964 = CONVERT _restakedTokenAddress to IERC20
+TMP_965 = CONVERT this to address
+TMP_966(uint256) = HIGH_LEVEL_CALL, dest:TMP_964(IERC20), function:allowance, arguments:['msg.sender', 'TMP_965']  
+EXPRESSION:require(bool,string)(IERC20(_restakedTokenAddress).allowance(msg.sender,address(this)) >= amount,AstridProtocol: Insufficient allowance of restaked token)	NodeType.EXPRESSION" -> "BlockID: 2235
+Call context: 
+None
+TMP_967(bool) = TMP_966 >= amount
+CONDITION TMP_967
+EXPRESSION:TMP_967(bool) = TMP_966 >= amount	NodeType.IF" [key=0];
+"BlockID: 2219
+Call context: 
+True
+TMP_969 = CONVERT _restakedTokenAddress to IRestakedETH
+TMP_970 = CONVERT this to address
+TMP_971(uint256) = HIGH_LEVEL_CALL, dest:TMP_969(IRestakedETH), function:scaledBalanceOf, arguments:['TMP_970']  
+EXPRESSION:" -> "BlockID: 2220
+Call context: 
+None
+sharesBefore(uint256) := TMP_971(uint256)
+TMP_972(bool) = LIBRARY_CALL, dest:Utils, function:Utils.payMe(address,uint256,address), arguments:['msg.sender', 'amount', '_restakedTokenAddress'] 
+EXPRESSION:sharesBefore = IRestakedETH(_restakedTokenAddress).scaledBalanceOf(address(this))	NodeType.VARIABLE
+sharesBefore = IRestakedETH(_restakedTokenAddress).scaledBalanceOf(address(this))	NodeType.EXPRESSION" [key=0];
+"BlockID: 2220
+Call context: 
+None
+sharesBefore(uint256) := TMP_971(uint256)
+TMP_972(bool) = LIBRARY_CALL, dest:Utils, function:Utils.payMe(address,uint256,address), arguments:['msg.sender', 'amount', '_restakedTokenAddress'] 
+EXPRESSION:sharesBefore = IRestakedETH(_restakedTokenAddress).scaledBalanceOf(address(this))	NodeType.VARIABLE
+sharesBefore = IRestakedETH(_restakedTokenAddress).scaledBalanceOf(address(this))	NodeType.EXPRESSION" -> "BlockID: 2238
+Call context: 
+None
+amountSent(bool) := TMP_972(bool)
+CONDITION amountSent
+EXPRESSION:amountSent(bool) := TMP_972(bool)	NodeType.IF" [key=0];
+"BlockID: 2222
+Call context: 
+True
+TMP_974 = CONVERT _restakedTokenAddress to IRestakedETH
+TMP_975 = CONVERT this to address
+TMP_976(uint256) = HIGH_LEVEL_CALL, dest:TMP_974(IRestakedETH), function:scaledBalanceOf, arguments:['TMP_975']  
+EXPRESSION:" -> "BlockID: 2223
+Call context: 
+None
+sharesAfter(uint256) := TMP_976(uint256)
+TMP_977(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['sharesAfter', 'sharesBefore'] 
+EXPRESSION:sharesAfter = IRestakedETH(_restakedTokenAddress).scaledBalanceOf(address(this))	NodeType.VARIABLE
+sharesAfter = IRestakedETH(_restakedTokenAddress).scaledBalanceOf(address(this))	NodeType.EXPRESSION" [key=0];
+"BlockID: 2223
+Call context: 
+None
+sharesAfter(uint256) := TMP_976(uint256)
+TMP_977(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['sharesAfter', 'sharesBefore'] 
+EXPRESSION:sharesAfter = IRestakedETH(_restakedTokenAddress).scaledBalanceOf(address(this))	NodeType.VARIABLE
+sharesAfter = IRestakedETH(_restakedTokenAddress).scaledBalanceOf(address(this))	NodeType.EXPRESSION" -> "BlockID: 2224
+Call context: 
+None
+shares(uint256) := TMP_977(uint256)
+REF_256(AstridProtocol.WithdrawalStatus) -> WithdrawalStatus.REQUESTED
+TMP_978 = CONVERT block.number to uint32
+REF_257 -> LENGTH withdrawalRequests
+REF_258(AstridProtocol.WithdrawalRequest[]) -> withdrawalRequestsByUser[msg.sender]
+REF_259 -> LENGTH REF_258
+TMP_979(AstridProtocol.WithdrawalRequest) = new WithdrawalRequest(msg.sender,_restakedTokenAddress,amount,shares,0,REF_256,TMP_978,block.timestamp,0,0,REF_257,REF_259)
+request(AstridProtocol.WithdrawalRequest) := TMP_979(AstridProtocol.WithdrawalRequest)
+REF_260(uint256) -> totalWithdrawalRequests[_restakedTokenAddress]
+REF_260(-> totalWithdrawalRequests) = REF_260 (c)+ shares
+REF_262 -> LENGTH withdrawalRequests
+TMP_981(uint256) := REF_262(uint256)
+TMP_982(uint256) = TMP_981 (c)+ 1
+REF_262(uint256) (->withdrawalRequests) := TMP_982(uint256)
+REF_263(AstridProtocol.WithdrawalRequest) -> withdrawalRequests[TMP_981]
+REF_263(AstridProtocol.WithdrawalRequest) (->withdrawalRequests) := request(AstridProtocol.WithdrawalRequest)
+REF_264(AstridProtocol.WithdrawalRequest[]) -> withdrawalRequestsByUser[msg.sender]
+REF_266 -> LENGTH REF_264
+TMP_984(uint256) := REF_266(uint256)
+TMP_985(uint256) = TMP_984 (c)+ 1
+REF_266(uint256) (->withdrawalRequestsByUser) := TMP_985(uint256)
+REF_267(AstridProtocol.WithdrawalRequest) -> REF_264[TMP_984]
+REF_267(AstridProtocol.WithdrawalRequest) (->withdrawalRequestsByUser) := request(AstridProtocol.WithdrawalRequest)
+CONDITION processWithdrawalsOnWithdraw
+EXPRESSION:shares = sharesAfter.sub(sharesBefore)	NodeType.VARIABLE
+shares = sharesAfter.sub(sharesBefore)	NodeType.EXPRESSION
+request = WithdrawalRequest(msg.sender,_restakedTokenAddress,amount,shares,0,WithdrawalStatus.REQUESTED,uint32(block.number),block.timestamp,0,0,withdrawalRequests.length,withdrawalRequestsByUser[msg.sender].length)	NodeType.VARIABLE
+request = WithdrawalRequest(msg.sender,_restakedTokenAddress,amount,shares,0,WithdrawalStatus.REQUESTED,uint32(block.number),block.timestamp,0,0,withdrawalRequests.length,withdrawalRequestsByUser[msg.sender].length)	NodeType.EXPRESSION
+totalWithdrawalRequests[_restakedTokenAddress] += shares	NodeType.EXPRESSION
+withdrawalRequests.push(request)	NodeType.EXPRESSION
+withdrawalRequestsByUser[msg.sender].push(request)	NodeType.EXPRESSION
+processWithdrawalsOnWithdraw	NodeType.IF" [key=0];
+"BlockID: 2224
+Call context: 
+None
+shares(uint256) := TMP_977(uint256)
+REF_256(AstridProtocol.WithdrawalStatus) -> WithdrawalStatus.REQUESTED
+TMP_978 = CONVERT block.number to uint32
+REF_257 -> LENGTH withdrawalRequests
+REF_258(AstridProtocol.WithdrawalRequest[]) -> withdrawalRequestsByUser[msg.sender]
+REF_259 -> LENGTH REF_258
+TMP_979(AstridProtocol.WithdrawalRequest) = new WithdrawalRequest(msg.sender,_restakedTokenAddress,amount,shares,0,REF_256,TMP_978,block.timestamp,0,0,REF_257,REF_259)
+request(AstridProtocol.WithdrawalRequest) := TMP_979(AstridProtocol.WithdrawalRequest)
+REF_260(uint256) -> totalWithdrawalRequests[_restakedTokenAddress]
+REF_260(-> totalWithdrawalRequests) = REF_260 (c)+ shares
+REF_262 -> LENGTH withdrawalRequests
+TMP_981(uint256) := REF_262(uint256)
+TMP_982(uint256) = TMP_981 (c)+ 1
+REF_262(uint256) (->withdrawalRequests) := TMP_982(uint256)
+REF_263(AstridProtocol.WithdrawalRequest) -> withdrawalRequests[TMP_981]
+REF_263(AstridProtocol.WithdrawalRequest) (->withdrawalRequests) := request(AstridProtocol.WithdrawalRequest)
+REF_264(AstridProtocol.WithdrawalRequest[]) -> withdrawalRequestsByUser[msg.sender]
+REF_266 -> LENGTH REF_264
+TMP_984(uint256) := REF_266(uint256)
+TMP_985(uint256) = TMP_984 (c)+ 1
+REF_266(uint256) (->withdrawalRequestsByUser) := TMP_985(uint256)
+REF_267(AstridProtocol.WithdrawalRequest) -> REF_264[TMP_984]
+REF_267(AstridProtocol.WithdrawalRequest) (->withdrawalRequestsByUser) := request(AstridProtocol.WithdrawalRequest)
+CONDITION processWithdrawalsOnWithdraw
+EXPRESSION:shares = sharesAfter.sub(sharesBefore)	NodeType.VARIABLE
+shares = sharesAfter.sub(sharesBefore)	NodeType.EXPRESSION
+request = WithdrawalRequest(msg.sender,_restakedTokenAddress,amount,shares,0,WithdrawalStatus.REQUESTED,uint32(block.number),block.timestamp,0,0,withdrawalRequests.length,withdrawalRequestsByUser[msg.sender].length)	NodeType.VARIABLE
+request = WithdrawalRequest(msg.sender,_restakedTokenAddress,amount,shares,0,WithdrawalStatus.REQUESTED,uint32(block.number),block.timestamp,0,0,withdrawalRequests.length,withdrawalRequestsByUser[msg.sender].length)	NodeType.EXPRESSION
+totalWithdrawalRequests[_restakedTokenAddress] += shares	NodeType.EXPRESSION
+withdrawalRequests.push(request)	NodeType.EXPRESSION
+withdrawalRequestsByUser[msg.sender].push(request)	NodeType.EXPRESSION
+processWithdrawalsOnWithdraw	NodeType.IF" -> "BlockID: 2225
+Call context: 
+True
+INTERNAL_CALL, AstridProtocol._processWithdrawals()()
+EXPRESSION:_processWithdrawals()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2224
+Call context: 
+None
+shares(uint256) := TMP_977(uint256)
+REF_256(AstridProtocol.WithdrawalStatus) -> WithdrawalStatus.REQUESTED
+TMP_978 = CONVERT block.number to uint32
+REF_257 -> LENGTH withdrawalRequests
+REF_258(AstridProtocol.WithdrawalRequest[]) -> withdrawalRequestsByUser[msg.sender]
+REF_259 -> LENGTH REF_258
+TMP_979(AstridProtocol.WithdrawalRequest) = new WithdrawalRequest(msg.sender,_restakedTokenAddress,amount,shares,0,REF_256,TMP_978,block.timestamp,0,0,REF_257,REF_259)
+request(AstridProtocol.WithdrawalRequest) := TMP_979(AstridProtocol.WithdrawalRequest)
+REF_260(uint256) -> totalWithdrawalRequests[_restakedTokenAddress]
+REF_260(-> totalWithdrawalRequests) = REF_260 (c)+ shares
+REF_262 -> LENGTH withdrawalRequests
+TMP_981(uint256) := REF_262(uint256)
+TMP_982(uint256) = TMP_981 (c)+ 1
+REF_262(uint256) (->withdrawalRequests) := TMP_982(uint256)
+REF_263(AstridProtocol.WithdrawalRequest) -> withdrawalRequests[TMP_981]
+REF_263(AstridProtocol.WithdrawalRequest) (->withdrawalRequests) := request(AstridProtocol.WithdrawalRequest)
+REF_264(AstridProtocol.WithdrawalRequest[]) -> withdrawalRequestsByUser[msg.sender]
+REF_266 -> LENGTH REF_264
+TMP_984(uint256) := REF_266(uint256)
+TMP_985(uint256) = TMP_984 (c)+ 1
+REF_266(uint256) (->withdrawalRequestsByUser) := TMP_985(uint256)
+REF_267(AstridProtocol.WithdrawalRequest) -> REF_264[TMP_984]
+REF_267(AstridProtocol.WithdrawalRequest) (->withdrawalRequestsByUser) := request(AstridProtocol.WithdrawalRequest)
+CONDITION processWithdrawalsOnWithdraw
+EXPRESSION:shares = sharesAfter.sub(sharesBefore)	NodeType.VARIABLE
+shares = sharesAfter.sub(sharesBefore)	NodeType.EXPRESSION
+request = WithdrawalRequest(msg.sender,_restakedTokenAddress,amount,shares,0,WithdrawalStatus.REQUESTED,uint32(block.number),block.timestamp,0,0,withdrawalRequests.length,withdrawalRequestsByUser[msg.sender].length)	NodeType.VARIABLE
+request = WithdrawalRequest(msg.sender,_restakedTokenAddress,amount,shares,0,WithdrawalStatus.REQUESTED,uint32(block.number),block.timestamp,0,0,withdrawalRequests.length,withdrawalRequestsByUser[msg.sender].length)	NodeType.EXPRESSION
+totalWithdrawalRequests[_restakedTokenAddress] += shares	NodeType.EXPRESSION
+withdrawalRequests.push(request)	NodeType.EXPRESSION
+withdrawalRequestsByUser[msg.sender].push(request)	NodeType.EXPRESSION
+processWithdrawalsOnWithdraw	NodeType.IF" -> "BlockID: 2227
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2225
+Call context: 
+True
+INTERNAL_CALL, AstridProtocol._processWithdrawals()()
+EXPRESSION:_processWithdrawals()	NodeType.EXPRESSION" -> "BlockID: 2227
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2229
+Call context: 
+None
+_stakedTokenAddress(address) := TMP_958(address)
+REF_248(AstridProtocol.StakedTokenMapping) -> stakedTokens[_stakedTokenAddress]
+stakedTokenMapping(AstridProtocol.StakedTokenMapping) := REF_248(AstridProtocol.StakedTokenMapping)
+REF_249(bool) -> stakedTokenMapping.whitelisted
+CONDITION REF_249
+EXPRESSION:REF_249(bool) -> stakedTokenMapping.whitelisted	NodeType.IF" -> "BlockID: 2230
+Call context: 
+True
+TMP_959(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2229
+Call context: 
+None
+_stakedTokenAddress(address) := TMP_958(address)
+REF_248(AstridProtocol.StakedTokenMapping) -> stakedTokens[_stakedTokenAddress]
+stakedTokenMapping(AstridProtocol.StakedTokenMapping) := REF_248(AstridProtocol.StakedTokenMapping)
+REF_249(bool) -> stakedTokenMapping.whitelisted
+CONDITION REF_249
+EXPRESSION:REF_249(bool) -> stakedTokenMapping.whitelisted	NodeType.IF" -> "BlockID: 2231
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2231
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2215
+Call context: 
+True
+TMP_960 = CONVERT _restakedTokenAddress to IERC20
+TMP_961(uint256) = HIGH_LEVEL_CALL, dest:TMP_960(IERC20), function:balanceOf, arguments:['msg.sender']  
+EXPRESSION:require(bool,string)(IERC20(_restakedTokenAddress).balanceOf(msg.sender) >= amount,AstridProtocol: Insufficient balance of restaked token)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2232
+Call context: 
+None
+TMP_962(bool) = TMP_961 >= amount
+CONDITION TMP_962
+EXPRESSION:TMP_962(bool) = TMP_961 >= amount	NodeType.IF" -> "BlockID: 2233
+Call context: 
+True
+TMP_963(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2232
+Call context: 
+None
+TMP_962(bool) = TMP_961 >= amount
+CONDITION TMP_962
+EXPRESSION:TMP_962(bool) = TMP_961 >= amount	NodeType.IF" -> "BlockID: 2234
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2234
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2217
+Call context: 
+True
+TMP_964 = CONVERT _restakedTokenAddress to IERC20
+TMP_965 = CONVERT this to address
+TMP_966(uint256) = HIGH_LEVEL_CALL, dest:TMP_964(IERC20), function:allowance, arguments:['msg.sender', 'TMP_965']  
+EXPRESSION:require(bool,string)(IERC20(_restakedTokenAddress).allowance(msg.sender,address(this)) >= amount,AstridProtocol: Insufficient allowance of restaked token)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2235
+Call context: 
+None
+TMP_967(bool) = TMP_966 >= amount
+CONDITION TMP_967
+EXPRESSION:TMP_967(bool) = TMP_966 >= amount	NodeType.IF" -> "BlockID: 2236
+Call context: 
+True
+TMP_968(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2235
+Call context: 
+None
+TMP_967(bool) = TMP_966 >= amount
+CONDITION TMP_967
+EXPRESSION:TMP_967(bool) = TMP_966 >= amount	NodeType.IF" -> "BlockID: 2237
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2237
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2219
+Call context: 
+True
+TMP_969 = CONVERT _restakedTokenAddress to IRestakedETH
+TMP_970 = CONVERT this to address
+TMP_971(uint256) = HIGH_LEVEL_CALL, dest:TMP_969(IRestakedETH), function:scaledBalanceOf, arguments:['TMP_970']  
+EXPRESSION:" [key=0];
+"BlockID: 2238
+Call context: 
+None
+amountSent(bool) := TMP_972(bool)
+CONDITION amountSent
+EXPRESSION:amountSent(bool) := TMP_972(bool)	NodeType.IF" -> "BlockID: 2239
+Call context: 
+True
+TMP_973(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2238
+Call context: 
+None
+amountSent(bool) := TMP_972(bool)
+CONDITION amountSent
+EXPRESSION:amountSent(bool) := TMP_972(bool)	NodeType.IF" -> "BlockID: 2240
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2240
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2222
+Call context: 
+True
+TMP_974 = CONVERT _restakedTokenAddress to IRestakedETH
+TMP_975 = CONVERT this to address
+TMP_976(uint256) = HIGH_LEVEL_CALL, dest:TMP_974(IRestakedETH), function:scaledBalanceOf, arguments:['TMP_975']  
+EXPRESSION:" [key=0];
+}

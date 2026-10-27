@@ -1,0 +1,785 @@
+digraph {
+"BlockID: 2894
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 2895
+Call context: 
+None
+MODIFIER_CALL, LevToken.nonReentrant()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION";
+"BlockID: 2896
+Call context: 
+None
+TMP_1946 = CONVERT msg.sender to address
+redeemer(address) := TMP_1946(address)
+TMP_1947 = CONVERT this to address
+TMP_1948(uint256) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:redeemAllowed, arguments:['TMP_1947', 'redeemer', 'redeemTokensIn']  
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION
+redeemer = address(msg.sender)	NodeType.VARIABLE
+redeemer = address(msg.sender)	NodeType.EXPRESSION";
+"BlockID: 2897
+Call context: 
+None
+allowed(uint256) := TMP_1948(uint256)
+TMP_1949(bool) = allowed != 0
+CONDITION TMP_1949
+EXPRESSION:allowed = tensorpricer.redeemAllowed(address(this),redeemer,redeemTokensIn)	NodeType.VARIABLE
+allowed = tensorpricer.redeemAllowed(address(this),redeemer,redeemTokensIn)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" [shape=box];
+"BlockID: 2898
+Call context: 
+True
+TMP_1950(None) = SOLIDITY_CALL revert RedeemTensorpricerRejection(uint256)(allowed)
+EXPRESSION:revert RedeemTensorpricerRejection(uint256)(allowed)	NodeType.EXPRESSION";
+"BlockID: 2899
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2900
+Call context: 
+None
+TMP_1951(uint256) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:getFx, arguments:['USDTUSDC']  
+EXPRESSION:";
+"BlockID: 2901
+Call context: 
+None
+fx_USDTUSDC_Mantissa(uint256) := TMP_1951(uint256)
+TMP_1952(ExponentialNoError.Exp) = new Exp(fx_USDTUSDC_Mantissa)
+TMP_1953(uint256) = INTERNAL_CALL, ExponentialNoError.mul_(uint256,ExponentialNoError.Exp)(borrowBalanceUSDT,TMP_1952)
+EXPRESSION:fx_USDTUSDC_Mantissa = tensorpricer.getFx(USDTUSDC)	NodeType.VARIABLE
+fx_USDTUSDC_Mantissa = tensorpricer.getFx(USDTUSDC)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2902
+Call context: 
+None
+tmpBorrowBalanceUSDC(uint256) := TMP_1953(uint256)
+TMP_1954(uint256) = INTERNAL_CALL, LevToken.calcNetAssetValue(uint256,uint256)(tmpBorrowBalanceUSDC,0)
+EXPRESSION:tmpBorrowBalanceUSDC = mul_(borrowBalanceUSDT,Exp(fx_USDTUSDC_Mantissa))	NodeType.VARIABLE
+tmpBorrowBalanceUSDC = mul_(borrowBalanceUSDT,Exp(fx_USDTUSDC_Mantissa))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2903
+Call context: 
+None
+tmpNetAssetValue(uint256) := TMP_1954(uint256)
+NEW VARIABLE targetLevRatio
+TUPLE_12(uint256,uint256,uint256) = INTERNAL_CALL, LevToken.refreshTargetLevRatio(uint256)(fx_USDTUSDC_Mantissa)
+EXPRESSION:tmpNetAssetValue = calcNetAssetValue(tmpBorrowBalanceUSDC,0)	NodeType.VARIABLE
+tmpNetAssetValue = calcNetAssetValue(tmpBorrowBalanceUSDC,0)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+(targetLevRatio) = refreshTargetLevRatio(fx_USDTUSDC_Mantissa)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2904
+Call context: 
+None
+targetLevRatio(uint256)= UNPACK TUPLE_12 index: 0 
+TMP_1955(uint256) = INTERNAL_CALL, LevToken.takePerfFee(uint256)(tmpNetAssetValue)
+EXPRESSION:(targetLevRatio) = refreshTargetLevRatio(fx_USDTUSDC_Mantissa)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2905
+Call context: 
+None
+updatedTmpNavMantissa(uint256) := TMP_1955(uint256)
+TMP_1956(ExponentialNoError.Exp) = new Exp(updatedTmpNavMantissa)
+TMP_1957(uint256) = INTERNAL_CALL, ExponentialNoError.mul_ScalarTruncate(ExponentialNoError.Exp,uint256)(TMP_1956,redeemTokensIn)
+EXPRESSION:updatedTmpNavMantissa = takePerfFee(tmpNetAssetValue)	NodeType.VARIABLE
+updatedTmpNavMantissa = takePerfFee(tmpNetAssetValue)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2906
+Call context: 
+None
+tmpRedeemAmount(uint256) := TMP_1957(uint256)
+NEW VARIABLE trueRedeemAmount
+TMP_1958(bool) = totalSupply == redeemTokensIn
+CONDITION TMP_1958
+EXPRESSION:tmpRedeemAmount = mul_ScalarTruncate(Exp(updatedTmpNavMantissa),redeemTokensIn)	NodeType.VARIABLE
+tmpRedeemAmount = mul_ScalarTruncate(Exp(updatedTmpNavMantissa),redeemTokensIn)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+totalSupply == redeemTokensIn	NodeType.IF" [shape=box];
+"BlockID: 2907
+Call context: 
+True
+TMP_1959(uint256) = INTERNAL_CALL, LevToken.redeemAllRebalance()()
+EXPRESSION:trueRedeemAmount = redeemAllRebalance()	NodeType.EXPRESSION";
+"BlockID: 2909
+Call context: 
+False
+redeemAmountInUSDC(uint256) := 0(uint256)
+TMP_1960(bool) = tmpNetAssetValue > 0
+CONDITION TMP_1960
+EXPRESSION:redeemAmountInUSDC = 0	NodeType.EXPRESSION
+tmpNetAssetValue > 0	NodeType.IF";
+"BlockID: 2910
+Call context: 
+True
+TMP_1961(LevTokenStorage.checkRebalanceRes) = INTERNAL_CALL, LevToken.checkRebalance(uint256,uint256)(1,tmpRedeemAmount)
+EXPRESSION:doRebalance(1,checkRebalance(1,tmpRedeemAmount),redeemTokensIn)	NodeType.EXPRESSION";
+"BlockID: 2913
+Call context: 
+False
+TMP_1963(bool) = INTERNAL_CALL, LevToken.deleverageAll()()
+EXPRESSION:deleverageAll()	NodeType.EXPRESSION";
+"BlockID: 2914
+Call context: 
+None
+CONDITION TMP_1963
+EXPRESSION:deleverageAll()	NodeType.IF" [shape=box];
+"BlockID: 2936
+Call context: 
+None
+RETURN
+EXPRESSION:withdrawUSDCfromCmp(amtNeeded + extraUSDC)	NodeType.EXPRESSION
+None	NodeType.RETURN";
+"BlockID: 2917
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2919
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2920
+Call context: 
+None
+TMP_1965(uint256) = redeemFeePC (c)* redeemAmountInUSDC
+TMP_1966(uint256) = TMP_1965 (c)/ expScale
+redeemFeeBeforeLevRatio(uint256) := TMP_1966(uint256)
+TMP_1967(uint256) = targetLevRatio (c)* redeemFeeBeforeLevRatio
+TMP_1968(uint256) = TMP_1967 (c)/ expScale
+redeemFee(uint256) := TMP_1968(uint256)
+TMP_1969(uint256) = redeemAmountInUSDC (c)- redeemFee
+trueRedeemAmount(uint256) := TMP_1969(uint256)
+TMP_1970(uint256) = levReserve (c)+ redeemFee
+levReserve(uint256) := TMP_1970(uint256)
+TMP_1971(uint256) = INTERNAL_CALL, LevToken.getCashExReserves()()
+EXPRESSION:redeemFeeBeforeLevRatio = (redeemFeePC * redeemAmountInUSDC) / expScale	NodeType.VARIABLE
+redeemFeeBeforeLevRatio = (redeemFeePC * redeemAmountInUSDC) / expScale	NodeType.EXPRESSION
+redeemFee = (targetLevRatio * redeemFeeBeforeLevRatio) / expScale	NodeType.VARIABLE
+redeemFee = (targetLevRatio * redeemFeeBeforeLevRatio) / expScale	NodeType.EXPRESSION
+trueRedeemAmount = redeemAmountInUSDC - redeemFee	NodeType.EXPRESSION
+levReserve = levReserve + redeemFee	NodeType.EXPRESSION";
+"BlockID: 2921
+Call context: 
+None
+currUSDCBalance(uint256) := TMP_1971(uint256)
+TMP_1972(bool) = redeemAmountInUSDC > currUSDCBalance
+CONDITION TMP_1972
+EXPRESSION:currUSDCBalance = getCashExReserves()	NodeType.VARIABLE
+currUSDCBalance = getCashExReserves()	NodeType.EXPRESSION
+redeemAmountInUSDC > currUSDCBalance	NodeType.IF" [shape=box];
+"BlockID: 2922
+Call context: 
+True
+TMP_1973(uint256) = redeemAmountInUSDC (c)- currUSDCBalance
+amtNeeded(uint256) := TMP_1973(uint256)
+TMP_1974(uint256) = INTERNAL_CALL, LevToken.getCmpBalanceInternal()()
+EXPRESSION:amtNeeded = redeemAmountInUSDC - currUSDCBalance	NodeType.VARIABLE
+amtNeeded = redeemAmountInUSDC - currUSDCBalance	NodeType.EXPRESSION";
+"BlockID: 2923
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2924
+Call context: 
+None
+TMP_1980(uint256) = totalSupply (c)- redeemTokensIn
+totalSupply(uint256) := TMP_1980(uint256)
+INTERNAL_CALL, LevToken.updateNetAssetValue(uint256,uint256)(borrowBalanceUSDC,trueRedeemAmount)
+EXPRESSION:totalSupply = totalSupply - redeemTokensIn	NodeType.EXPRESSION
+updateNetAssetValue(borrowBalanceUSDC,trueRedeemAmount)	NodeType.EXPRESSION";
+"BlockID: 2926
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2927
+Call context: 
+None
+REF_682(uint256) -> accountTokens[redeemer]
+REF_683(uint256) -> accountTokens[redeemer]
+TMP_1982(uint256) = REF_683 (c)- redeemTokensIn
+REF_682(uint256) (->accountTokens) := TMP_1982(uint256)
+TMP_1983(bool) = trueRedeemAmount > 0
+CONDITION TMP_1983
+EXPRESSION:accountTokens[redeemer] = accountTokens[redeemer] - redeemTokensIn	NodeType.EXPRESSION
+trueRedeemAmount > 0	NodeType.IF";
+"BlockID: 2928
+Call context: 
+True
+INTERNAL_CALL, LevErc20.doTransferOut(address,uint256)(redeemer,trueRedeemAmount)
+EXPRESSION:doTransferOut(redeemer,trueRedeemAmount)	NodeType.EXPRESSION";
+"BlockID: 2932
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2934
+Call context: 
+None
+compoundBalance(uint256) := TMP_1974(uint256)
+TMP_1975(uint256) = amtNeeded (c)+ extraUSDC
+TMP_1976(bool) = compoundBalance > TMP_1975
+CONDITION TMP_1976
+EXPRESSION:compoundBalance = getCmpBalanceInternal()	NodeType.VARIABLE
+compoundBalance = getCmpBalanceInternal()	NodeType.EXPRESSION
+compoundBalance > (amtNeeded + extraUSDC)	NodeType.IF" [shape=box];
+"BlockID: 2935
+Call context: 
+True
+TMP_1977(uint256) = amtNeeded (c)+ extraUSDC
+INTERNAL_CALL, DepositWithdraw.withdrawUSDCfromCmp(uint256)(TMP_1977)
+EXPRESSION:withdrawUSDCfromCmp(amtNeeded + extraUSDC)	NodeType.EXPRESSION";
+"BlockID: 2937
+Call context: 
+False
+INTERNAL_CALL, DepositWithdraw.withdrawUSDCfromCmp(uint256)(compoundBalance)
+EXPRESSION:withdrawUSDCfromCmp(compoundBalance)	NodeType.EXPRESSION";
+"BlockID: 2939
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2911
+Call context: 
+None
+INTERNAL_CALL, LevToken.doRebalance(uint256,LevTokenStorage.checkRebalanceRes,uint256)(1,TMP_1961,redeemTokensIn)
+EXPRESSION:doRebalance(1,checkRebalance(1,tmpRedeemAmount),redeemTokensIn)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2908
+Call context: 
+None
+trueRedeemAmount(uint256) := TMP_1959(uint256)
+totalSupply(uint256) := 0(uint256)
+EXPRESSION:trueRedeemAmount = redeemAllRebalance()	NodeType.EXPRESSION
+totalSupply = 0	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2894
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 2895
+Call context: 
+None
+MODIFIER_CALL, LevToken.nonReentrant()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2895
+Call context: 
+None
+MODIFIER_CALL, LevToken.nonReentrant()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION" -> "BlockID: 2896
+Call context: 
+None
+TMP_1946 = CONVERT msg.sender to address
+redeemer(address) := TMP_1946(address)
+TMP_1947 = CONVERT this to address
+TMP_1948(uint256) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:redeemAllowed, arguments:['TMP_1947', 'redeemer', 'redeemTokensIn']  
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION
+redeemer = address(msg.sender)	NodeType.VARIABLE
+redeemer = address(msg.sender)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2896
+Call context: 
+None
+TMP_1946 = CONVERT msg.sender to address
+redeemer(address) := TMP_1946(address)
+TMP_1947 = CONVERT this to address
+TMP_1948(uint256) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:redeemAllowed, arguments:['TMP_1947', 'redeemer', 'redeemTokensIn']  
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION
+redeemer = address(msg.sender)	NodeType.VARIABLE
+redeemer = address(msg.sender)	NodeType.EXPRESSION" -> "BlockID: 2897
+Call context: 
+None
+allowed(uint256) := TMP_1948(uint256)
+TMP_1949(bool) = allowed != 0
+CONDITION TMP_1949
+EXPRESSION:allowed = tensorpricer.redeemAllowed(address(this),redeemer,redeemTokensIn)	NodeType.VARIABLE
+allowed = tensorpricer.redeemAllowed(address(this),redeemer,redeemTokensIn)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" [key=0];
+"BlockID: 2897
+Call context: 
+None
+allowed(uint256) := TMP_1948(uint256)
+TMP_1949(bool) = allowed != 0
+CONDITION TMP_1949
+EXPRESSION:allowed = tensorpricer.redeemAllowed(address(this),redeemer,redeemTokensIn)	NodeType.VARIABLE
+allowed = tensorpricer.redeemAllowed(address(this),redeemer,redeemTokensIn)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" -> "BlockID: 2898
+Call context: 
+True
+TMP_1950(None) = SOLIDITY_CALL revert RedeemTensorpricerRejection(uint256)(allowed)
+EXPRESSION:revert RedeemTensorpricerRejection(uint256)(allowed)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2897
+Call context: 
+None
+allowed(uint256) := TMP_1948(uint256)
+TMP_1949(bool) = allowed != 0
+CONDITION TMP_1949
+EXPRESSION:allowed = tensorpricer.redeemAllowed(address(this),redeemer,redeemTokensIn)	NodeType.VARIABLE
+allowed = tensorpricer.redeemAllowed(address(this),redeemer,redeemTokensIn)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" -> "BlockID: 2899
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2899
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2900
+Call context: 
+None
+TMP_1951(uint256) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:getFx, arguments:['USDTUSDC']  
+EXPRESSION:" [key=0];
+"BlockID: 2900
+Call context: 
+None
+TMP_1951(uint256) = HIGH_LEVEL_CALL, dest:tensorpricer(TensorpricerInterface), function:getFx, arguments:['USDTUSDC']  
+EXPRESSION:" -> "BlockID: 2901
+Call context: 
+None
+fx_USDTUSDC_Mantissa(uint256) := TMP_1951(uint256)
+TMP_1952(ExponentialNoError.Exp) = new Exp(fx_USDTUSDC_Mantissa)
+TMP_1953(uint256) = INTERNAL_CALL, ExponentialNoError.mul_(uint256,ExponentialNoError.Exp)(borrowBalanceUSDT,TMP_1952)
+EXPRESSION:fx_USDTUSDC_Mantissa = tensorpricer.getFx(USDTUSDC)	NodeType.VARIABLE
+fx_USDTUSDC_Mantissa = tensorpricer.getFx(USDTUSDC)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2901
+Call context: 
+None
+fx_USDTUSDC_Mantissa(uint256) := TMP_1951(uint256)
+TMP_1952(ExponentialNoError.Exp) = new Exp(fx_USDTUSDC_Mantissa)
+TMP_1953(uint256) = INTERNAL_CALL, ExponentialNoError.mul_(uint256,ExponentialNoError.Exp)(borrowBalanceUSDT,TMP_1952)
+EXPRESSION:fx_USDTUSDC_Mantissa = tensorpricer.getFx(USDTUSDC)	NodeType.VARIABLE
+fx_USDTUSDC_Mantissa = tensorpricer.getFx(USDTUSDC)	NodeType.EXPRESSION" -> "BlockID: 2902
+Call context: 
+None
+tmpBorrowBalanceUSDC(uint256) := TMP_1953(uint256)
+TMP_1954(uint256) = INTERNAL_CALL, LevToken.calcNetAssetValue(uint256,uint256)(tmpBorrowBalanceUSDC,0)
+EXPRESSION:tmpBorrowBalanceUSDC = mul_(borrowBalanceUSDT,Exp(fx_USDTUSDC_Mantissa))	NodeType.VARIABLE
+tmpBorrowBalanceUSDC = mul_(borrowBalanceUSDT,Exp(fx_USDTUSDC_Mantissa))	NodeType.EXPRESSION" [key=0];
+"BlockID: 2902
+Call context: 
+None
+tmpBorrowBalanceUSDC(uint256) := TMP_1953(uint256)
+TMP_1954(uint256) = INTERNAL_CALL, LevToken.calcNetAssetValue(uint256,uint256)(tmpBorrowBalanceUSDC,0)
+EXPRESSION:tmpBorrowBalanceUSDC = mul_(borrowBalanceUSDT,Exp(fx_USDTUSDC_Mantissa))	NodeType.VARIABLE
+tmpBorrowBalanceUSDC = mul_(borrowBalanceUSDT,Exp(fx_USDTUSDC_Mantissa))	NodeType.EXPRESSION" -> "BlockID: 2903
+Call context: 
+None
+tmpNetAssetValue(uint256) := TMP_1954(uint256)
+NEW VARIABLE targetLevRatio
+TUPLE_12(uint256,uint256,uint256) = INTERNAL_CALL, LevToken.refreshTargetLevRatio(uint256)(fx_USDTUSDC_Mantissa)
+EXPRESSION:tmpNetAssetValue = calcNetAssetValue(tmpBorrowBalanceUSDC,0)	NodeType.VARIABLE
+tmpNetAssetValue = calcNetAssetValue(tmpBorrowBalanceUSDC,0)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+(targetLevRatio) = refreshTargetLevRatio(fx_USDTUSDC_Mantissa)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2903
+Call context: 
+None
+tmpNetAssetValue(uint256) := TMP_1954(uint256)
+NEW VARIABLE targetLevRatio
+TUPLE_12(uint256,uint256,uint256) = INTERNAL_CALL, LevToken.refreshTargetLevRatio(uint256)(fx_USDTUSDC_Mantissa)
+EXPRESSION:tmpNetAssetValue = calcNetAssetValue(tmpBorrowBalanceUSDC,0)	NodeType.VARIABLE
+tmpNetAssetValue = calcNetAssetValue(tmpBorrowBalanceUSDC,0)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+(targetLevRatio) = refreshTargetLevRatio(fx_USDTUSDC_Mantissa)	NodeType.EXPRESSION" -> "BlockID: 2904
+Call context: 
+None
+targetLevRatio(uint256)= UNPACK TUPLE_12 index: 0 
+TMP_1955(uint256) = INTERNAL_CALL, LevToken.takePerfFee(uint256)(tmpNetAssetValue)
+EXPRESSION:(targetLevRatio) = refreshTargetLevRatio(fx_USDTUSDC_Mantissa)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2904
+Call context: 
+None
+targetLevRatio(uint256)= UNPACK TUPLE_12 index: 0 
+TMP_1955(uint256) = INTERNAL_CALL, LevToken.takePerfFee(uint256)(tmpNetAssetValue)
+EXPRESSION:(targetLevRatio) = refreshTargetLevRatio(fx_USDTUSDC_Mantissa)	NodeType.EXPRESSION" -> "BlockID: 2905
+Call context: 
+None
+updatedTmpNavMantissa(uint256) := TMP_1955(uint256)
+TMP_1956(ExponentialNoError.Exp) = new Exp(updatedTmpNavMantissa)
+TMP_1957(uint256) = INTERNAL_CALL, ExponentialNoError.mul_ScalarTruncate(ExponentialNoError.Exp,uint256)(TMP_1956,redeemTokensIn)
+EXPRESSION:updatedTmpNavMantissa = takePerfFee(tmpNetAssetValue)	NodeType.VARIABLE
+updatedTmpNavMantissa = takePerfFee(tmpNetAssetValue)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2905
+Call context: 
+None
+updatedTmpNavMantissa(uint256) := TMP_1955(uint256)
+TMP_1956(ExponentialNoError.Exp) = new Exp(updatedTmpNavMantissa)
+TMP_1957(uint256) = INTERNAL_CALL, ExponentialNoError.mul_ScalarTruncate(ExponentialNoError.Exp,uint256)(TMP_1956,redeemTokensIn)
+EXPRESSION:updatedTmpNavMantissa = takePerfFee(tmpNetAssetValue)	NodeType.VARIABLE
+updatedTmpNavMantissa = takePerfFee(tmpNetAssetValue)	NodeType.EXPRESSION" -> "BlockID: 2906
+Call context: 
+None
+tmpRedeemAmount(uint256) := TMP_1957(uint256)
+NEW VARIABLE trueRedeemAmount
+TMP_1958(bool) = totalSupply == redeemTokensIn
+CONDITION TMP_1958
+EXPRESSION:tmpRedeemAmount = mul_ScalarTruncate(Exp(updatedTmpNavMantissa),redeemTokensIn)	NodeType.VARIABLE
+tmpRedeemAmount = mul_ScalarTruncate(Exp(updatedTmpNavMantissa),redeemTokensIn)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+totalSupply == redeemTokensIn	NodeType.IF" [key=0];
+"BlockID: 2906
+Call context: 
+None
+tmpRedeemAmount(uint256) := TMP_1957(uint256)
+NEW VARIABLE trueRedeemAmount
+TMP_1958(bool) = totalSupply == redeemTokensIn
+CONDITION TMP_1958
+EXPRESSION:tmpRedeemAmount = mul_ScalarTruncate(Exp(updatedTmpNavMantissa),redeemTokensIn)	NodeType.VARIABLE
+tmpRedeemAmount = mul_ScalarTruncate(Exp(updatedTmpNavMantissa),redeemTokensIn)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+totalSupply == redeemTokensIn	NodeType.IF" -> "BlockID: 2907
+Call context: 
+True
+TMP_1959(uint256) = INTERNAL_CALL, LevToken.redeemAllRebalance()()
+EXPRESSION:trueRedeemAmount = redeemAllRebalance()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2906
+Call context: 
+None
+tmpRedeemAmount(uint256) := TMP_1957(uint256)
+NEW VARIABLE trueRedeemAmount
+TMP_1958(bool) = totalSupply == redeemTokensIn
+CONDITION TMP_1958
+EXPRESSION:tmpRedeemAmount = mul_ScalarTruncate(Exp(updatedTmpNavMantissa),redeemTokensIn)	NodeType.VARIABLE
+tmpRedeemAmount = mul_ScalarTruncate(Exp(updatedTmpNavMantissa),redeemTokensIn)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+totalSupply == redeemTokensIn	NodeType.IF" -> "BlockID: 2909
+Call context: 
+False
+redeemAmountInUSDC(uint256) := 0(uint256)
+TMP_1960(bool) = tmpNetAssetValue > 0
+CONDITION TMP_1960
+EXPRESSION:redeemAmountInUSDC = 0	NodeType.EXPRESSION
+tmpNetAssetValue > 0	NodeType.IF" [key=0];
+"BlockID: 2907
+Call context: 
+True
+TMP_1959(uint256) = INTERNAL_CALL, LevToken.redeemAllRebalance()()
+EXPRESSION:trueRedeemAmount = redeemAllRebalance()	NodeType.EXPRESSION" -> "BlockID: 2908
+Call context: 
+None
+trueRedeemAmount(uint256) := TMP_1959(uint256)
+totalSupply(uint256) := 0(uint256)
+EXPRESSION:trueRedeemAmount = redeemAllRebalance()	NodeType.EXPRESSION
+totalSupply = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 2909
+Call context: 
+False
+redeemAmountInUSDC(uint256) := 0(uint256)
+TMP_1960(bool) = tmpNetAssetValue > 0
+CONDITION TMP_1960
+EXPRESSION:redeemAmountInUSDC = 0	NodeType.EXPRESSION
+tmpNetAssetValue > 0	NodeType.IF" -> "BlockID: 2910
+Call context: 
+True
+TMP_1961(LevTokenStorage.checkRebalanceRes) = INTERNAL_CALL, LevToken.checkRebalance(uint256,uint256)(1,tmpRedeemAmount)
+EXPRESSION:doRebalance(1,checkRebalance(1,tmpRedeemAmount),redeemTokensIn)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2909
+Call context: 
+False
+redeemAmountInUSDC(uint256) := 0(uint256)
+TMP_1960(bool) = tmpNetAssetValue > 0
+CONDITION TMP_1960
+EXPRESSION:redeemAmountInUSDC = 0	NodeType.EXPRESSION
+tmpNetAssetValue > 0	NodeType.IF" -> "BlockID: 2913
+Call context: 
+False
+TMP_1963(bool) = INTERNAL_CALL, LevToken.deleverageAll()()
+EXPRESSION:deleverageAll()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2910
+Call context: 
+True
+TMP_1961(LevTokenStorage.checkRebalanceRes) = INTERNAL_CALL, LevToken.checkRebalance(uint256,uint256)(1,tmpRedeemAmount)
+EXPRESSION:doRebalance(1,checkRebalance(1,tmpRedeemAmount),redeemTokensIn)	NodeType.EXPRESSION" -> "BlockID: 2911
+Call context: 
+None
+INTERNAL_CALL, LevToken.doRebalance(uint256,LevTokenStorage.checkRebalanceRes,uint256)(1,TMP_1961,redeemTokensIn)
+EXPRESSION:doRebalance(1,checkRebalance(1,tmpRedeemAmount),redeemTokensIn)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2913
+Call context: 
+False
+TMP_1963(bool) = INTERNAL_CALL, LevToken.deleverageAll()()
+EXPRESSION:deleverageAll()	NodeType.EXPRESSION" -> "BlockID: 2914
+Call context: 
+None
+CONDITION TMP_1963
+EXPRESSION:deleverageAll()	NodeType.IF" [key=0];
+"BlockID: 2914
+Call context: 
+None
+CONDITION TMP_1963
+EXPRESSION:deleverageAll()	NodeType.IF" -> "BlockID: 2936
+Call context: 
+None
+RETURN
+EXPRESSION:withdrawUSDCfromCmp(amtNeeded + extraUSDC)	NodeType.EXPRESSION
+None	NodeType.RETURN" [key=0];
+"BlockID: 2914
+Call context: 
+None
+CONDITION TMP_1963
+EXPRESSION:deleverageAll()	NodeType.IF" -> "BlockID: 2917
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2917
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2919
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2919
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2920
+Call context: 
+None
+TMP_1965(uint256) = redeemFeePC (c)* redeemAmountInUSDC
+TMP_1966(uint256) = TMP_1965 (c)/ expScale
+redeemFeeBeforeLevRatio(uint256) := TMP_1966(uint256)
+TMP_1967(uint256) = targetLevRatio (c)* redeemFeeBeforeLevRatio
+TMP_1968(uint256) = TMP_1967 (c)/ expScale
+redeemFee(uint256) := TMP_1968(uint256)
+TMP_1969(uint256) = redeemAmountInUSDC (c)- redeemFee
+trueRedeemAmount(uint256) := TMP_1969(uint256)
+TMP_1970(uint256) = levReserve (c)+ redeemFee
+levReserve(uint256) := TMP_1970(uint256)
+TMP_1971(uint256) = INTERNAL_CALL, LevToken.getCashExReserves()()
+EXPRESSION:redeemFeeBeforeLevRatio = (redeemFeePC * redeemAmountInUSDC) / expScale	NodeType.VARIABLE
+redeemFeeBeforeLevRatio = (redeemFeePC * redeemAmountInUSDC) / expScale	NodeType.EXPRESSION
+redeemFee = (targetLevRatio * redeemFeeBeforeLevRatio) / expScale	NodeType.VARIABLE
+redeemFee = (targetLevRatio * redeemFeeBeforeLevRatio) / expScale	NodeType.EXPRESSION
+trueRedeemAmount = redeemAmountInUSDC - redeemFee	NodeType.EXPRESSION
+levReserve = levReserve + redeemFee	NodeType.EXPRESSION" [key=0];
+"BlockID: 2920
+Call context: 
+None
+TMP_1965(uint256) = redeemFeePC (c)* redeemAmountInUSDC
+TMP_1966(uint256) = TMP_1965 (c)/ expScale
+redeemFeeBeforeLevRatio(uint256) := TMP_1966(uint256)
+TMP_1967(uint256) = targetLevRatio (c)* redeemFeeBeforeLevRatio
+TMP_1968(uint256) = TMP_1967 (c)/ expScale
+redeemFee(uint256) := TMP_1968(uint256)
+TMP_1969(uint256) = redeemAmountInUSDC (c)- redeemFee
+trueRedeemAmount(uint256) := TMP_1969(uint256)
+TMP_1970(uint256) = levReserve (c)+ redeemFee
+levReserve(uint256) := TMP_1970(uint256)
+TMP_1971(uint256) = INTERNAL_CALL, LevToken.getCashExReserves()()
+EXPRESSION:redeemFeeBeforeLevRatio = (redeemFeePC * redeemAmountInUSDC) / expScale	NodeType.VARIABLE
+redeemFeeBeforeLevRatio = (redeemFeePC * redeemAmountInUSDC) / expScale	NodeType.EXPRESSION
+redeemFee = (targetLevRatio * redeemFeeBeforeLevRatio) / expScale	NodeType.VARIABLE
+redeemFee = (targetLevRatio * redeemFeeBeforeLevRatio) / expScale	NodeType.EXPRESSION
+trueRedeemAmount = redeemAmountInUSDC - redeemFee	NodeType.EXPRESSION
+levReserve = levReserve + redeemFee	NodeType.EXPRESSION" -> "BlockID: 2921
+Call context: 
+None
+currUSDCBalance(uint256) := TMP_1971(uint256)
+TMP_1972(bool) = redeemAmountInUSDC > currUSDCBalance
+CONDITION TMP_1972
+EXPRESSION:currUSDCBalance = getCashExReserves()	NodeType.VARIABLE
+currUSDCBalance = getCashExReserves()	NodeType.EXPRESSION
+redeemAmountInUSDC > currUSDCBalance	NodeType.IF" [key=0];
+"BlockID: 2921
+Call context: 
+None
+currUSDCBalance(uint256) := TMP_1971(uint256)
+TMP_1972(bool) = redeemAmountInUSDC > currUSDCBalance
+CONDITION TMP_1972
+EXPRESSION:currUSDCBalance = getCashExReserves()	NodeType.VARIABLE
+currUSDCBalance = getCashExReserves()	NodeType.EXPRESSION
+redeemAmountInUSDC > currUSDCBalance	NodeType.IF" -> "BlockID: 2922
+Call context: 
+True
+TMP_1973(uint256) = redeemAmountInUSDC (c)- currUSDCBalance
+amtNeeded(uint256) := TMP_1973(uint256)
+TMP_1974(uint256) = INTERNAL_CALL, LevToken.getCmpBalanceInternal()()
+EXPRESSION:amtNeeded = redeemAmountInUSDC - currUSDCBalance	NodeType.VARIABLE
+amtNeeded = redeemAmountInUSDC - currUSDCBalance	NodeType.EXPRESSION" [key=0];
+"BlockID: 2921
+Call context: 
+None
+currUSDCBalance(uint256) := TMP_1971(uint256)
+TMP_1972(bool) = redeemAmountInUSDC > currUSDCBalance
+CONDITION TMP_1972
+EXPRESSION:currUSDCBalance = getCashExReserves()	NodeType.VARIABLE
+currUSDCBalance = getCashExReserves()	NodeType.EXPRESSION
+redeemAmountInUSDC > currUSDCBalance	NodeType.IF" -> "BlockID: 2923
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2922
+Call context: 
+True
+TMP_1973(uint256) = redeemAmountInUSDC (c)- currUSDCBalance
+amtNeeded(uint256) := TMP_1973(uint256)
+TMP_1974(uint256) = INTERNAL_CALL, LevToken.getCmpBalanceInternal()()
+EXPRESSION:amtNeeded = redeemAmountInUSDC - currUSDCBalance	NodeType.VARIABLE
+amtNeeded = redeemAmountInUSDC - currUSDCBalance	NodeType.EXPRESSION" -> "BlockID: 2934
+Call context: 
+None
+compoundBalance(uint256) := TMP_1974(uint256)
+TMP_1975(uint256) = amtNeeded (c)+ extraUSDC
+TMP_1976(bool) = compoundBalance > TMP_1975
+CONDITION TMP_1976
+EXPRESSION:compoundBalance = getCmpBalanceInternal()	NodeType.VARIABLE
+compoundBalance = getCmpBalanceInternal()	NodeType.EXPRESSION
+compoundBalance > (amtNeeded + extraUSDC)	NodeType.IF" [key=0];
+"BlockID: 2923
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2924
+Call context: 
+None
+TMP_1980(uint256) = totalSupply (c)- redeemTokensIn
+totalSupply(uint256) := TMP_1980(uint256)
+INTERNAL_CALL, LevToken.updateNetAssetValue(uint256,uint256)(borrowBalanceUSDC,trueRedeemAmount)
+EXPRESSION:totalSupply = totalSupply - redeemTokensIn	NodeType.EXPRESSION
+updateNetAssetValue(borrowBalanceUSDC,trueRedeemAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2924
+Call context: 
+None
+TMP_1980(uint256) = totalSupply (c)- redeemTokensIn
+totalSupply(uint256) := TMP_1980(uint256)
+INTERNAL_CALL, LevToken.updateNetAssetValue(uint256,uint256)(borrowBalanceUSDC,trueRedeemAmount)
+EXPRESSION:totalSupply = totalSupply - redeemTokensIn	NodeType.EXPRESSION
+updateNetAssetValue(borrowBalanceUSDC,trueRedeemAmount)	NodeType.EXPRESSION" -> "BlockID: 2926
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2926
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2927
+Call context: 
+None
+REF_682(uint256) -> accountTokens[redeemer]
+REF_683(uint256) -> accountTokens[redeemer]
+TMP_1982(uint256) = REF_683 (c)- redeemTokensIn
+REF_682(uint256) (->accountTokens) := TMP_1982(uint256)
+TMP_1983(bool) = trueRedeemAmount > 0
+CONDITION TMP_1983
+EXPRESSION:accountTokens[redeemer] = accountTokens[redeemer] - redeemTokensIn	NodeType.EXPRESSION
+trueRedeemAmount > 0	NodeType.IF" [key=0];
+"BlockID: 2927
+Call context: 
+None
+REF_682(uint256) -> accountTokens[redeemer]
+REF_683(uint256) -> accountTokens[redeemer]
+TMP_1982(uint256) = REF_683 (c)- redeemTokensIn
+REF_682(uint256) (->accountTokens) := TMP_1982(uint256)
+TMP_1983(bool) = trueRedeemAmount > 0
+CONDITION TMP_1983
+EXPRESSION:accountTokens[redeemer] = accountTokens[redeemer] - redeemTokensIn	NodeType.EXPRESSION
+trueRedeemAmount > 0	NodeType.IF" -> "BlockID: 2928
+Call context: 
+True
+INTERNAL_CALL, LevErc20.doTransferOut(address,uint256)(redeemer,trueRedeemAmount)
+EXPRESSION:doTransferOut(redeemer,trueRedeemAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2927
+Call context: 
+None
+REF_682(uint256) -> accountTokens[redeemer]
+REF_683(uint256) -> accountTokens[redeemer]
+TMP_1982(uint256) = REF_683 (c)- redeemTokensIn
+REF_682(uint256) (->accountTokens) := TMP_1982(uint256)
+TMP_1983(bool) = trueRedeemAmount > 0
+CONDITION TMP_1983
+EXPRESSION:accountTokens[redeemer] = accountTokens[redeemer] - redeemTokensIn	NodeType.EXPRESSION
+trueRedeemAmount > 0	NodeType.IF" -> "BlockID: 2932
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2928
+Call context: 
+True
+INTERNAL_CALL, LevErc20.doTransferOut(address,uint256)(redeemer,trueRedeemAmount)
+EXPRESSION:doTransferOut(redeemer,trueRedeemAmount)	NodeType.EXPRESSION" -> "BlockID: 2932
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2934
+Call context: 
+None
+compoundBalance(uint256) := TMP_1974(uint256)
+TMP_1975(uint256) = amtNeeded (c)+ extraUSDC
+TMP_1976(bool) = compoundBalance > TMP_1975
+CONDITION TMP_1976
+EXPRESSION:compoundBalance = getCmpBalanceInternal()	NodeType.VARIABLE
+compoundBalance = getCmpBalanceInternal()	NodeType.EXPRESSION
+compoundBalance > (amtNeeded + extraUSDC)	NodeType.IF" -> "BlockID: 2935
+Call context: 
+True
+TMP_1977(uint256) = amtNeeded (c)+ extraUSDC
+INTERNAL_CALL, DepositWithdraw.withdrawUSDCfromCmp(uint256)(TMP_1977)
+EXPRESSION:withdrawUSDCfromCmp(amtNeeded + extraUSDC)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2934
+Call context: 
+None
+compoundBalance(uint256) := TMP_1974(uint256)
+TMP_1975(uint256) = amtNeeded (c)+ extraUSDC
+TMP_1976(bool) = compoundBalance > TMP_1975
+CONDITION TMP_1976
+EXPRESSION:compoundBalance = getCmpBalanceInternal()	NodeType.VARIABLE
+compoundBalance = getCmpBalanceInternal()	NodeType.EXPRESSION
+compoundBalance > (amtNeeded + extraUSDC)	NodeType.IF" -> "BlockID: 2937
+Call context: 
+False
+INTERNAL_CALL, DepositWithdraw.withdrawUSDCfromCmp(uint256)(compoundBalance)
+EXPRESSION:withdrawUSDCfromCmp(compoundBalance)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2935
+Call context: 
+True
+TMP_1977(uint256) = amtNeeded (c)+ extraUSDC
+INTERNAL_CALL, DepositWithdraw.withdrawUSDCfromCmp(uint256)(TMP_1977)
+EXPRESSION:withdrawUSDCfromCmp(amtNeeded + extraUSDC)	NodeType.EXPRESSION" -> "BlockID: 2939
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2937
+Call context: 
+False
+INTERNAL_CALL, DepositWithdraw.withdrawUSDCfromCmp(uint256)(compoundBalance)
+EXPRESSION:withdrawUSDCfromCmp(compoundBalance)	NodeType.EXPRESSION" -> "BlockID: 2939
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2939
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2923
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2911
+Call context: 
+None
+INTERNAL_CALL, LevToken.doRebalance(uint256,LevTokenStorage.checkRebalanceRes,uint256)(1,TMP_1961,redeemTokensIn)
+EXPRESSION:doRebalance(1,checkRebalance(1,tmpRedeemAmount),redeemTokensIn)	NodeType.EXPRESSION" -> "BlockID: 2919
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2908
+Call context: 
+None
+trueRedeemAmount(uint256) := TMP_1959(uint256)
+totalSupply(uint256) := 0(uint256)
+EXPRESSION:trueRedeemAmount = redeemAllRebalance()	NodeType.EXPRESSION
+totalSupply = 0	NodeType.EXPRESSION" -> "BlockID: 2926
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

@@ -1,0 +1,690 @@
+digraph {
+"BlockID: 1333
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1334
+Call context: 
+None
+TMP_788 = CONVERT this to address
+TMP_789(uint256) = HIGH_LEVEL_CALL, dest:cointroller(CointrollerInterface), function:transferAllowed, arguments:['TMP_788', 'src', 'dst', 'tokens']  
+EXPRESSION:";
+"BlockID: 1335
+Call context: 
+None
+allowed(uint256) := TMP_789(uint256)
+TMP_790(bool) = allowed != 0
+CONDITION TMP_790
+EXPRESSION:allowed = cointroller.transferAllowed(address(this),src,dst,tokens)	NodeType.VARIABLE
+allowed = cointroller.transferAllowed(address(this),src,dst,tokens)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" [shape=box];
+"BlockID: 1336
+Call context: 
+True
+REF_544(TokenErrorReporter.Error) -> Error.COINTROLLER_REJECTION
+REF_545(TokenErrorReporter.FailureInfo) -> FailureInfo.TRANSFER_COINTROLLER_REJECTION
+TMP_791(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_544,REF_545,allowed)
+EXPRESSION:failOpaque(Error.COINTROLLER_REJECTION,FailureInfo.TRANSFER_COINTROLLER_REJECTION,allowed)	NodeType.EXPRESSION";
+"BlockID: 1338
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1339
+Call context: 
+None
+TMP_792(bool) = src == dst
+CONDITION TMP_792
+EXPRESSION:src == dst	NodeType.IF";
+"BlockID: 1340
+Call context: 
+True
+REF_546(TokenErrorReporter.Error) -> Error.BAD_INPUT
+REF_547(TokenErrorReporter.FailureInfo) -> FailureInfo.TRANSFER_NOT_ALLOWED
+TMP_793(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_546,REF_547)
+EXPRESSION:fail(Error.BAD_INPUT,FailureInfo.TRANSFER_NOT_ALLOWED)	NodeType.EXPRESSION";
+"BlockID: 1342
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1343
+Call context: 
+None
+startingAllowance(uint256) := 0(uint256)
+TMP_794(bool) = spender == src
+CONDITION TMP_794
+EXPRESSION:startingAllowance = 0	NodeType.VARIABLE
+startingAllowance = 0	NodeType.EXPRESSION
+spender == src	NodeType.IF";
+"BlockID: 1344
+Call context: 
+True
+TMP_795(uint256) = 0 - 1
+TMP_796 = CONVERT TMP_795 to uint256
+startingAllowance(uint256) := TMP_796(uint256)
+EXPRESSION:startingAllowance = uint256(- 1)	NodeType.EXPRESSION";
+"BlockID: 1345
+Call context: 
+False
+REF_548(mapping(address => uint256)) -> transferAllowances[src]
+REF_549(uint256) -> REF_548[spender]
+startingAllowance(uint256) := REF_549(uint256)
+EXPRESSION:startingAllowance = transferAllowances[src][spender]	NodeType.EXPRESSION";
+"BlockID: 1346
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1347
+Call context: 
+None
+NEW VARIABLE mathErr
+NEW VARIABLE allowanceNew
+NEW VARIABLE srrTokensNew
+NEW VARIABLE dstTokensNew
+TUPLE_86(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.subUInt(uint256,uint256)(startingAllowance,tokens)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(mathErr,allowanceNew) = subUInt(startingAllowance,tokens)	NodeType.EXPRESSION";
+"BlockID: 1348
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_86 index: 0 
+allowanceNew(uint256)= UNPACK TUPLE_86 index: 1 
+REF_550(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_797(bool) = mathErr != REF_550
+CONDITION TMP_797
+EXPRESSION:(mathErr,allowanceNew) = subUInt(startingAllowance,tokens)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 1349
+Call context: 
+True
+REF_551(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_552(TokenErrorReporter.FailureInfo) -> FailureInfo.TRANSFER_NOT_ALLOWED
+TMP_798(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_551,REF_552)
+EXPRESSION:fail(Error.MATH_ERROR,FailureInfo.TRANSFER_NOT_ALLOWED)	NodeType.EXPRESSION";
+"BlockID: 1351
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1352
+Call context: 
+None
+REF_553(uint256) -> accountTokens[src]
+TUPLE_87(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.subUInt(uint256,uint256)(REF_553,tokens)
+EXPRESSION:(mathErr,srrTokensNew) = subUInt(accountTokens[src],tokens)	NodeType.EXPRESSION";
+"BlockID: 1353
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_87 index: 0 
+srrTokensNew(uint256)= UNPACK TUPLE_87 index: 1 
+REF_554(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_799(bool) = mathErr != REF_554
+CONDITION TMP_799
+EXPRESSION:(mathErr,srrTokensNew) = subUInt(accountTokens[src],tokens)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 1354
+Call context: 
+True
+REF_555(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_556(TokenErrorReporter.FailureInfo) -> FailureInfo.TRANSFER_NOT_ENOUGH
+TMP_800(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_555,REF_556)
+EXPRESSION:fail(Error.MATH_ERROR,FailureInfo.TRANSFER_NOT_ENOUGH)	NodeType.EXPRESSION";
+"BlockID: 1356
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1357
+Call context: 
+None
+REF_557(uint256) -> accountTokens[dst]
+TUPLE_88(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.addUInt(uint256,uint256)(REF_557,tokens)
+EXPRESSION:(mathErr,dstTokensNew) = addUInt(accountTokens[dst],tokens)	NodeType.EXPRESSION";
+"BlockID: 1358
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_88 index: 0 
+dstTokensNew(uint256)= UNPACK TUPLE_88 index: 1 
+REF_558(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_801(bool) = mathErr != REF_558
+CONDITION TMP_801
+EXPRESSION:(mathErr,dstTokensNew) = addUInt(accountTokens[dst],tokens)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 1359
+Call context: 
+True
+REF_559(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_560(TokenErrorReporter.FailureInfo) -> FailureInfo.TRANSFER_TOO_MUCH
+TMP_802(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_559,REF_560)
+EXPRESSION:fail(Error.MATH_ERROR,FailureInfo.TRANSFER_TOO_MUCH)	NodeType.EXPRESSION";
+"BlockID: 1361
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1362
+Call context: 
+None
+REF_561(uint256) -> accountTokens[src]
+REF_561(uint256) (->accountTokens) := srrTokensNew(uint256)
+REF_562(uint256) -> accountTokens[dst]
+REF_562(uint256) (->accountTokens) := dstTokensNew(uint256)
+TMP_803(uint256) = 0 - 1
+TMP_804 = CONVERT TMP_803 to uint256
+TMP_805(bool) = startingAllowance != TMP_804
+CONDITION TMP_805
+EXPRESSION:accountTokens[src] = srrTokensNew	NodeType.EXPRESSION
+accountTokens[dst] = dstTokensNew	NodeType.EXPRESSION
+startingAllowance != uint256(- 1)	NodeType.IF";
+"BlockID: 1363
+Call context: 
+True
+REF_563(mapping(address => uint256)) -> transferAllowances[src]
+REF_564(uint256) -> REF_563[spender]
+REF_564(uint256) (->transferAllowances) := allowanceNew(uint256)
+EXPRESSION:transferAllowances[src][spender] = allowanceNew	NodeType.EXPRESSION";
+"BlockID: 1364
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1365
+Call context: 
+None
+REF_565(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_807 = CONVERT REF_565 to uint256
+RETURN TMP_807
+EXPRESSION:uint256(Error.NO_ERROR)	NodeType.RETURN";
+"BlockID: 1360
+Call context: 
+None
+RETURN TMP_802
+EXPRESSION:fail(Error.MATH_ERROR,FailureInfo.TRANSFER_TOO_MUCH)	NodeType.RETURN" [shape=box];
+"BlockID: 1355
+Call context: 
+None
+RETURN TMP_800
+EXPRESSION:fail(Error.MATH_ERROR,FailureInfo.TRANSFER_NOT_ENOUGH)	NodeType.RETURN" [shape=box];
+"BlockID: 1350
+Call context: 
+None
+RETURN TMP_798
+EXPRESSION:fail(Error.MATH_ERROR,FailureInfo.TRANSFER_NOT_ALLOWED)	NodeType.RETURN" [shape=box];
+"BlockID: 1341
+Call context: 
+None
+RETURN TMP_793
+EXPRESSION:fail(Error.BAD_INPUT,FailureInfo.TRANSFER_NOT_ALLOWED)	NodeType.RETURN" [shape=box];
+"BlockID: 1337
+Call context: 
+None
+RETURN TMP_791
+EXPRESSION:failOpaque(Error.COINTROLLER_REJECTION,FailureInfo.TRANSFER_COINTROLLER_REJECTION,allowed)	NodeType.RETURN" [shape=box];
+"BlockID: 1333
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1334
+Call context: 
+None
+TMP_788 = CONVERT this to address
+TMP_789(uint256) = HIGH_LEVEL_CALL, dest:cointroller(CointrollerInterface), function:transferAllowed, arguments:['TMP_788', 'src', 'dst', 'tokens']  
+EXPRESSION:" [key=0];
+"BlockID: 1334
+Call context: 
+None
+TMP_788 = CONVERT this to address
+TMP_789(uint256) = HIGH_LEVEL_CALL, dest:cointroller(CointrollerInterface), function:transferAllowed, arguments:['TMP_788', 'src', 'dst', 'tokens']  
+EXPRESSION:" -> "BlockID: 1335
+Call context: 
+None
+allowed(uint256) := TMP_789(uint256)
+TMP_790(bool) = allowed != 0
+CONDITION TMP_790
+EXPRESSION:allowed = cointroller.transferAllowed(address(this),src,dst,tokens)	NodeType.VARIABLE
+allowed = cointroller.transferAllowed(address(this),src,dst,tokens)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" [key=0];
+"BlockID: 1335
+Call context: 
+None
+allowed(uint256) := TMP_789(uint256)
+TMP_790(bool) = allowed != 0
+CONDITION TMP_790
+EXPRESSION:allowed = cointroller.transferAllowed(address(this),src,dst,tokens)	NodeType.VARIABLE
+allowed = cointroller.transferAllowed(address(this),src,dst,tokens)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" -> "BlockID: 1336
+Call context: 
+True
+REF_544(TokenErrorReporter.Error) -> Error.COINTROLLER_REJECTION
+REF_545(TokenErrorReporter.FailureInfo) -> FailureInfo.TRANSFER_COINTROLLER_REJECTION
+TMP_791(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_544,REF_545,allowed)
+EXPRESSION:failOpaque(Error.COINTROLLER_REJECTION,FailureInfo.TRANSFER_COINTROLLER_REJECTION,allowed)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1335
+Call context: 
+None
+allowed(uint256) := TMP_789(uint256)
+TMP_790(bool) = allowed != 0
+CONDITION TMP_790
+EXPRESSION:allowed = cointroller.transferAllowed(address(this),src,dst,tokens)	NodeType.VARIABLE
+allowed = cointroller.transferAllowed(address(this),src,dst,tokens)	NodeType.EXPRESSION
+allowed != 0	NodeType.IF" -> "BlockID: 1338
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1336
+Call context: 
+True
+REF_544(TokenErrorReporter.Error) -> Error.COINTROLLER_REJECTION
+REF_545(TokenErrorReporter.FailureInfo) -> FailureInfo.TRANSFER_COINTROLLER_REJECTION
+TMP_791(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_544,REF_545,allowed)
+EXPRESSION:failOpaque(Error.COINTROLLER_REJECTION,FailureInfo.TRANSFER_COINTROLLER_REJECTION,allowed)	NodeType.EXPRESSION" -> "BlockID: 1337
+Call context: 
+None
+RETURN TMP_791
+EXPRESSION:failOpaque(Error.COINTROLLER_REJECTION,FailureInfo.TRANSFER_COINTROLLER_REJECTION,allowed)	NodeType.RETURN" [key=0];
+"BlockID: 1338
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1339
+Call context: 
+None
+TMP_792(bool) = src == dst
+CONDITION TMP_792
+EXPRESSION:src == dst	NodeType.IF" [key=0];
+"BlockID: 1339
+Call context: 
+None
+TMP_792(bool) = src == dst
+CONDITION TMP_792
+EXPRESSION:src == dst	NodeType.IF" -> "BlockID: 1340
+Call context: 
+True
+REF_546(TokenErrorReporter.Error) -> Error.BAD_INPUT
+REF_547(TokenErrorReporter.FailureInfo) -> FailureInfo.TRANSFER_NOT_ALLOWED
+TMP_793(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_546,REF_547)
+EXPRESSION:fail(Error.BAD_INPUT,FailureInfo.TRANSFER_NOT_ALLOWED)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1339
+Call context: 
+None
+TMP_792(bool) = src == dst
+CONDITION TMP_792
+EXPRESSION:src == dst	NodeType.IF" -> "BlockID: 1342
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1340
+Call context: 
+True
+REF_546(TokenErrorReporter.Error) -> Error.BAD_INPUT
+REF_547(TokenErrorReporter.FailureInfo) -> FailureInfo.TRANSFER_NOT_ALLOWED
+TMP_793(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_546,REF_547)
+EXPRESSION:fail(Error.BAD_INPUT,FailureInfo.TRANSFER_NOT_ALLOWED)	NodeType.EXPRESSION" -> "BlockID: 1341
+Call context: 
+None
+RETURN TMP_793
+EXPRESSION:fail(Error.BAD_INPUT,FailureInfo.TRANSFER_NOT_ALLOWED)	NodeType.RETURN" [key=0];
+"BlockID: 1342
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1343
+Call context: 
+None
+startingAllowance(uint256) := 0(uint256)
+TMP_794(bool) = spender == src
+CONDITION TMP_794
+EXPRESSION:startingAllowance = 0	NodeType.VARIABLE
+startingAllowance = 0	NodeType.EXPRESSION
+spender == src	NodeType.IF" [key=0];
+"BlockID: 1343
+Call context: 
+None
+startingAllowance(uint256) := 0(uint256)
+TMP_794(bool) = spender == src
+CONDITION TMP_794
+EXPRESSION:startingAllowance = 0	NodeType.VARIABLE
+startingAllowance = 0	NodeType.EXPRESSION
+spender == src	NodeType.IF" -> "BlockID: 1344
+Call context: 
+True
+TMP_795(uint256) = 0 - 1
+TMP_796 = CONVERT TMP_795 to uint256
+startingAllowance(uint256) := TMP_796(uint256)
+EXPRESSION:startingAllowance = uint256(- 1)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1343
+Call context: 
+None
+startingAllowance(uint256) := 0(uint256)
+TMP_794(bool) = spender == src
+CONDITION TMP_794
+EXPRESSION:startingAllowance = 0	NodeType.VARIABLE
+startingAllowance = 0	NodeType.EXPRESSION
+spender == src	NodeType.IF" -> "BlockID: 1345
+Call context: 
+False
+REF_548(mapping(address => uint256)) -> transferAllowances[src]
+REF_549(uint256) -> REF_548[spender]
+startingAllowance(uint256) := REF_549(uint256)
+EXPRESSION:startingAllowance = transferAllowances[src][spender]	NodeType.EXPRESSION" [key=0];
+"BlockID: 1344
+Call context: 
+True
+TMP_795(uint256) = 0 - 1
+TMP_796 = CONVERT TMP_795 to uint256
+startingAllowance(uint256) := TMP_796(uint256)
+EXPRESSION:startingAllowance = uint256(- 1)	NodeType.EXPRESSION" -> "BlockID: 1346
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1345
+Call context: 
+False
+REF_548(mapping(address => uint256)) -> transferAllowances[src]
+REF_549(uint256) -> REF_548[spender]
+startingAllowance(uint256) := REF_549(uint256)
+EXPRESSION:startingAllowance = transferAllowances[src][spender]	NodeType.EXPRESSION" -> "BlockID: 1346
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1346
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1347
+Call context: 
+None
+NEW VARIABLE mathErr
+NEW VARIABLE allowanceNew
+NEW VARIABLE srrTokensNew
+NEW VARIABLE dstTokensNew
+TUPLE_86(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.subUInt(uint256,uint256)(startingAllowance,tokens)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(mathErr,allowanceNew) = subUInt(startingAllowance,tokens)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1347
+Call context: 
+None
+NEW VARIABLE mathErr
+NEW VARIABLE allowanceNew
+NEW VARIABLE srrTokensNew
+NEW VARIABLE dstTokensNew
+TUPLE_86(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.subUInt(uint256,uint256)(startingAllowance,tokens)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(mathErr,allowanceNew) = subUInt(startingAllowance,tokens)	NodeType.EXPRESSION" -> "BlockID: 1348
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_86 index: 0 
+allowanceNew(uint256)= UNPACK TUPLE_86 index: 1 
+REF_550(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_797(bool) = mathErr != REF_550
+CONDITION TMP_797
+EXPRESSION:(mathErr,allowanceNew) = subUInt(startingAllowance,tokens)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key=0];
+"BlockID: 1348
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_86 index: 0 
+allowanceNew(uint256)= UNPACK TUPLE_86 index: 1 
+REF_550(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_797(bool) = mathErr != REF_550
+CONDITION TMP_797
+EXPRESSION:(mathErr,allowanceNew) = subUInt(startingAllowance,tokens)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 1349
+Call context: 
+True
+REF_551(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_552(TokenErrorReporter.FailureInfo) -> FailureInfo.TRANSFER_NOT_ALLOWED
+TMP_798(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_551,REF_552)
+EXPRESSION:fail(Error.MATH_ERROR,FailureInfo.TRANSFER_NOT_ALLOWED)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1348
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_86 index: 0 
+allowanceNew(uint256)= UNPACK TUPLE_86 index: 1 
+REF_550(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_797(bool) = mathErr != REF_550
+CONDITION TMP_797
+EXPRESSION:(mathErr,allowanceNew) = subUInt(startingAllowance,tokens)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 1351
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1349
+Call context: 
+True
+REF_551(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_552(TokenErrorReporter.FailureInfo) -> FailureInfo.TRANSFER_NOT_ALLOWED
+TMP_798(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_551,REF_552)
+EXPRESSION:fail(Error.MATH_ERROR,FailureInfo.TRANSFER_NOT_ALLOWED)	NodeType.EXPRESSION" -> "BlockID: 1350
+Call context: 
+None
+RETURN TMP_798
+EXPRESSION:fail(Error.MATH_ERROR,FailureInfo.TRANSFER_NOT_ALLOWED)	NodeType.RETURN" [key=0];
+"BlockID: 1351
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1352
+Call context: 
+None
+REF_553(uint256) -> accountTokens[src]
+TUPLE_87(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.subUInt(uint256,uint256)(REF_553,tokens)
+EXPRESSION:(mathErr,srrTokensNew) = subUInt(accountTokens[src],tokens)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1352
+Call context: 
+None
+REF_553(uint256) -> accountTokens[src]
+TUPLE_87(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.subUInt(uint256,uint256)(REF_553,tokens)
+EXPRESSION:(mathErr,srrTokensNew) = subUInt(accountTokens[src],tokens)	NodeType.EXPRESSION" -> "BlockID: 1353
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_87 index: 0 
+srrTokensNew(uint256)= UNPACK TUPLE_87 index: 1 
+REF_554(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_799(bool) = mathErr != REF_554
+CONDITION TMP_799
+EXPRESSION:(mathErr,srrTokensNew) = subUInt(accountTokens[src],tokens)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key=0];
+"BlockID: 1353
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_87 index: 0 
+srrTokensNew(uint256)= UNPACK TUPLE_87 index: 1 
+REF_554(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_799(bool) = mathErr != REF_554
+CONDITION TMP_799
+EXPRESSION:(mathErr,srrTokensNew) = subUInt(accountTokens[src],tokens)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 1354
+Call context: 
+True
+REF_555(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_556(TokenErrorReporter.FailureInfo) -> FailureInfo.TRANSFER_NOT_ENOUGH
+TMP_800(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_555,REF_556)
+EXPRESSION:fail(Error.MATH_ERROR,FailureInfo.TRANSFER_NOT_ENOUGH)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1353
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_87 index: 0 
+srrTokensNew(uint256)= UNPACK TUPLE_87 index: 1 
+REF_554(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_799(bool) = mathErr != REF_554
+CONDITION TMP_799
+EXPRESSION:(mathErr,srrTokensNew) = subUInt(accountTokens[src],tokens)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 1356
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1354
+Call context: 
+True
+REF_555(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_556(TokenErrorReporter.FailureInfo) -> FailureInfo.TRANSFER_NOT_ENOUGH
+TMP_800(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_555,REF_556)
+EXPRESSION:fail(Error.MATH_ERROR,FailureInfo.TRANSFER_NOT_ENOUGH)	NodeType.EXPRESSION" -> "BlockID: 1355
+Call context: 
+None
+RETURN TMP_800
+EXPRESSION:fail(Error.MATH_ERROR,FailureInfo.TRANSFER_NOT_ENOUGH)	NodeType.RETURN" [key=0];
+"BlockID: 1356
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1357
+Call context: 
+None
+REF_557(uint256) -> accountTokens[dst]
+TUPLE_88(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.addUInt(uint256,uint256)(REF_557,tokens)
+EXPRESSION:(mathErr,dstTokensNew) = addUInt(accountTokens[dst],tokens)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1357
+Call context: 
+None
+REF_557(uint256) -> accountTokens[dst]
+TUPLE_88(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.addUInt(uint256,uint256)(REF_557,tokens)
+EXPRESSION:(mathErr,dstTokensNew) = addUInt(accountTokens[dst],tokens)	NodeType.EXPRESSION" -> "BlockID: 1358
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_88 index: 0 
+dstTokensNew(uint256)= UNPACK TUPLE_88 index: 1 
+REF_558(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_801(bool) = mathErr != REF_558
+CONDITION TMP_801
+EXPRESSION:(mathErr,dstTokensNew) = addUInt(accountTokens[dst],tokens)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key=0];
+"BlockID: 1358
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_88 index: 0 
+dstTokensNew(uint256)= UNPACK TUPLE_88 index: 1 
+REF_558(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_801(bool) = mathErr != REF_558
+CONDITION TMP_801
+EXPRESSION:(mathErr,dstTokensNew) = addUInt(accountTokens[dst],tokens)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 1359
+Call context: 
+True
+REF_559(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_560(TokenErrorReporter.FailureInfo) -> FailureInfo.TRANSFER_TOO_MUCH
+TMP_802(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_559,REF_560)
+EXPRESSION:fail(Error.MATH_ERROR,FailureInfo.TRANSFER_TOO_MUCH)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1358
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_88 index: 0 
+dstTokensNew(uint256)= UNPACK TUPLE_88 index: 1 
+REF_558(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_801(bool) = mathErr != REF_558
+CONDITION TMP_801
+EXPRESSION:(mathErr,dstTokensNew) = addUInt(accountTokens[dst],tokens)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 1361
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1359
+Call context: 
+True
+REF_559(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_560(TokenErrorReporter.FailureInfo) -> FailureInfo.TRANSFER_TOO_MUCH
+TMP_802(uint256) = INTERNAL_CALL, TokenErrorReporter.fail(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo)(REF_559,REF_560)
+EXPRESSION:fail(Error.MATH_ERROR,FailureInfo.TRANSFER_TOO_MUCH)	NodeType.EXPRESSION" -> "BlockID: 1360
+Call context: 
+None
+RETURN TMP_802
+EXPRESSION:fail(Error.MATH_ERROR,FailureInfo.TRANSFER_TOO_MUCH)	NodeType.RETURN" [key=0];
+"BlockID: 1361
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1362
+Call context: 
+None
+REF_561(uint256) -> accountTokens[src]
+REF_561(uint256) (->accountTokens) := srrTokensNew(uint256)
+REF_562(uint256) -> accountTokens[dst]
+REF_562(uint256) (->accountTokens) := dstTokensNew(uint256)
+TMP_803(uint256) = 0 - 1
+TMP_804 = CONVERT TMP_803 to uint256
+TMP_805(bool) = startingAllowance != TMP_804
+CONDITION TMP_805
+EXPRESSION:accountTokens[src] = srrTokensNew	NodeType.EXPRESSION
+accountTokens[dst] = dstTokensNew	NodeType.EXPRESSION
+startingAllowance != uint256(- 1)	NodeType.IF" [key=0];
+"BlockID: 1362
+Call context: 
+None
+REF_561(uint256) -> accountTokens[src]
+REF_561(uint256) (->accountTokens) := srrTokensNew(uint256)
+REF_562(uint256) -> accountTokens[dst]
+REF_562(uint256) (->accountTokens) := dstTokensNew(uint256)
+TMP_803(uint256) = 0 - 1
+TMP_804 = CONVERT TMP_803 to uint256
+TMP_805(bool) = startingAllowance != TMP_804
+CONDITION TMP_805
+EXPRESSION:accountTokens[src] = srrTokensNew	NodeType.EXPRESSION
+accountTokens[dst] = dstTokensNew	NodeType.EXPRESSION
+startingAllowance != uint256(- 1)	NodeType.IF" -> "BlockID: 1363
+Call context: 
+True
+REF_563(mapping(address => uint256)) -> transferAllowances[src]
+REF_564(uint256) -> REF_563[spender]
+REF_564(uint256) (->transferAllowances) := allowanceNew(uint256)
+EXPRESSION:transferAllowances[src][spender] = allowanceNew	NodeType.EXPRESSION" [key=0];
+"BlockID: 1362
+Call context: 
+None
+REF_561(uint256) -> accountTokens[src]
+REF_561(uint256) (->accountTokens) := srrTokensNew(uint256)
+REF_562(uint256) -> accountTokens[dst]
+REF_562(uint256) (->accountTokens) := dstTokensNew(uint256)
+TMP_803(uint256) = 0 - 1
+TMP_804 = CONVERT TMP_803 to uint256
+TMP_805(bool) = startingAllowance != TMP_804
+CONDITION TMP_805
+EXPRESSION:accountTokens[src] = srrTokensNew	NodeType.EXPRESSION
+accountTokens[dst] = dstTokensNew	NodeType.EXPRESSION
+startingAllowance != uint256(- 1)	NodeType.IF" -> "BlockID: 1364
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1363
+Call context: 
+True
+REF_563(mapping(address => uint256)) -> transferAllowances[src]
+REF_564(uint256) -> REF_563[spender]
+REF_564(uint256) (->transferAllowances) := allowanceNew(uint256)
+EXPRESSION:transferAllowances[src][spender] = allowanceNew	NodeType.EXPRESSION" -> "BlockID: 1364
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1364
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1365
+Call context: 
+None
+REF_565(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_807 = CONVERT REF_565 to uint256
+RETURN TMP_807
+EXPRESSION:uint256(Error.NO_ERROR)	NodeType.RETURN" [key=0];
+}

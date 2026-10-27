@@ -1,0 +1,581 @@
+digraph {
+"BlockID: 2876
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 2877
+Call context: 
+None
+TMP_2472(uint256) = HIGH_LEVEL_CALL, dest:minter(IBaseV2Minter), function:updatePeriod, arguments:[]  
+EXPRESSION:minter.updatePeriod()	NodeType.EXPRESSION";
+"BlockID: 2878
+Call context: 
+None
+TMP_2473(uint32) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.toUint32(uint256), arguments:['block.timestamp'] 
+EXPRESSION:minter.updatePeriod()	NodeType.EXPRESSION";
+"BlockID: 2879
+Call context: 
+None
+TMP_2474(uint32) = TMP_2473 (c)/ gaugeCycleLength
+TMP_2475(uint32) = TMP_2474 (c)* gaugeCycleLength
+currentCycle(uint32) := TMP_2475(uint32)
+lastCycle(uint32) := gaugeCycle(uint32)
+TMP_2476(bool) = currentCycle <= lastCycle
+CONDITION TMP_2476
+EXPRESSION:currentCycle = (block.timestamp.toUint32() / gaugeCycleLength) * gaugeCycleLength	NodeType.VARIABLE
+currentCycle = (block.timestamp.toUint32() / gaugeCycleLength) * gaugeCycleLength	NodeType.EXPRESSION
+lastCycle = gaugeCycle	NodeType.VARIABLE
+lastCycle = gaugeCycle	NodeType.EXPRESSION
+currentCycle <= lastCycle	NodeType.IF" [shape=box];
+"BlockID: 2880
+Call context: 
+True
+TMP_2477(None) = SOLIDITY_CALL revert CycleError()()
+EXPRESSION:revert CycleError()()	NodeType.EXPRESSION";
+"BlockID: 2881
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2882
+Call context: 
+None
+TMP_2478(bool) = currentCycle > nextCycle
+CONDITION TMP_2478
+EXPRESSION:currentCycle > nextCycle	NodeType.IF";
+"BlockID: 2883
+Call context: 
+True
+nextCycle(uint32) := currentCycle(uint32)
+paginationOffset(uint32) := 0(uint256)
+EXPRESSION:nextCycle = currentCycle	NodeType.EXPRESSION
+paginationOffset = 0	NodeType.EXPRESSION";
+"BlockID: 2884
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2885
+Call context: 
+None
+offset(uint32) := paginationOffset(uint32)
+TMP_2479(bool) = offset == 0
+CONDITION TMP_2479
+EXPRESSION:offset = paginationOffset	NodeType.VARIABLE
+offset = paginationOffset	NodeType.EXPRESSION
+offset == 0	NodeType.IF";
+"BlockID: 2886
+Call context: 
+True
+TMP_2480 = CONVERT this to address
+TMP_2481(uint256) = LIBRARY_CALL, dest:SafeTransferLib, function:SafeTransferLib.balanceOf(address,address), arguments:['rewardToken', 'TMP_2480'] 
+EXPRESSION:";
+"BlockID: 2888
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2889
+Call context: 
+None
+queued(uint112) := nextCycleQueuedRewards(uint112)
+TMP_2493(uint256) = HIGH_LEVEL_CALL, dest:gaugeToken(ERC20Gauges), function:numGauges, arguments:[]  
+EXPRESSION:queued = nextCycleQueuedRewards	NodeType.VARIABLE
+queued = nextCycleQueuedRewards	NodeType.EXPRESSION";
+"BlockID: 2890
+Call context: 
+None
+TMP_2494(uint256) = TMP_2493 (c)- offset
+remaining(uint256) := TMP_2494(uint256)
+TMP_2495(bool) = remaining <= numRewards
+CONDITION TMP_2495
+EXPRESSION:remaining = gaugeToken.numGauges() - offset	NodeType.VARIABLE
+remaining = gaugeToken.numGauges() - offset	NodeType.EXPRESSION
+remaining <= numRewards	NodeType.IF" [shape=box];
+"BlockID: 2891
+Call context: 
+True
+numRewards(uint256) := remaining(uint256)
+gaugeCycle(uint32) := currentCycle(uint32)
+nextCycleQueuedRewards(uint112) := 0(uint256)
+paginationOffset(uint32) := 0(uint256)
+EXPRESSION:numRewards = remaining	NodeType.EXPRESSION
+gaugeCycle = currentCycle	NodeType.EXPRESSION
+nextCycleQueuedRewards = 0	NodeType.EXPRESSION
+paginationOffset = 0	NodeType.EXPRESSION";
+"BlockID: 2892
+Call context: 
+False
+TMP_2497(uint32) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.toUint32(uint256), arguments:['numRewards'] 
+EXPRESSION:paginationOffset = offset + numRewards.toUint32()	NodeType.EXPRESSION";
+"BlockID: 2893
+Call context: 
+None
+TMP_2498(uint32) = offset (c)+ TMP_2497
+paginationOffset(uint32) := TMP_2498(uint32)
+EXPRESSION:paginationOffset = offset + numRewards.toUint32()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2894
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2895
+Call context: 
+None
+TMP_2499(address[]) = HIGH_LEVEL_CALL, dest:gaugeToken(ERC20Gauges), function:gauges, arguments:['offset', 'numRewards']  
+EXPRESSION:";
+"BlockID: 2896
+Call context: 
+None
+gauges(address[]) =  ['TMP_2499(address[])']
+INTERNAL_CALL, FlywheelGaugeRewards._queueRewards(address[],uint32,uint32,uint256)(gauges,currentCycle,lastCycle,queued)
+EXPRESSION:gauges = gaugeToken.gauges(offset,numRewards)	NodeType.VARIABLE
+gauges = gaugeToken.gauges(offset,numRewards)	NodeType.EXPRESSION
+_queueRewards(gauges,currentCycle,lastCycle,queued)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2887
+Call context: 
+None
+balanceBefore(uint256) := TMP_2481(uint256)
+TMP_2482(uint256) = HIGH_LEVEL_CALL, dest:minter(IBaseV2Minter), function:getRewards, arguments:[]  
+EXPRESSION:balanceBefore = rewardToken.balanceOf(address(this))	NodeType.VARIABLE
+balanceBefore = rewardToken.balanceOf(address(this))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2898
+Call context: 
+None
+newRewards(uint256) := TMP_2482(uint256)
+TMP_2483 = CONVERT this to address
+TMP_2484(uint256) = LIBRARY_CALL, dest:SafeTransferLib, function:SafeTransferLib.balanceOf(address,address), arguments:['rewardToken', 'TMP_2483'] 
+EXPRESSION:newRewards = minter.getRewards()	NodeType.VARIABLE
+newRewards = minter.getRewards()	NodeType.EXPRESSION
+require(bool)(rewardToken.balanceOf(address(this)) - balanceBefore >= newRewards)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2901
+Call context: 
+True
+TMP_2492 = CONVERT newRewards to uint112
+nextCycleQueuedRewards(uint112) = nextCycleQueuedRewards (c)+ TMP_2492
+EXPRESSION:nextCycleQueuedRewards += uint112(newRewards)	NodeType.EXPRESSION";
+"BlockID: 2902
+Call context: 
+None
+TMP_2485(uint256) = TMP_2484 (c)- balanceBefore
+TMP_2486(bool) = TMP_2485 >= newRewards
+CONDITION TMP_2486
+EXPRESSION:TMP_2486(bool) = TMP_2485 >= newRewards	NodeType.IF";
+"BlockID: 2903
+Call context: 
+True
+TMP_2487(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 2904
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2905
+Call context: 
+None
+TMP_2489(uint112) := 5192296858534827628530496329220095(uint112)
+TMP_2490(bool) = newRewards <= TMP_2489
+CONDITION TMP_2490
+EXPRESSION:TMP_2490(bool) = newRewards <= TMP_2489	NodeType.IF";
+"BlockID: 2906
+Call context: 
+True
+TMP_2491(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 2907
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2876
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 2877
+Call context: 
+None
+TMP_2472(uint256) = HIGH_LEVEL_CALL, dest:minter(IBaseV2Minter), function:updatePeriod, arguments:[]  
+EXPRESSION:minter.updatePeriod()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2877
+Call context: 
+None
+TMP_2472(uint256) = HIGH_LEVEL_CALL, dest:minter(IBaseV2Minter), function:updatePeriod, arguments:[]  
+EXPRESSION:minter.updatePeriod()	NodeType.EXPRESSION" -> "BlockID: 2878
+Call context: 
+None
+TMP_2473(uint32) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.toUint32(uint256), arguments:['block.timestamp'] 
+EXPRESSION:minter.updatePeriod()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2878
+Call context: 
+None
+TMP_2473(uint32) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.toUint32(uint256), arguments:['block.timestamp'] 
+EXPRESSION:minter.updatePeriod()	NodeType.EXPRESSION" -> "BlockID: 2879
+Call context: 
+None
+TMP_2474(uint32) = TMP_2473 (c)/ gaugeCycleLength
+TMP_2475(uint32) = TMP_2474 (c)* gaugeCycleLength
+currentCycle(uint32) := TMP_2475(uint32)
+lastCycle(uint32) := gaugeCycle(uint32)
+TMP_2476(bool) = currentCycle <= lastCycle
+CONDITION TMP_2476
+EXPRESSION:currentCycle = (block.timestamp.toUint32() / gaugeCycleLength) * gaugeCycleLength	NodeType.VARIABLE
+currentCycle = (block.timestamp.toUint32() / gaugeCycleLength) * gaugeCycleLength	NodeType.EXPRESSION
+lastCycle = gaugeCycle	NodeType.VARIABLE
+lastCycle = gaugeCycle	NodeType.EXPRESSION
+currentCycle <= lastCycle	NodeType.IF" [key=0];
+"BlockID: 2879
+Call context: 
+None
+TMP_2474(uint32) = TMP_2473 (c)/ gaugeCycleLength
+TMP_2475(uint32) = TMP_2474 (c)* gaugeCycleLength
+currentCycle(uint32) := TMP_2475(uint32)
+lastCycle(uint32) := gaugeCycle(uint32)
+TMP_2476(bool) = currentCycle <= lastCycle
+CONDITION TMP_2476
+EXPRESSION:currentCycle = (block.timestamp.toUint32() / gaugeCycleLength) * gaugeCycleLength	NodeType.VARIABLE
+currentCycle = (block.timestamp.toUint32() / gaugeCycleLength) * gaugeCycleLength	NodeType.EXPRESSION
+lastCycle = gaugeCycle	NodeType.VARIABLE
+lastCycle = gaugeCycle	NodeType.EXPRESSION
+currentCycle <= lastCycle	NodeType.IF" -> "BlockID: 2880
+Call context: 
+True
+TMP_2477(None) = SOLIDITY_CALL revert CycleError()()
+EXPRESSION:revert CycleError()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2879
+Call context: 
+None
+TMP_2474(uint32) = TMP_2473 (c)/ gaugeCycleLength
+TMP_2475(uint32) = TMP_2474 (c)* gaugeCycleLength
+currentCycle(uint32) := TMP_2475(uint32)
+lastCycle(uint32) := gaugeCycle(uint32)
+TMP_2476(bool) = currentCycle <= lastCycle
+CONDITION TMP_2476
+EXPRESSION:currentCycle = (block.timestamp.toUint32() / gaugeCycleLength) * gaugeCycleLength	NodeType.VARIABLE
+currentCycle = (block.timestamp.toUint32() / gaugeCycleLength) * gaugeCycleLength	NodeType.EXPRESSION
+lastCycle = gaugeCycle	NodeType.VARIABLE
+lastCycle = gaugeCycle	NodeType.EXPRESSION
+currentCycle <= lastCycle	NodeType.IF" -> "BlockID: 2881
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2881
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2882
+Call context: 
+None
+TMP_2478(bool) = currentCycle > nextCycle
+CONDITION TMP_2478
+EXPRESSION:currentCycle > nextCycle	NodeType.IF" [key=0];
+"BlockID: 2882
+Call context: 
+None
+TMP_2478(bool) = currentCycle > nextCycle
+CONDITION TMP_2478
+EXPRESSION:currentCycle > nextCycle	NodeType.IF" -> "BlockID: 2883
+Call context: 
+True
+nextCycle(uint32) := currentCycle(uint32)
+paginationOffset(uint32) := 0(uint256)
+EXPRESSION:nextCycle = currentCycle	NodeType.EXPRESSION
+paginationOffset = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 2882
+Call context: 
+None
+TMP_2478(bool) = currentCycle > nextCycle
+CONDITION TMP_2478
+EXPRESSION:currentCycle > nextCycle	NodeType.IF" -> "BlockID: 2884
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2883
+Call context: 
+True
+nextCycle(uint32) := currentCycle(uint32)
+paginationOffset(uint32) := 0(uint256)
+EXPRESSION:nextCycle = currentCycle	NodeType.EXPRESSION
+paginationOffset = 0	NodeType.EXPRESSION" -> "BlockID: 2884
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2884
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2885
+Call context: 
+None
+offset(uint32) := paginationOffset(uint32)
+TMP_2479(bool) = offset == 0
+CONDITION TMP_2479
+EXPRESSION:offset = paginationOffset	NodeType.VARIABLE
+offset = paginationOffset	NodeType.EXPRESSION
+offset == 0	NodeType.IF" [key=0];
+"BlockID: 2885
+Call context: 
+None
+offset(uint32) := paginationOffset(uint32)
+TMP_2479(bool) = offset == 0
+CONDITION TMP_2479
+EXPRESSION:offset = paginationOffset	NodeType.VARIABLE
+offset = paginationOffset	NodeType.EXPRESSION
+offset == 0	NodeType.IF" -> "BlockID: 2886
+Call context: 
+True
+TMP_2480 = CONVERT this to address
+TMP_2481(uint256) = LIBRARY_CALL, dest:SafeTransferLib, function:SafeTransferLib.balanceOf(address,address), arguments:['rewardToken', 'TMP_2480'] 
+EXPRESSION:" [key=0];
+"BlockID: 2885
+Call context: 
+None
+offset(uint32) := paginationOffset(uint32)
+TMP_2479(bool) = offset == 0
+CONDITION TMP_2479
+EXPRESSION:offset = paginationOffset	NodeType.VARIABLE
+offset = paginationOffset	NodeType.EXPRESSION
+offset == 0	NodeType.IF" -> "BlockID: 2888
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2886
+Call context: 
+True
+TMP_2480 = CONVERT this to address
+TMP_2481(uint256) = LIBRARY_CALL, dest:SafeTransferLib, function:SafeTransferLib.balanceOf(address,address), arguments:['rewardToken', 'TMP_2480'] 
+EXPRESSION:" -> "BlockID: 2887
+Call context: 
+None
+balanceBefore(uint256) := TMP_2481(uint256)
+TMP_2482(uint256) = HIGH_LEVEL_CALL, dest:minter(IBaseV2Minter), function:getRewards, arguments:[]  
+EXPRESSION:balanceBefore = rewardToken.balanceOf(address(this))	NodeType.VARIABLE
+balanceBefore = rewardToken.balanceOf(address(this))	NodeType.EXPRESSION" [key=0];
+"BlockID: 2888
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2889
+Call context: 
+None
+queued(uint112) := nextCycleQueuedRewards(uint112)
+TMP_2493(uint256) = HIGH_LEVEL_CALL, dest:gaugeToken(ERC20Gauges), function:numGauges, arguments:[]  
+EXPRESSION:queued = nextCycleQueuedRewards	NodeType.VARIABLE
+queued = nextCycleQueuedRewards	NodeType.EXPRESSION" [key=0];
+"BlockID: 2889
+Call context: 
+None
+queued(uint112) := nextCycleQueuedRewards(uint112)
+TMP_2493(uint256) = HIGH_LEVEL_CALL, dest:gaugeToken(ERC20Gauges), function:numGauges, arguments:[]  
+EXPRESSION:queued = nextCycleQueuedRewards	NodeType.VARIABLE
+queued = nextCycleQueuedRewards	NodeType.EXPRESSION" -> "BlockID: 2890
+Call context: 
+None
+TMP_2494(uint256) = TMP_2493 (c)- offset
+remaining(uint256) := TMP_2494(uint256)
+TMP_2495(bool) = remaining <= numRewards
+CONDITION TMP_2495
+EXPRESSION:remaining = gaugeToken.numGauges() - offset	NodeType.VARIABLE
+remaining = gaugeToken.numGauges() - offset	NodeType.EXPRESSION
+remaining <= numRewards	NodeType.IF" [key=0];
+"BlockID: 2890
+Call context: 
+None
+TMP_2494(uint256) = TMP_2493 (c)- offset
+remaining(uint256) := TMP_2494(uint256)
+TMP_2495(bool) = remaining <= numRewards
+CONDITION TMP_2495
+EXPRESSION:remaining = gaugeToken.numGauges() - offset	NodeType.VARIABLE
+remaining = gaugeToken.numGauges() - offset	NodeType.EXPRESSION
+remaining <= numRewards	NodeType.IF" -> "BlockID: 2891
+Call context: 
+True
+numRewards(uint256) := remaining(uint256)
+gaugeCycle(uint32) := currentCycle(uint32)
+nextCycleQueuedRewards(uint112) := 0(uint256)
+paginationOffset(uint32) := 0(uint256)
+EXPRESSION:numRewards = remaining	NodeType.EXPRESSION
+gaugeCycle = currentCycle	NodeType.EXPRESSION
+nextCycleQueuedRewards = 0	NodeType.EXPRESSION
+paginationOffset = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 2890
+Call context: 
+None
+TMP_2494(uint256) = TMP_2493 (c)- offset
+remaining(uint256) := TMP_2494(uint256)
+TMP_2495(bool) = remaining <= numRewards
+CONDITION TMP_2495
+EXPRESSION:remaining = gaugeToken.numGauges() - offset	NodeType.VARIABLE
+remaining = gaugeToken.numGauges() - offset	NodeType.EXPRESSION
+remaining <= numRewards	NodeType.IF" -> "BlockID: 2892
+Call context: 
+False
+TMP_2497(uint32) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.toUint32(uint256), arguments:['numRewards'] 
+EXPRESSION:paginationOffset = offset + numRewards.toUint32()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2891
+Call context: 
+True
+numRewards(uint256) := remaining(uint256)
+gaugeCycle(uint32) := currentCycle(uint32)
+nextCycleQueuedRewards(uint112) := 0(uint256)
+paginationOffset(uint32) := 0(uint256)
+EXPRESSION:numRewards = remaining	NodeType.EXPRESSION
+gaugeCycle = currentCycle	NodeType.EXPRESSION
+nextCycleQueuedRewards = 0	NodeType.EXPRESSION
+paginationOffset = 0	NodeType.EXPRESSION" -> "BlockID: 2894
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2892
+Call context: 
+False
+TMP_2497(uint32) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.toUint32(uint256), arguments:['numRewards'] 
+EXPRESSION:paginationOffset = offset + numRewards.toUint32()	NodeType.EXPRESSION" -> "BlockID: 2893
+Call context: 
+None
+TMP_2498(uint32) = offset (c)+ TMP_2497
+paginationOffset(uint32) := TMP_2498(uint32)
+EXPRESSION:paginationOffset = offset + numRewards.toUint32()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2893
+Call context: 
+None
+TMP_2498(uint32) = offset (c)+ TMP_2497
+paginationOffset(uint32) := TMP_2498(uint32)
+EXPRESSION:paginationOffset = offset + numRewards.toUint32()	NodeType.EXPRESSION" -> "BlockID: 2894
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2894
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2895
+Call context: 
+None
+TMP_2499(address[]) = HIGH_LEVEL_CALL, dest:gaugeToken(ERC20Gauges), function:gauges, arguments:['offset', 'numRewards']  
+EXPRESSION:" [key=0];
+"BlockID: 2895
+Call context: 
+None
+TMP_2499(address[]) = HIGH_LEVEL_CALL, dest:gaugeToken(ERC20Gauges), function:gauges, arguments:['offset', 'numRewards']  
+EXPRESSION:" -> "BlockID: 2896
+Call context: 
+None
+gauges(address[]) =  ['TMP_2499(address[])']
+INTERNAL_CALL, FlywheelGaugeRewards._queueRewards(address[],uint32,uint32,uint256)(gauges,currentCycle,lastCycle,queued)
+EXPRESSION:gauges = gaugeToken.gauges(offset,numRewards)	NodeType.VARIABLE
+gauges = gaugeToken.gauges(offset,numRewards)	NodeType.EXPRESSION
+_queueRewards(gauges,currentCycle,lastCycle,queued)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2887
+Call context: 
+None
+balanceBefore(uint256) := TMP_2481(uint256)
+TMP_2482(uint256) = HIGH_LEVEL_CALL, dest:minter(IBaseV2Minter), function:getRewards, arguments:[]  
+EXPRESSION:balanceBefore = rewardToken.balanceOf(address(this))	NodeType.VARIABLE
+balanceBefore = rewardToken.balanceOf(address(this))	NodeType.EXPRESSION" -> "BlockID: 2898
+Call context: 
+None
+newRewards(uint256) := TMP_2482(uint256)
+TMP_2483 = CONVERT this to address
+TMP_2484(uint256) = LIBRARY_CALL, dest:SafeTransferLib, function:SafeTransferLib.balanceOf(address,address), arguments:['rewardToken', 'TMP_2483'] 
+EXPRESSION:newRewards = minter.getRewards()	NodeType.VARIABLE
+newRewards = minter.getRewards()	NodeType.EXPRESSION
+require(bool)(rewardToken.balanceOf(address(this)) - balanceBefore >= newRewards)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2898
+Call context: 
+None
+newRewards(uint256) := TMP_2482(uint256)
+TMP_2483 = CONVERT this to address
+TMP_2484(uint256) = LIBRARY_CALL, dest:SafeTransferLib, function:SafeTransferLib.balanceOf(address,address), arguments:['rewardToken', 'TMP_2483'] 
+EXPRESSION:newRewards = minter.getRewards()	NodeType.VARIABLE
+newRewards = minter.getRewards()	NodeType.EXPRESSION
+require(bool)(rewardToken.balanceOf(address(this)) - balanceBefore >= newRewards)	NodeType.EXPRESSION" -> "BlockID: 2902
+Call context: 
+None
+TMP_2485(uint256) = TMP_2484 (c)- balanceBefore
+TMP_2486(bool) = TMP_2485 >= newRewards
+CONDITION TMP_2486
+EXPRESSION:TMP_2486(bool) = TMP_2485 >= newRewards	NodeType.IF" [key=0];
+"BlockID: 2901
+Call context: 
+True
+TMP_2492 = CONVERT newRewards to uint112
+nextCycleQueuedRewards(uint112) = nextCycleQueuedRewards (c)+ TMP_2492
+EXPRESSION:nextCycleQueuedRewards += uint112(newRewards)	NodeType.EXPRESSION" -> "BlockID: 2888
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2902
+Call context: 
+None
+TMP_2485(uint256) = TMP_2484 (c)- balanceBefore
+TMP_2486(bool) = TMP_2485 >= newRewards
+CONDITION TMP_2486
+EXPRESSION:TMP_2486(bool) = TMP_2485 >= newRewards	NodeType.IF" -> "BlockID: 2903
+Call context: 
+True
+TMP_2487(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2902
+Call context: 
+None
+TMP_2485(uint256) = TMP_2484 (c)- balanceBefore
+TMP_2486(bool) = TMP_2485 >= newRewards
+CONDITION TMP_2486
+EXPRESSION:TMP_2486(bool) = TMP_2485 >= newRewards	NodeType.IF" -> "BlockID: 2904
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2904
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2905
+Call context: 
+None
+TMP_2489(uint112) := 5192296858534827628530496329220095(uint112)
+TMP_2490(bool) = newRewards <= TMP_2489
+CONDITION TMP_2490
+EXPRESSION:TMP_2490(bool) = newRewards <= TMP_2489	NodeType.IF" [key=0];
+"BlockID: 2905
+Call context: 
+None
+TMP_2489(uint112) := 5192296858534827628530496329220095(uint112)
+TMP_2490(bool) = newRewards <= TMP_2489
+CONDITION TMP_2490
+EXPRESSION:TMP_2490(bool) = newRewards <= TMP_2489	NodeType.IF" -> "BlockID: 2906
+Call context: 
+True
+TMP_2491(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2905
+Call context: 
+None
+TMP_2489(uint112) := 5192296858534827628530496329220095(uint112)
+TMP_2490(bool) = newRewards <= TMP_2489
+CONDITION TMP_2490
+EXPRESSION:TMP_2490(bool) = newRewards <= TMP_2489	NodeType.IF" -> "BlockID: 2907
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2907
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2901
+Call context: 
+True
+TMP_2492 = CONVERT newRewards to uint112
+nextCycleQueuedRewards(uint112) = nextCycleQueuedRewards (c)+ TMP_2492
+EXPRESSION:nextCycleQueuedRewards += uint112(newRewards)	NodeType.EXPRESSION" [key=0];
+}

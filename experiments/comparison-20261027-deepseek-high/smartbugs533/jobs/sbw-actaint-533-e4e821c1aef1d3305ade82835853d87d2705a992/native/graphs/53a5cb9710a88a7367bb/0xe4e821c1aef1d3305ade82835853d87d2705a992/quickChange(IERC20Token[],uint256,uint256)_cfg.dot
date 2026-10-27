@@ -1,0 +1,547 @@
+digraph {
+"BlockID: 833
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 834
+Call context: 
+None
+MODIFIER_CALL, BancorChanger.validChangePath(IERC20Token[])(_path)
+EXPRESSION:validChangePath(_path)	NodeType.EXPRESSION";
+"BlockID: 835
+Call context: 
+None
+REF_72(IERC20Token) -> _path[0]
+fromToken(IERC20Token) := REF_72(IERC20Token)
+INTERNAL_CALL, BancorChanger.claimTokens(IERC20Token,address,uint256)(fromToken,msg.sender,_amount)
+EXPRESSION:validChangePath(_path)	NodeType.EXPRESSION
+fromToken = _path[0]	NodeType.VARIABLE
+fromToken = _path[0]	NodeType.EXPRESSION
+claimTokens(fromToken,msg.sender,_amount)	NodeType.EXPRESSION";
+"BlockID: 836
+Call context: 
+None
+NEW VARIABLE smartToken
+NEW VARIABLE toToken
+NEW VARIABLE changer
+REF_73 -> LENGTH _path
+pathLength(uint256) := REF_73(uint256)
+i(uint256) := 1(uint256)
+EXPRESSION:claimTokens(fromToken,msg.sender,_amount)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+pathLength = _path.length	NodeType.VARIABLE
+pathLength = _path.length	NodeType.EXPRESSION
+i = 1	NodeType.VARIABLE
+i = 1	NodeType.EXPRESSION";
+"BlockID: 837
+Call context: 
+None
+BEGIN_LOOP
+TMP_285(bool) = i < pathLength
+CONDITION TMP_285
+EXPRESSION:None	NodeType.STARTLOOP
+i < pathLength	NodeType.IFLOOP";
+"BlockID: 838
+Call context: 
+True
+REF_74(IERC20Token) -> _path[i]
+TMP_286 = CONVERT REF_74 to ISmartToken
+smartToken(ISmartToken) := TMP_286(ISmartToken)
+TMP_287(uint256) = i + 1
+REF_75(IERC20Token) -> _path[TMP_287]
+toToken(IERC20Token) := REF_75(IERC20Token)
+TMP_288(address) = HIGH_LEVEL_CALL, dest:smartToken(ISmartToken), function:owner, arguments:[]  
+EXPRESSION:smartToken = ISmartToken(_path[i])	NodeType.EXPRESSION
+toToken = _path[i + 1]	NodeType.EXPRESSION
+changer = BancorChanger(smartToken.owner())	NodeType.EXPRESSION";
+"BlockID: 839
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 840
+Call context: 
+None
+TMP_292(bool) = HIGH_LEVEL_CALL, dest:changer(BancorChanger), function:hasQuickBuyEtherToken, arguments:[]  
+EXPRESSION:changer.hasQuickBuyEtherToken() && changer.getQuickBuyEtherToken() == toToken	NodeType.EXPRESSION";
+"BlockID: 841
+Call context: 
+None
+TMP_293(IEtherToken) = HIGH_LEVEL_CALL, dest:changer(BancorChanger), function:getQuickBuyEtherToken, arguments:[]  
+EXPRESSION:changer.hasQuickBuyEtherToken() && changer.getQuickBuyEtherToken() == toToken	NodeType.EXPRESSION" [shape=box];
+"BlockID: 842
+Call context: 
+None
+TMP_294(bool) = TMP_293 == toToken
+TMP_295(bool) = TMP_292 && TMP_294
+CONDITION TMP_295
+EXPRESSION:changer.hasQuickBuyEtherToken() && changer.getQuickBuyEtherToken() == toToken	NodeType.IF" [shape=box];
+"BlockID: 843
+Call context: 
+True
+TMP_296 = CONVERT toToken to IEtherToken
+etherToken(IEtherToken) := TMP_296(IEtherToken)
+HIGH_LEVEL_CALL, dest:etherToken(IEtherToken), function:withdrawTo, arguments:['msg.sender', '_amount']  
+EXPRESSION:etherToken = IEtherToken(toToken)	NodeType.VARIABLE
+etherToken = IEtherToken(toToken)	NodeType.EXPRESSION
+etherToken.withdrawTo(msg.sender,_amount)	NodeType.EXPRESSION";
+"BlockID: 844
+Call context: 
+False
+TMP_298(bool) = HIGH_LEVEL_CALL, dest:toToken(IERC20Token), function:transfer, arguments:['msg.sender', '_amount']  
+EXPRESSION:assert(bool)(toToken.transfer(msg.sender,_amount))	NodeType.EXPRESSION";
+"BlockID: 846
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 847
+Call context: 
+None
+RETURN _amount
+EXPRESSION:_amount	NodeType.RETURN";
+"BlockID: 849
+Call context: 
+None
+TMP_289 = CONVERT TMP_288 to BancorChanger
+changer(BancorChanger) := TMP_289(BancorChanger)
+TMP_290(bool) = smartToken != fromToken
+CONDITION TMP_290
+EXPRESSION:changer = BancorChanger(smartToken.owner())	NodeType.EXPRESSION
+smartToken != fromToken	NodeType.IF" [shape=box];
+"BlockID: 850
+Call context: 
+True
+INTERNAL_CALL, BancorChanger.ensureAllowance(IERC20Token,address,uint256)(fromToken,changer,_amount)
+EXPRESSION:ensureAllowance(fromToken,changer,_amount)	NodeType.EXPRESSION";
+"BlockID: 852
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 853
+Call context: 
+None
+TMP_301(uint256) = pathLength - 2
+TMP_302(bool) = i == TMP_301
+CONDITION TMP_302
+EXPRESSION:i == pathLength - 2	NodeType.IF";
+"BlockID: 854
+Call context: 
+True
+TMP_303(uint256) = HIGH_LEVEL_CALL, dest:changer(BancorChanger), function:change, arguments:['fromToken', 'toToken', '_amount', '_minReturn']  
+EXPRESSION:_amount = changer.change(fromToken,toToken,_amount,_minReturn)	NodeType.EXPRESSION";
+"BlockID: 856
+Call context: 
+False
+TMP_304(uint256) = HIGH_LEVEL_CALL, dest:changer(BancorChanger), function:change, arguments:['fromToken', 'toToken', '_amount', '1']  
+EXPRESSION:_amount = changer.change(fromToken,toToken,_amount,1)	NodeType.EXPRESSION";
+"BlockID: 857
+Call context: 
+None
+_amount(uint256) := TMP_304(uint256)
+EXPRESSION:_amount = changer.change(fromToken,toToken,_amount,1)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 858
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 859
+Call context: 
+None
+fromToken(IERC20Token) := toToken(IERC20Token)
+i(uint256) = i + 2
+EXPRESSION:fromToken = toToken	NodeType.EXPRESSION
+i += 2	NodeType.EXPRESSION";
+"BlockID: 855
+Call context: 
+None
+_amount(uint256) := TMP_303(uint256)
+EXPRESSION:_amount = changer.change(fromToken,toToken,_amount,_minReturn)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 860
+Call context: 
+None
+CONDITION TMP_298
+EXPRESSION:TMP_299(None) = SOLIDITY_CALL assert(bool)(TMP_298)	NodeType.IF";
+"BlockID: 861
+Call context: 
+True
+TMP_299(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 862
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 833
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 834
+Call context: 
+None
+MODIFIER_CALL, BancorChanger.validChangePath(IERC20Token[])(_path)
+EXPRESSION:validChangePath(_path)	NodeType.EXPRESSION" [key=0];
+"BlockID: 834
+Call context: 
+None
+MODIFIER_CALL, BancorChanger.validChangePath(IERC20Token[])(_path)
+EXPRESSION:validChangePath(_path)	NodeType.EXPRESSION" -> "BlockID: 835
+Call context: 
+None
+REF_72(IERC20Token) -> _path[0]
+fromToken(IERC20Token) := REF_72(IERC20Token)
+INTERNAL_CALL, BancorChanger.claimTokens(IERC20Token,address,uint256)(fromToken,msg.sender,_amount)
+EXPRESSION:validChangePath(_path)	NodeType.EXPRESSION
+fromToken = _path[0]	NodeType.VARIABLE
+fromToken = _path[0]	NodeType.EXPRESSION
+claimTokens(fromToken,msg.sender,_amount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 835
+Call context: 
+None
+REF_72(IERC20Token) -> _path[0]
+fromToken(IERC20Token) := REF_72(IERC20Token)
+INTERNAL_CALL, BancorChanger.claimTokens(IERC20Token,address,uint256)(fromToken,msg.sender,_amount)
+EXPRESSION:validChangePath(_path)	NodeType.EXPRESSION
+fromToken = _path[0]	NodeType.VARIABLE
+fromToken = _path[0]	NodeType.EXPRESSION
+claimTokens(fromToken,msg.sender,_amount)	NodeType.EXPRESSION" -> "BlockID: 836
+Call context: 
+None
+NEW VARIABLE smartToken
+NEW VARIABLE toToken
+NEW VARIABLE changer
+REF_73 -> LENGTH _path
+pathLength(uint256) := REF_73(uint256)
+i(uint256) := 1(uint256)
+EXPRESSION:claimTokens(fromToken,msg.sender,_amount)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+pathLength = _path.length	NodeType.VARIABLE
+pathLength = _path.length	NodeType.EXPRESSION
+i = 1	NodeType.VARIABLE
+i = 1	NodeType.EXPRESSION" [key=0];
+"BlockID: 836
+Call context: 
+None
+NEW VARIABLE smartToken
+NEW VARIABLE toToken
+NEW VARIABLE changer
+REF_73 -> LENGTH _path
+pathLength(uint256) := REF_73(uint256)
+i(uint256) := 1(uint256)
+EXPRESSION:claimTokens(fromToken,msg.sender,_amount)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+pathLength = _path.length	NodeType.VARIABLE
+pathLength = _path.length	NodeType.EXPRESSION
+i = 1	NodeType.VARIABLE
+i = 1	NodeType.EXPRESSION" -> "BlockID: 837
+Call context: 
+None
+BEGIN_LOOP
+TMP_285(bool) = i < pathLength
+CONDITION TMP_285
+EXPRESSION:None	NodeType.STARTLOOP
+i < pathLength	NodeType.IFLOOP" [key=0];
+"BlockID: 837
+Call context: 
+None
+BEGIN_LOOP
+TMP_285(bool) = i < pathLength
+CONDITION TMP_285
+EXPRESSION:None	NodeType.STARTLOOP
+i < pathLength	NodeType.IFLOOP" -> "BlockID: 838
+Call context: 
+True
+REF_74(IERC20Token) -> _path[i]
+TMP_286 = CONVERT REF_74 to ISmartToken
+smartToken(ISmartToken) := TMP_286(ISmartToken)
+TMP_287(uint256) = i + 1
+REF_75(IERC20Token) -> _path[TMP_287]
+toToken(IERC20Token) := REF_75(IERC20Token)
+TMP_288(address) = HIGH_LEVEL_CALL, dest:smartToken(ISmartToken), function:owner, arguments:[]  
+EXPRESSION:smartToken = ISmartToken(_path[i])	NodeType.EXPRESSION
+toToken = _path[i + 1]	NodeType.EXPRESSION
+changer = BancorChanger(smartToken.owner())	NodeType.EXPRESSION" [key=0];
+"BlockID: 837
+Call context: 
+None
+BEGIN_LOOP
+TMP_285(bool) = i < pathLength
+CONDITION TMP_285
+EXPRESSION:None	NodeType.STARTLOOP
+i < pathLength	NodeType.IFLOOP" -> "BlockID: 839
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 838
+Call context: 
+True
+REF_74(IERC20Token) -> _path[i]
+TMP_286 = CONVERT REF_74 to ISmartToken
+smartToken(ISmartToken) := TMP_286(ISmartToken)
+TMP_287(uint256) = i + 1
+REF_75(IERC20Token) -> _path[TMP_287]
+toToken(IERC20Token) := REF_75(IERC20Token)
+TMP_288(address) = HIGH_LEVEL_CALL, dest:smartToken(ISmartToken), function:owner, arguments:[]  
+EXPRESSION:smartToken = ISmartToken(_path[i])	NodeType.EXPRESSION
+toToken = _path[i + 1]	NodeType.EXPRESSION
+changer = BancorChanger(smartToken.owner())	NodeType.EXPRESSION" -> "BlockID: 849
+Call context: 
+None
+TMP_289 = CONVERT TMP_288 to BancorChanger
+changer(BancorChanger) := TMP_289(BancorChanger)
+TMP_290(bool) = smartToken != fromToken
+CONDITION TMP_290
+EXPRESSION:changer = BancorChanger(smartToken.owner())	NodeType.EXPRESSION
+smartToken != fromToken	NodeType.IF" [key=0];
+"BlockID: 839
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 840
+Call context: 
+None
+TMP_292(bool) = HIGH_LEVEL_CALL, dest:changer(BancorChanger), function:hasQuickBuyEtherToken, arguments:[]  
+EXPRESSION:changer.hasQuickBuyEtherToken() && changer.getQuickBuyEtherToken() == toToken	NodeType.EXPRESSION" [key=0];
+"BlockID: 840
+Call context: 
+None
+TMP_292(bool) = HIGH_LEVEL_CALL, dest:changer(BancorChanger), function:hasQuickBuyEtherToken, arguments:[]  
+EXPRESSION:changer.hasQuickBuyEtherToken() && changer.getQuickBuyEtherToken() == toToken	NodeType.EXPRESSION" -> "BlockID: 841
+Call context: 
+None
+TMP_293(IEtherToken) = HIGH_LEVEL_CALL, dest:changer(BancorChanger), function:getQuickBuyEtherToken, arguments:[]  
+EXPRESSION:changer.hasQuickBuyEtherToken() && changer.getQuickBuyEtherToken() == toToken	NodeType.EXPRESSION" [key=0];
+"BlockID: 841
+Call context: 
+None
+TMP_293(IEtherToken) = HIGH_LEVEL_CALL, dest:changer(BancorChanger), function:getQuickBuyEtherToken, arguments:[]  
+EXPRESSION:changer.hasQuickBuyEtherToken() && changer.getQuickBuyEtherToken() == toToken	NodeType.EXPRESSION" -> "BlockID: 842
+Call context: 
+None
+TMP_294(bool) = TMP_293 == toToken
+TMP_295(bool) = TMP_292 && TMP_294
+CONDITION TMP_295
+EXPRESSION:changer.hasQuickBuyEtherToken() && changer.getQuickBuyEtherToken() == toToken	NodeType.IF" [key=0];
+"BlockID: 842
+Call context: 
+None
+TMP_294(bool) = TMP_293 == toToken
+TMP_295(bool) = TMP_292 && TMP_294
+CONDITION TMP_295
+EXPRESSION:changer.hasQuickBuyEtherToken() && changer.getQuickBuyEtherToken() == toToken	NodeType.IF" -> "BlockID: 843
+Call context: 
+True
+TMP_296 = CONVERT toToken to IEtherToken
+etherToken(IEtherToken) := TMP_296(IEtherToken)
+HIGH_LEVEL_CALL, dest:etherToken(IEtherToken), function:withdrawTo, arguments:['msg.sender', '_amount']  
+EXPRESSION:etherToken = IEtherToken(toToken)	NodeType.VARIABLE
+etherToken = IEtherToken(toToken)	NodeType.EXPRESSION
+etherToken.withdrawTo(msg.sender,_amount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 842
+Call context: 
+None
+TMP_294(bool) = TMP_293 == toToken
+TMP_295(bool) = TMP_292 && TMP_294
+CONDITION TMP_295
+EXPRESSION:changer.hasQuickBuyEtherToken() && changer.getQuickBuyEtherToken() == toToken	NodeType.IF" -> "BlockID: 844
+Call context: 
+False
+TMP_298(bool) = HIGH_LEVEL_CALL, dest:toToken(IERC20Token), function:transfer, arguments:['msg.sender', '_amount']  
+EXPRESSION:assert(bool)(toToken.transfer(msg.sender,_amount))	NodeType.EXPRESSION" [key=0];
+"BlockID: 843
+Call context: 
+True
+TMP_296 = CONVERT toToken to IEtherToken
+etherToken(IEtherToken) := TMP_296(IEtherToken)
+HIGH_LEVEL_CALL, dest:etherToken(IEtherToken), function:withdrawTo, arguments:['msg.sender', '_amount']  
+EXPRESSION:etherToken = IEtherToken(toToken)	NodeType.VARIABLE
+etherToken = IEtherToken(toToken)	NodeType.EXPRESSION
+etherToken.withdrawTo(msg.sender,_amount)	NodeType.EXPRESSION" -> "BlockID: 846
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 844
+Call context: 
+False
+TMP_298(bool) = HIGH_LEVEL_CALL, dest:toToken(IERC20Token), function:transfer, arguments:['msg.sender', '_amount']  
+EXPRESSION:assert(bool)(toToken.transfer(msg.sender,_amount))	NodeType.EXPRESSION" -> "BlockID: 860
+Call context: 
+None
+CONDITION TMP_298
+EXPRESSION:TMP_299(None) = SOLIDITY_CALL assert(bool)(TMP_298)	NodeType.IF" [key=0];
+"BlockID: 846
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 847
+Call context: 
+None
+RETURN _amount
+EXPRESSION:_amount	NodeType.RETURN" [key=0];
+"BlockID: 849
+Call context: 
+None
+TMP_289 = CONVERT TMP_288 to BancorChanger
+changer(BancorChanger) := TMP_289(BancorChanger)
+TMP_290(bool) = smartToken != fromToken
+CONDITION TMP_290
+EXPRESSION:changer = BancorChanger(smartToken.owner())	NodeType.EXPRESSION
+smartToken != fromToken	NodeType.IF" -> "BlockID: 850
+Call context: 
+True
+INTERNAL_CALL, BancorChanger.ensureAllowance(IERC20Token,address,uint256)(fromToken,changer,_amount)
+EXPRESSION:ensureAllowance(fromToken,changer,_amount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 849
+Call context: 
+None
+TMP_289 = CONVERT TMP_288 to BancorChanger
+changer(BancorChanger) := TMP_289(BancorChanger)
+TMP_290(bool) = smartToken != fromToken
+CONDITION TMP_290
+EXPRESSION:changer = BancorChanger(smartToken.owner())	NodeType.EXPRESSION
+smartToken != fromToken	NodeType.IF" -> "BlockID: 852
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 850
+Call context: 
+True
+INTERNAL_CALL, BancorChanger.ensureAllowance(IERC20Token,address,uint256)(fromToken,changer,_amount)
+EXPRESSION:ensureAllowance(fromToken,changer,_amount)	NodeType.EXPRESSION" -> "BlockID: 852
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 852
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 853
+Call context: 
+None
+TMP_301(uint256) = pathLength - 2
+TMP_302(bool) = i == TMP_301
+CONDITION TMP_302
+EXPRESSION:i == pathLength - 2	NodeType.IF" [key=0];
+"BlockID: 853
+Call context: 
+None
+TMP_301(uint256) = pathLength - 2
+TMP_302(bool) = i == TMP_301
+CONDITION TMP_302
+EXPRESSION:i == pathLength - 2	NodeType.IF" -> "BlockID: 854
+Call context: 
+True
+TMP_303(uint256) = HIGH_LEVEL_CALL, dest:changer(BancorChanger), function:change, arguments:['fromToken', 'toToken', '_amount', '_minReturn']  
+EXPRESSION:_amount = changer.change(fromToken,toToken,_amount,_minReturn)	NodeType.EXPRESSION" [key=0];
+"BlockID: 853
+Call context: 
+None
+TMP_301(uint256) = pathLength - 2
+TMP_302(bool) = i == TMP_301
+CONDITION TMP_302
+EXPRESSION:i == pathLength - 2	NodeType.IF" -> "BlockID: 856
+Call context: 
+False
+TMP_304(uint256) = HIGH_LEVEL_CALL, dest:changer(BancorChanger), function:change, arguments:['fromToken', 'toToken', '_amount', '1']  
+EXPRESSION:_amount = changer.change(fromToken,toToken,_amount,1)	NodeType.EXPRESSION" [key=0];
+"BlockID: 854
+Call context: 
+True
+TMP_303(uint256) = HIGH_LEVEL_CALL, dest:changer(BancorChanger), function:change, arguments:['fromToken', 'toToken', '_amount', '_minReturn']  
+EXPRESSION:_amount = changer.change(fromToken,toToken,_amount,_minReturn)	NodeType.EXPRESSION" -> "BlockID: 855
+Call context: 
+None
+_amount(uint256) := TMP_303(uint256)
+EXPRESSION:_amount = changer.change(fromToken,toToken,_amount,_minReturn)	NodeType.EXPRESSION" [key=0];
+"BlockID: 856
+Call context: 
+False
+TMP_304(uint256) = HIGH_LEVEL_CALL, dest:changer(BancorChanger), function:change, arguments:['fromToken', 'toToken', '_amount', '1']  
+EXPRESSION:_amount = changer.change(fromToken,toToken,_amount,1)	NodeType.EXPRESSION" -> "BlockID: 857
+Call context: 
+None
+_amount(uint256) := TMP_304(uint256)
+EXPRESSION:_amount = changer.change(fromToken,toToken,_amount,1)	NodeType.EXPRESSION" [key=0];
+"BlockID: 857
+Call context: 
+None
+_amount(uint256) := TMP_304(uint256)
+EXPRESSION:_amount = changer.change(fromToken,toToken,_amount,1)	NodeType.EXPRESSION" -> "BlockID: 858
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 858
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 859
+Call context: 
+None
+fromToken(IERC20Token) := toToken(IERC20Token)
+i(uint256) = i + 2
+EXPRESSION:fromToken = toToken	NodeType.EXPRESSION
+i += 2	NodeType.EXPRESSION" [key=0];
+"BlockID: 859
+Call context: 
+None
+fromToken(IERC20Token) := toToken(IERC20Token)
+i(uint256) = i + 2
+EXPRESSION:fromToken = toToken	NodeType.EXPRESSION
+i += 2	NodeType.EXPRESSION" -> "BlockID: 837
+Call context: 
+None
+BEGIN_LOOP
+TMP_285(bool) = i < pathLength
+CONDITION TMP_285
+EXPRESSION:None	NodeType.STARTLOOP
+i < pathLength	NodeType.IFLOOP" [key=0];
+"BlockID: 855
+Call context: 
+None
+_amount(uint256) := TMP_303(uint256)
+EXPRESSION:_amount = changer.change(fromToken,toToken,_amount,_minReturn)	NodeType.EXPRESSION" -> "BlockID: 858
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 860
+Call context: 
+None
+CONDITION TMP_298
+EXPRESSION:TMP_299(None) = SOLIDITY_CALL assert(bool)(TMP_298)	NodeType.IF" -> "BlockID: 861
+Call context: 
+True
+TMP_299(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 860
+Call context: 
+None
+CONDITION TMP_298
+EXPRESSION:TMP_299(None) = SOLIDITY_CALL assert(bool)(TMP_298)	NodeType.IF" -> "BlockID: 862
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 862
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 846
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

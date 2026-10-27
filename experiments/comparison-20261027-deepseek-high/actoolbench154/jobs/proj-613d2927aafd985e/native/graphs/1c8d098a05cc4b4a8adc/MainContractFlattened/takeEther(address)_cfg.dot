@@ -1,0 +1,798 @@
+digraph {
+"BlockID: 477
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 482
+Call context: 
+True
+TMP_221(uint256) = HIGH_LEVEL_CALL, dest:tokenSaleContract(TokenSale), function:decimals, arguments:[]  
+EXPRESSION:";
+"BlockID: 483
+Call context: 
+None
+TMP_222 = CONVERT TMP_221 to uint256
+TMP_223(uint256) = 10 ** TMP_222
+oneToken(uint256) := TMP_223(uint256)
+tknPriceApplied(uint256) := 0(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:oneToken = 10 ** uint256(tokenSaleContract.decimals())	NodeType.VARIABLE
+oneToken = 10 ** uint256(tokenSaleContract.decimals())	NodeType.EXPRESSION
+tknPriceApplied = 0	NodeType.VARIABLE
+tknPriceApplied = 0	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" [shape=box];
+"BlockID: 484
+Call context: 
+None
+BEGIN_LOOP
+REF_96 -> LENGTH sendThreshold
+TMP_224(bool) = i < REF_96
+CONDITION TMP_224
+EXPRESSION:None	NodeType.STARTLOOP
+i < sendThreshold.length	NodeType.IFLOOP";
+"BlockID: 485
+Call context: 
+True
+REF_97(uint256) -> sendThreshold[i]
+TMP_225(bool) = msg.value >= REF_97
+CONDITION TMP_225
+EXPRESSION:msg.value >= sendThreshold[i]	NodeType.IF";
+"BlockID: 486
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 488
+Call context: 
+True
+TMP_229(uint256) = HIGH_LEVEL_CALL, dest:tokenSaleContract(TokenSale), function:tokenValueInEther, arguments:['tknPriceApplied']  
+EXPRESSION:";
+"BlockID: 489
+Call context: 
+None
+tokenValue(uint256) := TMP_229(uint256)
+TMP_230(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['msg.value', 'oneToken'] 
+EXPRESSION:tokenValue = tokenSaleContract.tokenValueInEther(tknPriceApplied)	NodeType.VARIABLE
+tokenValue = tokenSaleContract.tokenValueInEther(tknPriceApplied)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 490
+Call context: 
+None
+TMP_231(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_230', 'tokenValue'] 
+EXPRESSION:" [shape=box];
+"BlockID: 491
+Call context: 
+None
+tokenAmount(uint256) := TMP_231(uint256)
+TMP_232(tokenInterface) = HIGH_LEVEL_CALL, dest:tokenSaleContract(TokenSale), function:tokenContract, arguments:[]  
+EXPRESSION:tokenAmount = msg.value.mul(oneToken).div(tokenValue)	NodeType.VARIABLE
+tokenAmount = msg.value.mul(oneToken).div(tokenValue)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 492
+Call context: 
+None
+TMP_233 = CONVERT TMP_232 to tokenInterface
+TMP_234(uint256) = HIGH_LEVEL_CALL, dest:TMP_233(tokenInterface), function:balanceOf, arguments:['tokenSaleContract']  
+EXPRESSION:" [shape=box];
+"BlockID: 493
+Call context: 
+None
+unboughtTokens(uint256) := TMP_234(uint256)
+TMP_235(bool) = unboughtTokens > remainingTokens
+CONDITION TMP_235
+EXPRESSION:unboughtTokens = tokenInterface(tokenSaleContract.tokenContract()).balanceOf(tokenSaleContract)	NodeType.VARIABLE
+unboughtTokens = tokenInterface(tokenSaleContract.tokenContract()).balanceOf(tokenSaleContract)	NodeType.EXPRESSION
+unboughtTokens > remainingTokens	NodeType.IF" [shape=box];
+"BlockID: 494
+Call context: 
+True
+unboughtTokens(uint256) := remainingTokens(uint256)
+EXPRESSION:unboughtTokens = remainingTokens	NodeType.EXPRESSION";
+"BlockID: 495
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 496
+Call context: 
+None
+refund(uint256) := 0(uint256)
+TMP_236(bool) = unboughtTokens < tokenAmount
+CONDITION TMP_236
+EXPRESSION:refund = 0	NodeType.VARIABLE
+refund = 0	NodeType.EXPRESSION
+unboughtTokens < tokenAmount	NodeType.IF";
+"BlockID: 497
+Call context: 
+True
+TMP_237(uint256) = tokenAmount - unboughtTokens
+TMP_238(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['TMP_237', 'tokenValue'] 
+EXPRESSION:refund = (tokenAmount - unboughtTokens).mul(tokenValue).div(oneToken)	NodeType.EXPRESSION";
+"BlockID: 500
+Call context: 
+False
+TMP_241(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['remainingTokens', 'tokenAmount'] 
+EXPRESSION:remainingTokens = remainingTokens.sub(tokenAmount)	NodeType.EXPRESSION";
+"BlockID: 501
+Call context: 
+None
+remainingTokens(uint256) := TMP_241(uint256)
+EXPRESSION:remainingTokens = remainingTokens.sub(tokenAmount)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 502
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 503
+Call context: 
+None
+REF_108(uint256) -> etherUser[_buyer]
+REF_109(uint256) -> etherUser[_buyer]
+TMP_242(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['msg.value', 'refund'] 
+EXPRESSION:etherUser[_buyer] = etherUser[_buyer].add(msg.value.sub(refund))	NodeType.EXPRESSION";
+"BlockID: 504
+Call context: 
+None
+TMP_243(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['REF_109', 'TMP_242'] 
+EXPRESSION:etherUser[_buyer] = etherUser[_buyer].add(msg.value.sub(refund))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 505
+Call context: 
+None
+REF_108(uint256) (->etherUser) := TMP_243(uint256)
+REF_112(uint256) -> pendingTokenUser[_buyer]
+REF_113(uint256) -> pendingTokenUser[_buyer]
+TMP_244(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['REF_113', 'tokenAmount'] 
+EXPRESSION:etherUser[_buyer] = etherUser[_buyer].add(msg.value.sub(refund))	NodeType.EXPRESSION
+pendingTokenUser[_buyer] = pendingTokenUser[_buyer].add(tokenAmount)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 506
+Call context: 
+None
+REF_112(uint256) (->pendingTokenUser) := TMP_244(uint256)
+EXPRESSION:pendingTokenUser[_buyer] = pendingTokenUser[_buyer].add(tokenAmount)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 498
+Call context: 
+None
+TMP_239(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_238', 'oneToken'] 
+EXPRESSION:refund = (tokenAmount - unboughtTokens).mul(tokenValue).div(oneToken)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 499
+Call context: 
+None
+refund(uint256) := TMP_239(uint256)
+tokenAmount(uint256) := unboughtTokens(uint256)
+remainingTokens(uint256) := 0(uint256)
+Transfer dest:_buyer value:refund
+EXPRESSION:refund = (tokenAmount - unboughtTokens).mul(tokenValue).div(oneToken)	NodeType.EXPRESSION
+tokenAmount = unboughtTokens	NodeType.EXPRESSION
+remainingTokens = 0	NodeType.EXPRESSION
+_buyer.transfer(refund)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 508
+Call context: 
+True
+REF_98(uint256) -> oneTokenInFiatWei[i]
+tknPriceApplied(uint256) := REF_98(uint256)
+EXPRESSION:tknPriceApplied = oneTokenInFiatWei[i]	NodeType.EXPRESSION";
+"BlockID: 509
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 510
+Call context: 
+None
+TMP_226(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:i ++	NodeType.EXPRESSION";
+"BlockID: 511
+Call context: 
+None
+TMP_213(bool) = now > startTime
+CONDITION TMP_213
+EXPRESSION:TMP_213(bool) = now > startTime	NodeType.IF";
+"BlockID: 512
+Call context: 
+True
+TMP_214(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 513
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 514
+Call context: 
+None
+TMP_215(bool) = now < endTime
+CONDITION TMP_215
+EXPRESSION:TMP_215(bool) = now < endTime	NodeType.IF";
+"BlockID: 515
+Call context: 
+True
+TMP_216(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 516
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 517
+Call context: 
+None
+TMP_217(bool) = msg.value >= etherMinimum
+CONDITION TMP_217
+EXPRESSION:TMP_217(bool) = msg.value >= etherMinimum	NodeType.IF";
+"BlockID: 518
+Call context: 
+True
+TMP_218(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 519
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 520
+Call context: 
+None
+TMP_219(bool) = remainingTokens > 0
+CONDITION TMP_219
+EXPRESSION:TMP_219(bool) = remainingTokens > 0	NodeType.IF";
+"BlockID: 521
+Call context: 
+True
+TMP_220(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 522
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 523
+Call context: 
+None
+TMP_227(bool) = tknPriceApplied > 0
+CONDITION TMP_227
+EXPRESSION:TMP_227(bool) = tknPriceApplied > 0	NodeType.IF";
+"BlockID: 524
+Call context: 
+True
+TMP_228(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 525
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 477
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 511
+Call context: 
+None
+TMP_213(bool) = now > startTime
+CONDITION TMP_213
+EXPRESSION:TMP_213(bool) = now > startTime	NodeType.IF" [key=0];
+"BlockID: 482
+Call context: 
+True
+TMP_221(uint256) = HIGH_LEVEL_CALL, dest:tokenSaleContract(TokenSale), function:decimals, arguments:[]  
+EXPRESSION:" -> "BlockID: 483
+Call context: 
+None
+TMP_222 = CONVERT TMP_221 to uint256
+TMP_223(uint256) = 10 ** TMP_222
+oneToken(uint256) := TMP_223(uint256)
+tknPriceApplied(uint256) := 0(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:oneToken = 10 ** uint256(tokenSaleContract.decimals())	NodeType.VARIABLE
+oneToken = 10 ** uint256(tokenSaleContract.decimals())	NodeType.EXPRESSION
+tknPriceApplied = 0	NodeType.VARIABLE
+tknPriceApplied = 0	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 483
+Call context: 
+None
+TMP_222 = CONVERT TMP_221 to uint256
+TMP_223(uint256) = 10 ** TMP_222
+oneToken(uint256) := TMP_223(uint256)
+tknPriceApplied(uint256) := 0(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:oneToken = 10 ** uint256(tokenSaleContract.decimals())	NodeType.VARIABLE
+oneToken = 10 ** uint256(tokenSaleContract.decimals())	NodeType.EXPRESSION
+tknPriceApplied = 0	NodeType.VARIABLE
+tknPriceApplied = 0	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" -> "BlockID: 484
+Call context: 
+None
+BEGIN_LOOP
+REF_96 -> LENGTH sendThreshold
+TMP_224(bool) = i < REF_96
+CONDITION TMP_224
+EXPRESSION:None	NodeType.STARTLOOP
+i < sendThreshold.length	NodeType.IFLOOP" [key=0];
+"BlockID: 484
+Call context: 
+None
+BEGIN_LOOP
+REF_96 -> LENGTH sendThreshold
+TMP_224(bool) = i < REF_96
+CONDITION TMP_224
+EXPRESSION:None	NodeType.STARTLOOP
+i < sendThreshold.length	NodeType.IFLOOP" -> "BlockID: 485
+Call context: 
+True
+REF_97(uint256) -> sendThreshold[i]
+TMP_225(bool) = msg.value >= REF_97
+CONDITION TMP_225
+EXPRESSION:msg.value >= sendThreshold[i]	NodeType.IF" [key=0];
+"BlockID: 484
+Call context: 
+None
+BEGIN_LOOP
+REF_96 -> LENGTH sendThreshold
+TMP_224(bool) = i < REF_96
+CONDITION TMP_224
+EXPRESSION:None	NodeType.STARTLOOP
+i < sendThreshold.length	NodeType.IFLOOP" -> "BlockID: 486
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 485
+Call context: 
+True
+REF_97(uint256) -> sendThreshold[i]
+TMP_225(bool) = msg.value >= REF_97
+CONDITION TMP_225
+EXPRESSION:msg.value >= sendThreshold[i]	NodeType.IF" -> "BlockID: 508
+Call context: 
+True
+REF_98(uint256) -> oneTokenInFiatWei[i]
+tknPriceApplied(uint256) := REF_98(uint256)
+EXPRESSION:tknPriceApplied = oneTokenInFiatWei[i]	NodeType.EXPRESSION" [key=0];
+"BlockID: 485
+Call context: 
+True
+REF_97(uint256) -> sendThreshold[i]
+TMP_225(bool) = msg.value >= REF_97
+CONDITION TMP_225
+EXPRESSION:msg.value >= sendThreshold[i]	NodeType.IF" -> "BlockID: 509
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 486
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 523
+Call context: 
+None
+TMP_227(bool) = tknPriceApplied > 0
+CONDITION TMP_227
+EXPRESSION:TMP_227(bool) = tknPriceApplied > 0	NodeType.IF" [key=0];
+"BlockID: 488
+Call context: 
+True
+TMP_229(uint256) = HIGH_LEVEL_CALL, dest:tokenSaleContract(TokenSale), function:tokenValueInEther, arguments:['tknPriceApplied']  
+EXPRESSION:" -> "BlockID: 489
+Call context: 
+None
+tokenValue(uint256) := TMP_229(uint256)
+TMP_230(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['msg.value', 'oneToken'] 
+EXPRESSION:tokenValue = tokenSaleContract.tokenValueInEther(tknPriceApplied)	NodeType.VARIABLE
+tokenValue = tokenSaleContract.tokenValueInEther(tknPriceApplied)	NodeType.EXPRESSION" [key=0];
+"BlockID: 489
+Call context: 
+None
+tokenValue(uint256) := TMP_229(uint256)
+TMP_230(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['msg.value', 'oneToken'] 
+EXPRESSION:tokenValue = tokenSaleContract.tokenValueInEther(tknPriceApplied)	NodeType.VARIABLE
+tokenValue = tokenSaleContract.tokenValueInEther(tknPriceApplied)	NodeType.EXPRESSION" -> "BlockID: 490
+Call context: 
+None
+TMP_231(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_230', 'tokenValue'] 
+EXPRESSION:" [key=0];
+"BlockID: 490
+Call context: 
+None
+TMP_231(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_230', 'tokenValue'] 
+EXPRESSION:" -> "BlockID: 491
+Call context: 
+None
+tokenAmount(uint256) := TMP_231(uint256)
+TMP_232(tokenInterface) = HIGH_LEVEL_CALL, dest:tokenSaleContract(TokenSale), function:tokenContract, arguments:[]  
+EXPRESSION:tokenAmount = msg.value.mul(oneToken).div(tokenValue)	NodeType.VARIABLE
+tokenAmount = msg.value.mul(oneToken).div(tokenValue)	NodeType.EXPRESSION" [key=0];
+"BlockID: 491
+Call context: 
+None
+tokenAmount(uint256) := TMP_231(uint256)
+TMP_232(tokenInterface) = HIGH_LEVEL_CALL, dest:tokenSaleContract(TokenSale), function:tokenContract, arguments:[]  
+EXPRESSION:tokenAmount = msg.value.mul(oneToken).div(tokenValue)	NodeType.VARIABLE
+tokenAmount = msg.value.mul(oneToken).div(tokenValue)	NodeType.EXPRESSION" -> "BlockID: 492
+Call context: 
+None
+TMP_233 = CONVERT TMP_232 to tokenInterface
+TMP_234(uint256) = HIGH_LEVEL_CALL, dest:TMP_233(tokenInterface), function:balanceOf, arguments:['tokenSaleContract']  
+EXPRESSION:" [key=0];
+"BlockID: 492
+Call context: 
+None
+TMP_233 = CONVERT TMP_232 to tokenInterface
+TMP_234(uint256) = HIGH_LEVEL_CALL, dest:TMP_233(tokenInterface), function:balanceOf, arguments:['tokenSaleContract']  
+EXPRESSION:" -> "BlockID: 493
+Call context: 
+None
+unboughtTokens(uint256) := TMP_234(uint256)
+TMP_235(bool) = unboughtTokens > remainingTokens
+CONDITION TMP_235
+EXPRESSION:unboughtTokens = tokenInterface(tokenSaleContract.tokenContract()).balanceOf(tokenSaleContract)	NodeType.VARIABLE
+unboughtTokens = tokenInterface(tokenSaleContract.tokenContract()).balanceOf(tokenSaleContract)	NodeType.EXPRESSION
+unboughtTokens > remainingTokens	NodeType.IF" [key=0];
+"BlockID: 493
+Call context: 
+None
+unboughtTokens(uint256) := TMP_234(uint256)
+TMP_235(bool) = unboughtTokens > remainingTokens
+CONDITION TMP_235
+EXPRESSION:unboughtTokens = tokenInterface(tokenSaleContract.tokenContract()).balanceOf(tokenSaleContract)	NodeType.VARIABLE
+unboughtTokens = tokenInterface(tokenSaleContract.tokenContract()).balanceOf(tokenSaleContract)	NodeType.EXPRESSION
+unboughtTokens > remainingTokens	NodeType.IF" -> "BlockID: 494
+Call context: 
+True
+unboughtTokens(uint256) := remainingTokens(uint256)
+EXPRESSION:unboughtTokens = remainingTokens	NodeType.EXPRESSION" [key=0];
+"BlockID: 493
+Call context: 
+None
+unboughtTokens(uint256) := TMP_234(uint256)
+TMP_235(bool) = unboughtTokens > remainingTokens
+CONDITION TMP_235
+EXPRESSION:unboughtTokens = tokenInterface(tokenSaleContract.tokenContract()).balanceOf(tokenSaleContract)	NodeType.VARIABLE
+unboughtTokens = tokenInterface(tokenSaleContract.tokenContract()).balanceOf(tokenSaleContract)	NodeType.EXPRESSION
+unboughtTokens > remainingTokens	NodeType.IF" -> "BlockID: 495
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 494
+Call context: 
+True
+unboughtTokens(uint256) := remainingTokens(uint256)
+EXPRESSION:unboughtTokens = remainingTokens	NodeType.EXPRESSION" -> "BlockID: 495
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 495
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 496
+Call context: 
+None
+refund(uint256) := 0(uint256)
+TMP_236(bool) = unboughtTokens < tokenAmount
+CONDITION TMP_236
+EXPRESSION:refund = 0	NodeType.VARIABLE
+refund = 0	NodeType.EXPRESSION
+unboughtTokens < tokenAmount	NodeType.IF" [key=0];
+"BlockID: 496
+Call context: 
+None
+refund(uint256) := 0(uint256)
+TMP_236(bool) = unboughtTokens < tokenAmount
+CONDITION TMP_236
+EXPRESSION:refund = 0	NodeType.VARIABLE
+refund = 0	NodeType.EXPRESSION
+unboughtTokens < tokenAmount	NodeType.IF" -> "BlockID: 497
+Call context: 
+True
+TMP_237(uint256) = tokenAmount - unboughtTokens
+TMP_238(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['TMP_237', 'tokenValue'] 
+EXPRESSION:refund = (tokenAmount - unboughtTokens).mul(tokenValue).div(oneToken)	NodeType.EXPRESSION" [key=0];
+"BlockID: 496
+Call context: 
+None
+refund(uint256) := 0(uint256)
+TMP_236(bool) = unboughtTokens < tokenAmount
+CONDITION TMP_236
+EXPRESSION:refund = 0	NodeType.VARIABLE
+refund = 0	NodeType.EXPRESSION
+unboughtTokens < tokenAmount	NodeType.IF" -> "BlockID: 500
+Call context: 
+False
+TMP_241(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['remainingTokens', 'tokenAmount'] 
+EXPRESSION:remainingTokens = remainingTokens.sub(tokenAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 497
+Call context: 
+True
+TMP_237(uint256) = tokenAmount - unboughtTokens
+TMP_238(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['TMP_237', 'tokenValue'] 
+EXPRESSION:refund = (tokenAmount - unboughtTokens).mul(tokenValue).div(oneToken)	NodeType.EXPRESSION" -> "BlockID: 498
+Call context: 
+None
+TMP_239(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_238', 'oneToken'] 
+EXPRESSION:refund = (tokenAmount - unboughtTokens).mul(tokenValue).div(oneToken)	NodeType.EXPRESSION" [key=0];
+"BlockID: 500
+Call context: 
+False
+TMP_241(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['remainingTokens', 'tokenAmount'] 
+EXPRESSION:remainingTokens = remainingTokens.sub(tokenAmount)	NodeType.EXPRESSION" -> "BlockID: 501
+Call context: 
+None
+remainingTokens(uint256) := TMP_241(uint256)
+EXPRESSION:remainingTokens = remainingTokens.sub(tokenAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 501
+Call context: 
+None
+remainingTokens(uint256) := TMP_241(uint256)
+EXPRESSION:remainingTokens = remainingTokens.sub(tokenAmount)	NodeType.EXPRESSION" -> "BlockID: 502
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 502
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 503
+Call context: 
+None
+REF_108(uint256) -> etherUser[_buyer]
+REF_109(uint256) -> etherUser[_buyer]
+TMP_242(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['msg.value', 'refund'] 
+EXPRESSION:etherUser[_buyer] = etherUser[_buyer].add(msg.value.sub(refund))	NodeType.EXPRESSION" [key=0];
+"BlockID: 503
+Call context: 
+None
+REF_108(uint256) -> etherUser[_buyer]
+REF_109(uint256) -> etherUser[_buyer]
+TMP_242(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['msg.value', 'refund'] 
+EXPRESSION:etherUser[_buyer] = etherUser[_buyer].add(msg.value.sub(refund))	NodeType.EXPRESSION" -> "BlockID: 504
+Call context: 
+None
+TMP_243(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['REF_109', 'TMP_242'] 
+EXPRESSION:etherUser[_buyer] = etherUser[_buyer].add(msg.value.sub(refund))	NodeType.EXPRESSION" [key=0];
+"BlockID: 504
+Call context: 
+None
+TMP_243(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['REF_109', 'TMP_242'] 
+EXPRESSION:etherUser[_buyer] = etherUser[_buyer].add(msg.value.sub(refund))	NodeType.EXPRESSION" -> "BlockID: 505
+Call context: 
+None
+REF_108(uint256) (->etherUser) := TMP_243(uint256)
+REF_112(uint256) -> pendingTokenUser[_buyer]
+REF_113(uint256) -> pendingTokenUser[_buyer]
+TMP_244(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['REF_113', 'tokenAmount'] 
+EXPRESSION:etherUser[_buyer] = etherUser[_buyer].add(msg.value.sub(refund))	NodeType.EXPRESSION
+pendingTokenUser[_buyer] = pendingTokenUser[_buyer].add(tokenAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 505
+Call context: 
+None
+REF_108(uint256) (->etherUser) := TMP_243(uint256)
+REF_112(uint256) -> pendingTokenUser[_buyer]
+REF_113(uint256) -> pendingTokenUser[_buyer]
+TMP_244(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['REF_113', 'tokenAmount'] 
+EXPRESSION:etherUser[_buyer] = etherUser[_buyer].add(msg.value.sub(refund))	NodeType.EXPRESSION
+pendingTokenUser[_buyer] = pendingTokenUser[_buyer].add(tokenAmount)	NodeType.EXPRESSION" -> "BlockID: 506
+Call context: 
+None
+REF_112(uint256) (->pendingTokenUser) := TMP_244(uint256)
+EXPRESSION:pendingTokenUser[_buyer] = pendingTokenUser[_buyer].add(tokenAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 498
+Call context: 
+None
+TMP_239(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_238', 'oneToken'] 
+EXPRESSION:refund = (tokenAmount - unboughtTokens).mul(tokenValue).div(oneToken)	NodeType.EXPRESSION" -> "BlockID: 499
+Call context: 
+None
+refund(uint256) := TMP_239(uint256)
+tokenAmount(uint256) := unboughtTokens(uint256)
+remainingTokens(uint256) := 0(uint256)
+Transfer dest:_buyer value:refund
+EXPRESSION:refund = (tokenAmount - unboughtTokens).mul(tokenValue).div(oneToken)	NodeType.EXPRESSION
+tokenAmount = unboughtTokens	NodeType.EXPRESSION
+remainingTokens = 0	NodeType.EXPRESSION
+_buyer.transfer(refund)	NodeType.EXPRESSION" [key=0];
+"BlockID: 499
+Call context: 
+None
+refund(uint256) := TMP_239(uint256)
+tokenAmount(uint256) := unboughtTokens(uint256)
+remainingTokens(uint256) := 0(uint256)
+Transfer dest:_buyer value:refund
+EXPRESSION:refund = (tokenAmount - unboughtTokens).mul(tokenValue).div(oneToken)	NodeType.EXPRESSION
+tokenAmount = unboughtTokens	NodeType.EXPRESSION
+remainingTokens = 0	NodeType.EXPRESSION
+_buyer.transfer(refund)	NodeType.EXPRESSION" -> "BlockID: 502
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 508
+Call context: 
+True
+REF_98(uint256) -> oneTokenInFiatWei[i]
+tknPriceApplied(uint256) := REF_98(uint256)
+EXPRESSION:tknPriceApplied = oneTokenInFiatWei[i]	NodeType.EXPRESSION" -> "BlockID: 509
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 509
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 510
+Call context: 
+None
+TMP_226(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:i ++	NodeType.EXPRESSION" [key=0];
+"BlockID: 510
+Call context: 
+None
+TMP_226(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:i ++	NodeType.EXPRESSION" -> "BlockID: 484
+Call context: 
+None
+BEGIN_LOOP
+REF_96 -> LENGTH sendThreshold
+TMP_224(bool) = i < REF_96
+CONDITION TMP_224
+EXPRESSION:None	NodeType.STARTLOOP
+i < sendThreshold.length	NodeType.IFLOOP" [key=0];
+"BlockID: 511
+Call context: 
+None
+TMP_213(bool) = now > startTime
+CONDITION TMP_213
+EXPRESSION:TMP_213(bool) = now > startTime	NodeType.IF" -> "BlockID: 512
+Call context: 
+True
+TMP_214(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 511
+Call context: 
+None
+TMP_213(bool) = now > startTime
+CONDITION TMP_213
+EXPRESSION:TMP_213(bool) = now > startTime	NodeType.IF" -> "BlockID: 513
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 513
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 514
+Call context: 
+None
+TMP_215(bool) = now < endTime
+CONDITION TMP_215
+EXPRESSION:TMP_215(bool) = now < endTime	NodeType.IF" [key=0];
+"BlockID: 514
+Call context: 
+None
+TMP_215(bool) = now < endTime
+CONDITION TMP_215
+EXPRESSION:TMP_215(bool) = now < endTime	NodeType.IF" -> "BlockID: 515
+Call context: 
+True
+TMP_216(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 514
+Call context: 
+None
+TMP_215(bool) = now < endTime
+CONDITION TMP_215
+EXPRESSION:TMP_215(bool) = now < endTime	NodeType.IF" -> "BlockID: 516
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 516
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 517
+Call context: 
+None
+TMP_217(bool) = msg.value >= etherMinimum
+CONDITION TMP_217
+EXPRESSION:TMP_217(bool) = msg.value >= etherMinimum	NodeType.IF" [key=0];
+"BlockID: 517
+Call context: 
+None
+TMP_217(bool) = msg.value >= etherMinimum
+CONDITION TMP_217
+EXPRESSION:TMP_217(bool) = msg.value >= etherMinimum	NodeType.IF" -> "BlockID: 518
+Call context: 
+True
+TMP_218(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 517
+Call context: 
+None
+TMP_217(bool) = msg.value >= etherMinimum
+CONDITION TMP_217
+EXPRESSION:TMP_217(bool) = msg.value >= etherMinimum	NodeType.IF" -> "BlockID: 519
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 519
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 520
+Call context: 
+None
+TMP_219(bool) = remainingTokens > 0
+CONDITION TMP_219
+EXPRESSION:TMP_219(bool) = remainingTokens > 0	NodeType.IF" [key=0];
+"BlockID: 520
+Call context: 
+None
+TMP_219(bool) = remainingTokens > 0
+CONDITION TMP_219
+EXPRESSION:TMP_219(bool) = remainingTokens > 0	NodeType.IF" -> "BlockID: 521
+Call context: 
+True
+TMP_220(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 520
+Call context: 
+None
+TMP_219(bool) = remainingTokens > 0
+CONDITION TMP_219
+EXPRESSION:TMP_219(bool) = remainingTokens > 0	NodeType.IF" -> "BlockID: 522
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 522
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 482
+Call context: 
+True
+TMP_221(uint256) = HIGH_LEVEL_CALL, dest:tokenSaleContract(TokenSale), function:decimals, arguments:[]  
+EXPRESSION:" [key=0];
+"BlockID: 523
+Call context: 
+None
+TMP_227(bool) = tknPriceApplied > 0
+CONDITION TMP_227
+EXPRESSION:TMP_227(bool) = tknPriceApplied > 0	NodeType.IF" -> "BlockID: 524
+Call context: 
+True
+TMP_228(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 523
+Call context: 
+None
+TMP_227(bool) = tknPriceApplied > 0
+CONDITION TMP_227
+EXPRESSION:TMP_227(bool) = tknPriceApplied > 0	NodeType.IF" -> "BlockID: 525
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 525
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 488
+Call context: 
+True
+TMP_229(uint256) = HIGH_LEVEL_CALL, dest:tokenSaleContract(TokenSale), function:tokenValueInEther, arguments:['tknPriceApplied']  
+EXPRESSION:" [key=0];
+}

@@ -1,0 +1,471 @@
+digraph {
+"BlockID: 3426
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 3427
+Call context: 
+None
+MODIFIER_CALL, ReentrancyGuard.nonReentrant()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION";
+"BlockID: 3428
+Call context: 
+None
+TMP_2899(uint256) = INTERNAL_CALL, ERC20MultiVotes.freeVotes(address)(user)
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION";
+"BlockID: 3429
+Call context: 
+None
+TMP_2900(uint256) = INTERNAL_CALL, ERC20Gauges.userUnusedVotes(address)(user)
+EXPRESSION:" [shape=box];
+"BlockID: 3430
+Call context: 
+None
+TMP_2901(uint256) = TMP_2899 (c)+ TMP_2900
+userFreeWeight(uint256) := TMP_2901(uint256)
+TMP_2902(bool) = userFreeWeight >= weight
+CONDITION TMP_2902
+EXPRESSION:userFreeWeight = freeVotes(user) + userUnusedVotes(user)	NodeType.VARIABLE
+userFreeWeight = freeVotes(user) + userUnusedVotes(user)	NodeType.EXPRESSION
+userFreeWeight >= weight	NodeType.IF" [shape=box];
+"BlockID: 3431
+Call context: 
+True
+RETURN
+EXPRESSION:None	NodeType.RETURN";
+"BlockID: 3432
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3433
+Call context: 
+None
+TMP_2903(uint32) = INTERNAL_CALL, ERC20Gauges._getGaugeCycleEnd()()
+EXPRESSION:";
+"BlockID: 3434
+Call context: 
+None
+currentCycle(uint32) := TMP_2903(uint32)
+NEW VARIABLE userFreed
+NEW VARIABLE totalFreed
+REF_732(EnumerableSet.AddressSet) -> _userGauges[user]
+TMP_2904(address[]) = LIBRARY_CALL, dest:EnumerableSet, function:EnumerableSet.values(EnumerableSet.AddressSet), arguments:['REF_732'] 
+EXPRESSION:currentCycle = _getGaugeCycleEnd()	NodeType.VARIABLE
+currentCycle = _getGaugeCycleEnd()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE" [shape=box];
+"BlockID: 3435
+Call context: 
+None
+gaugeList(address[]) =  ['TMP_2904(address[])']
+REF_734 -> LENGTH gaugeList
+size(uint256) := REF_734(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:gaugeList = _userGauges[user].values()	NodeType.VARIABLE
+gaugeList = _userGauges[user].values()	NodeType.EXPRESSION
+size = gaugeList.length	NodeType.VARIABLE
+size = gaugeList.length	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3436
+Call context: 
+None
+BEGIN_LOOP
+TMP_2905(bool) = i < size
+TMP_2906(uint256) = userFreeWeight (c)+ totalFreed
+TMP_2907(bool) = TMP_2906 < weight
+TMP_2908(bool) = TMP_2905 && TMP_2907
+CONDITION TMP_2908
+EXPRESSION:None	NodeType.STARTLOOP
+i < size && (userFreeWeight + totalFreed) < weight	NodeType.IFLOOP";
+"BlockID: 3437
+Call context: 
+True
+REF_735(address) -> gaugeList[i]
+gauge(address) := REF_735(address)
+REF_736(mapping(address => uint112)) -> getUserGaugeWeight[user]
+REF_737(uint112) -> REF_736[gauge]
+userGaugeWeight(uint112) := REF_737(uint112)
+TMP_2909(bool) = userGaugeWeight != 0
+CONDITION TMP_2909
+EXPRESSION:gauge = gaugeList[i]	NodeType.VARIABLE
+gauge = gaugeList[i]	NodeType.EXPRESSION
+userGaugeWeight = getUserGaugeWeight[user][gauge]	NodeType.VARIABLE
+userGaugeWeight = getUserGaugeWeight[user][gauge]	NodeType.EXPRESSION
+userGaugeWeight != 0	NodeType.IF";
+"BlockID: 3438
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 3439
+Call context: 
+None
+REF_739(uint112) -> getUserWeight[user]
+REF_739(-> getUserWeight) = REF_739 (c)- userFreed
+INTERNAL_CALL, ERC20Gauges._writeGaugeWeight(IERC20Gauges.Weight,function(uint112,uint112) returns(uint112),uint112,uint32)(_totalWeight,_subtract112,totalFreed,currentCycle)
+EXPRESSION:getUserWeight[user] -= userFreed	NodeType.EXPRESSION
+_writeGaugeWeight(_totalWeight,_subtract112,totalFreed,currentCycle)	NodeType.EXPRESSION";
+"BlockID: 3441
+Call context: 
+True
+TMP_2910(bool) = LIBRARY_CALL, dest:EnumerableSet, function:EnumerableSet.contains(EnumerableSet.AddressSet,address), arguments:['_deprecatedGauges', 'gauge'] 
+EXPRESSION:! _deprecatedGauges.contains(gauge)	NodeType.EXPRESSION";
+"BlockID: 3443
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3442
+Call context: 
+None
+TMP_2911 = ! TMP_2910 
+CONDITION TMP_2911
+EXPRESSION:! _deprecatedGauges.contains(gauge)	NodeType.IF" [shape=box];
+"BlockID: 3445
+Call context: 
+True
+totalFreed(uint112) = totalFreed (c)+ userGaugeWeight
+EXPRESSION:totalFreed += userGaugeWeight	NodeType.EXPRESSION";
+"BlockID: 3446
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3447
+Call context: 
+None
+userFreed(uint112) = userFreed (c)+ userGaugeWeight
+INTERNAL_CALL, ERC20Gauges._decrementGaugeWeight(address,address,uint112,uint32)(user,gauge,userGaugeWeight,currentCycle)
+EXPRESSION:userFreed += userGaugeWeight	NodeType.EXPRESSION
+_decrementGaugeWeight(user,gauge,userGaugeWeight,currentCycle)	NodeType.EXPRESSION";
+"BlockID: 3448
+Call context: 
+None
+TMP_2913(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:_decrementGaugeWeight(user,gauge,userGaugeWeight,currentCycle)	NodeType.EXPRESSION
+i ++	NodeType.EXPRESSION";
+"BlockID: 3426
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 3427
+Call context: 
+None
+MODIFIER_CALL, ReentrancyGuard.nonReentrant()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION" [key=0];
+"BlockID: 3427
+Call context: 
+None
+MODIFIER_CALL, ReentrancyGuard.nonReentrant()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION" -> "BlockID: 3428
+Call context: 
+None
+TMP_2899(uint256) = INTERNAL_CALL, ERC20MultiVotes.freeVotes(address)(user)
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION" [key=0];
+"BlockID: 3428
+Call context: 
+None
+TMP_2899(uint256) = INTERNAL_CALL, ERC20MultiVotes.freeVotes(address)(user)
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION" -> "BlockID: 3429
+Call context: 
+None
+TMP_2900(uint256) = INTERNAL_CALL, ERC20Gauges.userUnusedVotes(address)(user)
+EXPRESSION:" [key=0];
+"BlockID: 3429
+Call context: 
+None
+TMP_2900(uint256) = INTERNAL_CALL, ERC20Gauges.userUnusedVotes(address)(user)
+EXPRESSION:" -> "BlockID: 3430
+Call context: 
+None
+TMP_2901(uint256) = TMP_2899 (c)+ TMP_2900
+userFreeWeight(uint256) := TMP_2901(uint256)
+TMP_2902(bool) = userFreeWeight >= weight
+CONDITION TMP_2902
+EXPRESSION:userFreeWeight = freeVotes(user) + userUnusedVotes(user)	NodeType.VARIABLE
+userFreeWeight = freeVotes(user) + userUnusedVotes(user)	NodeType.EXPRESSION
+userFreeWeight >= weight	NodeType.IF" [key=0];
+"BlockID: 3430
+Call context: 
+None
+TMP_2901(uint256) = TMP_2899 (c)+ TMP_2900
+userFreeWeight(uint256) := TMP_2901(uint256)
+TMP_2902(bool) = userFreeWeight >= weight
+CONDITION TMP_2902
+EXPRESSION:userFreeWeight = freeVotes(user) + userUnusedVotes(user)	NodeType.VARIABLE
+userFreeWeight = freeVotes(user) + userUnusedVotes(user)	NodeType.EXPRESSION
+userFreeWeight >= weight	NodeType.IF" -> "BlockID: 3431
+Call context: 
+True
+RETURN
+EXPRESSION:None	NodeType.RETURN" [key=0];
+"BlockID: 3430
+Call context: 
+None
+TMP_2901(uint256) = TMP_2899 (c)+ TMP_2900
+userFreeWeight(uint256) := TMP_2901(uint256)
+TMP_2902(bool) = userFreeWeight >= weight
+CONDITION TMP_2902
+EXPRESSION:userFreeWeight = freeVotes(user) + userUnusedVotes(user)	NodeType.VARIABLE
+userFreeWeight = freeVotes(user) + userUnusedVotes(user)	NodeType.EXPRESSION
+userFreeWeight >= weight	NodeType.IF" -> "BlockID: 3432
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3432
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3433
+Call context: 
+None
+TMP_2903(uint32) = INTERNAL_CALL, ERC20Gauges._getGaugeCycleEnd()()
+EXPRESSION:" [key=0];
+"BlockID: 3433
+Call context: 
+None
+TMP_2903(uint32) = INTERNAL_CALL, ERC20Gauges._getGaugeCycleEnd()()
+EXPRESSION:" -> "BlockID: 3434
+Call context: 
+None
+currentCycle(uint32) := TMP_2903(uint32)
+NEW VARIABLE userFreed
+NEW VARIABLE totalFreed
+REF_732(EnumerableSet.AddressSet) -> _userGauges[user]
+TMP_2904(address[]) = LIBRARY_CALL, dest:EnumerableSet, function:EnumerableSet.values(EnumerableSet.AddressSet), arguments:['REF_732'] 
+EXPRESSION:currentCycle = _getGaugeCycleEnd()	NodeType.VARIABLE
+currentCycle = _getGaugeCycleEnd()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE" [key=0];
+"BlockID: 3434
+Call context: 
+None
+currentCycle(uint32) := TMP_2903(uint32)
+NEW VARIABLE userFreed
+NEW VARIABLE totalFreed
+REF_732(EnumerableSet.AddressSet) -> _userGauges[user]
+TMP_2904(address[]) = LIBRARY_CALL, dest:EnumerableSet, function:EnumerableSet.values(EnumerableSet.AddressSet), arguments:['REF_732'] 
+EXPRESSION:currentCycle = _getGaugeCycleEnd()	NodeType.VARIABLE
+currentCycle = _getGaugeCycleEnd()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE" -> "BlockID: 3435
+Call context: 
+None
+gaugeList(address[]) =  ['TMP_2904(address[])']
+REF_734 -> LENGTH gaugeList
+size(uint256) := REF_734(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:gaugeList = _userGauges[user].values()	NodeType.VARIABLE
+gaugeList = _userGauges[user].values()	NodeType.EXPRESSION
+size = gaugeList.length	NodeType.VARIABLE
+size = gaugeList.length	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 3435
+Call context: 
+None
+gaugeList(address[]) =  ['TMP_2904(address[])']
+REF_734 -> LENGTH gaugeList
+size(uint256) := REF_734(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:gaugeList = _userGauges[user].values()	NodeType.VARIABLE
+gaugeList = _userGauges[user].values()	NodeType.EXPRESSION
+size = gaugeList.length	NodeType.VARIABLE
+size = gaugeList.length	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" -> "BlockID: 3436
+Call context: 
+None
+BEGIN_LOOP
+TMP_2905(bool) = i < size
+TMP_2906(uint256) = userFreeWeight (c)+ totalFreed
+TMP_2907(bool) = TMP_2906 < weight
+TMP_2908(bool) = TMP_2905 && TMP_2907
+CONDITION TMP_2908
+EXPRESSION:None	NodeType.STARTLOOP
+i < size && (userFreeWeight + totalFreed) < weight	NodeType.IFLOOP" [key=0];
+"BlockID: 3436
+Call context: 
+None
+BEGIN_LOOP
+TMP_2905(bool) = i < size
+TMP_2906(uint256) = userFreeWeight (c)+ totalFreed
+TMP_2907(bool) = TMP_2906 < weight
+TMP_2908(bool) = TMP_2905 && TMP_2907
+CONDITION TMP_2908
+EXPRESSION:None	NodeType.STARTLOOP
+i < size && (userFreeWeight + totalFreed) < weight	NodeType.IFLOOP" -> "BlockID: 3437
+Call context: 
+True
+REF_735(address) -> gaugeList[i]
+gauge(address) := REF_735(address)
+REF_736(mapping(address => uint112)) -> getUserGaugeWeight[user]
+REF_737(uint112) -> REF_736[gauge]
+userGaugeWeight(uint112) := REF_737(uint112)
+TMP_2909(bool) = userGaugeWeight != 0
+CONDITION TMP_2909
+EXPRESSION:gauge = gaugeList[i]	NodeType.VARIABLE
+gauge = gaugeList[i]	NodeType.EXPRESSION
+userGaugeWeight = getUserGaugeWeight[user][gauge]	NodeType.VARIABLE
+userGaugeWeight = getUserGaugeWeight[user][gauge]	NodeType.EXPRESSION
+userGaugeWeight != 0	NodeType.IF" [key=0];
+"BlockID: 3436
+Call context: 
+None
+BEGIN_LOOP
+TMP_2905(bool) = i < size
+TMP_2906(uint256) = userFreeWeight (c)+ totalFreed
+TMP_2907(bool) = TMP_2906 < weight
+TMP_2908(bool) = TMP_2905 && TMP_2907
+CONDITION TMP_2908
+EXPRESSION:None	NodeType.STARTLOOP
+i < size && (userFreeWeight + totalFreed) < weight	NodeType.IFLOOP" -> "BlockID: 3438
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 3437
+Call context: 
+True
+REF_735(address) -> gaugeList[i]
+gauge(address) := REF_735(address)
+REF_736(mapping(address => uint112)) -> getUserGaugeWeight[user]
+REF_737(uint112) -> REF_736[gauge]
+userGaugeWeight(uint112) := REF_737(uint112)
+TMP_2909(bool) = userGaugeWeight != 0
+CONDITION TMP_2909
+EXPRESSION:gauge = gaugeList[i]	NodeType.VARIABLE
+gauge = gaugeList[i]	NodeType.EXPRESSION
+userGaugeWeight = getUserGaugeWeight[user][gauge]	NodeType.VARIABLE
+userGaugeWeight = getUserGaugeWeight[user][gauge]	NodeType.EXPRESSION
+userGaugeWeight != 0	NodeType.IF" -> "BlockID: 3441
+Call context: 
+True
+TMP_2910(bool) = LIBRARY_CALL, dest:EnumerableSet, function:EnumerableSet.contains(EnumerableSet.AddressSet,address), arguments:['_deprecatedGauges', 'gauge'] 
+EXPRESSION:! _deprecatedGauges.contains(gauge)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3437
+Call context: 
+True
+REF_735(address) -> gaugeList[i]
+gauge(address) := REF_735(address)
+REF_736(mapping(address => uint112)) -> getUserGaugeWeight[user]
+REF_737(uint112) -> REF_736[gauge]
+userGaugeWeight(uint112) := REF_737(uint112)
+TMP_2909(bool) = userGaugeWeight != 0
+CONDITION TMP_2909
+EXPRESSION:gauge = gaugeList[i]	NodeType.VARIABLE
+gauge = gaugeList[i]	NodeType.EXPRESSION
+userGaugeWeight = getUserGaugeWeight[user][gauge]	NodeType.VARIABLE
+userGaugeWeight = getUserGaugeWeight[user][gauge]	NodeType.EXPRESSION
+userGaugeWeight != 0	NodeType.IF" -> "BlockID: 3443
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3438
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 3439
+Call context: 
+None
+REF_739(uint112) -> getUserWeight[user]
+REF_739(-> getUserWeight) = REF_739 (c)- userFreed
+INTERNAL_CALL, ERC20Gauges._writeGaugeWeight(IERC20Gauges.Weight,function(uint112,uint112) returns(uint112),uint112,uint32)(_totalWeight,_subtract112,totalFreed,currentCycle)
+EXPRESSION:getUserWeight[user] -= userFreed	NodeType.EXPRESSION
+_writeGaugeWeight(_totalWeight,_subtract112,totalFreed,currentCycle)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3441
+Call context: 
+True
+TMP_2910(bool) = LIBRARY_CALL, dest:EnumerableSet, function:EnumerableSet.contains(EnumerableSet.AddressSet,address), arguments:['_deprecatedGauges', 'gauge'] 
+EXPRESSION:! _deprecatedGauges.contains(gauge)	NodeType.EXPRESSION" -> "BlockID: 3442
+Call context: 
+None
+TMP_2911 = ! TMP_2910 
+CONDITION TMP_2911
+EXPRESSION:! _deprecatedGauges.contains(gauge)	NodeType.IF" [key=0];
+"BlockID: 3443
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3436
+Call context: 
+None
+BEGIN_LOOP
+TMP_2905(bool) = i < size
+TMP_2906(uint256) = userFreeWeight (c)+ totalFreed
+TMP_2907(bool) = TMP_2906 < weight
+TMP_2908(bool) = TMP_2905 && TMP_2907
+CONDITION TMP_2908
+EXPRESSION:None	NodeType.STARTLOOP
+i < size && (userFreeWeight + totalFreed) < weight	NodeType.IFLOOP" [key=0];
+"BlockID: 3442
+Call context: 
+None
+TMP_2911 = ! TMP_2910 
+CONDITION TMP_2911
+EXPRESSION:! _deprecatedGauges.contains(gauge)	NodeType.IF" -> "BlockID: 3445
+Call context: 
+True
+totalFreed(uint112) = totalFreed (c)+ userGaugeWeight
+EXPRESSION:totalFreed += userGaugeWeight	NodeType.EXPRESSION" [key=0];
+"BlockID: 3442
+Call context: 
+None
+TMP_2911 = ! TMP_2910 
+CONDITION TMP_2911
+EXPRESSION:! _deprecatedGauges.contains(gauge)	NodeType.IF" -> "BlockID: 3446
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3445
+Call context: 
+True
+totalFreed(uint112) = totalFreed (c)+ userGaugeWeight
+EXPRESSION:totalFreed += userGaugeWeight	NodeType.EXPRESSION" -> "BlockID: 3446
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3446
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3447
+Call context: 
+None
+userFreed(uint112) = userFreed (c)+ userGaugeWeight
+INTERNAL_CALL, ERC20Gauges._decrementGaugeWeight(address,address,uint112,uint32)(user,gauge,userGaugeWeight,currentCycle)
+EXPRESSION:userFreed += userGaugeWeight	NodeType.EXPRESSION
+_decrementGaugeWeight(user,gauge,userGaugeWeight,currentCycle)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3447
+Call context: 
+None
+userFreed(uint112) = userFreed (c)+ userGaugeWeight
+INTERNAL_CALL, ERC20Gauges._decrementGaugeWeight(address,address,uint112,uint32)(user,gauge,userGaugeWeight,currentCycle)
+EXPRESSION:userFreed += userGaugeWeight	NodeType.EXPRESSION
+_decrementGaugeWeight(user,gauge,userGaugeWeight,currentCycle)	NodeType.EXPRESSION" -> "BlockID: 3448
+Call context: 
+None
+TMP_2913(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:_decrementGaugeWeight(user,gauge,userGaugeWeight,currentCycle)	NodeType.EXPRESSION
+i ++	NodeType.EXPRESSION" [key=0];
+"BlockID: 3448
+Call context: 
+None
+TMP_2913(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:_decrementGaugeWeight(user,gauge,userGaugeWeight,currentCycle)	NodeType.EXPRESSION
+i ++	NodeType.EXPRESSION" -> "BlockID: 3443
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

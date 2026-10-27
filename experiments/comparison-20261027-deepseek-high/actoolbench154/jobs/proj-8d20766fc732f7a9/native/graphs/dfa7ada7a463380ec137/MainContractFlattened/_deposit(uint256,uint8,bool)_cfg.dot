@@ -1,0 +1,588 @@
+digraph {
+"BlockID: 1218
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1219
+Call context: 
+None
+REF_36(GymSinglePool.UserInfo) -> userInfo[msg.sender]
+user(GymSinglePool.UserInfo) := REF_36(GymSinglePool.UserInfo)
+TMP_458 = CONVERT tokenAddress to IERC20Upgradeable
+token(IERC20Upgradeable) := TMP_458(IERC20Upgradeable)
+pool(GymSinglePool.PoolInfo) := poolInfo(GymSinglePool.PoolInfo)
+INTERNAL_CALL, GymSinglePool.updatePool()()
+EXPRESSION:user = userInfo[msg.sender]	NodeType.VARIABLE
+user = userInfo[msg.sender]	NodeType.EXPRESSION
+token = IERC20Upgradeable(tokenAddress)	NodeType.VARIABLE
+token = IERC20Upgradeable(tokenAddress)	NodeType.EXPRESSION
+pool = poolInfo	NodeType.VARIABLE
+pool = poolInfo	NodeType.EXPRESSION
+updatePool()	NodeType.EXPRESSION";
+"BlockID: 1220
+Call context: 
+None
+REF_37(uint256) -> months[_periodId]
+period(uint256) := REF_37(uint256)
+REF_39(uint256) -> months[_periodId]
+TMP_460(uint256) = LIBRARY_CALL, dest:DateTime, function:DateTime.addMonths(uint256,uint256), arguments:['block.timestamp', 'REF_39'] 
+EXPRESSION:updatePool()	NodeType.EXPRESSION
+period = months[_periodId]	NodeType.VARIABLE
+period = months[_periodId]	NodeType.EXPRESSION";
+"BlockID: 1221
+Call context: 
+None
+lockTimesamp(uint256) := TMP_460(uint256)
+burnTokensAmount(uint256) := 0(uint256)
+TMP_461 = ! _isUnlocked 
+CONDITION TMP_461
+EXPRESSION:lockTimesamp = DateTime.addMonths(block.timestamp,months[_periodId])	NodeType.VARIABLE
+lockTimesamp = DateTime.addMonths(block.timestamp,months[_periodId])	NodeType.EXPRESSION
+burnTokensAmount = 0	NodeType.VARIABLE
+burnTokensAmount = 0	NodeType.EXPRESSION
+! _isUnlocked	NodeType.IF" [shape=box];
+"BlockID: 1222
+Call context: 
+True
+TMP_462(uint256) = _depositAmount (c)* 4
+TMP_463(uint256) = TMP_462 (c)/ 100
+burnTokensAmount(uint256) := TMP_463(uint256)
+totalBurntInSinglePool(uint256) = totalBurntInSinglePool (c)+ burnTokensAmount
+TMP_464 = CONVERT tokenAddress to IERC20Burnable
+HIGH_LEVEL_CALL, dest:TMP_464(IERC20Burnable), function:burnFrom, arguments:['msg.sender', 'burnTokensAmount']  
+EXPRESSION:burnTokensAmount = (_depositAmount * 4) / 100	NodeType.EXPRESSION
+totalBurntInSinglePool += burnTokensAmount	NodeType.EXPRESSION
+IERC20Burnable(tokenAddress).burnFrom(msg.sender,burnTokensAmount)	NodeType.EXPRESSION";
+"BlockID: 1223
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1224
+Call context: 
+None
+TMP_466(uint256) = _depositAmount (c)- burnTokensAmount
+amountToDeposit(uint256) := TMP_466(uint256)
+TMP_467 = CONVERT this to address
+LIBRARY_CALL, dest:SafeERC20Upgradeable, function:SafeERC20Upgradeable.safeTransferFrom(IERC20Upgradeable,address,address,uint256), arguments:['token', 'msg.sender', 'TMP_467', 'amountToDeposit'] 
+EXPRESSION:amountToDeposit = _depositAmount - burnTokensAmount	NodeType.VARIABLE
+amountToDeposit = _depositAmount - burnTokensAmount	NodeType.EXPRESSION
+token.safeTransferFrom(msg.sender,address(this),amountToDeposit)	NodeType.EXPRESSION";
+"BlockID: 1225
+Call context: 
+None
+TMP_469(uint256) = INTERNAL_CALL, GymSinglePool.getPrice()()
+EXPRESSION:token.safeTransferFrom(msg.sender,address(this),amountToDeposit)	NodeType.EXPRESSION";
+"BlockID: 1226
+Call context: 
+None
+TMP_470(uint256) = amountToDeposit (c)* TMP_469
+TMP_471(uint256) = TMP_470 (c)/ 1000000000000000000
+TMP_472(uint256) = TMP_471 (c)/ 1000000000000000000
+UsdValueOfGym(uint256) := TMP_472(uint256)
+REF_42(uint256) -> user.totalDepositTokens
+REF_42(-> user) = REF_42 (c)+ amountToDeposit
+REF_43(uint256) -> user.totalDepositDollarValue
+REF_43(-> user) = REF_43 (c)+ UsdValueOfGym
+totalGymnetLocked(uint256) = totalGymnetLocked (c)+ amountToDeposit
+CONDITION _isUnlocked
+EXPRESSION:UsdValueOfGym = ((amountToDeposit * getPrice()) / 1e18) / 1e18	NodeType.VARIABLE
+UsdValueOfGym = ((amountToDeposit * getPrice()) / 1e18) / 1e18	NodeType.EXPRESSION
+user.totalDepositTokens += amountToDeposit	NodeType.EXPRESSION
+user.totalDepositDollarValue += UsdValueOfGym	NodeType.EXPRESSION
+totalGymnetLocked += amountToDeposit	NodeType.EXPRESSION
+_isUnlocked	NodeType.IF" [shape=box];
+"BlockID: 1227
+Call context: 
+True
+totalGymnetUnlocked(uint256) = totalGymnetUnlocked (c)+ amountToDeposit
+period(uint256) := 0(uint256)
+REF_45(uint256) -> months[_periodId]
+TMP_473(uint256) = LIBRARY_CALL, dest:DateTime, function:DateTime.addSeconds(uint256,uint256), arguments:['block.timestamp', 'REF_45'] 
+EXPRESSION:totalGymnetUnlocked += amountToDeposit	NodeType.EXPRESSION
+period = 0	NodeType.EXPRESSION
+lockTimesamp = DateTime.addSeconds(block.timestamp,months[_periodId])	NodeType.EXPRESSION";
+"BlockID: 1228
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1229
+Call context: 
+None
+REF_46(uint256) -> pool.accRewardPerShare
+TMP_474(uint256) = amountToDeposit (c)* REF_46
+TMP_475(uint256) = TMP_474 (c)/ 1000000000000000000
+rewardDebt(uint256) := TMP_475(uint256)
+TMP_476(GymSinglePool.UserDeposits) = new UserDeposits(amountToDeposit,UsdValueOfGym,period,block.timestamp,lockTimesamp,0,False,0,rewardDebt)
+depositDetails(GymSinglePool.UserDeposits) := TMP_476(GymSinglePool.UserDeposits)
+REF_47(GymSinglePool.UserDeposits[]) -> user_deposits[msg.sender]
+REF_49 -> LENGTH REF_47
+TMP_478(uint256) := REF_49(uint256)
+TMP_479(uint256) = TMP_478 (c)+ 1
+REF_49(uint256) (->user_deposits) := TMP_479(uint256)
+REF_50(GymSinglePool.UserDeposits) -> REF_47[TMP_478]
+REF_50(GymSinglePool.UserDeposits) (->user_deposits) := depositDetails(GymSinglePool.UserDeposits)
+REF_51(uint256) -> user.depositId
+REF_52(GymSinglePool.UserDeposits[]) -> user_deposits[msg.sender]
+REF_53 -> LENGTH REF_52
+REF_51(uint256) (->user) := REF_53(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:rewardDebt = (amountToDeposit * (pool.accRewardPerShare)) / (1e18)	NodeType.VARIABLE
+rewardDebt = (amountToDeposit * (pool.accRewardPerShare)) / (1e18)	NodeType.EXPRESSION
+depositDetails = UserDeposits(amountToDeposit,UsdValueOfGym,period,block.timestamp,lockTimesamp,0,false,0,rewardDebt)	NodeType.VARIABLE
+depositDetails = UserDeposits(amountToDeposit,UsdValueOfGym,period,block.timestamp,lockTimesamp,0,false,0,rewardDebt)	NodeType.EXPRESSION
+user_deposits[msg.sender].push(depositDetails)	NodeType.EXPRESSION
+user.depositId = user_deposits[msg.sender].length	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION";
+"BlockID: 1230
+Call context: 
+None
+BEGIN_LOOP
+REF_54 -> LENGTH levels
+TMP_480(bool) = i < REF_54
+CONDITION TMP_480
+EXPRESSION:None	NodeType.STARTLOOP
+i < levels.length	NodeType.IFLOOP";
+"BlockID: 1231
+Call context: 
+True
+REF_55(uint256) -> user.totalDepositDollarValue
+REF_56(uint256) -> levels[i]
+TMP_481(bool) = REF_55 >= REF_56
+CONDITION TMP_481
+EXPRESSION:user.totalDepositDollarValue >= levels[i]	NodeType.IF";
+"BlockID: 1232
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 1234
+Call context: 
+True
+REF_57(uint256) -> user.level
+REF_57(uint256) (->user) := i(uint256)
+EXPRESSION:user.level = i	NodeType.EXPRESSION";
+"BlockID: 1235
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1236
+Call context: 
+None
+TMP_482(uint256) := i(uint256)
+i(uint256) = i (c)+ 1
+EXPRESSION:i ++	NodeType.EXPRESSION";
+"BlockID: 1237
+Call context: 
+None
+lockTimesamp(uint256) := TMP_473(uint256)
+EXPRESSION:lockTimesamp = DateTime.addSeconds(block.timestamp,months[_periodId])	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1218
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1219
+Call context: 
+None
+REF_36(GymSinglePool.UserInfo) -> userInfo[msg.sender]
+user(GymSinglePool.UserInfo) := REF_36(GymSinglePool.UserInfo)
+TMP_458 = CONVERT tokenAddress to IERC20Upgradeable
+token(IERC20Upgradeable) := TMP_458(IERC20Upgradeable)
+pool(GymSinglePool.PoolInfo) := poolInfo(GymSinglePool.PoolInfo)
+INTERNAL_CALL, GymSinglePool.updatePool()()
+EXPRESSION:user = userInfo[msg.sender]	NodeType.VARIABLE
+user = userInfo[msg.sender]	NodeType.EXPRESSION
+token = IERC20Upgradeable(tokenAddress)	NodeType.VARIABLE
+token = IERC20Upgradeable(tokenAddress)	NodeType.EXPRESSION
+pool = poolInfo	NodeType.VARIABLE
+pool = poolInfo	NodeType.EXPRESSION
+updatePool()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1219
+Call context: 
+None
+REF_36(GymSinglePool.UserInfo) -> userInfo[msg.sender]
+user(GymSinglePool.UserInfo) := REF_36(GymSinglePool.UserInfo)
+TMP_458 = CONVERT tokenAddress to IERC20Upgradeable
+token(IERC20Upgradeable) := TMP_458(IERC20Upgradeable)
+pool(GymSinglePool.PoolInfo) := poolInfo(GymSinglePool.PoolInfo)
+INTERNAL_CALL, GymSinglePool.updatePool()()
+EXPRESSION:user = userInfo[msg.sender]	NodeType.VARIABLE
+user = userInfo[msg.sender]	NodeType.EXPRESSION
+token = IERC20Upgradeable(tokenAddress)	NodeType.VARIABLE
+token = IERC20Upgradeable(tokenAddress)	NodeType.EXPRESSION
+pool = poolInfo	NodeType.VARIABLE
+pool = poolInfo	NodeType.EXPRESSION
+updatePool()	NodeType.EXPRESSION" -> "BlockID: 1220
+Call context: 
+None
+REF_37(uint256) -> months[_periodId]
+period(uint256) := REF_37(uint256)
+REF_39(uint256) -> months[_periodId]
+TMP_460(uint256) = LIBRARY_CALL, dest:DateTime, function:DateTime.addMonths(uint256,uint256), arguments:['block.timestamp', 'REF_39'] 
+EXPRESSION:updatePool()	NodeType.EXPRESSION
+period = months[_periodId]	NodeType.VARIABLE
+period = months[_periodId]	NodeType.EXPRESSION" [key=0];
+"BlockID: 1220
+Call context: 
+None
+REF_37(uint256) -> months[_periodId]
+period(uint256) := REF_37(uint256)
+REF_39(uint256) -> months[_periodId]
+TMP_460(uint256) = LIBRARY_CALL, dest:DateTime, function:DateTime.addMonths(uint256,uint256), arguments:['block.timestamp', 'REF_39'] 
+EXPRESSION:updatePool()	NodeType.EXPRESSION
+period = months[_periodId]	NodeType.VARIABLE
+period = months[_periodId]	NodeType.EXPRESSION" -> "BlockID: 1221
+Call context: 
+None
+lockTimesamp(uint256) := TMP_460(uint256)
+burnTokensAmount(uint256) := 0(uint256)
+TMP_461 = ! _isUnlocked 
+CONDITION TMP_461
+EXPRESSION:lockTimesamp = DateTime.addMonths(block.timestamp,months[_periodId])	NodeType.VARIABLE
+lockTimesamp = DateTime.addMonths(block.timestamp,months[_periodId])	NodeType.EXPRESSION
+burnTokensAmount = 0	NodeType.VARIABLE
+burnTokensAmount = 0	NodeType.EXPRESSION
+! _isUnlocked	NodeType.IF" [key=0];
+"BlockID: 1221
+Call context: 
+None
+lockTimesamp(uint256) := TMP_460(uint256)
+burnTokensAmount(uint256) := 0(uint256)
+TMP_461 = ! _isUnlocked 
+CONDITION TMP_461
+EXPRESSION:lockTimesamp = DateTime.addMonths(block.timestamp,months[_periodId])	NodeType.VARIABLE
+lockTimesamp = DateTime.addMonths(block.timestamp,months[_periodId])	NodeType.EXPRESSION
+burnTokensAmount = 0	NodeType.VARIABLE
+burnTokensAmount = 0	NodeType.EXPRESSION
+! _isUnlocked	NodeType.IF" -> "BlockID: 1222
+Call context: 
+True
+TMP_462(uint256) = _depositAmount (c)* 4
+TMP_463(uint256) = TMP_462 (c)/ 100
+burnTokensAmount(uint256) := TMP_463(uint256)
+totalBurntInSinglePool(uint256) = totalBurntInSinglePool (c)+ burnTokensAmount
+TMP_464 = CONVERT tokenAddress to IERC20Burnable
+HIGH_LEVEL_CALL, dest:TMP_464(IERC20Burnable), function:burnFrom, arguments:['msg.sender', 'burnTokensAmount']  
+EXPRESSION:burnTokensAmount = (_depositAmount * 4) / 100	NodeType.EXPRESSION
+totalBurntInSinglePool += burnTokensAmount	NodeType.EXPRESSION
+IERC20Burnable(tokenAddress).burnFrom(msg.sender,burnTokensAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1221
+Call context: 
+None
+lockTimesamp(uint256) := TMP_460(uint256)
+burnTokensAmount(uint256) := 0(uint256)
+TMP_461 = ! _isUnlocked 
+CONDITION TMP_461
+EXPRESSION:lockTimesamp = DateTime.addMonths(block.timestamp,months[_periodId])	NodeType.VARIABLE
+lockTimesamp = DateTime.addMonths(block.timestamp,months[_periodId])	NodeType.EXPRESSION
+burnTokensAmount = 0	NodeType.VARIABLE
+burnTokensAmount = 0	NodeType.EXPRESSION
+! _isUnlocked	NodeType.IF" -> "BlockID: 1223
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1222
+Call context: 
+True
+TMP_462(uint256) = _depositAmount (c)* 4
+TMP_463(uint256) = TMP_462 (c)/ 100
+burnTokensAmount(uint256) := TMP_463(uint256)
+totalBurntInSinglePool(uint256) = totalBurntInSinglePool (c)+ burnTokensAmount
+TMP_464 = CONVERT tokenAddress to IERC20Burnable
+HIGH_LEVEL_CALL, dest:TMP_464(IERC20Burnable), function:burnFrom, arguments:['msg.sender', 'burnTokensAmount']  
+EXPRESSION:burnTokensAmount = (_depositAmount * 4) / 100	NodeType.EXPRESSION
+totalBurntInSinglePool += burnTokensAmount	NodeType.EXPRESSION
+IERC20Burnable(tokenAddress).burnFrom(msg.sender,burnTokensAmount)	NodeType.EXPRESSION" -> "BlockID: 1223
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1223
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1224
+Call context: 
+None
+TMP_466(uint256) = _depositAmount (c)- burnTokensAmount
+amountToDeposit(uint256) := TMP_466(uint256)
+TMP_467 = CONVERT this to address
+LIBRARY_CALL, dest:SafeERC20Upgradeable, function:SafeERC20Upgradeable.safeTransferFrom(IERC20Upgradeable,address,address,uint256), arguments:['token', 'msg.sender', 'TMP_467', 'amountToDeposit'] 
+EXPRESSION:amountToDeposit = _depositAmount - burnTokensAmount	NodeType.VARIABLE
+amountToDeposit = _depositAmount - burnTokensAmount	NodeType.EXPRESSION
+token.safeTransferFrom(msg.sender,address(this),amountToDeposit)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1224
+Call context: 
+None
+TMP_466(uint256) = _depositAmount (c)- burnTokensAmount
+amountToDeposit(uint256) := TMP_466(uint256)
+TMP_467 = CONVERT this to address
+LIBRARY_CALL, dest:SafeERC20Upgradeable, function:SafeERC20Upgradeable.safeTransferFrom(IERC20Upgradeable,address,address,uint256), arguments:['token', 'msg.sender', 'TMP_467', 'amountToDeposit'] 
+EXPRESSION:amountToDeposit = _depositAmount - burnTokensAmount	NodeType.VARIABLE
+amountToDeposit = _depositAmount - burnTokensAmount	NodeType.EXPRESSION
+token.safeTransferFrom(msg.sender,address(this),amountToDeposit)	NodeType.EXPRESSION" -> "BlockID: 1225
+Call context: 
+None
+TMP_469(uint256) = INTERNAL_CALL, GymSinglePool.getPrice()()
+EXPRESSION:token.safeTransferFrom(msg.sender,address(this),amountToDeposit)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1225
+Call context: 
+None
+TMP_469(uint256) = INTERNAL_CALL, GymSinglePool.getPrice()()
+EXPRESSION:token.safeTransferFrom(msg.sender,address(this),amountToDeposit)	NodeType.EXPRESSION" -> "BlockID: 1226
+Call context: 
+None
+TMP_470(uint256) = amountToDeposit (c)* TMP_469
+TMP_471(uint256) = TMP_470 (c)/ 1000000000000000000
+TMP_472(uint256) = TMP_471 (c)/ 1000000000000000000
+UsdValueOfGym(uint256) := TMP_472(uint256)
+REF_42(uint256) -> user.totalDepositTokens
+REF_42(-> user) = REF_42 (c)+ amountToDeposit
+REF_43(uint256) -> user.totalDepositDollarValue
+REF_43(-> user) = REF_43 (c)+ UsdValueOfGym
+totalGymnetLocked(uint256) = totalGymnetLocked (c)+ amountToDeposit
+CONDITION _isUnlocked
+EXPRESSION:UsdValueOfGym = ((amountToDeposit * getPrice()) / 1e18) / 1e18	NodeType.VARIABLE
+UsdValueOfGym = ((amountToDeposit * getPrice()) / 1e18) / 1e18	NodeType.EXPRESSION
+user.totalDepositTokens += amountToDeposit	NodeType.EXPRESSION
+user.totalDepositDollarValue += UsdValueOfGym	NodeType.EXPRESSION
+totalGymnetLocked += amountToDeposit	NodeType.EXPRESSION
+_isUnlocked	NodeType.IF" [key=0];
+"BlockID: 1226
+Call context: 
+None
+TMP_470(uint256) = amountToDeposit (c)* TMP_469
+TMP_471(uint256) = TMP_470 (c)/ 1000000000000000000
+TMP_472(uint256) = TMP_471 (c)/ 1000000000000000000
+UsdValueOfGym(uint256) := TMP_472(uint256)
+REF_42(uint256) -> user.totalDepositTokens
+REF_42(-> user) = REF_42 (c)+ amountToDeposit
+REF_43(uint256) -> user.totalDepositDollarValue
+REF_43(-> user) = REF_43 (c)+ UsdValueOfGym
+totalGymnetLocked(uint256) = totalGymnetLocked (c)+ amountToDeposit
+CONDITION _isUnlocked
+EXPRESSION:UsdValueOfGym = ((amountToDeposit * getPrice()) / 1e18) / 1e18	NodeType.VARIABLE
+UsdValueOfGym = ((amountToDeposit * getPrice()) / 1e18) / 1e18	NodeType.EXPRESSION
+user.totalDepositTokens += amountToDeposit	NodeType.EXPRESSION
+user.totalDepositDollarValue += UsdValueOfGym	NodeType.EXPRESSION
+totalGymnetLocked += amountToDeposit	NodeType.EXPRESSION
+_isUnlocked	NodeType.IF" -> "BlockID: 1227
+Call context: 
+True
+totalGymnetUnlocked(uint256) = totalGymnetUnlocked (c)+ amountToDeposit
+period(uint256) := 0(uint256)
+REF_45(uint256) -> months[_periodId]
+TMP_473(uint256) = LIBRARY_CALL, dest:DateTime, function:DateTime.addSeconds(uint256,uint256), arguments:['block.timestamp', 'REF_45'] 
+EXPRESSION:totalGymnetUnlocked += amountToDeposit	NodeType.EXPRESSION
+period = 0	NodeType.EXPRESSION
+lockTimesamp = DateTime.addSeconds(block.timestamp,months[_periodId])	NodeType.EXPRESSION" [key=0];
+"BlockID: 1226
+Call context: 
+None
+TMP_470(uint256) = amountToDeposit (c)* TMP_469
+TMP_471(uint256) = TMP_470 (c)/ 1000000000000000000
+TMP_472(uint256) = TMP_471 (c)/ 1000000000000000000
+UsdValueOfGym(uint256) := TMP_472(uint256)
+REF_42(uint256) -> user.totalDepositTokens
+REF_42(-> user) = REF_42 (c)+ amountToDeposit
+REF_43(uint256) -> user.totalDepositDollarValue
+REF_43(-> user) = REF_43 (c)+ UsdValueOfGym
+totalGymnetLocked(uint256) = totalGymnetLocked (c)+ amountToDeposit
+CONDITION _isUnlocked
+EXPRESSION:UsdValueOfGym = ((amountToDeposit * getPrice()) / 1e18) / 1e18	NodeType.VARIABLE
+UsdValueOfGym = ((amountToDeposit * getPrice()) / 1e18) / 1e18	NodeType.EXPRESSION
+user.totalDepositTokens += amountToDeposit	NodeType.EXPRESSION
+user.totalDepositDollarValue += UsdValueOfGym	NodeType.EXPRESSION
+totalGymnetLocked += amountToDeposit	NodeType.EXPRESSION
+_isUnlocked	NodeType.IF" -> "BlockID: 1228
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1227
+Call context: 
+True
+totalGymnetUnlocked(uint256) = totalGymnetUnlocked (c)+ amountToDeposit
+period(uint256) := 0(uint256)
+REF_45(uint256) -> months[_periodId]
+TMP_473(uint256) = LIBRARY_CALL, dest:DateTime, function:DateTime.addSeconds(uint256,uint256), arguments:['block.timestamp', 'REF_45'] 
+EXPRESSION:totalGymnetUnlocked += amountToDeposit	NodeType.EXPRESSION
+period = 0	NodeType.EXPRESSION
+lockTimesamp = DateTime.addSeconds(block.timestamp,months[_periodId])	NodeType.EXPRESSION" -> "BlockID: 1237
+Call context: 
+None
+lockTimesamp(uint256) := TMP_473(uint256)
+EXPRESSION:lockTimesamp = DateTime.addSeconds(block.timestamp,months[_periodId])	NodeType.EXPRESSION" [key=0];
+"BlockID: 1228
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1229
+Call context: 
+None
+REF_46(uint256) -> pool.accRewardPerShare
+TMP_474(uint256) = amountToDeposit (c)* REF_46
+TMP_475(uint256) = TMP_474 (c)/ 1000000000000000000
+rewardDebt(uint256) := TMP_475(uint256)
+TMP_476(GymSinglePool.UserDeposits) = new UserDeposits(amountToDeposit,UsdValueOfGym,period,block.timestamp,lockTimesamp,0,False,0,rewardDebt)
+depositDetails(GymSinglePool.UserDeposits) := TMP_476(GymSinglePool.UserDeposits)
+REF_47(GymSinglePool.UserDeposits[]) -> user_deposits[msg.sender]
+REF_49 -> LENGTH REF_47
+TMP_478(uint256) := REF_49(uint256)
+TMP_479(uint256) = TMP_478 (c)+ 1
+REF_49(uint256) (->user_deposits) := TMP_479(uint256)
+REF_50(GymSinglePool.UserDeposits) -> REF_47[TMP_478]
+REF_50(GymSinglePool.UserDeposits) (->user_deposits) := depositDetails(GymSinglePool.UserDeposits)
+REF_51(uint256) -> user.depositId
+REF_52(GymSinglePool.UserDeposits[]) -> user_deposits[msg.sender]
+REF_53 -> LENGTH REF_52
+REF_51(uint256) (->user) := REF_53(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:rewardDebt = (amountToDeposit * (pool.accRewardPerShare)) / (1e18)	NodeType.VARIABLE
+rewardDebt = (amountToDeposit * (pool.accRewardPerShare)) / (1e18)	NodeType.EXPRESSION
+depositDetails = UserDeposits(amountToDeposit,UsdValueOfGym,period,block.timestamp,lockTimesamp,0,false,0,rewardDebt)	NodeType.VARIABLE
+depositDetails = UserDeposits(amountToDeposit,UsdValueOfGym,period,block.timestamp,lockTimesamp,0,false,0,rewardDebt)	NodeType.EXPRESSION
+user_deposits[msg.sender].push(depositDetails)	NodeType.EXPRESSION
+user.depositId = user_deposits[msg.sender].length	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 1229
+Call context: 
+None
+REF_46(uint256) -> pool.accRewardPerShare
+TMP_474(uint256) = amountToDeposit (c)* REF_46
+TMP_475(uint256) = TMP_474 (c)/ 1000000000000000000
+rewardDebt(uint256) := TMP_475(uint256)
+TMP_476(GymSinglePool.UserDeposits) = new UserDeposits(amountToDeposit,UsdValueOfGym,period,block.timestamp,lockTimesamp,0,False,0,rewardDebt)
+depositDetails(GymSinglePool.UserDeposits) := TMP_476(GymSinglePool.UserDeposits)
+REF_47(GymSinglePool.UserDeposits[]) -> user_deposits[msg.sender]
+REF_49 -> LENGTH REF_47
+TMP_478(uint256) := REF_49(uint256)
+TMP_479(uint256) = TMP_478 (c)+ 1
+REF_49(uint256) (->user_deposits) := TMP_479(uint256)
+REF_50(GymSinglePool.UserDeposits) -> REF_47[TMP_478]
+REF_50(GymSinglePool.UserDeposits) (->user_deposits) := depositDetails(GymSinglePool.UserDeposits)
+REF_51(uint256) -> user.depositId
+REF_52(GymSinglePool.UserDeposits[]) -> user_deposits[msg.sender]
+REF_53 -> LENGTH REF_52
+REF_51(uint256) (->user) := REF_53(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:rewardDebt = (amountToDeposit * (pool.accRewardPerShare)) / (1e18)	NodeType.VARIABLE
+rewardDebt = (amountToDeposit * (pool.accRewardPerShare)) / (1e18)	NodeType.EXPRESSION
+depositDetails = UserDeposits(amountToDeposit,UsdValueOfGym,period,block.timestamp,lockTimesamp,0,false,0,rewardDebt)	NodeType.VARIABLE
+depositDetails = UserDeposits(amountToDeposit,UsdValueOfGym,period,block.timestamp,lockTimesamp,0,false,0,rewardDebt)	NodeType.EXPRESSION
+user_deposits[msg.sender].push(depositDetails)	NodeType.EXPRESSION
+user.depositId = user_deposits[msg.sender].length	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" -> "BlockID: 1230
+Call context: 
+None
+BEGIN_LOOP
+REF_54 -> LENGTH levels
+TMP_480(bool) = i < REF_54
+CONDITION TMP_480
+EXPRESSION:None	NodeType.STARTLOOP
+i < levels.length	NodeType.IFLOOP" [key=0];
+"BlockID: 1230
+Call context: 
+None
+BEGIN_LOOP
+REF_54 -> LENGTH levels
+TMP_480(bool) = i < REF_54
+CONDITION TMP_480
+EXPRESSION:None	NodeType.STARTLOOP
+i < levels.length	NodeType.IFLOOP" -> "BlockID: 1231
+Call context: 
+True
+REF_55(uint256) -> user.totalDepositDollarValue
+REF_56(uint256) -> levels[i]
+TMP_481(bool) = REF_55 >= REF_56
+CONDITION TMP_481
+EXPRESSION:user.totalDepositDollarValue >= levels[i]	NodeType.IF" [key=0];
+"BlockID: 1230
+Call context: 
+None
+BEGIN_LOOP
+REF_54 -> LENGTH levels
+TMP_480(bool) = i < REF_54
+CONDITION TMP_480
+EXPRESSION:None	NodeType.STARTLOOP
+i < levels.length	NodeType.IFLOOP" -> "BlockID: 1232
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 1231
+Call context: 
+True
+REF_55(uint256) -> user.totalDepositDollarValue
+REF_56(uint256) -> levels[i]
+TMP_481(bool) = REF_55 >= REF_56
+CONDITION TMP_481
+EXPRESSION:user.totalDepositDollarValue >= levels[i]	NodeType.IF" -> "BlockID: 1234
+Call context: 
+True
+REF_57(uint256) -> user.level
+REF_57(uint256) (->user) := i(uint256)
+EXPRESSION:user.level = i	NodeType.EXPRESSION" [key=0];
+"BlockID: 1231
+Call context: 
+True
+REF_55(uint256) -> user.totalDepositDollarValue
+REF_56(uint256) -> levels[i]
+TMP_481(bool) = REF_55 >= REF_56
+CONDITION TMP_481
+EXPRESSION:user.totalDepositDollarValue >= levels[i]	NodeType.IF" -> "BlockID: 1235
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1234
+Call context: 
+True
+REF_57(uint256) -> user.level
+REF_57(uint256) (->user) := i(uint256)
+EXPRESSION:user.level = i	NodeType.EXPRESSION" -> "BlockID: 1235
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1235
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1236
+Call context: 
+None
+TMP_482(uint256) := i(uint256)
+i(uint256) = i (c)+ 1
+EXPRESSION:i ++	NodeType.EXPRESSION" [key=0];
+"BlockID: 1236
+Call context: 
+None
+TMP_482(uint256) := i(uint256)
+i(uint256) = i (c)+ 1
+EXPRESSION:i ++	NodeType.EXPRESSION" -> "BlockID: 1230
+Call context: 
+None
+BEGIN_LOOP
+REF_54 -> LENGTH levels
+TMP_480(bool) = i < REF_54
+CONDITION TMP_480
+EXPRESSION:None	NodeType.STARTLOOP
+i < levels.length	NodeType.IFLOOP" [key=0];
+"BlockID: 1237
+Call context: 
+None
+lockTimesamp(uint256) := TMP_473(uint256)
+EXPRESSION:lockTimesamp = DateTime.addSeconds(block.timestamp,months[_periodId])	NodeType.EXPRESSION" -> "BlockID: 1228
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

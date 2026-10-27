@@ -1,0 +1,591 @@
+digraph {
+"BlockID: 1198
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1199
+Call context: 
+None
+MODIFIER_CALL, ReentrancyGuard.preventReentrant()()
+EXPRESSION:preventReentrant()	NodeType.EXPRESSION";
+"BlockID: 1200
+Call context: 
+None
+INTERNAL_CALL, DVMVault._transferBaseOut(address,uint256)(assetTo,baseAmount)
+EXPRESSION:preventReentrant()	NodeType.EXPRESSION
+_transferBaseOut(assetTo,baseAmount)	NodeType.EXPRESSION";
+"BlockID: 1201
+Call context: 
+None
+INTERNAL_CALL, DVMVault._transferQuoteOut(address,uint256)(assetTo,quoteAmount)
+EXPRESSION:_transferBaseOut(assetTo,baseAmount)	NodeType.EXPRESSION
+_transferQuoteOut(assetTo,quoteAmount)	NodeType.EXPRESSION";
+"BlockID: 1202
+Call context: 
+None
+REF_565 -> LENGTH data
+TMP_851(bool) = REF_565 > 0
+CONDITION TMP_851
+EXPRESSION:_transferQuoteOut(assetTo,quoteAmount)	NodeType.EXPRESSION
+data.length > 0	NodeType.IF";
+"BlockID: 1203
+Call context: 
+True
+TMP_852 = CONVERT assetTo to IDODOCallee
+HIGH_LEVEL_CALL, dest:TMP_852(IDODOCallee), function:DVMFlashLoanCall, arguments:['msg.sender', 'baseAmount', 'quoteAmount', 'data']  
+EXPRESSION:IDODOCallee(assetTo).DVMFlashLoanCall(msg.sender,baseAmount,quoteAmount,data)	NodeType.EXPRESSION";
+"BlockID: 1205
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1206
+Call context: 
+None
+TMP_854 = CONVERT this to address
+TMP_855(uint256) = HIGH_LEVEL_CALL, dest:_BASE_TOKEN_(IERC20), function:balanceOf, arguments:['TMP_854']  
+EXPRESSION:";
+"BlockID: 1207
+Call context: 
+None
+baseBalance(uint256) := TMP_855(uint256)
+TMP_856 = CONVERT this to address
+TMP_857(uint256) = HIGH_LEVEL_CALL, dest:_QUOTE_TOKEN_(IERC20), function:balanceOf, arguments:['TMP_856']  
+EXPRESSION:baseBalance = _BASE_TOKEN_.balanceOf(address(this))	NodeType.VARIABLE
+baseBalance = _BASE_TOKEN_.balanceOf(address(this))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1209
+Call context: 
+True
+TMP_862(bool) = baseBalance < _BASE_RESERVE_
+CONDITION TMP_862
+EXPRESSION:baseBalance < _BASE_RESERVE_	NodeType.IF";
+"BlockID: 1210
+Call context: 
+True
+TMP_863 = CONVERT _QUOTE_RESERVE_ to uint256
+TMP_864(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['quoteBalance', 'TMP_863'] 
+EXPRESSION:";
+"BlockID: 1212
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1213
+Call context: 
+None
+TMP_873(bool) = quoteBalance < _QUOTE_RESERVE_
+CONDITION TMP_873
+EXPRESSION:quoteBalance < _QUOTE_RESERVE_	NodeType.IF";
+"BlockID: 1214
+Call context: 
+True
+TMP_874 = CONVERT _BASE_RESERVE_ to uint256
+TMP_875(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['baseBalance', 'TMP_874'] 
+EXPRESSION:";
+"BlockID: 1216
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1217
+Call context: 
+None
+INTERNAL_CALL, DVMVault._sync()()
+EXPRESSION:_sync()	NodeType.EXPRESSION";
+"BlockID: 1215
+Call context: 
+None
+baseInput(uint256) := TMP_875(uint256)
+NEW VARIABLE receiveQuoteAmount
+NEW VARIABLE mtFee_scope_0
+TUPLE_10(uint256,uint256) = INTERNAL_CALL, DVMTrader.querySellBase(address,uint256)(tx.origin,baseInput)
+EXPRESSION:baseInput = baseBalance.sub(uint256(_BASE_RESERVE_))	NodeType.VARIABLE
+baseInput = baseBalance.sub(uint256(_BASE_RESERVE_))	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(receiveQuoteAmount,mtFee_scope_0) = querySellBase(tx.origin,baseInput)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1219
+Call context: 
+None
+receiveQuoteAmount(uint256)= UNPACK TUPLE_10 index: 0 
+mtFee_scope_0(uint256)= UNPACK TUPLE_10 index: 1 
+TMP_876 = CONVERT _QUOTE_RESERVE_ to uint256
+TMP_877(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['TMP_876', 'quoteBalance'] 
+EXPRESSION:(receiveQuoteAmount,mtFee_scope_0) = querySellBase(tx.origin,baseInput)	NodeType.EXPRESSION
+require(bool,string)(uint256(_QUOTE_RESERVE_).sub(quoteBalance) <= receiveQuoteAmount,FLASH_LOAN_FAILED)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1221
+Call context: 
+True
+INTERNAL_CALL, DVMVault._transferQuoteOut(address,uint256)(_MAINTAINER_,mtFee_scope_0)
+EXPRESSION:_transferQuoteOut(_MAINTAINER_,mtFee_scope_0)	NodeType.EXPRESSION";
+"BlockID: 1211
+Call context: 
+None
+quoteInput(uint256) := TMP_864(uint256)
+NEW VARIABLE receiveBaseAmount
+NEW VARIABLE mtFee
+TUPLE_9(uint256,uint256) = INTERNAL_CALL, DVMTrader.querySellQuote(address,uint256)(tx.origin,quoteInput)
+EXPRESSION:quoteInput = quoteBalance.sub(uint256(_QUOTE_RESERVE_))	NodeType.VARIABLE
+quoteInput = quoteBalance.sub(uint256(_QUOTE_RESERVE_))	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(receiveBaseAmount,mtFee) = querySellQuote(tx.origin,quoteInput)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1223
+Call context: 
+None
+receiveBaseAmount(uint256)= UNPACK TUPLE_9 index: 0 
+mtFee(uint256)= UNPACK TUPLE_9 index: 1 
+TMP_865 = CONVERT _BASE_RESERVE_ to uint256
+TMP_866(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['TMP_865', 'baseBalance'] 
+EXPRESSION:(receiveBaseAmount,mtFee) = querySellQuote(tx.origin,quoteInput)	NodeType.EXPRESSION
+require(bool,string)(uint256(_BASE_RESERVE_).sub(baseBalance) <= receiveBaseAmount,FLASH_LOAN_FAILED)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1225
+Call context: 
+True
+INTERNAL_CALL, DVMVault._transferBaseOut(address,uint256)(_MAINTAINER_,mtFee)
+EXPRESSION:_transferBaseOut(_MAINTAINER_,mtFee)	NodeType.EXPRESSION";
+"BlockID: 1227
+Call context: 
+None
+quoteBalance(uint256) := TMP_857(uint256)
+TMP_858(bool) = baseBalance >= _BASE_RESERVE_
+TMP_859(bool) = quoteBalance >= _QUOTE_RESERVE_
+TMP_860(bool) = TMP_858 || TMP_859
+CONDITION TMP_860
+EXPRESSION:TMP_860(bool) = TMP_858 || TMP_859	NodeType.IF";
+"BlockID: 1228
+Call context: 
+True
+TMP_861(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 1229
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1230
+Call context: 
+None
+TMP_878(bool) = TMP_877 <= receiveQuoteAmount
+CONDITION TMP_878
+EXPRESSION:TMP_878(bool) = TMP_877 <= receiveQuoteAmount	NodeType.IF";
+"BlockID: 1231
+Call context: 
+True
+TMP_879(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 1232
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1233
+Call context: 
+None
+TMP_867(bool) = TMP_866 <= receiveBaseAmount
+CONDITION TMP_867
+EXPRESSION:TMP_867(bool) = TMP_866 <= receiveBaseAmount	NodeType.IF";
+"BlockID: 1234
+Call context: 
+True
+TMP_868(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 1235
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1198
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1199
+Call context: 
+None
+MODIFIER_CALL, ReentrancyGuard.preventReentrant()()
+EXPRESSION:preventReentrant()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1199
+Call context: 
+None
+MODIFIER_CALL, ReentrancyGuard.preventReentrant()()
+EXPRESSION:preventReentrant()	NodeType.EXPRESSION" -> "BlockID: 1200
+Call context: 
+None
+INTERNAL_CALL, DVMVault._transferBaseOut(address,uint256)(assetTo,baseAmount)
+EXPRESSION:preventReentrant()	NodeType.EXPRESSION
+_transferBaseOut(assetTo,baseAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1200
+Call context: 
+None
+INTERNAL_CALL, DVMVault._transferBaseOut(address,uint256)(assetTo,baseAmount)
+EXPRESSION:preventReentrant()	NodeType.EXPRESSION
+_transferBaseOut(assetTo,baseAmount)	NodeType.EXPRESSION" -> "BlockID: 1201
+Call context: 
+None
+INTERNAL_CALL, DVMVault._transferQuoteOut(address,uint256)(assetTo,quoteAmount)
+EXPRESSION:_transferBaseOut(assetTo,baseAmount)	NodeType.EXPRESSION
+_transferQuoteOut(assetTo,quoteAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1201
+Call context: 
+None
+INTERNAL_CALL, DVMVault._transferQuoteOut(address,uint256)(assetTo,quoteAmount)
+EXPRESSION:_transferBaseOut(assetTo,baseAmount)	NodeType.EXPRESSION
+_transferQuoteOut(assetTo,quoteAmount)	NodeType.EXPRESSION" -> "BlockID: 1202
+Call context: 
+None
+REF_565 -> LENGTH data
+TMP_851(bool) = REF_565 > 0
+CONDITION TMP_851
+EXPRESSION:_transferQuoteOut(assetTo,quoteAmount)	NodeType.EXPRESSION
+data.length > 0	NodeType.IF" [key=0];
+"BlockID: 1202
+Call context: 
+None
+REF_565 -> LENGTH data
+TMP_851(bool) = REF_565 > 0
+CONDITION TMP_851
+EXPRESSION:_transferQuoteOut(assetTo,quoteAmount)	NodeType.EXPRESSION
+data.length > 0	NodeType.IF" -> "BlockID: 1203
+Call context: 
+True
+TMP_852 = CONVERT assetTo to IDODOCallee
+HIGH_LEVEL_CALL, dest:TMP_852(IDODOCallee), function:DVMFlashLoanCall, arguments:['msg.sender', 'baseAmount', 'quoteAmount', 'data']  
+EXPRESSION:IDODOCallee(assetTo).DVMFlashLoanCall(msg.sender,baseAmount,quoteAmount,data)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1202
+Call context: 
+None
+REF_565 -> LENGTH data
+TMP_851(bool) = REF_565 > 0
+CONDITION TMP_851
+EXPRESSION:_transferQuoteOut(assetTo,quoteAmount)	NodeType.EXPRESSION
+data.length > 0	NodeType.IF" -> "BlockID: 1205
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1203
+Call context: 
+True
+TMP_852 = CONVERT assetTo to IDODOCallee
+HIGH_LEVEL_CALL, dest:TMP_852(IDODOCallee), function:DVMFlashLoanCall, arguments:['msg.sender', 'baseAmount', 'quoteAmount', 'data']  
+EXPRESSION:IDODOCallee(assetTo).DVMFlashLoanCall(msg.sender,baseAmount,quoteAmount,data)	NodeType.EXPRESSION" -> "BlockID: 1205
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1205
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1206
+Call context: 
+None
+TMP_854 = CONVERT this to address
+TMP_855(uint256) = HIGH_LEVEL_CALL, dest:_BASE_TOKEN_(IERC20), function:balanceOf, arguments:['TMP_854']  
+EXPRESSION:" [key=0];
+"BlockID: 1206
+Call context: 
+None
+TMP_854 = CONVERT this to address
+TMP_855(uint256) = HIGH_LEVEL_CALL, dest:_BASE_TOKEN_(IERC20), function:balanceOf, arguments:['TMP_854']  
+EXPRESSION:" -> "BlockID: 1207
+Call context: 
+None
+baseBalance(uint256) := TMP_855(uint256)
+TMP_856 = CONVERT this to address
+TMP_857(uint256) = HIGH_LEVEL_CALL, dest:_QUOTE_TOKEN_(IERC20), function:balanceOf, arguments:['TMP_856']  
+EXPRESSION:baseBalance = _BASE_TOKEN_.balanceOf(address(this))	NodeType.VARIABLE
+baseBalance = _BASE_TOKEN_.balanceOf(address(this))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1207
+Call context: 
+None
+baseBalance(uint256) := TMP_855(uint256)
+TMP_856 = CONVERT this to address
+TMP_857(uint256) = HIGH_LEVEL_CALL, dest:_QUOTE_TOKEN_(IERC20), function:balanceOf, arguments:['TMP_856']  
+EXPRESSION:baseBalance = _BASE_TOKEN_.balanceOf(address(this))	NodeType.VARIABLE
+baseBalance = _BASE_TOKEN_.balanceOf(address(this))	NodeType.EXPRESSION" -> "BlockID: 1227
+Call context: 
+None
+quoteBalance(uint256) := TMP_857(uint256)
+TMP_858(bool) = baseBalance >= _BASE_RESERVE_
+TMP_859(bool) = quoteBalance >= _QUOTE_RESERVE_
+TMP_860(bool) = TMP_858 || TMP_859
+CONDITION TMP_860
+EXPRESSION:TMP_860(bool) = TMP_858 || TMP_859	NodeType.IF" [key=0];
+"BlockID: 1209
+Call context: 
+True
+TMP_862(bool) = baseBalance < _BASE_RESERVE_
+CONDITION TMP_862
+EXPRESSION:baseBalance < _BASE_RESERVE_	NodeType.IF" -> "BlockID: 1210
+Call context: 
+True
+TMP_863 = CONVERT _QUOTE_RESERVE_ to uint256
+TMP_864(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['quoteBalance', 'TMP_863'] 
+EXPRESSION:" [key=0];
+"BlockID: 1209
+Call context: 
+True
+TMP_862(bool) = baseBalance < _BASE_RESERVE_
+CONDITION TMP_862
+EXPRESSION:baseBalance < _BASE_RESERVE_	NodeType.IF" -> "BlockID: 1212
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1210
+Call context: 
+True
+TMP_863 = CONVERT _QUOTE_RESERVE_ to uint256
+TMP_864(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['quoteBalance', 'TMP_863'] 
+EXPRESSION:" -> "BlockID: 1211
+Call context: 
+None
+quoteInput(uint256) := TMP_864(uint256)
+NEW VARIABLE receiveBaseAmount
+NEW VARIABLE mtFee
+TUPLE_9(uint256,uint256) = INTERNAL_CALL, DVMTrader.querySellQuote(address,uint256)(tx.origin,quoteInput)
+EXPRESSION:quoteInput = quoteBalance.sub(uint256(_QUOTE_RESERVE_))	NodeType.VARIABLE
+quoteInput = quoteBalance.sub(uint256(_QUOTE_RESERVE_))	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(receiveBaseAmount,mtFee) = querySellQuote(tx.origin,quoteInput)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1212
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1213
+Call context: 
+None
+TMP_873(bool) = quoteBalance < _QUOTE_RESERVE_
+CONDITION TMP_873
+EXPRESSION:quoteBalance < _QUOTE_RESERVE_	NodeType.IF" [key=0];
+"BlockID: 1213
+Call context: 
+None
+TMP_873(bool) = quoteBalance < _QUOTE_RESERVE_
+CONDITION TMP_873
+EXPRESSION:quoteBalance < _QUOTE_RESERVE_	NodeType.IF" -> "BlockID: 1214
+Call context: 
+True
+TMP_874 = CONVERT _BASE_RESERVE_ to uint256
+TMP_875(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['baseBalance', 'TMP_874'] 
+EXPRESSION:" [key=0];
+"BlockID: 1213
+Call context: 
+None
+TMP_873(bool) = quoteBalance < _QUOTE_RESERVE_
+CONDITION TMP_873
+EXPRESSION:quoteBalance < _QUOTE_RESERVE_	NodeType.IF" -> "BlockID: 1216
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1214
+Call context: 
+True
+TMP_874 = CONVERT _BASE_RESERVE_ to uint256
+TMP_875(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['baseBalance', 'TMP_874'] 
+EXPRESSION:" -> "BlockID: 1215
+Call context: 
+None
+baseInput(uint256) := TMP_875(uint256)
+NEW VARIABLE receiveQuoteAmount
+NEW VARIABLE mtFee_scope_0
+TUPLE_10(uint256,uint256) = INTERNAL_CALL, DVMTrader.querySellBase(address,uint256)(tx.origin,baseInput)
+EXPRESSION:baseInput = baseBalance.sub(uint256(_BASE_RESERVE_))	NodeType.VARIABLE
+baseInput = baseBalance.sub(uint256(_BASE_RESERVE_))	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(receiveQuoteAmount,mtFee_scope_0) = querySellBase(tx.origin,baseInput)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1216
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1217
+Call context: 
+None
+INTERNAL_CALL, DVMVault._sync()()
+EXPRESSION:_sync()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1215
+Call context: 
+None
+baseInput(uint256) := TMP_875(uint256)
+NEW VARIABLE receiveQuoteAmount
+NEW VARIABLE mtFee_scope_0
+TUPLE_10(uint256,uint256) = INTERNAL_CALL, DVMTrader.querySellBase(address,uint256)(tx.origin,baseInput)
+EXPRESSION:baseInput = baseBalance.sub(uint256(_BASE_RESERVE_))	NodeType.VARIABLE
+baseInput = baseBalance.sub(uint256(_BASE_RESERVE_))	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(receiveQuoteAmount,mtFee_scope_0) = querySellBase(tx.origin,baseInput)	NodeType.EXPRESSION" -> "BlockID: 1219
+Call context: 
+None
+receiveQuoteAmount(uint256)= UNPACK TUPLE_10 index: 0 
+mtFee_scope_0(uint256)= UNPACK TUPLE_10 index: 1 
+TMP_876 = CONVERT _QUOTE_RESERVE_ to uint256
+TMP_877(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['TMP_876', 'quoteBalance'] 
+EXPRESSION:(receiveQuoteAmount,mtFee_scope_0) = querySellBase(tx.origin,baseInput)	NodeType.EXPRESSION
+require(bool,string)(uint256(_QUOTE_RESERVE_).sub(quoteBalance) <= receiveQuoteAmount,FLASH_LOAN_FAILED)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1219
+Call context: 
+None
+receiveQuoteAmount(uint256)= UNPACK TUPLE_10 index: 0 
+mtFee_scope_0(uint256)= UNPACK TUPLE_10 index: 1 
+TMP_876 = CONVERT _QUOTE_RESERVE_ to uint256
+TMP_877(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['TMP_876', 'quoteBalance'] 
+EXPRESSION:(receiveQuoteAmount,mtFee_scope_0) = querySellBase(tx.origin,baseInput)	NodeType.EXPRESSION
+require(bool,string)(uint256(_QUOTE_RESERVE_).sub(quoteBalance) <= receiveQuoteAmount,FLASH_LOAN_FAILED)	NodeType.EXPRESSION" -> "BlockID: 1230
+Call context: 
+None
+TMP_878(bool) = TMP_877 <= receiveQuoteAmount
+CONDITION TMP_878
+EXPRESSION:TMP_878(bool) = TMP_877 <= receiveQuoteAmount	NodeType.IF" [key=0];
+"BlockID: 1221
+Call context: 
+True
+INTERNAL_CALL, DVMVault._transferQuoteOut(address,uint256)(_MAINTAINER_,mtFee_scope_0)
+EXPRESSION:_transferQuoteOut(_MAINTAINER_,mtFee_scope_0)	NodeType.EXPRESSION" -> "BlockID: 1216
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1211
+Call context: 
+None
+quoteInput(uint256) := TMP_864(uint256)
+NEW VARIABLE receiveBaseAmount
+NEW VARIABLE mtFee
+TUPLE_9(uint256,uint256) = INTERNAL_CALL, DVMTrader.querySellQuote(address,uint256)(tx.origin,quoteInput)
+EXPRESSION:quoteInput = quoteBalance.sub(uint256(_QUOTE_RESERVE_))	NodeType.VARIABLE
+quoteInput = quoteBalance.sub(uint256(_QUOTE_RESERVE_))	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(receiveBaseAmount,mtFee) = querySellQuote(tx.origin,quoteInput)	NodeType.EXPRESSION" -> "BlockID: 1223
+Call context: 
+None
+receiveBaseAmount(uint256)= UNPACK TUPLE_9 index: 0 
+mtFee(uint256)= UNPACK TUPLE_9 index: 1 
+TMP_865 = CONVERT _BASE_RESERVE_ to uint256
+TMP_866(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['TMP_865', 'baseBalance'] 
+EXPRESSION:(receiveBaseAmount,mtFee) = querySellQuote(tx.origin,quoteInput)	NodeType.EXPRESSION
+require(bool,string)(uint256(_BASE_RESERVE_).sub(baseBalance) <= receiveBaseAmount,FLASH_LOAN_FAILED)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1223
+Call context: 
+None
+receiveBaseAmount(uint256)= UNPACK TUPLE_9 index: 0 
+mtFee(uint256)= UNPACK TUPLE_9 index: 1 
+TMP_865 = CONVERT _BASE_RESERVE_ to uint256
+TMP_866(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['TMP_865', 'baseBalance'] 
+EXPRESSION:(receiveBaseAmount,mtFee) = querySellQuote(tx.origin,quoteInput)	NodeType.EXPRESSION
+require(bool,string)(uint256(_BASE_RESERVE_).sub(baseBalance) <= receiveBaseAmount,FLASH_LOAN_FAILED)	NodeType.EXPRESSION" -> "BlockID: 1233
+Call context: 
+None
+TMP_867(bool) = TMP_866 <= receiveBaseAmount
+CONDITION TMP_867
+EXPRESSION:TMP_867(bool) = TMP_866 <= receiveBaseAmount	NodeType.IF" [key=0];
+"BlockID: 1225
+Call context: 
+True
+INTERNAL_CALL, DVMVault._transferBaseOut(address,uint256)(_MAINTAINER_,mtFee)
+EXPRESSION:_transferBaseOut(_MAINTAINER_,mtFee)	NodeType.EXPRESSION" -> "BlockID: 1212
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1227
+Call context: 
+None
+quoteBalance(uint256) := TMP_857(uint256)
+TMP_858(bool) = baseBalance >= _BASE_RESERVE_
+TMP_859(bool) = quoteBalance >= _QUOTE_RESERVE_
+TMP_860(bool) = TMP_858 || TMP_859
+CONDITION TMP_860
+EXPRESSION:TMP_860(bool) = TMP_858 || TMP_859	NodeType.IF" -> "BlockID: 1228
+Call context: 
+True
+TMP_861(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1227
+Call context: 
+None
+quoteBalance(uint256) := TMP_857(uint256)
+TMP_858(bool) = baseBalance >= _BASE_RESERVE_
+TMP_859(bool) = quoteBalance >= _QUOTE_RESERVE_
+TMP_860(bool) = TMP_858 || TMP_859
+CONDITION TMP_860
+EXPRESSION:TMP_860(bool) = TMP_858 || TMP_859	NodeType.IF" -> "BlockID: 1229
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1229
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1209
+Call context: 
+True
+TMP_862(bool) = baseBalance < _BASE_RESERVE_
+CONDITION TMP_862
+EXPRESSION:baseBalance < _BASE_RESERVE_	NodeType.IF" [key=0];
+"BlockID: 1230
+Call context: 
+None
+TMP_878(bool) = TMP_877 <= receiveQuoteAmount
+CONDITION TMP_878
+EXPRESSION:TMP_878(bool) = TMP_877 <= receiveQuoteAmount	NodeType.IF" -> "BlockID: 1231
+Call context: 
+True
+TMP_879(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1230
+Call context: 
+None
+TMP_878(bool) = TMP_877 <= receiveQuoteAmount
+CONDITION TMP_878
+EXPRESSION:TMP_878(bool) = TMP_877 <= receiveQuoteAmount	NodeType.IF" -> "BlockID: 1232
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1232
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1221
+Call context: 
+True
+INTERNAL_CALL, DVMVault._transferQuoteOut(address,uint256)(_MAINTAINER_,mtFee_scope_0)
+EXPRESSION:_transferQuoteOut(_MAINTAINER_,mtFee_scope_0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1233
+Call context: 
+None
+TMP_867(bool) = TMP_866 <= receiveBaseAmount
+CONDITION TMP_867
+EXPRESSION:TMP_867(bool) = TMP_866 <= receiveBaseAmount	NodeType.IF" -> "BlockID: 1234
+Call context: 
+True
+TMP_868(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1233
+Call context: 
+None
+TMP_867(bool) = TMP_866 <= receiveBaseAmount
+CONDITION TMP_867
+EXPRESSION:TMP_867(bool) = TMP_866 <= receiveBaseAmount	NodeType.IF" -> "BlockID: 1235
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1235
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1225
+Call context: 
+True
+INTERNAL_CALL, DVMVault._transferBaseOut(address,uint256)(_MAINTAINER_,mtFee)
+EXPRESSION:_transferBaseOut(_MAINTAINER_,mtFee)	NodeType.EXPRESSION" [key=0];
+}

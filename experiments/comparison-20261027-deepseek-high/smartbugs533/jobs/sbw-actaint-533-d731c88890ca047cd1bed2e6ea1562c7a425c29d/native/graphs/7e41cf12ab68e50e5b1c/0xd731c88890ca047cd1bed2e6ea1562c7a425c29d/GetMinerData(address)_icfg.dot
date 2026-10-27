@@ -1,0 +1,798 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+i(uint8) := 0(uint256)
+REF_31(RigIdle.MinerData) -> miners[minerAddr]
+REF_32(uint256) -> REF_31.money
+money(uint256) := REF_32(uint256)
+REF_33(RigIdle.MinerData) -> miners[minerAddr]
+REF_34(uint256) -> REF_33.lastUpdateTime
+lastupdate(uint256) := REF_34(uint256)
+REF_46(RigIdle.MinerData) -> miners[minerAddr]
+m(RigIdle.MinerData) := REF_46(RigIdle.MinerData)
+personalProduction(uint256) := 0(uint256)
+REF_47(uint256) -> m.premamentMineBonusPct
+TMP_54(uint256) = 100 + REF_47
+productionSpeed(uint256) := TMP_54(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION
+money = miners[minerAddr].money	NodeType.EXPRESSION
+lastupdate = miners[minerAddr].lastUpdateTime	NodeType.EXPRESSION
+m = miners[minerAddr]	NodeType.VARIABLE
+m = miners[minerAddr]	NodeType.EXPRESSION
+personalProduction = 0	NodeType.EXPRESSION
+productionSpeed = 100 + m.premamentMineBonusPct	NodeType.VARIABLE
+productionSpeed = 100 + m.premamentMineBonusPct	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION";
+"BlockID: 17
+Call context: 
+None
+BEGIN_LOOP
+TMP_46(bool) = i < NUMBER_OF_RIG_TYPES
+CONDITION TMP_46
+EXPRESSION:None	NodeType.STARTLOOP
+i < NUMBER_OF_RIG_TYPES	NodeType.IFLOOP";
+"BlockID: 18
+Call context: 
+True
+REF_35(uint256) -> rigs[i]
+REF_36(RigIdle.MinerData) -> miners[minerAddr]
+REF_37(uint256[9]) -> REF_36.rigs
+REF_38(uint256) -> REF_37[i]
+REF_35(uint256) (->rigs) := REF_38(uint256)
+i(uint8) = i + 1
+EXPRESSION:rigs[i] = miners[minerAddr].rigs[i]	NodeType.EXPRESSION
+++ i	NodeType.EXPRESSION";
+"BlockID: 19
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 20
+Call context: 
+None
+i(uint8) := 0(uint256)
+EXPRESSION:i = 0	NodeType.EXPRESSION";
+"BlockID: 21
+Call context: 
+None
+BEGIN_LOOP
+TMP_47(bool) = i < NUMBER_OF_UPGRADES
+CONDITION TMP_47
+EXPRESSION:None	NodeType.STARTLOOP
+i < NUMBER_OF_UPGRADES	NodeType.IFLOOP";
+"BlockID: 22
+Call context: 
+True
+REF_39(uint256) -> upgrades[i]
+REF_40(RigIdle.MinerData) -> miners[minerAddr]
+REF_41(uint8[3]) -> REF_40.hasUpgrade
+REF_42(uint8) -> REF_41[i]
+REF_39(uint256) (->upgrades) := REF_42(uint8)
+i(uint8) = i + 1
+EXPRESSION:upgrades[i] = miners[minerAddr].hasUpgrade[i]	NodeType.EXPRESSION
+++ i	NodeType.EXPRESSION";
+"BlockID: 23
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 24
+Call context: 
+None
+REF_43(RigIdle.MinerData) -> miners[minerAddr]
+REF_44(uint256) -> REF_43.unclaimedPot
+unclaimedPot(uint256) := REF_44(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:unclaimedPot = miners[minerAddr].unclaimedPot	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION";
+"BlockID: 31
+Call context: 
+None
+hasBooster(bool) := TMP_48(bool)
+TMP_49(uint256) = now - lastupdate
+TMP_50(uint256) = prodPerSec * TMP_49
+TMP_51(uint256) = money + TMP_50
+unconfirmedMoney(uint256) := TMP_51(uint256)
+EXPRESSION:hasBooster = HasBooster(minerAddr)	NodeType.EXPRESSION
+unconfirmedMoney = money + (prodPerSec * (now - lastupdate))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 8
+Call context: GetMinerData
+None
+CONDITION TMP_55
+EXPRESSION:HasBooster(minerAddr)	NodeType.IF" [shape=box];
+"BlockID: 10
+Call context: GetMinerData
+True
+productionSpeed(uint256) = productionSpeed + 500
+EXPRESSION:productionSpeed += 500	NodeType.EXPRESSION";
+"BlockID: 11
+Call context: GetMinerData
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 12
+Call context: GetMinerData
+None
+j(uint8) := 0(uint256)
+EXPRESSION:j = 0	NodeType.VARIABLE
+j = 0	NodeType.EXPRESSION";
+"BlockID: 13
+Call context: GetMinerData
+None
+BEGIN_LOOP
+TMP_56(bool) = j < NUMBER_OF_RIG_TYPES
+CONDITION TMP_56
+EXPRESSION:None	NodeType.STARTLOOP
+j < NUMBER_OF_RIG_TYPES	NodeType.IFLOOP";
+"BlockID: 14
+Call context: GetMinerData
+True
+REF_48(uint256[9]) -> m.rigs
+REF_49(uint256) -> REF_48[j]
+REF_50(RigIdle.RigData) -> rigData[j]
+REF_51(uint256) -> REF_50.baseOutput
+TMP_57(uint256) = REF_49 * REF_51
+personalProduction(uint256) = personalProduction + TMP_57
+j(uint8) = j + 1
+EXPRESSION:personalProduction += m.rigs[j] * rigData[j].baseOutput	NodeType.EXPRESSION
+++ j	NodeType.EXPRESSION";
+"BlockID: 15
+Call context: GetMinerData
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 16
+Call context: GetMinerData
+None
+TMP_58(uint256) = personalProduction * productionSpeed
+TMP_59(uint256) = TMP_58 / 100
+personalProduction(uint256) := TMP_59(uint256)
+TMP_287(None) := personalProduction(uint256)
+prodPerSec(uint256) := TMP_45(uint256)
+i(uint8) := 0(uint256)
+EXPRESSION:personalProduction = personalProduction * productionSpeed / 100	NodeType.EXPRESSION
+prodPerSec = GetProductionPerSecond(minerAddr)	NodeType.EXPRESSION
+i = 0	NodeType.EXPRESSION";
+"BlockID: 2
+Call context: GetMinerData,GetProductionPerSecond
+None
+BEGIN_LOOP
+TMP_63(bool) = i < NUMBER_OF_BOOSTERS
+CONDITION TMP_63
+EXPRESSION:None	NodeType.STARTLOOP
+i < NUMBER_OF_BOOSTERS	NodeType.IFLOOP";
+"BlockID: 3
+Call context: GetMinerData,GetProductionPerSecond
+True
+REF_58(address) -> boosterHolders[i]
+TMP_64(bool) = REF_58 == addr
+CONDITION TMP_64
+EXPRESSION:boosterHolders[i] == addr	NodeType.IF";
+"BlockID: 4
+Call context: GetMinerData,GetProductionPerSecond
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 7
+Call context: GetMinerData,GetProductionPerSecond
+None
+TMP_290(None) := False(bool)
+EXPRESSION:";
+"BlockID: 5
+Call context: GetMinerData,GetProductionPerSecond
+True
+TMP_290(None) := True(bool)
+EXPRESSION:";
+"BlockID: 6
+Call context: GetMinerData,GetProductionPerSecond
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 9
+Call context: GetMinerData,GetProductionPerSecond
+None
+i(uint256) = i + 1
+EXPRESSION:++ i	NodeType.EXPRESSION";
+"BlockID: 25
+Call context: GetMinerData
+None
+BEGIN_LOOP
+TMP_63(bool) = i < NUMBER_OF_BOOSTERS
+CONDITION TMP_63
+EXPRESSION:None	NodeType.STARTLOOP
+i < NUMBER_OF_BOOSTERS	NodeType.IFLOOP";
+"BlockID: 26
+Call context: GetMinerData
+True
+REF_58(address) -> boosterHolders[i]
+TMP_64(bool) = REF_58 == addr
+CONDITION TMP_64
+EXPRESSION:boosterHolders[i] == addr	NodeType.IF";
+"BlockID: 27
+Call context: GetMinerData
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 30
+Call context: GetMinerData
+None
+TMP_290(None) := False(bool)
+EXPRESSION:";
+"BlockID: 28
+Call context: GetMinerData
+True
+TMP_290(None) := True(bool)
+EXPRESSION:";
+"BlockID: 29
+Call context: GetMinerData
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 32
+Call context: GetMinerData
+None
+i(uint256) = i + 1
+EXPRESSION:++ i	NodeType.EXPRESSION";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+i(uint8) := 0(uint256)
+REF_31(RigIdle.MinerData) -> miners[minerAddr]
+REF_32(uint256) -> REF_31.money
+money(uint256) := REF_32(uint256)
+REF_33(RigIdle.MinerData) -> miners[minerAddr]
+REF_34(uint256) -> REF_33.lastUpdateTime
+lastupdate(uint256) := REF_34(uint256)
+REF_46(RigIdle.MinerData) -> miners[minerAddr]
+m(RigIdle.MinerData) := REF_46(RigIdle.MinerData)
+personalProduction(uint256) := 0(uint256)
+REF_47(uint256) -> m.premamentMineBonusPct
+TMP_54(uint256) = 100 + REF_47
+productionSpeed(uint256) := TMP_54(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION
+money = miners[minerAddr].money	NodeType.EXPRESSION
+lastupdate = miners[minerAddr].lastUpdateTime	NodeType.EXPRESSION
+m = miners[minerAddr]	NodeType.VARIABLE
+m = miners[minerAddr]	NodeType.EXPRESSION
+personalProduction = 0	NodeType.EXPRESSION
+productionSpeed = 100 + m.premamentMineBonusPct	NodeType.VARIABLE
+productionSpeed = 100 + m.premamentMineBonusPct	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 1
+Call context: 
+None
+i(uint8) := 0(uint256)
+REF_31(RigIdle.MinerData) -> miners[minerAddr]
+REF_32(uint256) -> REF_31.money
+money(uint256) := REF_32(uint256)
+REF_33(RigIdle.MinerData) -> miners[minerAddr]
+REF_34(uint256) -> REF_33.lastUpdateTime
+lastupdate(uint256) := REF_34(uint256)
+REF_46(RigIdle.MinerData) -> miners[minerAddr]
+m(RigIdle.MinerData) := REF_46(RigIdle.MinerData)
+personalProduction(uint256) := 0(uint256)
+REF_47(uint256) -> m.premamentMineBonusPct
+TMP_54(uint256) = 100 + REF_47
+productionSpeed(uint256) := TMP_54(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION
+money = miners[minerAddr].money	NodeType.EXPRESSION
+lastupdate = miners[minerAddr].lastUpdateTime	NodeType.EXPRESSION
+m = miners[minerAddr]	NodeType.VARIABLE
+m = miners[minerAddr]	NodeType.EXPRESSION
+personalProduction = 0	NodeType.EXPRESSION
+productionSpeed = 100 + m.premamentMineBonusPct	NodeType.VARIABLE
+productionSpeed = 100 + m.premamentMineBonusPct	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" -> "BlockID: 2
+Call context: GetMinerData,GetProductionPerSecond
+None
+BEGIN_LOOP
+TMP_63(bool) = i < NUMBER_OF_BOOSTERS
+CONDITION TMP_63
+EXPRESSION:None	NodeType.STARTLOOP
+i < NUMBER_OF_BOOSTERS	NodeType.IFLOOP" [key="successor_5"];
+"BlockID: 17
+Call context: 
+None
+BEGIN_LOOP
+TMP_46(bool) = i < NUMBER_OF_RIG_TYPES
+CONDITION TMP_46
+EXPRESSION:None	NodeType.STARTLOOP
+i < NUMBER_OF_RIG_TYPES	NodeType.IFLOOP" -> "BlockID: 18
+Call context: 
+True
+REF_35(uint256) -> rigs[i]
+REF_36(RigIdle.MinerData) -> miners[minerAddr]
+REF_37(uint256[9]) -> REF_36.rigs
+REF_38(uint256) -> REF_37[i]
+REF_35(uint256) (->rigs) := REF_38(uint256)
+i(uint8) = i + 1
+EXPRESSION:rigs[i] = miners[minerAddr].rigs[i]	NodeType.EXPRESSION
+++ i	NodeType.EXPRESSION" [key=0];
+"BlockID: 17
+Call context: 
+None
+BEGIN_LOOP
+TMP_46(bool) = i < NUMBER_OF_RIG_TYPES
+CONDITION TMP_46
+EXPRESSION:None	NodeType.STARTLOOP
+i < NUMBER_OF_RIG_TYPES	NodeType.IFLOOP" -> "BlockID: 19
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 18
+Call context: 
+True
+REF_35(uint256) -> rigs[i]
+REF_36(RigIdle.MinerData) -> miners[minerAddr]
+REF_37(uint256[9]) -> REF_36.rigs
+REF_38(uint256) -> REF_37[i]
+REF_35(uint256) (->rigs) := REF_38(uint256)
+i(uint8) = i + 1
+EXPRESSION:rigs[i] = miners[minerAddr].rigs[i]	NodeType.EXPRESSION
+++ i	NodeType.EXPRESSION" -> "BlockID: 17
+Call context: 
+None
+BEGIN_LOOP
+TMP_46(bool) = i < NUMBER_OF_RIG_TYPES
+CONDITION TMP_46
+EXPRESSION:None	NodeType.STARTLOOP
+i < NUMBER_OF_RIG_TYPES	NodeType.IFLOOP" [key=0];
+"BlockID: 19
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 20
+Call context: 
+None
+i(uint8) := 0(uint256)
+EXPRESSION:i = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 20
+Call context: 
+None
+i(uint8) := 0(uint256)
+EXPRESSION:i = 0	NodeType.EXPRESSION" -> "BlockID: 21
+Call context: 
+None
+BEGIN_LOOP
+TMP_47(bool) = i < NUMBER_OF_UPGRADES
+CONDITION TMP_47
+EXPRESSION:None	NodeType.STARTLOOP
+i < NUMBER_OF_UPGRADES	NodeType.IFLOOP" [key=0];
+"BlockID: 21
+Call context: 
+None
+BEGIN_LOOP
+TMP_47(bool) = i < NUMBER_OF_UPGRADES
+CONDITION TMP_47
+EXPRESSION:None	NodeType.STARTLOOP
+i < NUMBER_OF_UPGRADES	NodeType.IFLOOP" -> "BlockID: 22
+Call context: 
+True
+REF_39(uint256) -> upgrades[i]
+REF_40(RigIdle.MinerData) -> miners[minerAddr]
+REF_41(uint8[3]) -> REF_40.hasUpgrade
+REF_42(uint8) -> REF_41[i]
+REF_39(uint256) (->upgrades) := REF_42(uint8)
+i(uint8) = i + 1
+EXPRESSION:upgrades[i] = miners[minerAddr].hasUpgrade[i]	NodeType.EXPRESSION
+++ i	NodeType.EXPRESSION" [key=0];
+"BlockID: 21
+Call context: 
+None
+BEGIN_LOOP
+TMP_47(bool) = i < NUMBER_OF_UPGRADES
+CONDITION TMP_47
+EXPRESSION:None	NodeType.STARTLOOP
+i < NUMBER_OF_UPGRADES	NodeType.IFLOOP" -> "BlockID: 23
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 22
+Call context: 
+True
+REF_39(uint256) -> upgrades[i]
+REF_40(RigIdle.MinerData) -> miners[minerAddr]
+REF_41(uint8[3]) -> REF_40.hasUpgrade
+REF_42(uint8) -> REF_41[i]
+REF_39(uint256) (->upgrades) := REF_42(uint8)
+i(uint8) = i + 1
+EXPRESSION:upgrades[i] = miners[minerAddr].hasUpgrade[i]	NodeType.EXPRESSION
+++ i	NodeType.EXPRESSION" -> "BlockID: 21
+Call context: 
+None
+BEGIN_LOOP
+TMP_47(bool) = i < NUMBER_OF_UPGRADES
+CONDITION TMP_47
+EXPRESSION:None	NodeType.STARTLOOP
+i < NUMBER_OF_UPGRADES	NodeType.IFLOOP" [key=0];
+"BlockID: 23
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 24
+Call context: 
+None
+REF_43(RigIdle.MinerData) -> miners[minerAddr]
+REF_44(uint256) -> REF_43.unclaimedPot
+unclaimedPot(uint256) := REF_44(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:unclaimedPot = miners[minerAddr].unclaimedPot	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 24
+Call context: 
+None
+REF_43(RigIdle.MinerData) -> miners[minerAddr]
+REF_44(uint256) -> REF_43.unclaimedPot
+unclaimedPot(uint256) := REF_44(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:unclaimedPot = miners[minerAddr].unclaimedPot	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" -> "BlockID: 25
+Call context: GetMinerData
+None
+BEGIN_LOOP
+TMP_63(bool) = i < NUMBER_OF_BOOSTERS
+CONDITION TMP_63
+EXPRESSION:None	NodeType.STARTLOOP
+i < NUMBER_OF_BOOSTERS	NodeType.IFLOOP" [key="successor_5"];
+"BlockID: 8
+Call context: GetMinerData
+None
+CONDITION TMP_55
+EXPRESSION:HasBooster(minerAddr)	NodeType.IF" -> "BlockID: 10
+Call context: GetMinerData
+True
+productionSpeed(uint256) = productionSpeed + 500
+EXPRESSION:productionSpeed += 500	NodeType.EXPRESSION" [key=0];
+"BlockID: 8
+Call context: GetMinerData
+None
+CONDITION TMP_55
+EXPRESSION:HasBooster(minerAddr)	NodeType.IF" -> "BlockID: 11
+Call context: GetMinerData
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 10
+Call context: GetMinerData
+True
+productionSpeed(uint256) = productionSpeed + 500
+EXPRESSION:productionSpeed += 500	NodeType.EXPRESSION" -> "BlockID: 11
+Call context: GetMinerData
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 11
+Call context: GetMinerData
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 12
+Call context: GetMinerData
+None
+j(uint8) := 0(uint256)
+EXPRESSION:j = 0	NodeType.VARIABLE
+j = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 12
+Call context: GetMinerData
+None
+j(uint8) := 0(uint256)
+EXPRESSION:j = 0	NodeType.VARIABLE
+j = 0	NodeType.EXPRESSION" -> "BlockID: 13
+Call context: GetMinerData
+None
+BEGIN_LOOP
+TMP_56(bool) = j < NUMBER_OF_RIG_TYPES
+CONDITION TMP_56
+EXPRESSION:None	NodeType.STARTLOOP
+j < NUMBER_OF_RIG_TYPES	NodeType.IFLOOP" [key=0];
+"BlockID: 13
+Call context: GetMinerData
+None
+BEGIN_LOOP
+TMP_56(bool) = j < NUMBER_OF_RIG_TYPES
+CONDITION TMP_56
+EXPRESSION:None	NodeType.STARTLOOP
+j < NUMBER_OF_RIG_TYPES	NodeType.IFLOOP" -> "BlockID: 14
+Call context: GetMinerData
+True
+REF_48(uint256[9]) -> m.rigs
+REF_49(uint256) -> REF_48[j]
+REF_50(RigIdle.RigData) -> rigData[j]
+REF_51(uint256) -> REF_50.baseOutput
+TMP_57(uint256) = REF_49 * REF_51
+personalProduction(uint256) = personalProduction + TMP_57
+j(uint8) = j + 1
+EXPRESSION:personalProduction += m.rigs[j] * rigData[j].baseOutput	NodeType.EXPRESSION
+++ j	NodeType.EXPRESSION" [key=0];
+"BlockID: 13
+Call context: GetMinerData
+None
+BEGIN_LOOP
+TMP_56(bool) = j < NUMBER_OF_RIG_TYPES
+CONDITION TMP_56
+EXPRESSION:None	NodeType.STARTLOOP
+j < NUMBER_OF_RIG_TYPES	NodeType.IFLOOP" -> "BlockID: 15
+Call context: GetMinerData
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 14
+Call context: GetMinerData
+True
+REF_48(uint256[9]) -> m.rigs
+REF_49(uint256) -> REF_48[j]
+REF_50(RigIdle.RigData) -> rigData[j]
+REF_51(uint256) -> REF_50.baseOutput
+TMP_57(uint256) = REF_49 * REF_51
+personalProduction(uint256) = personalProduction + TMP_57
+j(uint8) = j + 1
+EXPRESSION:personalProduction += m.rigs[j] * rigData[j].baseOutput	NodeType.EXPRESSION
+++ j	NodeType.EXPRESSION" -> "BlockID: 13
+Call context: GetMinerData
+None
+BEGIN_LOOP
+TMP_56(bool) = j < NUMBER_OF_RIG_TYPES
+CONDITION TMP_56
+EXPRESSION:None	NodeType.STARTLOOP
+j < NUMBER_OF_RIG_TYPES	NodeType.IFLOOP" [key=0];
+"BlockID: 15
+Call context: GetMinerData
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 16
+Call context: GetMinerData
+None
+TMP_58(uint256) = personalProduction * productionSpeed
+TMP_59(uint256) = TMP_58 / 100
+personalProduction(uint256) := TMP_59(uint256)
+TMP_287(None) := personalProduction(uint256)
+prodPerSec(uint256) := TMP_45(uint256)
+i(uint8) := 0(uint256)
+EXPRESSION:personalProduction = personalProduction * productionSpeed / 100	NodeType.EXPRESSION
+prodPerSec = GetProductionPerSecond(minerAddr)	NodeType.EXPRESSION
+i = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 16
+Call context: GetMinerData
+None
+TMP_58(uint256) = personalProduction * productionSpeed
+TMP_59(uint256) = TMP_58 / 100
+personalProduction(uint256) := TMP_59(uint256)
+TMP_287(None) := personalProduction(uint256)
+prodPerSec(uint256) := TMP_45(uint256)
+i(uint8) := 0(uint256)
+EXPRESSION:personalProduction = personalProduction * productionSpeed / 100	NodeType.EXPRESSION
+prodPerSec = GetProductionPerSecond(minerAddr)	NodeType.EXPRESSION
+i = 0	NodeType.EXPRESSION" -> "BlockID: 17
+Call context: 
+None
+BEGIN_LOOP
+TMP_46(bool) = i < NUMBER_OF_RIG_TYPES
+CONDITION TMP_46
+EXPRESSION:None	NodeType.STARTLOOP
+i < NUMBER_OF_RIG_TYPES	NodeType.IFLOOP" [key="successor_2"];
+"BlockID: 2
+Call context: GetMinerData,GetProductionPerSecond
+None
+BEGIN_LOOP
+TMP_63(bool) = i < NUMBER_OF_BOOSTERS
+CONDITION TMP_63
+EXPRESSION:None	NodeType.STARTLOOP
+i < NUMBER_OF_BOOSTERS	NodeType.IFLOOP" -> "BlockID: 3
+Call context: GetMinerData,GetProductionPerSecond
+True
+REF_58(address) -> boosterHolders[i]
+TMP_64(bool) = REF_58 == addr
+CONDITION TMP_64
+EXPRESSION:boosterHolders[i] == addr	NodeType.IF" [key=0];
+"BlockID: 2
+Call context: GetMinerData,GetProductionPerSecond
+None
+BEGIN_LOOP
+TMP_63(bool) = i < NUMBER_OF_BOOSTERS
+CONDITION TMP_63
+EXPRESSION:None	NodeType.STARTLOOP
+i < NUMBER_OF_BOOSTERS	NodeType.IFLOOP" -> "BlockID: 4
+Call context: GetMinerData,GetProductionPerSecond
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 3
+Call context: GetMinerData,GetProductionPerSecond
+True
+REF_58(address) -> boosterHolders[i]
+TMP_64(bool) = REF_58 == addr
+CONDITION TMP_64
+EXPRESSION:boosterHolders[i] == addr	NodeType.IF" -> "BlockID: 5
+Call context: GetMinerData,GetProductionPerSecond
+True
+TMP_290(None) := True(bool)
+EXPRESSION:" [key=0];
+"BlockID: 3
+Call context: GetMinerData,GetProductionPerSecond
+True
+REF_58(address) -> boosterHolders[i]
+TMP_64(bool) = REF_58 == addr
+CONDITION TMP_64
+EXPRESSION:boosterHolders[i] == addr	NodeType.IF" -> "BlockID: 6
+Call context: GetMinerData,GetProductionPerSecond
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 4
+Call context: GetMinerData,GetProductionPerSecond
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 7
+Call context: GetMinerData,GetProductionPerSecond
+None
+TMP_290(None) := False(bool)
+EXPRESSION:" [key=0];
+"BlockID: 7
+Call context: GetMinerData,GetProductionPerSecond
+None
+TMP_290(None) := False(bool)
+EXPRESSION:" -> "BlockID: 8
+Call context: GetMinerData
+None
+CONDITION TMP_55
+EXPRESSION:HasBooster(minerAddr)	NodeType.IF" [key="successor_5", ref="RigIdle.HasBooster"];
+"BlockID: 5
+Call context: GetMinerData,GetProductionPerSecond
+True
+TMP_290(None) := True(bool)
+EXPRESSION:" -> "BlockID: 8
+Call context: GetMinerData
+None
+CONDITION TMP_55
+EXPRESSION:HasBooster(minerAddr)	NodeType.IF" [key="successor_5", ref="RigIdle.HasBooster"];
+"BlockID: 6
+Call context: GetMinerData,GetProductionPerSecond
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 9
+Call context: GetMinerData,GetProductionPerSecond
+None
+i(uint256) = i + 1
+EXPRESSION:++ i	NodeType.EXPRESSION" [key=0];
+"BlockID: 9
+Call context: GetMinerData,GetProductionPerSecond
+None
+i(uint256) = i + 1
+EXPRESSION:++ i	NodeType.EXPRESSION" -> "BlockID: 2
+Call context: GetMinerData,GetProductionPerSecond
+None
+BEGIN_LOOP
+TMP_63(bool) = i < NUMBER_OF_BOOSTERS
+CONDITION TMP_63
+EXPRESSION:None	NodeType.STARTLOOP
+i < NUMBER_OF_BOOSTERS	NodeType.IFLOOP" [key=0];
+"BlockID: 25
+Call context: GetMinerData
+None
+BEGIN_LOOP
+TMP_63(bool) = i < NUMBER_OF_BOOSTERS
+CONDITION TMP_63
+EXPRESSION:None	NodeType.STARTLOOP
+i < NUMBER_OF_BOOSTERS	NodeType.IFLOOP" -> "BlockID: 26
+Call context: GetMinerData
+True
+REF_58(address) -> boosterHolders[i]
+TMP_64(bool) = REF_58 == addr
+CONDITION TMP_64
+EXPRESSION:boosterHolders[i] == addr	NodeType.IF" [key=0];
+"BlockID: 25
+Call context: GetMinerData
+None
+BEGIN_LOOP
+TMP_63(bool) = i < NUMBER_OF_BOOSTERS
+CONDITION TMP_63
+EXPRESSION:None	NodeType.STARTLOOP
+i < NUMBER_OF_BOOSTERS	NodeType.IFLOOP" -> "BlockID: 27
+Call context: GetMinerData
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 26
+Call context: GetMinerData
+True
+REF_58(address) -> boosterHolders[i]
+TMP_64(bool) = REF_58 == addr
+CONDITION TMP_64
+EXPRESSION:boosterHolders[i] == addr	NodeType.IF" -> "BlockID: 28
+Call context: GetMinerData
+True
+TMP_290(None) := True(bool)
+EXPRESSION:" [key=0];
+"BlockID: 26
+Call context: GetMinerData
+True
+REF_58(address) -> boosterHolders[i]
+TMP_64(bool) = REF_58 == addr
+CONDITION TMP_64
+EXPRESSION:boosterHolders[i] == addr	NodeType.IF" -> "BlockID: 29
+Call context: GetMinerData
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 27
+Call context: GetMinerData
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 30
+Call context: GetMinerData
+None
+TMP_290(None) := False(bool)
+EXPRESSION:" [key=0];
+"BlockID: 30
+Call context: GetMinerData
+None
+TMP_290(None) := False(bool)
+EXPRESSION:" -> "BlockID: 31
+Call context: 
+None
+hasBooster(bool) := TMP_48(bool)
+TMP_49(uint256) = now - lastupdate
+TMP_50(uint256) = prodPerSec * TMP_49
+TMP_51(uint256) = money + TMP_50
+unconfirmedMoney(uint256) := TMP_51(uint256)
+EXPRESSION:hasBooster = HasBooster(minerAddr)	NodeType.EXPRESSION
+unconfirmedMoney = money + (prodPerSec * (now - lastupdate))	NodeType.EXPRESSION" [key="successor_5", ref="RigIdle.HasBooster"];
+"BlockID: 28
+Call context: GetMinerData
+True
+TMP_290(None) := True(bool)
+EXPRESSION:" -> "BlockID: 31
+Call context: 
+None
+hasBooster(bool) := TMP_48(bool)
+TMP_49(uint256) = now - lastupdate
+TMP_50(uint256) = prodPerSec * TMP_49
+TMP_51(uint256) = money + TMP_50
+unconfirmedMoney(uint256) := TMP_51(uint256)
+EXPRESSION:hasBooster = HasBooster(minerAddr)	NodeType.EXPRESSION
+unconfirmedMoney = money + (prodPerSec * (now - lastupdate))	NodeType.EXPRESSION" [key="successor_5", ref="RigIdle.HasBooster"];
+"BlockID: 29
+Call context: GetMinerData
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 32
+Call context: GetMinerData
+None
+i(uint256) = i + 1
+EXPRESSION:++ i	NodeType.EXPRESSION" [key=0];
+"BlockID: 32
+Call context: GetMinerData
+None
+i(uint256) = i + 1
+EXPRESSION:++ i	NodeType.EXPRESSION" -> "BlockID: 25
+Call context: GetMinerData
+None
+BEGIN_LOOP
+TMP_63(bool) = i < NUMBER_OF_BOOSTERS
+CONDITION TMP_63
+EXPRESSION:None	NodeType.STARTLOOP
+i < NUMBER_OF_BOOSTERS	NodeType.IFLOOP" [key=0];
+}

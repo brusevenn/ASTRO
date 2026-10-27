@@ -1,0 +1,583 @@
+digraph {
+"BlockID: 743
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 744
+Call context: 
+None
+MODIFIER_CALL, LendingLedger.is_valid_epoch(uint256)(_claimFromTimestamp)
+EXPRESSION:is_valid_epoch(_claimFromTimestamp)	NodeType.EXPRESSION";
+"BlockID: 745
+Call context: 
+None
+MODIFIER_CALL, LendingLedger.is_valid_epoch(uint256)(_claimUpToTimestamp)
+EXPRESSION:is_valid_epoch(_claimFromTimestamp)	NodeType.EXPRESSION
+is_valid_epoch(_claimUpToTimestamp)	NodeType.EXPRESSION";
+"BlockID: 747
+Call context: 
+True
+INTERNAL_CALL, LendingLedger._checkpoint_lender(address,address,uint256)(_market,lender,_claimUpToTimestamp)
+EXPRESSION:_checkpoint_lender(_market,lender,_claimUpToTimestamp)	NodeType.EXPRESSION";
+"BlockID: 748
+Call context: 
+None
+INTERNAL_CALL, LendingLedger._checkpoint_market(address,uint256)(_market,_claimUpToTimestamp)
+EXPRESSION:_checkpoint_lender(_market,lender,_claimUpToTimestamp)	NodeType.EXPRESSION
+_checkpoint_market(_market,_claimUpToTimestamp)	NodeType.EXPRESSION";
+"BlockID: 749
+Call context: 
+None
+TMP_557(uint256) = block.timestamp (c)/ WEEK
+TMP_558(uint256) = TMP_557 (c)* WEEK
+currEpoch(uint256) := TMP_558(uint256)
+TMP_559(uint256) = LIBRARY_CALL, dest:Math, function:Math.max(uint256,uint256), arguments:['userLastClaimed', '_claimFromTimestamp'] 
+EXPRESSION:_checkpoint_market(_market,_claimUpToTimestamp)	NodeType.EXPRESSION
+currEpoch = (block.timestamp / WEEK) * WEEK	NodeType.VARIABLE
+currEpoch = (block.timestamp / WEEK) * WEEK	NodeType.EXPRESSION";
+"BlockID: 750
+Call context: 
+None
+claimStart(uint256) := TMP_559(uint256)
+TMP_560(uint256) = currEpoch (c)- WEEK
+TMP_561(uint256) = LIBRARY_CALL, dest:Math, function:Math.min(uint256,uint256), arguments:['TMP_560', '_claimUpToTimestamp'] 
+EXPRESSION:claimStart = Math.max(userLastClaimed,_claimFromTimestamp)	NodeType.VARIABLE
+claimStart = Math.max(userLastClaimed,_claimFromTimestamp)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 751
+Call context: 
+None
+claimEnd(uint256) := TMP_561(uint256)
+NEW VARIABLE cantoToSend
+TMP_562(bool) = claimEnd >= claimStart
+CONDITION TMP_562
+EXPRESSION:claimEnd = Math.min(currEpoch - WEEK,_claimUpToTimestamp)	NodeType.VARIABLE
+claimEnd = Math.min(currEpoch - WEEK,_claimUpToTimestamp)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+claimEnd >= claimStart	NodeType.IF" [shape=box];
+"BlockID: 752
+Call context: 
+True
+i(uint256) := claimStart(uint256)
+EXPRESSION:i = claimStart	NodeType.VARIABLE
+i = claimStart	NodeType.EXPRESSION";
+"BlockID: 753
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 754
+Call context: 
+None
+TMP_571(bool) = cantoToSend > 0
+CONDITION TMP_571
+EXPRESSION:cantoToSend > 0	NodeType.IF";
+"BlockID: 755
+Call context: 
+True
+NEW VARIABLE success
+TUPLE_2(bool,bytes) = LOW_LEVEL_CALL, dest:msg.sender, function:call, arguments:[''] value:cantoToSend 
+EXPRESSION:None	NodeType.VARIABLE
+(success) = msg.sender.call{value: cantoToSend}()	NodeType.EXPRESSION";
+"BlockID: 756
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 759
+Call context: 
+None
+BEGIN_LOOP
+TMP_563(bool) = i <= claimEnd
+CONDITION TMP_563
+EXPRESSION:None	NodeType.STARTLOOP
+i <= claimEnd	NodeType.IFLOOP";
+"BlockID: 761
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 762
+Call context: 
+None
+REF_382(mapping(address => uint256)) -> userClaimedEpoch[_market]
+REF_383(uint256) -> REF_382[lender]
+TMP_570(uint256) = claimEnd (c)+ WEEK
+REF_383(uint256) (->userClaimedEpoch) := TMP_570(uint256)
+EXPRESSION:userClaimedEpoch[_market][lender] = claimEnd + WEEK	NodeType.EXPRESSION";
+"BlockID: 763
+Call context: 
+True
+TMP_565(uint256) = HIGH_LEVEL_CALL, dest:gaugeController(GaugeController), function:gauge_relative_weight_write, arguments:['_market', 'i']  
+EXPRESSION:";
+"BlockID: 764
+Call context: 
+None
+marketWeight(uint256) := TMP_565(uint256)
+TMP_566(uint256) = marketWeight (c)* userBalance
+REF_381(uint248) -> ri.amount
+TMP_567(uint256) = TMP_566 (c)* REF_381
+TMP_568(uint256) = 1000000000000000000 (c)* marketBalance
+TMP_569(uint256) = TMP_567 (c)/ TMP_568
+cantoToSend(uint256) = cantoToSend (c)+ TMP_569
+i(uint256) = i (c)+ WEEK
+EXPRESSION:marketWeight = gaugeController.gauge_relative_weight_write(_market,i)	NodeType.VARIABLE
+marketWeight = gaugeController.gauge_relative_weight_write(_market,i)	NodeType.EXPRESSION
+cantoToSend += (marketWeight * userBalance * ri.amount) / (1e18 * marketBalance)	NodeType.EXPRESSION
+i += WEEK	NodeType.EXPRESSION" [shape=box];
+"BlockID: 765
+Call context: 
+None
+lender(address) := msg.sender(address)
+REF_369(mapping(address => uint256)) -> userClaimedEpoch[_market]
+REF_370(uint256) -> REF_369[lender]
+userLastClaimed(uint256) := REF_370(uint256)
+TMP_553(bool) = userLastClaimed > 0
+CONDITION TMP_553
+EXPRESSION:TMP_553(bool) = userLastClaimed > 0	NodeType.IF";
+"BlockID: 766
+Call context: 
+True
+TMP_554(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 767
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 768
+Call context: 
+None
+success(bool)= UNPACK TUPLE_2 index: 0 
+CONDITION success
+EXPRESSION:success(bool)= UNPACK TUPLE_2 index: 0 	NodeType.IF";
+"BlockID: 769
+Call context: 
+True
+TMP_572(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 770
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 771
+Call context: 
+None
+REF_373(mapping(address => mapping(uint256 => uint256))) -> lendingMarketBalances[_market]
+REF_374(mapping(uint256 => uint256)) -> REF_373[lender]
+REF_375(uint256) -> REF_374[i]
+userBalance(uint256) := REF_375(uint256)
+REF_376(mapping(uint256 => uint256)) -> lendingMarketTotalBalance[_market]
+REF_377(uint256) -> REF_376[i]
+marketBalance(uint256) := REF_377(uint256)
+REF_378(LendingLedger.RewardInformation) -> rewardInformation[i]
+ri(LendingLedger.RewardInformation) := REF_378(LendingLedger.RewardInformation)
+REF_379(bool) -> ri.set
+CONDITION REF_379
+EXPRESSION:REF_379(bool) -> ri.set	NodeType.IF";
+"BlockID: 772
+Call context: 
+True
+TMP_564(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 773
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 743
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 744
+Call context: 
+None
+MODIFIER_CALL, LendingLedger.is_valid_epoch(uint256)(_claimFromTimestamp)
+EXPRESSION:is_valid_epoch(_claimFromTimestamp)	NodeType.EXPRESSION" [key=0];
+"BlockID: 744
+Call context: 
+None
+MODIFIER_CALL, LendingLedger.is_valid_epoch(uint256)(_claimFromTimestamp)
+EXPRESSION:is_valid_epoch(_claimFromTimestamp)	NodeType.EXPRESSION" -> "BlockID: 745
+Call context: 
+None
+MODIFIER_CALL, LendingLedger.is_valid_epoch(uint256)(_claimUpToTimestamp)
+EXPRESSION:is_valid_epoch(_claimFromTimestamp)	NodeType.EXPRESSION
+is_valid_epoch(_claimUpToTimestamp)	NodeType.EXPRESSION" [key=0];
+"BlockID: 745
+Call context: 
+None
+MODIFIER_CALL, LendingLedger.is_valid_epoch(uint256)(_claimUpToTimestamp)
+EXPRESSION:is_valid_epoch(_claimFromTimestamp)	NodeType.EXPRESSION
+is_valid_epoch(_claimUpToTimestamp)	NodeType.EXPRESSION" -> "BlockID: 765
+Call context: 
+None
+lender(address) := msg.sender(address)
+REF_369(mapping(address => uint256)) -> userClaimedEpoch[_market]
+REF_370(uint256) -> REF_369[lender]
+userLastClaimed(uint256) := REF_370(uint256)
+TMP_553(bool) = userLastClaimed > 0
+CONDITION TMP_553
+EXPRESSION:TMP_553(bool) = userLastClaimed > 0	NodeType.IF" [key=0];
+"BlockID: 747
+Call context: 
+True
+INTERNAL_CALL, LendingLedger._checkpoint_lender(address,address,uint256)(_market,lender,_claimUpToTimestamp)
+EXPRESSION:_checkpoint_lender(_market,lender,_claimUpToTimestamp)	NodeType.EXPRESSION" -> "BlockID: 748
+Call context: 
+None
+INTERNAL_CALL, LendingLedger._checkpoint_market(address,uint256)(_market,_claimUpToTimestamp)
+EXPRESSION:_checkpoint_lender(_market,lender,_claimUpToTimestamp)	NodeType.EXPRESSION
+_checkpoint_market(_market,_claimUpToTimestamp)	NodeType.EXPRESSION" [key=0];
+"BlockID: 748
+Call context: 
+None
+INTERNAL_CALL, LendingLedger._checkpoint_market(address,uint256)(_market,_claimUpToTimestamp)
+EXPRESSION:_checkpoint_lender(_market,lender,_claimUpToTimestamp)	NodeType.EXPRESSION
+_checkpoint_market(_market,_claimUpToTimestamp)	NodeType.EXPRESSION" -> "BlockID: 749
+Call context: 
+None
+TMP_557(uint256) = block.timestamp (c)/ WEEK
+TMP_558(uint256) = TMP_557 (c)* WEEK
+currEpoch(uint256) := TMP_558(uint256)
+TMP_559(uint256) = LIBRARY_CALL, dest:Math, function:Math.max(uint256,uint256), arguments:['userLastClaimed', '_claimFromTimestamp'] 
+EXPRESSION:_checkpoint_market(_market,_claimUpToTimestamp)	NodeType.EXPRESSION
+currEpoch = (block.timestamp / WEEK) * WEEK	NodeType.VARIABLE
+currEpoch = (block.timestamp / WEEK) * WEEK	NodeType.EXPRESSION" [key=0];
+"BlockID: 749
+Call context: 
+None
+TMP_557(uint256) = block.timestamp (c)/ WEEK
+TMP_558(uint256) = TMP_557 (c)* WEEK
+currEpoch(uint256) := TMP_558(uint256)
+TMP_559(uint256) = LIBRARY_CALL, dest:Math, function:Math.max(uint256,uint256), arguments:['userLastClaimed', '_claimFromTimestamp'] 
+EXPRESSION:_checkpoint_market(_market,_claimUpToTimestamp)	NodeType.EXPRESSION
+currEpoch = (block.timestamp / WEEK) * WEEK	NodeType.VARIABLE
+currEpoch = (block.timestamp / WEEK) * WEEK	NodeType.EXPRESSION" -> "BlockID: 750
+Call context: 
+None
+claimStart(uint256) := TMP_559(uint256)
+TMP_560(uint256) = currEpoch (c)- WEEK
+TMP_561(uint256) = LIBRARY_CALL, dest:Math, function:Math.min(uint256,uint256), arguments:['TMP_560', '_claimUpToTimestamp'] 
+EXPRESSION:claimStart = Math.max(userLastClaimed,_claimFromTimestamp)	NodeType.VARIABLE
+claimStart = Math.max(userLastClaimed,_claimFromTimestamp)	NodeType.EXPRESSION" [key=0];
+"BlockID: 750
+Call context: 
+None
+claimStart(uint256) := TMP_559(uint256)
+TMP_560(uint256) = currEpoch (c)- WEEK
+TMP_561(uint256) = LIBRARY_CALL, dest:Math, function:Math.min(uint256,uint256), arguments:['TMP_560', '_claimUpToTimestamp'] 
+EXPRESSION:claimStart = Math.max(userLastClaimed,_claimFromTimestamp)	NodeType.VARIABLE
+claimStart = Math.max(userLastClaimed,_claimFromTimestamp)	NodeType.EXPRESSION" -> "BlockID: 751
+Call context: 
+None
+claimEnd(uint256) := TMP_561(uint256)
+NEW VARIABLE cantoToSend
+TMP_562(bool) = claimEnd >= claimStart
+CONDITION TMP_562
+EXPRESSION:claimEnd = Math.min(currEpoch - WEEK,_claimUpToTimestamp)	NodeType.VARIABLE
+claimEnd = Math.min(currEpoch - WEEK,_claimUpToTimestamp)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+claimEnd >= claimStart	NodeType.IF" [key=0];
+"BlockID: 751
+Call context: 
+None
+claimEnd(uint256) := TMP_561(uint256)
+NEW VARIABLE cantoToSend
+TMP_562(bool) = claimEnd >= claimStart
+CONDITION TMP_562
+EXPRESSION:claimEnd = Math.min(currEpoch - WEEK,_claimUpToTimestamp)	NodeType.VARIABLE
+claimEnd = Math.min(currEpoch - WEEK,_claimUpToTimestamp)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+claimEnd >= claimStart	NodeType.IF" -> "BlockID: 752
+Call context: 
+True
+i(uint256) := claimStart(uint256)
+EXPRESSION:i = claimStart	NodeType.VARIABLE
+i = claimStart	NodeType.EXPRESSION" [key=0];
+"BlockID: 751
+Call context: 
+None
+claimEnd(uint256) := TMP_561(uint256)
+NEW VARIABLE cantoToSend
+TMP_562(bool) = claimEnd >= claimStart
+CONDITION TMP_562
+EXPRESSION:claimEnd = Math.min(currEpoch - WEEK,_claimUpToTimestamp)	NodeType.VARIABLE
+claimEnd = Math.min(currEpoch - WEEK,_claimUpToTimestamp)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+claimEnd >= claimStart	NodeType.IF" -> "BlockID: 753
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 752
+Call context: 
+True
+i(uint256) := claimStart(uint256)
+EXPRESSION:i = claimStart	NodeType.VARIABLE
+i = claimStart	NodeType.EXPRESSION" -> "BlockID: 759
+Call context: 
+None
+BEGIN_LOOP
+TMP_563(bool) = i <= claimEnd
+CONDITION TMP_563
+EXPRESSION:None	NodeType.STARTLOOP
+i <= claimEnd	NodeType.IFLOOP" [key=0];
+"BlockID: 753
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 754
+Call context: 
+None
+TMP_571(bool) = cantoToSend > 0
+CONDITION TMP_571
+EXPRESSION:cantoToSend > 0	NodeType.IF" [key=0];
+"BlockID: 754
+Call context: 
+None
+TMP_571(bool) = cantoToSend > 0
+CONDITION TMP_571
+EXPRESSION:cantoToSend > 0	NodeType.IF" -> "BlockID: 755
+Call context: 
+True
+NEW VARIABLE success
+TUPLE_2(bool,bytes) = LOW_LEVEL_CALL, dest:msg.sender, function:call, arguments:[''] value:cantoToSend 
+EXPRESSION:None	NodeType.VARIABLE
+(success) = msg.sender.call{value: cantoToSend}()	NodeType.EXPRESSION" [key=0];
+"BlockID: 754
+Call context: 
+None
+TMP_571(bool) = cantoToSend > 0
+CONDITION TMP_571
+EXPRESSION:cantoToSend > 0	NodeType.IF" -> "BlockID: 756
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 755
+Call context: 
+True
+NEW VARIABLE success
+TUPLE_2(bool,bytes) = LOW_LEVEL_CALL, dest:msg.sender, function:call, arguments:[''] value:cantoToSend 
+EXPRESSION:None	NodeType.VARIABLE
+(success) = msg.sender.call{value: cantoToSend}()	NodeType.EXPRESSION" -> "BlockID: 768
+Call context: 
+None
+success(bool)= UNPACK TUPLE_2 index: 0 
+CONDITION success
+EXPRESSION:success(bool)= UNPACK TUPLE_2 index: 0 	NodeType.IF" [key=0];
+"BlockID: 759
+Call context: 
+None
+BEGIN_LOOP
+TMP_563(bool) = i <= claimEnd
+CONDITION TMP_563
+EXPRESSION:None	NodeType.STARTLOOP
+i <= claimEnd	NodeType.IFLOOP" -> "BlockID: 761
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 759
+Call context: 
+None
+BEGIN_LOOP
+TMP_563(bool) = i <= claimEnd
+CONDITION TMP_563
+EXPRESSION:None	NodeType.STARTLOOP
+i <= claimEnd	NodeType.IFLOOP" -> "BlockID: 771
+Call context: 
+None
+REF_373(mapping(address => mapping(uint256 => uint256))) -> lendingMarketBalances[_market]
+REF_374(mapping(uint256 => uint256)) -> REF_373[lender]
+REF_375(uint256) -> REF_374[i]
+userBalance(uint256) := REF_375(uint256)
+REF_376(mapping(uint256 => uint256)) -> lendingMarketTotalBalance[_market]
+REF_377(uint256) -> REF_376[i]
+marketBalance(uint256) := REF_377(uint256)
+REF_378(LendingLedger.RewardInformation) -> rewardInformation[i]
+ri(LendingLedger.RewardInformation) := REF_378(LendingLedger.RewardInformation)
+REF_379(bool) -> ri.set
+CONDITION REF_379
+EXPRESSION:REF_379(bool) -> ri.set	NodeType.IF" [key=0];
+"BlockID: 761
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 762
+Call context: 
+None
+REF_382(mapping(address => uint256)) -> userClaimedEpoch[_market]
+REF_383(uint256) -> REF_382[lender]
+TMP_570(uint256) = claimEnd (c)+ WEEK
+REF_383(uint256) (->userClaimedEpoch) := TMP_570(uint256)
+EXPRESSION:userClaimedEpoch[_market][lender] = claimEnd + WEEK	NodeType.EXPRESSION" [key=0];
+"BlockID: 762
+Call context: 
+None
+REF_382(mapping(address => uint256)) -> userClaimedEpoch[_market]
+REF_383(uint256) -> REF_382[lender]
+TMP_570(uint256) = claimEnd (c)+ WEEK
+REF_383(uint256) (->userClaimedEpoch) := TMP_570(uint256)
+EXPRESSION:userClaimedEpoch[_market][lender] = claimEnd + WEEK	NodeType.EXPRESSION" -> "BlockID: 753
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 763
+Call context: 
+True
+TMP_565(uint256) = HIGH_LEVEL_CALL, dest:gaugeController(GaugeController), function:gauge_relative_weight_write, arguments:['_market', 'i']  
+EXPRESSION:" -> "BlockID: 764
+Call context: 
+None
+marketWeight(uint256) := TMP_565(uint256)
+TMP_566(uint256) = marketWeight (c)* userBalance
+REF_381(uint248) -> ri.amount
+TMP_567(uint256) = TMP_566 (c)* REF_381
+TMP_568(uint256) = 1000000000000000000 (c)* marketBalance
+TMP_569(uint256) = TMP_567 (c)/ TMP_568
+cantoToSend(uint256) = cantoToSend (c)+ TMP_569
+i(uint256) = i (c)+ WEEK
+EXPRESSION:marketWeight = gaugeController.gauge_relative_weight_write(_market,i)	NodeType.VARIABLE
+marketWeight = gaugeController.gauge_relative_weight_write(_market,i)	NodeType.EXPRESSION
+cantoToSend += (marketWeight * userBalance * ri.amount) / (1e18 * marketBalance)	NodeType.EXPRESSION
+i += WEEK	NodeType.EXPRESSION" [key=0];
+"BlockID: 764
+Call context: 
+None
+marketWeight(uint256) := TMP_565(uint256)
+TMP_566(uint256) = marketWeight (c)* userBalance
+REF_381(uint248) -> ri.amount
+TMP_567(uint256) = TMP_566 (c)* REF_381
+TMP_568(uint256) = 1000000000000000000 (c)* marketBalance
+TMP_569(uint256) = TMP_567 (c)/ TMP_568
+cantoToSend(uint256) = cantoToSend (c)+ TMP_569
+i(uint256) = i (c)+ WEEK
+EXPRESSION:marketWeight = gaugeController.gauge_relative_weight_write(_market,i)	NodeType.VARIABLE
+marketWeight = gaugeController.gauge_relative_weight_write(_market,i)	NodeType.EXPRESSION
+cantoToSend += (marketWeight * userBalance * ri.amount) / (1e18 * marketBalance)	NodeType.EXPRESSION
+i += WEEK	NodeType.EXPRESSION" -> "BlockID: 759
+Call context: 
+None
+BEGIN_LOOP
+TMP_563(bool) = i <= claimEnd
+CONDITION TMP_563
+EXPRESSION:None	NodeType.STARTLOOP
+i <= claimEnd	NodeType.IFLOOP" [key=0];
+"BlockID: 765
+Call context: 
+None
+lender(address) := msg.sender(address)
+REF_369(mapping(address => uint256)) -> userClaimedEpoch[_market]
+REF_370(uint256) -> REF_369[lender]
+userLastClaimed(uint256) := REF_370(uint256)
+TMP_553(bool) = userLastClaimed > 0
+CONDITION TMP_553
+EXPRESSION:TMP_553(bool) = userLastClaimed > 0	NodeType.IF" -> "BlockID: 766
+Call context: 
+True
+TMP_554(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 765
+Call context: 
+None
+lender(address) := msg.sender(address)
+REF_369(mapping(address => uint256)) -> userClaimedEpoch[_market]
+REF_370(uint256) -> REF_369[lender]
+userLastClaimed(uint256) := REF_370(uint256)
+TMP_553(bool) = userLastClaimed > 0
+CONDITION TMP_553
+EXPRESSION:TMP_553(bool) = userLastClaimed > 0	NodeType.IF" -> "BlockID: 767
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 767
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 747
+Call context: 
+True
+INTERNAL_CALL, LendingLedger._checkpoint_lender(address,address,uint256)(_market,lender,_claimUpToTimestamp)
+EXPRESSION:_checkpoint_lender(_market,lender,_claimUpToTimestamp)	NodeType.EXPRESSION" [key=0];
+"BlockID: 768
+Call context: 
+None
+success(bool)= UNPACK TUPLE_2 index: 0 
+CONDITION success
+EXPRESSION:success(bool)= UNPACK TUPLE_2 index: 0 	NodeType.IF" -> "BlockID: 769
+Call context: 
+True
+TMP_572(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 768
+Call context: 
+None
+success(bool)= UNPACK TUPLE_2 index: 0 
+CONDITION success
+EXPRESSION:success(bool)= UNPACK TUPLE_2 index: 0 	NodeType.IF" -> "BlockID: 770
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 770
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 756
+Call context: 
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 771
+Call context: 
+None
+REF_373(mapping(address => mapping(uint256 => uint256))) -> lendingMarketBalances[_market]
+REF_374(mapping(uint256 => uint256)) -> REF_373[lender]
+REF_375(uint256) -> REF_374[i]
+userBalance(uint256) := REF_375(uint256)
+REF_376(mapping(uint256 => uint256)) -> lendingMarketTotalBalance[_market]
+REF_377(uint256) -> REF_376[i]
+marketBalance(uint256) := REF_377(uint256)
+REF_378(LendingLedger.RewardInformation) -> rewardInformation[i]
+ri(LendingLedger.RewardInformation) := REF_378(LendingLedger.RewardInformation)
+REF_379(bool) -> ri.set
+CONDITION REF_379
+EXPRESSION:REF_379(bool) -> ri.set	NodeType.IF" -> "BlockID: 772
+Call context: 
+True
+TMP_564(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 771
+Call context: 
+None
+REF_373(mapping(address => mapping(uint256 => uint256))) -> lendingMarketBalances[_market]
+REF_374(mapping(uint256 => uint256)) -> REF_373[lender]
+REF_375(uint256) -> REF_374[i]
+userBalance(uint256) := REF_375(uint256)
+REF_376(mapping(uint256 => uint256)) -> lendingMarketTotalBalance[_market]
+REF_377(uint256) -> REF_376[i]
+marketBalance(uint256) := REF_377(uint256)
+REF_378(LendingLedger.RewardInformation) -> rewardInformation[i]
+ri(LendingLedger.RewardInformation) := REF_378(LendingLedger.RewardInformation)
+REF_379(bool) -> ri.set
+CONDITION REF_379
+EXPRESSION:REF_379(bool) -> ri.set	NodeType.IF" -> "BlockID: 773
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 773
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 763
+Call context: 
+True
+TMP_565(uint256) = HIGH_LEVEL_CALL, dest:gaugeController(GaugeController), function:gauge_relative_weight_write, arguments:['_market', 'i']  
+EXPRESSION:" [key=0];
+}

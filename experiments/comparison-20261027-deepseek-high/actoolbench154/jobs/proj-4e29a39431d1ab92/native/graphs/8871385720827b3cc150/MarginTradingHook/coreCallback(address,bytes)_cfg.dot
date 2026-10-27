@@ -1,0 +1,422 @@
+digraph {
+"BlockID: 877
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 878
+Call context: 
+None
+TMP_599(bool) = msg.sender == CORE
+REF_319(uint32) -> Errors.NOT_INIT_CORE
+INTERNAL_CALL, _require(bool,uint32)(TMP_599,REF_319)
+EXPRESSION:_require(msg.sender == CORE,Errors.NOT_INIT_CORE)	NodeType.EXPRESSION";
+"BlockID: 879
+Call context: 
+None
+TMP_601 = CONVERT this to address
+TMP_602(bool) = _sender == TMP_601
+REF_320(uint32) -> Errors.NOT_AUTHORIZED
+INTERNAL_CALL, _require(bool,uint32)(TMP_602,REF_320)
+EXPRESSION:_require(msg.sender == CORE,Errors.NOT_INIT_CORE)	NodeType.EXPRESSION
+_require(_sender == address(this),Errors.NOT_AUTHORIZED)	NodeType.EXPRESSION";
+"BlockID: 880
+Call context: 
+None
+TMP_604(SwapInfo) = SOLIDITY_CALL abi.decode()(_data,SwapInfo)
+swapInfo(SwapInfo) := TMP_604(SwapInfo)
+REF_322(uint256) -> swapInfo.initPosId
+REF_323(MarginPos) -> __marginPositions[REF_322]
+marginPos(MarginPos) := REF_323(MarginPos)
+REF_324(address) -> swapInfo.tokenIn
+TMP_605 = CONVERT REF_324 to IERC20
+TMP_606 = CONVERT this to address
+TMP_607(uint256) = HIGH_LEVEL_CALL, dest:TMP_605(IERC20), function:balanceOf, arguments:['TMP_606']  
+EXPRESSION:_require(_sender == address(this),Errors.NOT_AUTHORIZED)	NodeType.EXPRESSION
+swapInfo = abi.decode(_data,(SwapInfo))	NodeType.VARIABLE
+swapInfo = abi.decode(_data,(SwapInfo))	NodeType.EXPRESSION
+marginPos = __marginPositions[swapInfo.initPosId]	NodeType.VARIABLE
+marginPos = __marginPositions[swapInfo.initPosId]	NodeType.EXPRESSION";
+"BlockID: 881
+Call context: 
+None
+amtIn(uint256) := TMP_607(uint256)
+REF_326(address) -> swapInfo.tokenIn
+TMP_608 = CONVERT REF_326 to IERC20
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['TMP_608', 'swapHelper', 'amtIn'] 
+EXPRESSION:amtIn = IERC20(swapInfo.tokenIn).balanceOf(address(this))	NodeType.VARIABLE
+amtIn = IERC20(swapInfo.tokenIn).balanceOf(address(this))	NodeType.EXPRESSION
+IERC20(swapInfo.tokenIn).safeTransfer(swapHelper,amtIn)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 882
+Call context: 
+None
+TMP_610 = CONVERT swapHelper to IBaseSwapHelper
+HIGH_LEVEL_CALL, dest:TMP_610(IBaseSwapHelper), function:swap, arguments:['swapInfo']  
+EXPRESSION:IERC20(swapInfo.tokenIn).safeTransfer(swapHelper,amtIn)	NodeType.EXPRESSION
+IBaseSwapHelper(swapHelper).swap(swapInfo)	NodeType.EXPRESSION";
+"BlockID: 883
+Call context: 
+None
+REF_329(address) -> swapInfo.tokenOut
+TMP_612 = CONVERT REF_329 to IERC20
+TMP_613 = CONVERT this to address
+TMP_614(uint256) = HIGH_LEVEL_CALL, dest:TMP_612(IERC20), function:balanceOf, arguments:['TMP_613']  
+EXPRESSION:IBaseSwapHelper(swapHelper).swap(swapInfo)	NodeType.EXPRESSION";
+"BlockID: 884
+Call context: 
+None
+amtOut(uint256) := TMP_614(uint256)
+REF_331(SwapType) -> swapInfo.swapType
+REF_332(SwapType) -> SwapType.OpenExactIn
+TMP_615(bool) = REF_331 == REF_332
+CONDITION TMP_615
+EXPRESSION:amtOut = IERC20(swapInfo.tokenOut).balanceOf(address(this))	NodeType.VARIABLE
+amtOut = IERC20(swapInfo.tokenOut).balanceOf(address(this))	NodeType.EXPRESSION
+swapInfo.swapType == SwapType.OpenExactIn	NodeType.IF" [shape=box];
+"BlockID: 885
+Call context: 
+True
+REF_333(address) -> swapInfo.tokenOut
+TMP_616 = CONVERT REF_333 to IERC20
+REF_335(address) -> marginPos.collPool
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['TMP_616', 'REF_335', 'amtOut'] 
+EXPRESSION:IERC20(swapInfo.tokenOut).safeTransfer(marginPos.collPool,amtOut)	NodeType.EXPRESSION";
+"BlockID: 887
+Call context: 
+False
+amtSwapped(uint256) := amtIn(uint256)
+REF_339(SwapType) -> swapInfo.swapType
+REF_340(SwapType) -> SwapType.CloseExactOut
+TMP_619(bool) = REF_339 == REF_340
+CONDITION TMP_619
+EXPRESSION:amtSwapped = amtIn	NodeType.VARIABLE
+amtSwapped = amtIn	NodeType.EXPRESSION
+swapInfo.swapType == SwapType.CloseExactOut	NodeType.IF";
+"BlockID: 888
+Call context: 
+True
+REF_341(address) -> swapInfo.tokenOut
+TMP_620 = CONVERT REF_341 to IERC20
+TMP_621 = CONVERT this to address
+TMP_622(uint256) = HIGH_LEVEL_CALL, dest:TMP_620(IERC20), function:balanceOf, arguments:['TMP_621']  
+EXPRESSION:_require(IERC20(swapInfo.tokenOut).balanceOf(address(this)) == swapInfo.amtOut,Errors.SLIPPAGE_CONTROL)	NodeType.EXPRESSION";
+"BlockID: 891
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 893
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 894
+Call context: 
+None
+TMP_629(bytes) = SOLIDITY_CALL abi.encode()(amtOut)
+result(bytes) := TMP_629(bytes)
+EXPRESSION:result = abi.encode(amtOut)	NodeType.EXPRESSION";
+"BlockID: 889
+Call context: 
+None
+REF_343(uint256) -> swapInfo.amtOut
+TMP_623(bool) = TMP_622 == REF_343
+REF_344(uint32) -> Errors.SLIPPAGE_CONTROL
+INTERNAL_CALL, _require(bool,uint32)(TMP_623,REF_344)
+EXPRESSION:_require(IERC20(swapInfo.tokenOut).balanceOf(address(this)) == swapInfo.amtOut,Errors.SLIPPAGE_CONTROL)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 890
+Call context: 
+None
+REF_345(address) -> swapInfo.tokenIn
+TMP_625 = CONVERT REF_345 to IERC20
+TMP_626 = CONVERT this to address
+TMP_627(uint256) = HIGH_LEVEL_CALL, dest:TMP_625(IERC20), function:balanceOf, arguments:['TMP_626']  
+EXPRESSION:_require(IERC20(swapInfo.tokenOut).balanceOf(address(this)) == swapInfo.amtOut,Errors.SLIPPAGE_CONTROL)	NodeType.EXPRESSION
+amtSwapped -= IERC20(swapInfo.tokenIn).balanceOf(address(this))	NodeType.EXPRESSION";
+"BlockID: 895
+Call context: 
+None
+amtSwapped(uint256) = amtSwapped (c)- TMP_627
+EXPRESSION:amtSwapped -= IERC20(swapInfo.tokenIn).balanceOf(address(this))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 877
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 878
+Call context: 
+None
+TMP_599(bool) = msg.sender == CORE
+REF_319(uint32) -> Errors.NOT_INIT_CORE
+INTERNAL_CALL, _require(bool,uint32)(TMP_599,REF_319)
+EXPRESSION:_require(msg.sender == CORE,Errors.NOT_INIT_CORE)	NodeType.EXPRESSION" [key=0];
+"BlockID: 878
+Call context: 
+None
+TMP_599(bool) = msg.sender == CORE
+REF_319(uint32) -> Errors.NOT_INIT_CORE
+INTERNAL_CALL, _require(bool,uint32)(TMP_599,REF_319)
+EXPRESSION:_require(msg.sender == CORE,Errors.NOT_INIT_CORE)	NodeType.EXPRESSION" -> "BlockID: 879
+Call context: 
+None
+TMP_601 = CONVERT this to address
+TMP_602(bool) = _sender == TMP_601
+REF_320(uint32) -> Errors.NOT_AUTHORIZED
+INTERNAL_CALL, _require(bool,uint32)(TMP_602,REF_320)
+EXPRESSION:_require(msg.sender == CORE,Errors.NOT_INIT_CORE)	NodeType.EXPRESSION
+_require(_sender == address(this),Errors.NOT_AUTHORIZED)	NodeType.EXPRESSION" [key=0];
+"BlockID: 879
+Call context: 
+None
+TMP_601 = CONVERT this to address
+TMP_602(bool) = _sender == TMP_601
+REF_320(uint32) -> Errors.NOT_AUTHORIZED
+INTERNAL_CALL, _require(bool,uint32)(TMP_602,REF_320)
+EXPRESSION:_require(msg.sender == CORE,Errors.NOT_INIT_CORE)	NodeType.EXPRESSION
+_require(_sender == address(this),Errors.NOT_AUTHORIZED)	NodeType.EXPRESSION" -> "BlockID: 880
+Call context: 
+None
+TMP_604(SwapInfo) = SOLIDITY_CALL abi.decode()(_data,SwapInfo)
+swapInfo(SwapInfo) := TMP_604(SwapInfo)
+REF_322(uint256) -> swapInfo.initPosId
+REF_323(MarginPos) -> __marginPositions[REF_322]
+marginPos(MarginPos) := REF_323(MarginPos)
+REF_324(address) -> swapInfo.tokenIn
+TMP_605 = CONVERT REF_324 to IERC20
+TMP_606 = CONVERT this to address
+TMP_607(uint256) = HIGH_LEVEL_CALL, dest:TMP_605(IERC20), function:balanceOf, arguments:['TMP_606']  
+EXPRESSION:_require(_sender == address(this),Errors.NOT_AUTHORIZED)	NodeType.EXPRESSION
+swapInfo = abi.decode(_data,(SwapInfo))	NodeType.VARIABLE
+swapInfo = abi.decode(_data,(SwapInfo))	NodeType.EXPRESSION
+marginPos = __marginPositions[swapInfo.initPosId]	NodeType.VARIABLE
+marginPos = __marginPositions[swapInfo.initPosId]	NodeType.EXPRESSION" [key=0];
+"BlockID: 880
+Call context: 
+None
+TMP_604(SwapInfo) = SOLIDITY_CALL abi.decode()(_data,SwapInfo)
+swapInfo(SwapInfo) := TMP_604(SwapInfo)
+REF_322(uint256) -> swapInfo.initPosId
+REF_323(MarginPos) -> __marginPositions[REF_322]
+marginPos(MarginPos) := REF_323(MarginPos)
+REF_324(address) -> swapInfo.tokenIn
+TMP_605 = CONVERT REF_324 to IERC20
+TMP_606 = CONVERT this to address
+TMP_607(uint256) = HIGH_LEVEL_CALL, dest:TMP_605(IERC20), function:balanceOf, arguments:['TMP_606']  
+EXPRESSION:_require(_sender == address(this),Errors.NOT_AUTHORIZED)	NodeType.EXPRESSION
+swapInfo = abi.decode(_data,(SwapInfo))	NodeType.VARIABLE
+swapInfo = abi.decode(_data,(SwapInfo))	NodeType.EXPRESSION
+marginPos = __marginPositions[swapInfo.initPosId]	NodeType.VARIABLE
+marginPos = __marginPositions[swapInfo.initPosId]	NodeType.EXPRESSION" -> "BlockID: 881
+Call context: 
+None
+amtIn(uint256) := TMP_607(uint256)
+REF_326(address) -> swapInfo.tokenIn
+TMP_608 = CONVERT REF_326 to IERC20
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['TMP_608', 'swapHelper', 'amtIn'] 
+EXPRESSION:amtIn = IERC20(swapInfo.tokenIn).balanceOf(address(this))	NodeType.VARIABLE
+amtIn = IERC20(swapInfo.tokenIn).balanceOf(address(this))	NodeType.EXPRESSION
+IERC20(swapInfo.tokenIn).safeTransfer(swapHelper,amtIn)	NodeType.EXPRESSION" [key=0];
+"BlockID: 881
+Call context: 
+None
+amtIn(uint256) := TMP_607(uint256)
+REF_326(address) -> swapInfo.tokenIn
+TMP_608 = CONVERT REF_326 to IERC20
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['TMP_608', 'swapHelper', 'amtIn'] 
+EXPRESSION:amtIn = IERC20(swapInfo.tokenIn).balanceOf(address(this))	NodeType.VARIABLE
+amtIn = IERC20(swapInfo.tokenIn).balanceOf(address(this))	NodeType.EXPRESSION
+IERC20(swapInfo.tokenIn).safeTransfer(swapHelper,amtIn)	NodeType.EXPRESSION" -> "BlockID: 882
+Call context: 
+None
+TMP_610 = CONVERT swapHelper to IBaseSwapHelper
+HIGH_LEVEL_CALL, dest:TMP_610(IBaseSwapHelper), function:swap, arguments:['swapInfo']  
+EXPRESSION:IERC20(swapInfo.tokenIn).safeTransfer(swapHelper,amtIn)	NodeType.EXPRESSION
+IBaseSwapHelper(swapHelper).swap(swapInfo)	NodeType.EXPRESSION" [key=0];
+"BlockID: 882
+Call context: 
+None
+TMP_610 = CONVERT swapHelper to IBaseSwapHelper
+HIGH_LEVEL_CALL, dest:TMP_610(IBaseSwapHelper), function:swap, arguments:['swapInfo']  
+EXPRESSION:IERC20(swapInfo.tokenIn).safeTransfer(swapHelper,amtIn)	NodeType.EXPRESSION
+IBaseSwapHelper(swapHelper).swap(swapInfo)	NodeType.EXPRESSION" -> "BlockID: 883
+Call context: 
+None
+REF_329(address) -> swapInfo.tokenOut
+TMP_612 = CONVERT REF_329 to IERC20
+TMP_613 = CONVERT this to address
+TMP_614(uint256) = HIGH_LEVEL_CALL, dest:TMP_612(IERC20), function:balanceOf, arguments:['TMP_613']  
+EXPRESSION:IBaseSwapHelper(swapHelper).swap(swapInfo)	NodeType.EXPRESSION" [key=0];
+"BlockID: 883
+Call context: 
+None
+REF_329(address) -> swapInfo.tokenOut
+TMP_612 = CONVERT REF_329 to IERC20
+TMP_613 = CONVERT this to address
+TMP_614(uint256) = HIGH_LEVEL_CALL, dest:TMP_612(IERC20), function:balanceOf, arguments:['TMP_613']  
+EXPRESSION:IBaseSwapHelper(swapHelper).swap(swapInfo)	NodeType.EXPRESSION" -> "BlockID: 884
+Call context: 
+None
+amtOut(uint256) := TMP_614(uint256)
+REF_331(SwapType) -> swapInfo.swapType
+REF_332(SwapType) -> SwapType.OpenExactIn
+TMP_615(bool) = REF_331 == REF_332
+CONDITION TMP_615
+EXPRESSION:amtOut = IERC20(swapInfo.tokenOut).balanceOf(address(this))	NodeType.VARIABLE
+amtOut = IERC20(swapInfo.tokenOut).balanceOf(address(this))	NodeType.EXPRESSION
+swapInfo.swapType == SwapType.OpenExactIn	NodeType.IF" [key=0];
+"BlockID: 884
+Call context: 
+None
+amtOut(uint256) := TMP_614(uint256)
+REF_331(SwapType) -> swapInfo.swapType
+REF_332(SwapType) -> SwapType.OpenExactIn
+TMP_615(bool) = REF_331 == REF_332
+CONDITION TMP_615
+EXPRESSION:amtOut = IERC20(swapInfo.tokenOut).balanceOf(address(this))	NodeType.VARIABLE
+amtOut = IERC20(swapInfo.tokenOut).balanceOf(address(this))	NodeType.EXPRESSION
+swapInfo.swapType == SwapType.OpenExactIn	NodeType.IF" -> "BlockID: 885
+Call context: 
+True
+REF_333(address) -> swapInfo.tokenOut
+TMP_616 = CONVERT REF_333 to IERC20
+REF_335(address) -> marginPos.collPool
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['TMP_616', 'REF_335', 'amtOut'] 
+EXPRESSION:IERC20(swapInfo.tokenOut).safeTransfer(marginPos.collPool,amtOut)	NodeType.EXPRESSION" [key=0];
+"BlockID: 884
+Call context: 
+None
+amtOut(uint256) := TMP_614(uint256)
+REF_331(SwapType) -> swapInfo.swapType
+REF_332(SwapType) -> SwapType.OpenExactIn
+TMP_615(bool) = REF_331 == REF_332
+CONDITION TMP_615
+EXPRESSION:amtOut = IERC20(swapInfo.tokenOut).balanceOf(address(this))	NodeType.VARIABLE
+amtOut = IERC20(swapInfo.tokenOut).balanceOf(address(this))	NodeType.EXPRESSION
+swapInfo.swapType == SwapType.OpenExactIn	NodeType.IF" -> "BlockID: 887
+Call context: 
+False
+amtSwapped(uint256) := amtIn(uint256)
+REF_339(SwapType) -> swapInfo.swapType
+REF_340(SwapType) -> SwapType.CloseExactOut
+TMP_619(bool) = REF_339 == REF_340
+CONDITION TMP_619
+EXPRESSION:amtSwapped = amtIn	NodeType.VARIABLE
+amtSwapped = amtIn	NodeType.EXPRESSION
+swapInfo.swapType == SwapType.CloseExactOut	NodeType.IF" [key=0];
+"BlockID: 885
+Call context: 
+True
+REF_333(address) -> swapInfo.tokenOut
+TMP_616 = CONVERT REF_333 to IERC20
+REF_335(address) -> marginPos.collPool
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['TMP_616', 'REF_335', 'amtOut'] 
+EXPRESSION:IERC20(swapInfo.tokenOut).safeTransfer(marginPos.collPool,amtOut)	NodeType.EXPRESSION" -> "BlockID: 893
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 887
+Call context: 
+False
+amtSwapped(uint256) := amtIn(uint256)
+REF_339(SwapType) -> swapInfo.swapType
+REF_340(SwapType) -> SwapType.CloseExactOut
+TMP_619(bool) = REF_339 == REF_340
+CONDITION TMP_619
+EXPRESSION:amtSwapped = amtIn	NodeType.VARIABLE
+amtSwapped = amtIn	NodeType.EXPRESSION
+swapInfo.swapType == SwapType.CloseExactOut	NodeType.IF" -> "BlockID: 888
+Call context: 
+True
+REF_341(address) -> swapInfo.tokenOut
+TMP_620 = CONVERT REF_341 to IERC20
+TMP_621 = CONVERT this to address
+TMP_622(uint256) = HIGH_LEVEL_CALL, dest:TMP_620(IERC20), function:balanceOf, arguments:['TMP_621']  
+EXPRESSION:_require(IERC20(swapInfo.tokenOut).balanceOf(address(this)) == swapInfo.amtOut,Errors.SLIPPAGE_CONTROL)	NodeType.EXPRESSION" [key=0];
+"BlockID: 887
+Call context: 
+False
+amtSwapped(uint256) := amtIn(uint256)
+REF_339(SwapType) -> swapInfo.swapType
+REF_340(SwapType) -> SwapType.CloseExactOut
+TMP_619(bool) = REF_339 == REF_340
+CONDITION TMP_619
+EXPRESSION:amtSwapped = amtIn	NodeType.VARIABLE
+amtSwapped = amtIn	NodeType.EXPRESSION
+swapInfo.swapType == SwapType.CloseExactOut	NodeType.IF" -> "BlockID: 891
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 888
+Call context: 
+True
+REF_341(address) -> swapInfo.tokenOut
+TMP_620 = CONVERT REF_341 to IERC20
+TMP_621 = CONVERT this to address
+TMP_622(uint256) = HIGH_LEVEL_CALL, dest:TMP_620(IERC20), function:balanceOf, arguments:['TMP_621']  
+EXPRESSION:_require(IERC20(swapInfo.tokenOut).balanceOf(address(this)) == swapInfo.amtOut,Errors.SLIPPAGE_CONTROL)	NodeType.EXPRESSION" -> "BlockID: 889
+Call context: 
+None
+REF_343(uint256) -> swapInfo.amtOut
+TMP_623(bool) = TMP_622 == REF_343
+REF_344(uint32) -> Errors.SLIPPAGE_CONTROL
+INTERNAL_CALL, _require(bool,uint32)(TMP_623,REF_344)
+EXPRESSION:_require(IERC20(swapInfo.tokenOut).balanceOf(address(this)) == swapInfo.amtOut,Errors.SLIPPAGE_CONTROL)	NodeType.EXPRESSION" [key=0];
+"BlockID: 891
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 893
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 893
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 894
+Call context: 
+None
+TMP_629(bytes) = SOLIDITY_CALL abi.encode()(amtOut)
+result(bytes) := TMP_629(bytes)
+EXPRESSION:result = abi.encode(amtOut)	NodeType.EXPRESSION" [key=0];
+"BlockID: 889
+Call context: 
+None
+REF_343(uint256) -> swapInfo.amtOut
+TMP_623(bool) = TMP_622 == REF_343
+REF_344(uint32) -> Errors.SLIPPAGE_CONTROL
+INTERNAL_CALL, _require(bool,uint32)(TMP_623,REF_344)
+EXPRESSION:_require(IERC20(swapInfo.tokenOut).balanceOf(address(this)) == swapInfo.amtOut,Errors.SLIPPAGE_CONTROL)	NodeType.EXPRESSION" -> "BlockID: 890
+Call context: 
+None
+REF_345(address) -> swapInfo.tokenIn
+TMP_625 = CONVERT REF_345 to IERC20
+TMP_626 = CONVERT this to address
+TMP_627(uint256) = HIGH_LEVEL_CALL, dest:TMP_625(IERC20), function:balanceOf, arguments:['TMP_626']  
+EXPRESSION:_require(IERC20(swapInfo.tokenOut).balanceOf(address(this)) == swapInfo.amtOut,Errors.SLIPPAGE_CONTROL)	NodeType.EXPRESSION
+amtSwapped -= IERC20(swapInfo.tokenIn).balanceOf(address(this))	NodeType.EXPRESSION" [key=0];
+"BlockID: 890
+Call context: 
+None
+REF_345(address) -> swapInfo.tokenIn
+TMP_625 = CONVERT REF_345 to IERC20
+TMP_626 = CONVERT this to address
+TMP_627(uint256) = HIGH_LEVEL_CALL, dest:TMP_625(IERC20), function:balanceOf, arguments:['TMP_626']  
+EXPRESSION:_require(IERC20(swapInfo.tokenOut).balanceOf(address(this)) == swapInfo.amtOut,Errors.SLIPPAGE_CONTROL)	NodeType.EXPRESSION
+amtSwapped -= IERC20(swapInfo.tokenIn).balanceOf(address(this))	NodeType.EXPRESSION" -> "BlockID: 895
+Call context: 
+None
+amtSwapped(uint256) = amtSwapped (c)- TMP_627
+EXPRESSION:amtSwapped -= IERC20(swapInfo.tokenIn).balanceOf(address(this))	NodeType.EXPRESSION" [key=0];
+"BlockID: 895
+Call context: 
+None
+amtSwapped(uint256) = amtSwapped (c)- TMP_627
+EXPRESSION:amtSwapped -= IERC20(swapInfo.tokenIn).balanceOf(address(this))	NodeType.EXPRESSION" -> "BlockID: 891
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

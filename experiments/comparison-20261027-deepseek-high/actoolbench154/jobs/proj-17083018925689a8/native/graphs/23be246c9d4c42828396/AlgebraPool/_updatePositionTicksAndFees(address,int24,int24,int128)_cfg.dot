@@ -1,0 +1,860 @@
+digraph {
+"BlockID: 2870
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 2871
+Call context: 
+None
+REF_1102(uint160) -> globalState.price
+REF_1103(int24) -> globalState.tick
+REF_1104(uint16) -> globalState.timepointIndex
+TMP_2279(AlgebraPool.UpdatePositionCache) = new UpdatePositionCache(REF_1102,REF_1103,REF_1104)
+cache(AlgebraPool.UpdatePositionCache) := TMP_2279(AlgebraPool.UpdatePositionCache)
+TMP_2280(AlgebraPool.Position) = INTERNAL_CALL, AlgebraPool.getOrCreatePosition(address,int24,int24)(owner,bottomTick,topTick)
+EXPRESSION:cache = UpdatePositionCache(globalState.price,globalState.tick,globalState.timepointIndex)	NodeType.VARIABLE
+cache = UpdatePositionCache(globalState.price,globalState.tick,globalState.timepointIndex)	NodeType.EXPRESSION
+position = getOrCreatePosition(owner,bottomTick,topTick)	NodeType.EXPRESSION";
+"BlockID: 2872
+Call context: 
+None
+position(AlgebraPool.Position) := TMP_2280(AlgebraPool.Position)
+_totalFeeGrowth0Token(uint256) := totalFeeGrowth0Token(uint256)
+_totalFeeGrowth1Token(uint256) := totalFeeGrowth1Token(uint256)
+NEW VARIABLE toggledBottom
+NEW VARIABLE toggledTop
+TMP_2281(bool) = liquidityDelta != 0
+CONDITION TMP_2281
+EXPRESSION:position = getOrCreatePosition(owner,bottomTick,topTick)	NodeType.EXPRESSION
+_totalFeeGrowth0Token = totalFeeGrowth0Token	NodeType.VARIABLE
+_totalFeeGrowth0Token = totalFeeGrowth0Token	NodeType.EXPRESSION
+_totalFeeGrowth1Token = totalFeeGrowth1Token	NodeType.VARIABLE
+_totalFeeGrowth1Token = totalFeeGrowth1Token	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+liquidityDelta != 0	NodeType.IF" [shape=box];
+"BlockID: 2873
+Call context: 
+True
+TMP_2282(uint32) = INTERNAL_CALL, SimulationTimeAlgebraPool._blockTimestamp()()
+EXPRESSION:";
+"BlockID: 2875
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2876
+Call context: 
+None
+NEW VARIABLE feeGrowthInside0X128
+NEW VARIABLE feeGrowthInside1X128
+REF_1114(int24) -> cache.tick
+TUPLE_60(uint256,uint256) = LIBRARY_CALL, dest:TickManager, function:TickManager.getInnerFeeGrowth(mapping(int24 => TickManager.Tick),int24,int24,int24,uint256,uint256), arguments:['ticks', 'bottomTick', 'topTick', 'REF_1114', '_totalFeeGrowth0Token', '_totalFeeGrowth1Token'] 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(feeGrowthInside0X128,feeGrowthInside1X128) = ticks.getInnerFeeGrowth(bottomTick,topTick,cache.tick,_totalFeeGrowth0Token,_totalFeeGrowth1Token)	NodeType.EXPRESSION";
+"BlockID: 2877
+Call context: 
+None
+feeGrowthInside0X128(uint256)= UNPACK TUPLE_60 index: 0 
+feeGrowthInside1X128(uint256)= UNPACK TUPLE_60 index: 1 
+INTERNAL_CALL, AlgebraPool._recalculatePosition(AlgebraPool.Position,int128,uint256,uint256)(position,liquidityDelta,feeGrowthInside0X128,feeGrowthInside1X128)
+EXPRESSION:(feeGrowthInside0X128,feeGrowthInside1X128) = ticks.getInnerFeeGrowth(bottomTick,topTick,cache.tick,_totalFeeGrowth0Token,_totalFeeGrowth1Token)	NodeType.EXPRESSION
+_recalculatePosition(position,liquidityDelta,feeGrowthInside0X128,feeGrowthInside1X128)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2878
+Call context: 
+None
+TMP_2288(bool) = liquidityDelta != 0
+CONDITION TMP_2288
+EXPRESSION:_recalculatePosition(position,liquidityDelta,feeGrowthInside0X128,feeGrowthInside1X128)	NodeType.EXPRESSION
+liquidityDelta != 0	NodeType.IF";
+"BlockID: 2879
+Call context: 
+True
+TMP_2289(bool) = liquidityDelta < 0
+CONDITION TMP_2289
+EXPRESSION:liquidityDelta < 0	NodeType.IF";
+"BlockID: 2880
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2882
+Call context: 
+True
+CONDITION toggledBottom
+EXPRESSION:toggledBottom	NodeType.IF";
+"BlockID: 2883
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2884
+Call context: 
+None
+NEW VARIABLE globalLiquidityDelta
+REF_1117(int24) -> cache.tick
+REF_1118(uint160) -> cache.price
+TUPLE_61(int256,int256,int128) = INTERNAL_CALL, AlgebraPool._getAmountsForLiquidity(int24,int24,int128,int24,uint160)(bottomTick,topTick,liquidityDelta,REF_1117,REF_1118)
+EXPRESSION:None	NodeType.VARIABLE
+(amount0,amount1,globalLiquidityDelta) = _getAmountsForLiquidity(bottomTick,topTick,liquidityDelta,cache.tick,cache.price)	NodeType.EXPRESSION";
+"BlockID: 2885
+Call context: 
+None
+amount0(int256)= UNPACK TUPLE_61 index: 0 
+amount1(int256)= UNPACK TUPLE_61 index: 1 
+globalLiquidityDelta(int128)= UNPACK TUPLE_61 index: 2 
+TMP_2290(bool) = globalLiquidityDelta != 0
+CONDITION TMP_2290
+EXPRESSION:(amount0,amount1,globalLiquidityDelta) = _getAmountsForLiquidity(bottomTick,topTick,liquidityDelta,cache.tick,cache.price)	NodeType.EXPRESSION
+globalLiquidityDelta != 0	NodeType.IF" [shape=box];
+"BlockID: 2886
+Call context: 
+True
+liquidityBefore(uint128) := liquidity(uint128)
+REF_1119(uint16) -> cache.timepointIndex
+TMP_2291(uint32) = INTERNAL_CALL, SimulationTimeAlgebraPool._blockTimestamp()()
+EXPRESSION:liquidityBefore = liquidity	NodeType.VARIABLE
+liquidityBefore = liquidity	NodeType.EXPRESSION";
+"BlockID: 2887
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2889
+Call context: 
+None
+REF_1120(int24) -> cache.tick
+TMP_2292(uint16) = INTERNAL_CALL, AlgebraPool._writeTimepoint(uint16,uint32,int24,uint128,uint128)(REF_1119,TMP_2291,REF_1120,liquidityBefore,volumePerLiquidityInBlock)
+EXPRESSION:" [shape=box];
+"BlockID: 2890
+Call context: 
+None
+newTimepointIndex(uint16) := TMP_2292(uint16)
+REF_1121(uint16) -> cache.timepointIndex
+TMP_2293(bool) = REF_1121 != newTimepointIndex
+CONDITION TMP_2293
+EXPRESSION:newTimepointIndex = _writeTimepoint(cache.timepointIndex,_blockTimestamp(),cache.tick,liquidityBefore,volumePerLiquidityInBlock)	NodeType.VARIABLE
+newTimepointIndex = _writeTimepoint(cache.timepointIndex,_blockTimestamp(),cache.tick,liquidityBefore,volumePerLiquidityInBlock)	NodeType.EXPRESSION
+cache.timepointIndex != newTimepointIndex	NodeType.IF" [shape=box];
+"BlockID: 2891
+Call context: 
+True
+REF_1122(uint16) -> globalState.fee
+TMP_2294(uint32) = INTERNAL_CALL, SimulationTimeAlgebraPool._blockTimestamp()()
+EXPRESSION:globalState.fee = _getNewFee(_blockTimestamp(),cache.tick,newTimepointIndex,liquidityBefore)	NodeType.EXPRESSION";
+"BlockID: 2894
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2895
+Call context: 
+None
+TMP_2296(uint128) = LIBRARY_CALL, dest:LiquidityMath, function:LiquidityMath.addDelta(uint128,int128), arguments:['liquidityBefore', 'liquidityDelta'] 
+EXPRESSION:liquidity = LiquidityMath.addDelta(liquidityBefore,liquidityDelta)	NodeType.EXPRESSION";
+"BlockID: 2896
+Call context: 
+None
+liquidity(uint128) := TMP_2296(uint128)
+EXPRESSION:liquidity = LiquidityMath.addDelta(liquidityBefore,liquidityDelta)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2892
+Call context: 
+None
+REF_1123(int24) -> cache.tick
+TMP_2295(uint16) = INTERNAL_CALL, AlgebraPool._getNewFee(uint32,int24,uint16,uint128)(TMP_2294,REF_1123,newTimepointIndex,liquidityBefore)
+EXPRESSION:globalState.fee = _getNewFee(_blockTimestamp(),cache.tick,newTimepointIndex,liquidityBefore)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2893
+Call context: 
+None
+REF_1122(uint16) (->globalState) := TMP_2295(uint16)
+REF_1124(uint16) -> globalState.timepointIndex
+REF_1124(uint16) (->globalState) := newTimepointIndex(uint16)
+volumePerLiquidityInBlock(uint128) := 0(uint256)
+EXPRESSION:globalState.fee = _getNewFee(_blockTimestamp(),cache.tick,newTimepointIndex,liquidityBefore)	NodeType.EXPRESSION
+globalState.timepointIndex = newTimepointIndex	NodeType.EXPRESSION
+volumePerLiquidityInBlock = 0	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2897
+Call context: 
+True
+REF_1115(TickManager.Tick) -> ticks[bottomTick]
+ticks = delete REF_1115 
+EXPRESSION:delete ticks[bottomTick]	NodeType.EXPRESSION";
+"BlockID: 2898
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2899
+Call context: 
+None
+CONDITION toggledTop
+EXPRESSION:toggledTop	NodeType.IF";
+"BlockID: 2900
+Call context: 
+True
+REF_1116(TickManager.Tick) -> ticks[topTick]
+ticks = delete REF_1116 
+EXPRESSION:delete ticks[topTick]	NodeType.EXPRESSION";
+"BlockID: 2901
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2874
+Call context: 
+None
+time(uint32) := TMP_2282(uint32)
+NEW VARIABLE tickCumulative
+NEW VARIABLE secondsPerLiquidityCumulative
+REF_1105(int24) -> cache.tick
+REF_1106(uint16) -> cache.timepointIndex
+TUPLE_59(int56,uint160,uint112,uint256) = INTERNAL_CALL, AlgebraPool._getSingleTimepoint(uint32,uint32,int24,uint16,uint128)(time,0,REF_1105,REF_1106,liquidity)
+EXPRESSION:time = _blockTimestamp()	NodeType.VARIABLE
+time = _blockTimestamp()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(tickCumulative,secondsPerLiquidityCumulative) = _getSingleTimepoint(time,0,cache.tick,cache.timepointIndex,liquidity)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2903
+Call context: 
+None
+tickCumulative(int56)= UNPACK TUPLE_59 index: 0 
+secondsPerLiquidityCumulative(uint160)= UNPACK TUPLE_59 index: 1 
+REF_1108(int24) -> cache.tick
+TMP_2283(bool) = LIBRARY_CALL, dest:TickManager, function:TickManager.update(mapping(int24 => TickManager.Tick),int24,int24,int128,uint256,uint256,uint160,int56,uint32,bool), arguments:['ticks', 'bottomTick', 'REF_1108', 'liquidityDelta', '_totalFeeGrowth0Token', '_totalFeeGrowth1Token', 'secondsPerLiquidityCumulative', 'tickCumulative', 'time', 'False'] 
+EXPRESSION:(tickCumulative,secondsPerLiquidityCumulative) = _getSingleTimepoint(time,0,cache.tick,cache.timepointIndex,liquidity)	NodeType.EXPRESSION
+ticks.update(bottomTick,cache.tick,liquidityDelta,_totalFeeGrowth0Token,_totalFeeGrowth1Token,secondsPerLiquidityCumulative,tickCumulative,time,false)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2904
+Call context: 
+None
+CONDITION TMP_2283
+EXPRESSION:ticks.update(bottomTick,cache.tick,liquidityDelta,_totalFeeGrowth0Token,_totalFeeGrowth1Token,secondsPerLiquidityCumulative,tickCumulative,time,false)	NodeType.IF" [shape=box];
+"BlockID: 2905
+Call context: 
+True
+toggledBottom(bool) := True(bool)
+LIBRARY_CALL, dest:TickTable, function:TickTable.toggleTick(mapping(int16 => uint256),int24), arguments:['tickTable', 'bottomTick'] 
+EXPRESSION:toggledBottom = true	NodeType.EXPRESSION
+tickTable.toggleTick(bottomTick)	NodeType.EXPRESSION";
+"BlockID: 2906
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2907
+Call context: 
+None
+REF_1111(int24) -> cache.tick
+TMP_2285(bool) = LIBRARY_CALL, dest:TickManager, function:TickManager.update(mapping(int24 => TickManager.Tick),int24,int24,int128,uint256,uint256,uint160,int56,uint32,bool), arguments:['ticks', 'topTick', 'REF_1111', 'liquidityDelta', '_totalFeeGrowth0Token', '_totalFeeGrowth1Token', 'secondsPerLiquidityCumulative', 'tickCumulative', 'time', 'True'] 
+EXPRESSION:ticks.update(topTick,cache.tick,liquidityDelta,_totalFeeGrowth0Token,_totalFeeGrowth1Token,secondsPerLiquidityCumulative,tickCumulative,time,true)	NodeType.EXPRESSION";
+"BlockID: 2908
+Call context: 
+None
+CONDITION TMP_2285
+EXPRESSION:ticks.update(topTick,cache.tick,liquidityDelta,_totalFeeGrowth0Token,_totalFeeGrowth1Token,secondsPerLiquidityCumulative,tickCumulative,time,true)	NodeType.IF" [shape=box];
+"BlockID: 2909
+Call context: 
+True
+toggledTop(bool) := True(bool)
+LIBRARY_CALL, dest:TickTable, function:TickTable.toggleTick(mapping(int16 => uint256),int24), arguments:['tickTable', 'topTick'] 
+EXPRESSION:toggledTop = true	NodeType.EXPRESSION
+tickTable.toggleTick(topTick)	NodeType.EXPRESSION";
+"BlockID: 2910
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2870
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 2871
+Call context: 
+None
+REF_1102(uint160) -> globalState.price
+REF_1103(int24) -> globalState.tick
+REF_1104(uint16) -> globalState.timepointIndex
+TMP_2279(AlgebraPool.UpdatePositionCache) = new UpdatePositionCache(REF_1102,REF_1103,REF_1104)
+cache(AlgebraPool.UpdatePositionCache) := TMP_2279(AlgebraPool.UpdatePositionCache)
+TMP_2280(AlgebraPool.Position) = INTERNAL_CALL, AlgebraPool.getOrCreatePosition(address,int24,int24)(owner,bottomTick,topTick)
+EXPRESSION:cache = UpdatePositionCache(globalState.price,globalState.tick,globalState.timepointIndex)	NodeType.VARIABLE
+cache = UpdatePositionCache(globalState.price,globalState.tick,globalState.timepointIndex)	NodeType.EXPRESSION
+position = getOrCreatePosition(owner,bottomTick,topTick)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2871
+Call context: 
+None
+REF_1102(uint160) -> globalState.price
+REF_1103(int24) -> globalState.tick
+REF_1104(uint16) -> globalState.timepointIndex
+TMP_2279(AlgebraPool.UpdatePositionCache) = new UpdatePositionCache(REF_1102,REF_1103,REF_1104)
+cache(AlgebraPool.UpdatePositionCache) := TMP_2279(AlgebraPool.UpdatePositionCache)
+TMP_2280(AlgebraPool.Position) = INTERNAL_CALL, AlgebraPool.getOrCreatePosition(address,int24,int24)(owner,bottomTick,topTick)
+EXPRESSION:cache = UpdatePositionCache(globalState.price,globalState.tick,globalState.timepointIndex)	NodeType.VARIABLE
+cache = UpdatePositionCache(globalState.price,globalState.tick,globalState.timepointIndex)	NodeType.EXPRESSION
+position = getOrCreatePosition(owner,bottomTick,topTick)	NodeType.EXPRESSION" -> "BlockID: 2872
+Call context: 
+None
+position(AlgebraPool.Position) := TMP_2280(AlgebraPool.Position)
+_totalFeeGrowth0Token(uint256) := totalFeeGrowth0Token(uint256)
+_totalFeeGrowth1Token(uint256) := totalFeeGrowth1Token(uint256)
+NEW VARIABLE toggledBottom
+NEW VARIABLE toggledTop
+TMP_2281(bool) = liquidityDelta != 0
+CONDITION TMP_2281
+EXPRESSION:position = getOrCreatePosition(owner,bottomTick,topTick)	NodeType.EXPRESSION
+_totalFeeGrowth0Token = totalFeeGrowth0Token	NodeType.VARIABLE
+_totalFeeGrowth0Token = totalFeeGrowth0Token	NodeType.EXPRESSION
+_totalFeeGrowth1Token = totalFeeGrowth1Token	NodeType.VARIABLE
+_totalFeeGrowth1Token = totalFeeGrowth1Token	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+liquidityDelta != 0	NodeType.IF" [key=0];
+"BlockID: 2872
+Call context: 
+None
+position(AlgebraPool.Position) := TMP_2280(AlgebraPool.Position)
+_totalFeeGrowth0Token(uint256) := totalFeeGrowth0Token(uint256)
+_totalFeeGrowth1Token(uint256) := totalFeeGrowth1Token(uint256)
+NEW VARIABLE toggledBottom
+NEW VARIABLE toggledTop
+TMP_2281(bool) = liquidityDelta != 0
+CONDITION TMP_2281
+EXPRESSION:position = getOrCreatePosition(owner,bottomTick,topTick)	NodeType.EXPRESSION
+_totalFeeGrowth0Token = totalFeeGrowth0Token	NodeType.VARIABLE
+_totalFeeGrowth0Token = totalFeeGrowth0Token	NodeType.EXPRESSION
+_totalFeeGrowth1Token = totalFeeGrowth1Token	NodeType.VARIABLE
+_totalFeeGrowth1Token = totalFeeGrowth1Token	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+liquidityDelta != 0	NodeType.IF" -> "BlockID: 2873
+Call context: 
+True
+TMP_2282(uint32) = INTERNAL_CALL, SimulationTimeAlgebraPool._blockTimestamp()()
+EXPRESSION:" [key=0];
+"BlockID: 2872
+Call context: 
+None
+position(AlgebraPool.Position) := TMP_2280(AlgebraPool.Position)
+_totalFeeGrowth0Token(uint256) := totalFeeGrowth0Token(uint256)
+_totalFeeGrowth1Token(uint256) := totalFeeGrowth1Token(uint256)
+NEW VARIABLE toggledBottom
+NEW VARIABLE toggledTop
+TMP_2281(bool) = liquidityDelta != 0
+CONDITION TMP_2281
+EXPRESSION:position = getOrCreatePosition(owner,bottomTick,topTick)	NodeType.EXPRESSION
+_totalFeeGrowth0Token = totalFeeGrowth0Token	NodeType.VARIABLE
+_totalFeeGrowth0Token = totalFeeGrowth0Token	NodeType.EXPRESSION
+_totalFeeGrowth1Token = totalFeeGrowth1Token	NodeType.VARIABLE
+_totalFeeGrowth1Token = totalFeeGrowth1Token	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+liquidityDelta != 0	NodeType.IF" -> "BlockID: 2875
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2873
+Call context: 
+True
+TMP_2282(uint32) = INTERNAL_CALL, SimulationTimeAlgebraPool._blockTimestamp()()
+EXPRESSION:" -> "BlockID: 2874
+Call context: 
+None
+time(uint32) := TMP_2282(uint32)
+NEW VARIABLE tickCumulative
+NEW VARIABLE secondsPerLiquidityCumulative
+REF_1105(int24) -> cache.tick
+REF_1106(uint16) -> cache.timepointIndex
+TUPLE_59(int56,uint160,uint112,uint256) = INTERNAL_CALL, AlgebraPool._getSingleTimepoint(uint32,uint32,int24,uint16,uint128)(time,0,REF_1105,REF_1106,liquidity)
+EXPRESSION:time = _blockTimestamp()	NodeType.VARIABLE
+time = _blockTimestamp()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(tickCumulative,secondsPerLiquidityCumulative) = _getSingleTimepoint(time,0,cache.tick,cache.timepointIndex,liquidity)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2875
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2876
+Call context: 
+None
+NEW VARIABLE feeGrowthInside0X128
+NEW VARIABLE feeGrowthInside1X128
+REF_1114(int24) -> cache.tick
+TUPLE_60(uint256,uint256) = LIBRARY_CALL, dest:TickManager, function:TickManager.getInnerFeeGrowth(mapping(int24 => TickManager.Tick),int24,int24,int24,uint256,uint256), arguments:['ticks', 'bottomTick', 'topTick', 'REF_1114', '_totalFeeGrowth0Token', '_totalFeeGrowth1Token'] 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(feeGrowthInside0X128,feeGrowthInside1X128) = ticks.getInnerFeeGrowth(bottomTick,topTick,cache.tick,_totalFeeGrowth0Token,_totalFeeGrowth1Token)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2876
+Call context: 
+None
+NEW VARIABLE feeGrowthInside0X128
+NEW VARIABLE feeGrowthInside1X128
+REF_1114(int24) -> cache.tick
+TUPLE_60(uint256,uint256) = LIBRARY_CALL, dest:TickManager, function:TickManager.getInnerFeeGrowth(mapping(int24 => TickManager.Tick),int24,int24,int24,uint256,uint256), arguments:['ticks', 'bottomTick', 'topTick', 'REF_1114', '_totalFeeGrowth0Token', '_totalFeeGrowth1Token'] 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(feeGrowthInside0X128,feeGrowthInside1X128) = ticks.getInnerFeeGrowth(bottomTick,topTick,cache.tick,_totalFeeGrowth0Token,_totalFeeGrowth1Token)	NodeType.EXPRESSION" -> "BlockID: 2877
+Call context: 
+None
+feeGrowthInside0X128(uint256)= UNPACK TUPLE_60 index: 0 
+feeGrowthInside1X128(uint256)= UNPACK TUPLE_60 index: 1 
+INTERNAL_CALL, AlgebraPool._recalculatePosition(AlgebraPool.Position,int128,uint256,uint256)(position,liquidityDelta,feeGrowthInside0X128,feeGrowthInside1X128)
+EXPRESSION:(feeGrowthInside0X128,feeGrowthInside1X128) = ticks.getInnerFeeGrowth(bottomTick,topTick,cache.tick,_totalFeeGrowth0Token,_totalFeeGrowth1Token)	NodeType.EXPRESSION
+_recalculatePosition(position,liquidityDelta,feeGrowthInside0X128,feeGrowthInside1X128)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2877
+Call context: 
+None
+feeGrowthInside0X128(uint256)= UNPACK TUPLE_60 index: 0 
+feeGrowthInside1X128(uint256)= UNPACK TUPLE_60 index: 1 
+INTERNAL_CALL, AlgebraPool._recalculatePosition(AlgebraPool.Position,int128,uint256,uint256)(position,liquidityDelta,feeGrowthInside0X128,feeGrowthInside1X128)
+EXPRESSION:(feeGrowthInside0X128,feeGrowthInside1X128) = ticks.getInnerFeeGrowth(bottomTick,topTick,cache.tick,_totalFeeGrowth0Token,_totalFeeGrowth1Token)	NodeType.EXPRESSION
+_recalculatePosition(position,liquidityDelta,feeGrowthInside0X128,feeGrowthInside1X128)	NodeType.EXPRESSION" -> "BlockID: 2878
+Call context: 
+None
+TMP_2288(bool) = liquidityDelta != 0
+CONDITION TMP_2288
+EXPRESSION:_recalculatePosition(position,liquidityDelta,feeGrowthInside0X128,feeGrowthInside1X128)	NodeType.EXPRESSION
+liquidityDelta != 0	NodeType.IF" [key=0];
+"BlockID: 2878
+Call context: 
+None
+TMP_2288(bool) = liquidityDelta != 0
+CONDITION TMP_2288
+EXPRESSION:_recalculatePosition(position,liquidityDelta,feeGrowthInside0X128,feeGrowthInside1X128)	NodeType.EXPRESSION
+liquidityDelta != 0	NodeType.IF" -> "BlockID: 2879
+Call context: 
+True
+TMP_2289(bool) = liquidityDelta < 0
+CONDITION TMP_2289
+EXPRESSION:liquidityDelta < 0	NodeType.IF" [key=0];
+"BlockID: 2878
+Call context: 
+None
+TMP_2288(bool) = liquidityDelta != 0
+CONDITION TMP_2288
+EXPRESSION:_recalculatePosition(position,liquidityDelta,feeGrowthInside0X128,feeGrowthInside1X128)	NodeType.EXPRESSION
+liquidityDelta != 0	NodeType.IF" -> "BlockID: 2880
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2879
+Call context: 
+True
+TMP_2289(bool) = liquidityDelta < 0
+CONDITION TMP_2289
+EXPRESSION:liquidityDelta < 0	NodeType.IF" -> "BlockID: 2882
+Call context: 
+True
+CONDITION toggledBottom
+EXPRESSION:toggledBottom	NodeType.IF" [key=0];
+"BlockID: 2879
+Call context: 
+True
+TMP_2289(bool) = liquidityDelta < 0
+CONDITION TMP_2289
+EXPRESSION:liquidityDelta < 0	NodeType.IF" -> "BlockID: 2883
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2882
+Call context: 
+True
+CONDITION toggledBottom
+EXPRESSION:toggledBottom	NodeType.IF" -> "BlockID: 2897
+Call context: 
+True
+REF_1115(TickManager.Tick) -> ticks[bottomTick]
+ticks = delete REF_1115 
+EXPRESSION:delete ticks[bottomTick]	NodeType.EXPRESSION" [key=0];
+"BlockID: 2882
+Call context: 
+True
+CONDITION toggledBottom
+EXPRESSION:toggledBottom	NodeType.IF" -> "BlockID: 2898
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2883
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2884
+Call context: 
+None
+NEW VARIABLE globalLiquidityDelta
+REF_1117(int24) -> cache.tick
+REF_1118(uint160) -> cache.price
+TUPLE_61(int256,int256,int128) = INTERNAL_CALL, AlgebraPool._getAmountsForLiquidity(int24,int24,int128,int24,uint160)(bottomTick,topTick,liquidityDelta,REF_1117,REF_1118)
+EXPRESSION:None	NodeType.VARIABLE
+(amount0,amount1,globalLiquidityDelta) = _getAmountsForLiquidity(bottomTick,topTick,liquidityDelta,cache.tick,cache.price)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2884
+Call context: 
+None
+NEW VARIABLE globalLiquidityDelta
+REF_1117(int24) -> cache.tick
+REF_1118(uint160) -> cache.price
+TUPLE_61(int256,int256,int128) = INTERNAL_CALL, AlgebraPool._getAmountsForLiquidity(int24,int24,int128,int24,uint160)(bottomTick,topTick,liquidityDelta,REF_1117,REF_1118)
+EXPRESSION:None	NodeType.VARIABLE
+(amount0,amount1,globalLiquidityDelta) = _getAmountsForLiquidity(bottomTick,topTick,liquidityDelta,cache.tick,cache.price)	NodeType.EXPRESSION" -> "BlockID: 2885
+Call context: 
+None
+amount0(int256)= UNPACK TUPLE_61 index: 0 
+amount1(int256)= UNPACK TUPLE_61 index: 1 
+globalLiquidityDelta(int128)= UNPACK TUPLE_61 index: 2 
+TMP_2290(bool) = globalLiquidityDelta != 0
+CONDITION TMP_2290
+EXPRESSION:(amount0,amount1,globalLiquidityDelta) = _getAmountsForLiquidity(bottomTick,topTick,liquidityDelta,cache.tick,cache.price)	NodeType.EXPRESSION
+globalLiquidityDelta != 0	NodeType.IF" [key=0];
+"BlockID: 2885
+Call context: 
+None
+amount0(int256)= UNPACK TUPLE_61 index: 0 
+amount1(int256)= UNPACK TUPLE_61 index: 1 
+globalLiquidityDelta(int128)= UNPACK TUPLE_61 index: 2 
+TMP_2290(bool) = globalLiquidityDelta != 0
+CONDITION TMP_2290
+EXPRESSION:(amount0,amount1,globalLiquidityDelta) = _getAmountsForLiquidity(bottomTick,topTick,liquidityDelta,cache.tick,cache.price)	NodeType.EXPRESSION
+globalLiquidityDelta != 0	NodeType.IF" -> "BlockID: 2886
+Call context: 
+True
+liquidityBefore(uint128) := liquidity(uint128)
+REF_1119(uint16) -> cache.timepointIndex
+TMP_2291(uint32) = INTERNAL_CALL, SimulationTimeAlgebraPool._blockTimestamp()()
+EXPRESSION:liquidityBefore = liquidity	NodeType.VARIABLE
+liquidityBefore = liquidity	NodeType.EXPRESSION" [key=0];
+"BlockID: 2885
+Call context: 
+None
+amount0(int256)= UNPACK TUPLE_61 index: 0 
+amount1(int256)= UNPACK TUPLE_61 index: 1 
+globalLiquidityDelta(int128)= UNPACK TUPLE_61 index: 2 
+TMP_2290(bool) = globalLiquidityDelta != 0
+CONDITION TMP_2290
+EXPRESSION:(amount0,amount1,globalLiquidityDelta) = _getAmountsForLiquidity(bottomTick,topTick,liquidityDelta,cache.tick,cache.price)	NodeType.EXPRESSION
+globalLiquidityDelta != 0	NodeType.IF" -> "BlockID: 2887
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2886
+Call context: 
+True
+liquidityBefore(uint128) := liquidity(uint128)
+REF_1119(uint16) -> cache.timepointIndex
+TMP_2291(uint32) = INTERNAL_CALL, SimulationTimeAlgebraPool._blockTimestamp()()
+EXPRESSION:liquidityBefore = liquidity	NodeType.VARIABLE
+liquidityBefore = liquidity	NodeType.EXPRESSION" -> "BlockID: 2889
+Call context: 
+None
+REF_1120(int24) -> cache.tick
+TMP_2292(uint16) = INTERNAL_CALL, AlgebraPool._writeTimepoint(uint16,uint32,int24,uint128,uint128)(REF_1119,TMP_2291,REF_1120,liquidityBefore,volumePerLiquidityInBlock)
+EXPRESSION:" [key=0];
+"BlockID: 2887
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2880
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2889
+Call context: 
+None
+REF_1120(int24) -> cache.tick
+TMP_2292(uint16) = INTERNAL_CALL, AlgebraPool._writeTimepoint(uint16,uint32,int24,uint128,uint128)(REF_1119,TMP_2291,REF_1120,liquidityBefore,volumePerLiquidityInBlock)
+EXPRESSION:" -> "BlockID: 2890
+Call context: 
+None
+newTimepointIndex(uint16) := TMP_2292(uint16)
+REF_1121(uint16) -> cache.timepointIndex
+TMP_2293(bool) = REF_1121 != newTimepointIndex
+CONDITION TMP_2293
+EXPRESSION:newTimepointIndex = _writeTimepoint(cache.timepointIndex,_blockTimestamp(),cache.tick,liquidityBefore,volumePerLiquidityInBlock)	NodeType.VARIABLE
+newTimepointIndex = _writeTimepoint(cache.timepointIndex,_blockTimestamp(),cache.tick,liquidityBefore,volumePerLiquidityInBlock)	NodeType.EXPRESSION
+cache.timepointIndex != newTimepointIndex	NodeType.IF" [key=0];
+"BlockID: 2890
+Call context: 
+None
+newTimepointIndex(uint16) := TMP_2292(uint16)
+REF_1121(uint16) -> cache.timepointIndex
+TMP_2293(bool) = REF_1121 != newTimepointIndex
+CONDITION TMP_2293
+EXPRESSION:newTimepointIndex = _writeTimepoint(cache.timepointIndex,_blockTimestamp(),cache.tick,liquidityBefore,volumePerLiquidityInBlock)	NodeType.VARIABLE
+newTimepointIndex = _writeTimepoint(cache.timepointIndex,_blockTimestamp(),cache.tick,liquidityBefore,volumePerLiquidityInBlock)	NodeType.EXPRESSION
+cache.timepointIndex != newTimepointIndex	NodeType.IF" -> "BlockID: 2891
+Call context: 
+True
+REF_1122(uint16) -> globalState.fee
+TMP_2294(uint32) = INTERNAL_CALL, SimulationTimeAlgebraPool._blockTimestamp()()
+EXPRESSION:globalState.fee = _getNewFee(_blockTimestamp(),cache.tick,newTimepointIndex,liquidityBefore)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2890
+Call context: 
+None
+newTimepointIndex(uint16) := TMP_2292(uint16)
+REF_1121(uint16) -> cache.timepointIndex
+TMP_2293(bool) = REF_1121 != newTimepointIndex
+CONDITION TMP_2293
+EXPRESSION:newTimepointIndex = _writeTimepoint(cache.timepointIndex,_blockTimestamp(),cache.tick,liquidityBefore,volumePerLiquidityInBlock)	NodeType.VARIABLE
+newTimepointIndex = _writeTimepoint(cache.timepointIndex,_blockTimestamp(),cache.tick,liquidityBefore,volumePerLiquidityInBlock)	NodeType.EXPRESSION
+cache.timepointIndex != newTimepointIndex	NodeType.IF" -> "BlockID: 2894
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2891
+Call context: 
+True
+REF_1122(uint16) -> globalState.fee
+TMP_2294(uint32) = INTERNAL_CALL, SimulationTimeAlgebraPool._blockTimestamp()()
+EXPRESSION:globalState.fee = _getNewFee(_blockTimestamp(),cache.tick,newTimepointIndex,liquidityBefore)	NodeType.EXPRESSION" -> "BlockID: 2892
+Call context: 
+None
+REF_1123(int24) -> cache.tick
+TMP_2295(uint16) = INTERNAL_CALL, AlgebraPool._getNewFee(uint32,int24,uint16,uint128)(TMP_2294,REF_1123,newTimepointIndex,liquidityBefore)
+EXPRESSION:globalState.fee = _getNewFee(_blockTimestamp(),cache.tick,newTimepointIndex,liquidityBefore)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2894
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2895
+Call context: 
+None
+TMP_2296(uint128) = LIBRARY_CALL, dest:LiquidityMath, function:LiquidityMath.addDelta(uint128,int128), arguments:['liquidityBefore', 'liquidityDelta'] 
+EXPRESSION:liquidity = LiquidityMath.addDelta(liquidityBefore,liquidityDelta)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2895
+Call context: 
+None
+TMP_2296(uint128) = LIBRARY_CALL, dest:LiquidityMath, function:LiquidityMath.addDelta(uint128,int128), arguments:['liquidityBefore', 'liquidityDelta'] 
+EXPRESSION:liquidity = LiquidityMath.addDelta(liquidityBefore,liquidityDelta)	NodeType.EXPRESSION" -> "BlockID: 2896
+Call context: 
+None
+liquidity(uint128) := TMP_2296(uint128)
+EXPRESSION:liquidity = LiquidityMath.addDelta(liquidityBefore,liquidityDelta)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2896
+Call context: 
+None
+liquidity(uint128) := TMP_2296(uint128)
+EXPRESSION:liquidity = LiquidityMath.addDelta(liquidityBefore,liquidityDelta)	NodeType.EXPRESSION" -> "BlockID: 2887
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2892
+Call context: 
+None
+REF_1123(int24) -> cache.tick
+TMP_2295(uint16) = INTERNAL_CALL, AlgebraPool._getNewFee(uint32,int24,uint16,uint128)(TMP_2294,REF_1123,newTimepointIndex,liquidityBefore)
+EXPRESSION:globalState.fee = _getNewFee(_blockTimestamp(),cache.tick,newTimepointIndex,liquidityBefore)	NodeType.EXPRESSION" -> "BlockID: 2893
+Call context: 
+None
+REF_1122(uint16) (->globalState) := TMP_2295(uint16)
+REF_1124(uint16) -> globalState.timepointIndex
+REF_1124(uint16) (->globalState) := newTimepointIndex(uint16)
+volumePerLiquidityInBlock(uint128) := 0(uint256)
+EXPRESSION:globalState.fee = _getNewFee(_blockTimestamp(),cache.tick,newTimepointIndex,liquidityBefore)	NodeType.EXPRESSION
+globalState.timepointIndex = newTimepointIndex	NodeType.EXPRESSION
+volumePerLiquidityInBlock = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 2893
+Call context: 
+None
+REF_1122(uint16) (->globalState) := TMP_2295(uint16)
+REF_1124(uint16) -> globalState.timepointIndex
+REF_1124(uint16) (->globalState) := newTimepointIndex(uint16)
+volumePerLiquidityInBlock(uint128) := 0(uint256)
+EXPRESSION:globalState.fee = _getNewFee(_blockTimestamp(),cache.tick,newTimepointIndex,liquidityBefore)	NodeType.EXPRESSION
+globalState.timepointIndex = newTimepointIndex	NodeType.EXPRESSION
+volumePerLiquidityInBlock = 0	NodeType.EXPRESSION" -> "BlockID: 2894
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2897
+Call context: 
+True
+REF_1115(TickManager.Tick) -> ticks[bottomTick]
+ticks = delete REF_1115 
+EXPRESSION:delete ticks[bottomTick]	NodeType.EXPRESSION" -> "BlockID: 2898
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2898
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2899
+Call context: 
+None
+CONDITION toggledTop
+EXPRESSION:toggledTop	NodeType.IF" [key=0];
+"BlockID: 2899
+Call context: 
+None
+CONDITION toggledTop
+EXPRESSION:toggledTop	NodeType.IF" -> "BlockID: 2900
+Call context: 
+True
+REF_1116(TickManager.Tick) -> ticks[topTick]
+ticks = delete REF_1116 
+EXPRESSION:delete ticks[topTick]	NodeType.EXPRESSION" [key=0];
+"BlockID: 2899
+Call context: 
+None
+CONDITION toggledTop
+EXPRESSION:toggledTop	NodeType.IF" -> "BlockID: 2901
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2900
+Call context: 
+True
+REF_1116(TickManager.Tick) -> ticks[topTick]
+ticks = delete REF_1116 
+EXPRESSION:delete ticks[topTick]	NodeType.EXPRESSION" -> "BlockID: 2901
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2901
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2883
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2874
+Call context: 
+None
+time(uint32) := TMP_2282(uint32)
+NEW VARIABLE tickCumulative
+NEW VARIABLE secondsPerLiquidityCumulative
+REF_1105(int24) -> cache.tick
+REF_1106(uint16) -> cache.timepointIndex
+TUPLE_59(int56,uint160,uint112,uint256) = INTERNAL_CALL, AlgebraPool._getSingleTimepoint(uint32,uint32,int24,uint16,uint128)(time,0,REF_1105,REF_1106,liquidity)
+EXPRESSION:time = _blockTimestamp()	NodeType.VARIABLE
+time = _blockTimestamp()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(tickCumulative,secondsPerLiquidityCumulative) = _getSingleTimepoint(time,0,cache.tick,cache.timepointIndex,liquidity)	NodeType.EXPRESSION" -> "BlockID: 2903
+Call context: 
+None
+tickCumulative(int56)= UNPACK TUPLE_59 index: 0 
+secondsPerLiquidityCumulative(uint160)= UNPACK TUPLE_59 index: 1 
+REF_1108(int24) -> cache.tick
+TMP_2283(bool) = LIBRARY_CALL, dest:TickManager, function:TickManager.update(mapping(int24 => TickManager.Tick),int24,int24,int128,uint256,uint256,uint160,int56,uint32,bool), arguments:['ticks', 'bottomTick', 'REF_1108', 'liquidityDelta', '_totalFeeGrowth0Token', '_totalFeeGrowth1Token', 'secondsPerLiquidityCumulative', 'tickCumulative', 'time', 'False'] 
+EXPRESSION:(tickCumulative,secondsPerLiquidityCumulative) = _getSingleTimepoint(time,0,cache.tick,cache.timepointIndex,liquidity)	NodeType.EXPRESSION
+ticks.update(bottomTick,cache.tick,liquidityDelta,_totalFeeGrowth0Token,_totalFeeGrowth1Token,secondsPerLiquidityCumulative,tickCumulative,time,false)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2903
+Call context: 
+None
+tickCumulative(int56)= UNPACK TUPLE_59 index: 0 
+secondsPerLiquidityCumulative(uint160)= UNPACK TUPLE_59 index: 1 
+REF_1108(int24) -> cache.tick
+TMP_2283(bool) = LIBRARY_CALL, dest:TickManager, function:TickManager.update(mapping(int24 => TickManager.Tick),int24,int24,int128,uint256,uint256,uint160,int56,uint32,bool), arguments:['ticks', 'bottomTick', 'REF_1108', 'liquidityDelta', '_totalFeeGrowth0Token', '_totalFeeGrowth1Token', 'secondsPerLiquidityCumulative', 'tickCumulative', 'time', 'False'] 
+EXPRESSION:(tickCumulative,secondsPerLiquidityCumulative) = _getSingleTimepoint(time,0,cache.tick,cache.timepointIndex,liquidity)	NodeType.EXPRESSION
+ticks.update(bottomTick,cache.tick,liquidityDelta,_totalFeeGrowth0Token,_totalFeeGrowth1Token,secondsPerLiquidityCumulative,tickCumulative,time,false)	NodeType.EXPRESSION" -> "BlockID: 2904
+Call context: 
+None
+CONDITION TMP_2283
+EXPRESSION:ticks.update(bottomTick,cache.tick,liquidityDelta,_totalFeeGrowth0Token,_totalFeeGrowth1Token,secondsPerLiquidityCumulative,tickCumulative,time,false)	NodeType.IF" [key=0];
+"BlockID: 2904
+Call context: 
+None
+CONDITION TMP_2283
+EXPRESSION:ticks.update(bottomTick,cache.tick,liquidityDelta,_totalFeeGrowth0Token,_totalFeeGrowth1Token,secondsPerLiquidityCumulative,tickCumulative,time,false)	NodeType.IF" -> "BlockID: 2905
+Call context: 
+True
+toggledBottom(bool) := True(bool)
+LIBRARY_CALL, dest:TickTable, function:TickTable.toggleTick(mapping(int16 => uint256),int24), arguments:['tickTable', 'bottomTick'] 
+EXPRESSION:toggledBottom = true	NodeType.EXPRESSION
+tickTable.toggleTick(bottomTick)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2904
+Call context: 
+None
+CONDITION TMP_2283
+EXPRESSION:ticks.update(bottomTick,cache.tick,liquidityDelta,_totalFeeGrowth0Token,_totalFeeGrowth1Token,secondsPerLiquidityCumulative,tickCumulative,time,false)	NodeType.IF" -> "BlockID: 2906
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2905
+Call context: 
+True
+toggledBottom(bool) := True(bool)
+LIBRARY_CALL, dest:TickTable, function:TickTable.toggleTick(mapping(int16 => uint256),int24), arguments:['tickTable', 'bottomTick'] 
+EXPRESSION:toggledBottom = true	NodeType.EXPRESSION
+tickTable.toggleTick(bottomTick)	NodeType.EXPRESSION" -> "BlockID: 2906
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2906
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2907
+Call context: 
+None
+REF_1111(int24) -> cache.tick
+TMP_2285(bool) = LIBRARY_CALL, dest:TickManager, function:TickManager.update(mapping(int24 => TickManager.Tick),int24,int24,int128,uint256,uint256,uint160,int56,uint32,bool), arguments:['ticks', 'topTick', 'REF_1111', 'liquidityDelta', '_totalFeeGrowth0Token', '_totalFeeGrowth1Token', 'secondsPerLiquidityCumulative', 'tickCumulative', 'time', 'True'] 
+EXPRESSION:ticks.update(topTick,cache.tick,liquidityDelta,_totalFeeGrowth0Token,_totalFeeGrowth1Token,secondsPerLiquidityCumulative,tickCumulative,time,true)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2907
+Call context: 
+None
+REF_1111(int24) -> cache.tick
+TMP_2285(bool) = LIBRARY_CALL, dest:TickManager, function:TickManager.update(mapping(int24 => TickManager.Tick),int24,int24,int128,uint256,uint256,uint160,int56,uint32,bool), arguments:['ticks', 'topTick', 'REF_1111', 'liquidityDelta', '_totalFeeGrowth0Token', '_totalFeeGrowth1Token', 'secondsPerLiquidityCumulative', 'tickCumulative', 'time', 'True'] 
+EXPRESSION:ticks.update(topTick,cache.tick,liquidityDelta,_totalFeeGrowth0Token,_totalFeeGrowth1Token,secondsPerLiquidityCumulative,tickCumulative,time,true)	NodeType.EXPRESSION" -> "BlockID: 2908
+Call context: 
+None
+CONDITION TMP_2285
+EXPRESSION:ticks.update(topTick,cache.tick,liquidityDelta,_totalFeeGrowth0Token,_totalFeeGrowth1Token,secondsPerLiquidityCumulative,tickCumulative,time,true)	NodeType.IF" [key=0];
+"BlockID: 2908
+Call context: 
+None
+CONDITION TMP_2285
+EXPRESSION:ticks.update(topTick,cache.tick,liquidityDelta,_totalFeeGrowth0Token,_totalFeeGrowth1Token,secondsPerLiquidityCumulative,tickCumulative,time,true)	NodeType.IF" -> "BlockID: 2909
+Call context: 
+True
+toggledTop(bool) := True(bool)
+LIBRARY_CALL, dest:TickTable, function:TickTable.toggleTick(mapping(int16 => uint256),int24), arguments:['tickTable', 'topTick'] 
+EXPRESSION:toggledTop = true	NodeType.EXPRESSION
+tickTable.toggleTick(topTick)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2908
+Call context: 
+None
+CONDITION TMP_2285
+EXPRESSION:ticks.update(topTick,cache.tick,liquidityDelta,_totalFeeGrowth0Token,_totalFeeGrowth1Token,secondsPerLiquidityCumulative,tickCumulative,time,true)	NodeType.IF" -> "BlockID: 2910
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2909
+Call context: 
+True
+toggledTop(bool) := True(bool)
+LIBRARY_CALL, dest:TickTable, function:TickTable.toggleTick(mapping(int16 => uint256),int24), arguments:['tickTable', 'topTick'] 
+EXPRESSION:toggledTop = true	NodeType.EXPRESSION
+tickTable.toggleTick(topTick)	NodeType.EXPRESSION" -> "BlockID: 2910
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2910
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2875
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

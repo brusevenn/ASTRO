@@ -1,0 +1,774 @@
+digraph {
+"BlockID: 2457
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 2458
+Call context: 
+None
+REF_874(ILienToken.Stack) -> activeStack[position]
+stack(ILienToken.Stack) := REF_874(ILienToken.Stack)
+REF_875(ILienToken.Point) -> stack.point
+REF_876(uint256) -> REF_875.lienId
+lienId(uint256) := REF_876(uint256)
+REF_877(mapping(uint256 => ILienToken.LienMeta)) -> s.lienMeta
+REF_878(ILienToken.LienMeta) -> REF_877[lienId]
+REF_879(bool) -> REF_878.atLiquidation
+CONDITION REF_879
+EXPRESSION:stack = activeStack[position]	NodeType.VARIABLE
+stack = activeStack[position]	NodeType.EXPRESSION
+lienId = stack.point.lienId	NodeType.VARIABLE
+lienId = stack.point.lienId	NodeType.EXPRESSION
+s.lienMeta[lienId].atLiquidation	NodeType.IF";
+"BlockID: 2459
+Call context: 
+True
+REF_880(ILienToken.InvalidStates) -> InvalidStates.COLLATERAL_AUCTION
+TMP_1721(None) = SOLIDITY_CALL revert InvalidState(ILienToken.InvalidStates)(REF_880)
+EXPRESSION:revert InvalidState(ILienToken.InvalidStates)(InvalidStates.COLLATERAL_AUCTION)	NodeType.EXPRESSION";
+"BlockID: 2460
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2461
+Call context: 
+None
+REF_881(ILienToken.Point) -> stack.point
+REF_882(uint40) -> REF_881.end
+end(uint64) := REF_882(uint40)
+TMP_1722(bool) = block.timestamp >= end
+CONDITION TMP_1722
+EXPRESSION:end = stack.point.end	NodeType.VARIABLE
+end = stack.point.end	NodeType.EXPRESSION
+block.timestamp >= end	NodeType.IF";
+"BlockID: 2462
+Call context: 
+True
+TMP_1723(None) = SOLIDITY_CALL revert InvalidLoanState()()
+EXPRESSION:revert InvalidLoanState()()	NodeType.EXPRESSION";
+"BlockID: 2463
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2464
+Call context: 
+None
+TMP_1724(uint88) = INTERNAL_CALL, LienToken._getOwed(ILienToken.Stack,uint256)(stack,block.timestamp)
+EXPRESSION:";
+"BlockID: 2465
+Call context: 
+None
+owed(uint256) := TMP_1724(uint88)
+TMP_1725(address) = INTERNAL_CALL, ERC721_1.ownerOf(uint256)(lienId)
+EXPRESSION:owed = _getOwed(stack,block.timestamp)	NodeType.VARIABLE
+owed = _getOwed(stack,block.timestamp)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2466
+Call context: 
+None
+lienOwner(address) := TMP_1725(address)
+TMP_1726(bool) = INTERNAL_CALL, LienToken._isPublicVault(ILienToken.LienStorage,address)(s,lienOwner)
+EXPRESSION:lienOwner = ownerOf(lienId)	NodeType.VARIABLE
+lienOwner = ownerOf(lienId)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2467
+Call context: 
+None
+isPublicVault(bool) := TMP_1726(bool)
+TMP_1727(address) = INTERNAL_CALL, LienToken._getPayee(ILienToken.LienStorage,uint256)(s,lienId)
+EXPRESSION:isPublicVault = _isPublicVault(s,lienOwner)	NodeType.VARIABLE
+isPublicVault = _isPublicVault(s,lienOwner)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2468
+Call context: 
+None
+payee(address) := TMP_1727(address)
+TMP_1728(bool) = amount > owed
+CONDITION TMP_1728
+EXPRESSION:payee = _getPayee(s,lienId)	NodeType.VARIABLE
+payee = _getPayee(s,lienId)	NodeType.EXPRESSION
+amount > owed	NodeType.IF" [shape=box];
+"BlockID: 2469
+Call context: 
+True
+amount(uint256) := owed(uint256)
+EXPRESSION:amount = owed	NodeType.EXPRESSION";
+"BlockID: 2470
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2471
+Call context: 
+None
+CONDITION isPublicVault
+EXPRESSION:isPublicVault	NodeType.IF";
+"BlockID: 2472
+Call context: 
+True
+TMP_1729 = CONVERT lienOwner to IPublicVault
+REF_885(ILienToken.Point) -> stack.point
+REF_886(uint88) -> REF_885.amount
+TMP_1730(uint256) = owed (c)- REF_886
+REF_887(ILienToken.Point) -> stack.point
+REF_888(uint88) -> REF_887.amount
+TMP_1731(uint256) = INTERNAL_CALL, LienToken.calculateSlope(ILienToken.Stack)(stack)
+EXPRESSION:IPublicVault(lienOwner).beforePayment(IPublicVault.BeforePaymentParams(owed - stack.point.amount,stack.point.amount,calculateSlope(stack)))	NodeType.EXPRESSION";
+"BlockID: 2475
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2476
+Call context: 
+None
+REF_889(ILienToken.Point) -> stack.point
+REF_890(uint88) -> REF_889.amount
+TMP_1734(uint88) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo88(uint256), arguments:['owed'] 
+EXPRESSION:stack.point.amount = owed.safeCastTo88()	NodeType.EXPRESSION";
+"BlockID: 2477
+Call context: 
+None
+REF_890(uint88) (->stack) := TMP_1734(uint88)
+REF_892(ILienToken.Point) -> stack.point
+REF_893(uint40) -> REF_892.last
+TMP_1735(uint40) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo40(uint256), arguments:['block.timestamp'] 
+EXPRESSION:stack.point.amount = owed.safeCastTo88()	NodeType.EXPRESSION
+stack.point.last = block.timestamp.safeCastTo40()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2478
+Call context: 
+None
+REF_893(uint40) (->stack) := TMP_1735(uint40)
+REF_895(ILienToken.Point) -> stack.point
+REF_896(uint88) -> REF_895.amount
+TMP_1736(bool) = REF_896 > amount
+CONDITION TMP_1736
+EXPRESSION:stack.point.last = block.timestamp.safeCastTo40()	NodeType.EXPRESSION
+stack.point.amount > amount	NodeType.IF" [shape=box];
+"BlockID: 2479
+Call context: 
+True
+REF_897(ILienToken.Point) -> stack.point
+REF_898(uint88) -> REF_897.amount
+TMP_1737(uint88) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo88(uint256), arguments:['amount'] 
+EXPRESSION:stack.point.amount -= amount.safeCastTo88()	NodeType.EXPRESSION";
+"BlockID: 2481
+Call context: 
+False
+REF_901(ILienToken.Point) -> stack.point
+REF_902(uint88) -> REF_901.amount
+amount(uint256) := REF_902(uint88)
+CONDITION isPublicVault
+EXPRESSION:amount = stack.point.amount	NodeType.EXPRESSION
+isPublicVault	NodeType.IF";
+"BlockID: 2482
+Call context: 
+True
+TMP_1741 = CONVERT lienOwner to IPublicVault
+TMP_1742 = CONVERT lienOwner to IPublicVault
+TMP_1743(uint64) = HIGH_LEVEL_CALL, dest:TMP_1742(IPublicVault), function:getLienEpoch, arguments:['end']  
+EXPRESSION:IPublicVault(lienOwner).decreaseEpochLienCount(IPublicVault(lienOwner).getLienEpoch(end))	NodeType.EXPRESSION";
+"BlockID: 2485
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2486
+Call context: 
+None
+REF_905(mapping(uint256 => ILienToken.LienMeta)) -> s.lienMeta
+REF_906(ILienToken.LienMeta) -> REF_905[lienId]
+REF_905 = delete REF_906 
+INTERNAL_CALL, ERC721_1._burn(uint256)(lienId)
+EXPRESSION:delete s.lienMeta[lienId]	NodeType.EXPRESSION
+_burn(lienId)	NodeType.EXPRESSION";
+"BlockID: 2487
+Call context: 
+None
+TMP_1746(ILienToken.Stack[]) = INTERNAL_CALL, LienToken._removeStackPosition(ILienToken.Stack[],uint8)(activeStack,position)
+EXPRESSION:_burn(lienId)	NodeType.EXPRESSION
+activeStack = _removeStackPosition(activeStack,position)	NodeType.EXPRESSION";
+"BlockID: 2488
+Call context: 
+None
+activeStack(ILienToken.Stack[]) =  ['TMP_1746(ILienToken.Stack[])']
+EXPRESSION:activeStack = _removeStackPosition(activeStack,position)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2489
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2490
+Call context: 
+None
+REF_907(ITransferProxy) -> s.TRANSFER_PROXY
+REF_909(ILienToken.Lien) -> stack.lien
+REF_910(address) -> REF_909.token
+HIGH_LEVEL_CALL, dest:REF_907(ITransferProxy), function:tokenTransferFrom, arguments:['REF_910', 'payer', 'payee', 'amount']  
+EXPRESSION:s.TRANSFER_PROXY.tokenTransferFrom(stack.lien.token,payer,payee,amount)	NodeType.EXPRESSION";
+"BlockID: 2491
+Call context: 
+None
+RETURN activeStack,amount
+EXPRESSION:s.TRANSFER_PROXY.tokenTransferFrom(stack.lien.token,payer,payee,amount)	NodeType.EXPRESSION
+(activeStack,amount)	NodeType.RETURN";
+"BlockID: 2483
+Call context: 
+None
+HIGH_LEVEL_CALL, dest:TMP_1741(IPublicVault), function:decreaseEpochLienCount, arguments:['TMP_1743']  
+EXPRESSION:IPublicVault(lienOwner).decreaseEpochLienCount(IPublicVault(lienOwner).getLienEpoch(end))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2480
+Call context: 
+None
+REF_898(-> stack) = REF_898 (c)- TMP_1737
+CONDITION isPublicVault
+EXPRESSION:stack.point.amount -= amount.safeCastTo88()	NodeType.EXPRESSION
+isPublicVault	NodeType.IF" [shape=box];
+"BlockID: 2492
+Call context: 
+True
+TMP_1738 = CONVERT lienOwner to IPublicVault
+TMP_1739(uint256) = INTERNAL_CALL, LienToken.calculateSlope(ILienToken.Stack)(stack)
+EXPRESSION:IPublicVault(lienOwner).afterPayment(calculateSlope(stack))	NodeType.EXPRESSION";
+"BlockID: 2495
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2493
+Call context: 
+None
+HIGH_LEVEL_CALL, dest:TMP_1738(IPublicVault), function:afterPayment, arguments:['TMP_1739']  
+EXPRESSION:IPublicVault(lienOwner).afterPayment(calculateSlope(stack))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2473
+Call context: 
+None
+TMP_1732(IPublicVault.BeforePaymentParams) = new BeforePaymentParams(TMP_1730,REF_888,TMP_1731)
+HIGH_LEVEL_CALL, dest:TMP_1729(IPublicVault), function:beforePayment, arguments:['TMP_1732']  
+EXPRESSION:IPublicVault(lienOwner).beforePayment(IPublicVault.BeforePaymentParams(owed - stack.point.amount,stack.point.amount,calculateSlope(stack)))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2457
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 2458
+Call context: 
+None
+REF_874(ILienToken.Stack) -> activeStack[position]
+stack(ILienToken.Stack) := REF_874(ILienToken.Stack)
+REF_875(ILienToken.Point) -> stack.point
+REF_876(uint256) -> REF_875.lienId
+lienId(uint256) := REF_876(uint256)
+REF_877(mapping(uint256 => ILienToken.LienMeta)) -> s.lienMeta
+REF_878(ILienToken.LienMeta) -> REF_877[lienId]
+REF_879(bool) -> REF_878.atLiquidation
+CONDITION REF_879
+EXPRESSION:stack = activeStack[position]	NodeType.VARIABLE
+stack = activeStack[position]	NodeType.EXPRESSION
+lienId = stack.point.lienId	NodeType.VARIABLE
+lienId = stack.point.lienId	NodeType.EXPRESSION
+s.lienMeta[lienId].atLiquidation	NodeType.IF" [key=0];
+"BlockID: 2458
+Call context: 
+None
+REF_874(ILienToken.Stack) -> activeStack[position]
+stack(ILienToken.Stack) := REF_874(ILienToken.Stack)
+REF_875(ILienToken.Point) -> stack.point
+REF_876(uint256) -> REF_875.lienId
+lienId(uint256) := REF_876(uint256)
+REF_877(mapping(uint256 => ILienToken.LienMeta)) -> s.lienMeta
+REF_878(ILienToken.LienMeta) -> REF_877[lienId]
+REF_879(bool) -> REF_878.atLiquidation
+CONDITION REF_879
+EXPRESSION:stack = activeStack[position]	NodeType.VARIABLE
+stack = activeStack[position]	NodeType.EXPRESSION
+lienId = stack.point.lienId	NodeType.VARIABLE
+lienId = stack.point.lienId	NodeType.EXPRESSION
+s.lienMeta[lienId].atLiquidation	NodeType.IF" -> "BlockID: 2459
+Call context: 
+True
+REF_880(ILienToken.InvalidStates) -> InvalidStates.COLLATERAL_AUCTION
+TMP_1721(None) = SOLIDITY_CALL revert InvalidState(ILienToken.InvalidStates)(REF_880)
+EXPRESSION:revert InvalidState(ILienToken.InvalidStates)(InvalidStates.COLLATERAL_AUCTION)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2458
+Call context: 
+None
+REF_874(ILienToken.Stack) -> activeStack[position]
+stack(ILienToken.Stack) := REF_874(ILienToken.Stack)
+REF_875(ILienToken.Point) -> stack.point
+REF_876(uint256) -> REF_875.lienId
+lienId(uint256) := REF_876(uint256)
+REF_877(mapping(uint256 => ILienToken.LienMeta)) -> s.lienMeta
+REF_878(ILienToken.LienMeta) -> REF_877[lienId]
+REF_879(bool) -> REF_878.atLiquidation
+CONDITION REF_879
+EXPRESSION:stack = activeStack[position]	NodeType.VARIABLE
+stack = activeStack[position]	NodeType.EXPRESSION
+lienId = stack.point.lienId	NodeType.VARIABLE
+lienId = stack.point.lienId	NodeType.EXPRESSION
+s.lienMeta[lienId].atLiquidation	NodeType.IF" -> "BlockID: 2460
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2460
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2461
+Call context: 
+None
+REF_881(ILienToken.Point) -> stack.point
+REF_882(uint40) -> REF_881.end
+end(uint64) := REF_882(uint40)
+TMP_1722(bool) = block.timestamp >= end
+CONDITION TMP_1722
+EXPRESSION:end = stack.point.end	NodeType.VARIABLE
+end = stack.point.end	NodeType.EXPRESSION
+block.timestamp >= end	NodeType.IF" [key=0];
+"BlockID: 2461
+Call context: 
+None
+REF_881(ILienToken.Point) -> stack.point
+REF_882(uint40) -> REF_881.end
+end(uint64) := REF_882(uint40)
+TMP_1722(bool) = block.timestamp >= end
+CONDITION TMP_1722
+EXPRESSION:end = stack.point.end	NodeType.VARIABLE
+end = stack.point.end	NodeType.EXPRESSION
+block.timestamp >= end	NodeType.IF" -> "BlockID: 2462
+Call context: 
+True
+TMP_1723(None) = SOLIDITY_CALL revert InvalidLoanState()()
+EXPRESSION:revert InvalidLoanState()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2461
+Call context: 
+None
+REF_881(ILienToken.Point) -> stack.point
+REF_882(uint40) -> REF_881.end
+end(uint64) := REF_882(uint40)
+TMP_1722(bool) = block.timestamp >= end
+CONDITION TMP_1722
+EXPRESSION:end = stack.point.end	NodeType.VARIABLE
+end = stack.point.end	NodeType.EXPRESSION
+block.timestamp >= end	NodeType.IF" -> "BlockID: 2463
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2463
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2464
+Call context: 
+None
+TMP_1724(uint88) = INTERNAL_CALL, LienToken._getOwed(ILienToken.Stack,uint256)(stack,block.timestamp)
+EXPRESSION:" [key=0];
+"BlockID: 2464
+Call context: 
+None
+TMP_1724(uint88) = INTERNAL_CALL, LienToken._getOwed(ILienToken.Stack,uint256)(stack,block.timestamp)
+EXPRESSION:" -> "BlockID: 2465
+Call context: 
+None
+owed(uint256) := TMP_1724(uint88)
+TMP_1725(address) = INTERNAL_CALL, ERC721_1.ownerOf(uint256)(lienId)
+EXPRESSION:owed = _getOwed(stack,block.timestamp)	NodeType.VARIABLE
+owed = _getOwed(stack,block.timestamp)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2465
+Call context: 
+None
+owed(uint256) := TMP_1724(uint88)
+TMP_1725(address) = INTERNAL_CALL, ERC721_1.ownerOf(uint256)(lienId)
+EXPRESSION:owed = _getOwed(stack,block.timestamp)	NodeType.VARIABLE
+owed = _getOwed(stack,block.timestamp)	NodeType.EXPRESSION" -> "BlockID: 2466
+Call context: 
+None
+lienOwner(address) := TMP_1725(address)
+TMP_1726(bool) = INTERNAL_CALL, LienToken._isPublicVault(ILienToken.LienStorage,address)(s,lienOwner)
+EXPRESSION:lienOwner = ownerOf(lienId)	NodeType.VARIABLE
+lienOwner = ownerOf(lienId)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2466
+Call context: 
+None
+lienOwner(address) := TMP_1725(address)
+TMP_1726(bool) = INTERNAL_CALL, LienToken._isPublicVault(ILienToken.LienStorage,address)(s,lienOwner)
+EXPRESSION:lienOwner = ownerOf(lienId)	NodeType.VARIABLE
+lienOwner = ownerOf(lienId)	NodeType.EXPRESSION" -> "BlockID: 2467
+Call context: 
+None
+isPublicVault(bool) := TMP_1726(bool)
+TMP_1727(address) = INTERNAL_CALL, LienToken._getPayee(ILienToken.LienStorage,uint256)(s,lienId)
+EXPRESSION:isPublicVault = _isPublicVault(s,lienOwner)	NodeType.VARIABLE
+isPublicVault = _isPublicVault(s,lienOwner)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2467
+Call context: 
+None
+isPublicVault(bool) := TMP_1726(bool)
+TMP_1727(address) = INTERNAL_CALL, LienToken._getPayee(ILienToken.LienStorage,uint256)(s,lienId)
+EXPRESSION:isPublicVault = _isPublicVault(s,lienOwner)	NodeType.VARIABLE
+isPublicVault = _isPublicVault(s,lienOwner)	NodeType.EXPRESSION" -> "BlockID: 2468
+Call context: 
+None
+payee(address) := TMP_1727(address)
+TMP_1728(bool) = amount > owed
+CONDITION TMP_1728
+EXPRESSION:payee = _getPayee(s,lienId)	NodeType.VARIABLE
+payee = _getPayee(s,lienId)	NodeType.EXPRESSION
+amount > owed	NodeType.IF" [key=0];
+"BlockID: 2468
+Call context: 
+None
+payee(address) := TMP_1727(address)
+TMP_1728(bool) = amount > owed
+CONDITION TMP_1728
+EXPRESSION:payee = _getPayee(s,lienId)	NodeType.VARIABLE
+payee = _getPayee(s,lienId)	NodeType.EXPRESSION
+amount > owed	NodeType.IF" -> "BlockID: 2469
+Call context: 
+True
+amount(uint256) := owed(uint256)
+EXPRESSION:amount = owed	NodeType.EXPRESSION" [key=0];
+"BlockID: 2468
+Call context: 
+None
+payee(address) := TMP_1727(address)
+TMP_1728(bool) = amount > owed
+CONDITION TMP_1728
+EXPRESSION:payee = _getPayee(s,lienId)	NodeType.VARIABLE
+payee = _getPayee(s,lienId)	NodeType.EXPRESSION
+amount > owed	NodeType.IF" -> "BlockID: 2470
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2469
+Call context: 
+True
+amount(uint256) := owed(uint256)
+EXPRESSION:amount = owed	NodeType.EXPRESSION" -> "BlockID: 2470
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2470
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2471
+Call context: 
+None
+CONDITION isPublicVault
+EXPRESSION:isPublicVault	NodeType.IF" [key=0];
+"BlockID: 2471
+Call context: 
+None
+CONDITION isPublicVault
+EXPRESSION:isPublicVault	NodeType.IF" -> "BlockID: 2472
+Call context: 
+True
+TMP_1729 = CONVERT lienOwner to IPublicVault
+REF_885(ILienToken.Point) -> stack.point
+REF_886(uint88) -> REF_885.amount
+TMP_1730(uint256) = owed (c)- REF_886
+REF_887(ILienToken.Point) -> stack.point
+REF_888(uint88) -> REF_887.amount
+TMP_1731(uint256) = INTERNAL_CALL, LienToken.calculateSlope(ILienToken.Stack)(stack)
+EXPRESSION:IPublicVault(lienOwner).beforePayment(IPublicVault.BeforePaymentParams(owed - stack.point.amount,stack.point.amount,calculateSlope(stack)))	NodeType.EXPRESSION" [key=0];
+"BlockID: 2471
+Call context: 
+None
+CONDITION isPublicVault
+EXPRESSION:isPublicVault	NodeType.IF" -> "BlockID: 2475
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2472
+Call context: 
+True
+TMP_1729 = CONVERT lienOwner to IPublicVault
+REF_885(ILienToken.Point) -> stack.point
+REF_886(uint88) -> REF_885.amount
+TMP_1730(uint256) = owed (c)- REF_886
+REF_887(ILienToken.Point) -> stack.point
+REF_888(uint88) -> REF_887.amount
+TMP_1731(uint256) = INTERNAL_CALL, LienToken.calculateSlope(ILienToken.Stack)(stack)
+EXPRESSION:IPublicVault(lienOwner).beforePayment(IPublicVault.BeforePaymentParams(owed - stack.point.amount,stack.point.amount,calculateSlope(stack)))	NodeType.EXPRESSION" -> "BlockID: 2473
+Call context: 
+None
+TMP_1732(IPublicVault.BeforePaymentParams) = new BeforePaymentParams(TMP_1730,REF_888,TMP_1731)
+HIGH_LEVEL_CALL, dest:TMP_1729(IPublicVault), function:beforePayment, arguments:['TMP_1732']  
+EXPRESSION:IPublicVault(lienOwner).beforePayment(IPublicVault.BeforePaymentParams(owed - stack.point.amount,stack.point.amount,calculateSlope(stack)))	NodeType.EXPRESSION" [key=0];
+"BlockID: 2475
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2476
+Call context: 
+None
+REF_889(ILienToken.Point) -> stack.point
+REF_890(uint88) -> REF_889.amount
+TMP_1734(uint88) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo88(uint256), arguments:['owed'] 
+EXPRESSION:stack.point.amount = owed.safeCastTo88()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2476
+Call context: 
+None
+REF_889(ILienToken.Point) -> stack.point
+REF_890(uint88) -> REF_889.amount
+TMP_1734(uint88) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo88(uint256), arguments:['owed'] 
+EXPRESSION:stack.point.amount = owed.safeCastTo88()	NodeType.EXPRESSION" -> "BlockID: 2477
+Call context: 
+None
+REF_890(uint88) (->stack) := TMP_1734(uint88)
+REF_892(ILienToken.Point) -> stack.point
+REF_893(uint40) -> REF_892.last
+TMP_1735(uint40) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo40(uint256), arguments:['block.timestamp'] 
+EXPRESSION:stack.point.amount = owed.safeCastTo88()	NodeType.EXPRESSION
+stack.point.last = block.timestamp.safeCastTo40()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2477
+Call context: 
+None
+REF_890(uint88) (->stack) := TMP_1734(uint88)
+REF_892(ILienToken.Point) -> stack.point
+REF_893(uint40) -> REF_892.last
+TMP_1735(uint40) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo40(uint256), arguments:['block.timestamp'] 
+EXPRESSION:stack.point.amount = owed.safeCastTo88()	NodeType.EXPRESSION
+stack.point.last = block.timestamp.safeCastTo40()	NodeType.EXPRESSION" -> "BlockID: 2478
+Call context: 
+None
+REF_893(uint40) (->stack) := TMP_1735(uint40)
+REF_895(ILienToken.Point) -> stack.point
+REF_896(uint88) -> REF_895.amount
+TMP_1736(bool) = REF_896 > amount
+CONDITION TMP_1736
+EXPRESSION:stack.point.last = block.timestamp.safeCastTo40()	NodeType.EXPRESSION
+stack.point.amount > amount	NodeType.IF" [key=0];
+"BlockID: 2478
+Call context: 
+None
+REF_893(uint40) (->stack) := TMP_1735(uint40)
+REF_895(ILienToken.Point) -> stack.point
+REF_896(uint88) -> REF_895.amount
+TMP_1736(bool) = REF_896 > amount
+CONDITION TMP_1736
+EXPRESSION:stack.point.last = block.timestamp.safeCastTo40()	NodeType.EXPRESSION
+stack.point.amount > amount	NodeType.IF" -> "BlockID: 2479
+Call context: 
+True
+REF_897(ILienToken.Point) -> stack.point
+REF_898(uint88) -> REF_897.amount
+TMP_1737(uint88) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo88(uint256), arguments:['amount'] 
+EXPRESSION:stack.point.amount -= amount.safeCastTo88()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2478
+Call context: 
+None
+REF_893(uint40) (->stack) := TMP_1735(uint40)
+REF_895(ILienToken.Point) -> stack.point
+REF_896(uint88) -> REF_895.amount
+TMP_1736(bool) = REF_896 > amount
+CONDITION TMP_1736
+EXPRESSION:stack.point.last = block.timestamp.safeCastTo40()	NodeType.EXPRESSION
+stack.point.amount > amount	NodeType.IF" -> "BlockID: 2481
+Call context: 
+False
+REF_901(ILienToken.Point) -> stack.point
+REF_902(uint88) -> REF_901.amount
+amount(uint256) := REF_902(uint88)
+CONDITION isPublicVault
+EXPRESSION:amount = stack.point.amount	NodeType.EXPRESSION
+isPublicVault	NodeType.IF" [key=0];
+"BlockID: 2479
+Call context: 
+True
+REF_897(ILienToken.Point) -> stack.point
+REF_898(uint88) -> REF_897.amount
+TMP_1737(uint88) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo88(uint256), arguments:['amount'] 
+EXPRESSION:stack.point.amount -= amount.safeCastTo88()	NodeType.EXPRESSION" -> "BlockID: 2480
+Call context: 
+None
+REF_898(-> stack) = REF_898 (c)- TMP_1737
+CONDITION isPublicVault
+EXPRESSION:stack.point.amount -= amount.safeCastTo88()	NodeType.EXPRESSION
+isPublicVault	NodeType.IF" [key=0];
+"BlockID: 2481
+Call context: 
+False
+REF_901(ILienToken.Point) -> stack.point
+REF_902(uint88) -> REF_901.amount
+amount(uint256) := REF_902(uint88)
+CONDITION isPublicVault
+EXPRESSION:amount = stack.point.amount	NodeType.EXPRESSION
+isPublicVault	NodeType.IF" -> "BlockID: 2482
+Call context: 
+True
+TMP_1741 = CONVERT lienOwner to IPublicVault
+TMP_1742 = CONVERT lienOwner to IPublicVault
+TMP_1743(uint64) = HIGH_LEVEL_CALL, dest:TMP_1742(IPublicVault), function:getLienEpoch, arguments:['end']  
+EXPRESSION:IPublicVault(lienOwner).decreaseEpochLienCount(IPublicVault(lienOwner).getLienEpoch(end))	NodeType.EXPRESSION" [key=0];
+"BlockID: 2481
+Call context: 
+False
+REF_901(ILienToken.Point) -> stack.point
+REF_902(uint88) -> REF_901.amount
+amount(uint256) := REF_902(uint88)
+CONDITION isPublicVault
+EXPRESSION:amount = stack.point.amount	NodeType.EXPRESSION
+isPublicVault	NodeType.IF" -> "BlockID: 2485
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2482
+Call context: 
+True
+TMP_1741 = CONVERT lienOwner to IPublicVault
+TMP_1742 = CONVERT lienOwner to IPublicVault
+TMP_1743(uint64) = HIGH_LEVEL_CALL, dest:TMP_1742(IPublicVault), function:getLienEpoch, arguments:['end']  
+EXPRESSION:IPublicVault(lienOwner).decreaseEpochLienCount(IPublicVault(lienOwner).getLienEpoch(end))	NodeType.EXPRESSION" -> "BlockID: 2483
+Call context: 
+None
+HIGH_LEVEL_CALL, dest:TMP_1741(IPublicVault), function:decreaseEpochLienCount, arguments:['TMP_1743']  
+EXPRESSION:IPublicVault(lienOwner).decreaseEpochLienCount(IPublicVault(lienOwner).getLienEpoch(end))	NodeType.EXPRESSION" [key=0];
+"BlockID: 2485
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2486
+Call context: 
+None
+REF_905(mapping(uint256 => ILienToken.LienMeta)) -> s.lienMeta
+REF_906(ILienToken.LienMeta) -> REF_905[lienId]
+REF_905 = delete REF_906 
+INTERNAL_CALL, ERC721_1._burn(uint256)(lienId)
+EXPRESSION:delete s.lienMeta[lienId]	NodeType.EXPRESSION
+_burn(lienId)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2486
+Call context: 
+None
+REF_905(mapping(uint256 => ILienToken.LienMeta)) -> s.lienMeta
+REF_906(ILienToken.LienMeta) -> REF_905[lienId]
+REF_905 = delete REF_906 
+INTERNAL_CALL, ERC721_1._burn(uint256)(lienId)
+EXPRESSION:delete s.lienMeta[lienId]	NodeType.EXPRESSION
+_burn(lienId)	NodeType.EXPRESSION" -> "BlockID: 2487
+Call context: 
+None
+TMP_1746(ILienToken.Stack[]) = INTERNAL_CALL, LienToken._removeStackPosition(ILienToken.Stack[],uint8)(activeStack,position)
+EXPRESSION:_burn(lienId)	NodeType.EXPRESSION
+activeStack = _removeStackPosition(activeStack,position)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2487
+Call context: 
+None
+TMP_1746(ILienToken.Stack[]) = INTERNAL_CALL, LienToken._removeStackPosition(ILienToken.Stack[],uint8)(activeStack,position)
+EXPRESSION:_burn(lienId)	NodeType.EXPRESSION
+activeStack = _removeStackPosition(activeStack,position)	NodeType.EXPRESSION" -> "BlockID: 2488
+Call context: 
+None
+activeStack(ILienToken.Stack[]) =  ['TMP_1746(ILienToken.Stack[])']
+EXPRESSION:activeStack = _removeStackPosition(activeStack,position)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2488
+Call context: 
+None
+activeStack(ILienToken.Stack[]) =  ['TMP_1746(ILienToken.Stack[])']
+EXPRESSION:activeStack = _removeStackPosition(activeStack,position)	NodeType.EXPRESSION" -> "BlockID: 2489
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2489
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2490
+Call context: 
+None
+REF_907(ITransferProxy) -> s.TRANSFER_PROXY
+REF_909(ILienToken.Lien) -> stack.lien
+REF_910(address) -> REF_909.token
+HIGH_LEVEL_CALL, dest:REF_907(ITransferProxy), function:tokenTransferFrom, arguments:['REF_910', 'payer', 'payee', 'amount']  
+EXPRESSION:s.TRANSFER_PROXY.tokenTransferFrom(stack.lien.token,payer,payee,amount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2490
+Call context: 
+None
+REF_907(ITransferProxy) -> s.TRANSFER_PROXY
+REF_909(ILienToken.Lien) -> stack.lien
+REF_910(address) -> REF_909.token
+HIGH_LEVEL_CALL, dest:REF_907(ITransferProxy), function:tokenTransferFrom, arguments:['REF_910', 'payer', 'payee', 'amount']  
+EXPRESSION:s.TRANSFER_PROXY.tokenTransferFrom(stack.lien.token,payer,payee,amount)	NodeType.EXPRESSION" -> "BlockID: 2491
+Call context: 
+None
+RETURN activeStack,amount
+EXPRESSION:s.TRANSFER_PROXY.tokenTransferFrom(stack.lien.token,payer,payee,amount)	NodeType.EXPRESSION
+(activeStack,amount)	NodeType.RETURN" [key=0];
+"BlockID: 2483
+Call context: 
+None
+HIGH_LEVEL_CALL, dest:TMP_1741(IPublicVault), function:decreaseEpochLienCount, arguments:['TMP_1743']  
+EXPRESSION:IPublicVault(lienOwner).decreaseEpochLienCount(IPublicVault(lienOwner).getLienEpoch(end))	NodeType.EXPRESSION" -> "BlockID: 2485
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2480
+Call context: 
+None
+REF_898(-> stack) = REF_898 (c)- TMP_1737
+CONDITION isPublicVault
+EXPRESSION:stack.point.amount -= amount.safeCastTo88()	NodeType.EXPRESSION
+isPublicVault	NodeType.IF" -> "BlockID: 2492
+Call context: 
+True
+TMP_1738 = CONVERT lienOwner to IPublicVault
+TMP_1739(uint256) = INTERNAL_CALL, LienToken.calculateSlope(ILienToken.Stack)(stack)
+EXPRESSION:IPublicVault(lienOwner).afterPayment(calculateSlope(stack))	NodeType.EXPRESSION" [key=0];
+"BlockID: 2480
+Call context: 
+None
+REF_898(-> stack) = REF_898 (c)- TMP_1737
+CONDITION isPublicVault
+EXPRESSION:stack.point.amount -= amount.safeCastTo88()	NodeType.EXPRESSION
+isPublicVault	NodeType.IF" -> "BlockID: 2495
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2492
+Call context: 
+True
+TMP_1738 = CONVERT lienOwner to IPublicVault
+TMP_1739(uint256) = INTERNAL_CALL, LienToken.calculateSlope(ILienToken.Stack)(stack)
+EXPRESSION:IPublicVault(lienOwner).afterPayment(calculateSlope(stack))	NodeType.EXPRESSION" -> "BlockID: 2493
+Call context: 
+None
+HIGH_LEVEL_CALL, dest:TMP_1738(IPublicVault), function:afterPayment, arguments:['TMP_1739']  
+EXPRESSION:IPublicVault(lienOwner).afterPayment(calculateSlope(stack))	NodeType.EXPRESSION" [key=0];
+"BlockID: 2495
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2489
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2493
+Call context: 
+None
+HIGH_LEVEL_CALL, dest:TMP_1738(IPublicVault), function:afterPayment, arguments:['TMP_1739']  
+EXPRESSION:IPublicVault(lienOwner).afterPayment(calculateSlope(stack))	NodeType.EXPRESSION" -> "BlockID: 2495
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2473
+Call context: 
+None
+TMP_1732(IPublicVault.BeforePaymentParams) = new BeforePaymentParams(TMP_1730,REF_888,TMP_1731)
+HIGH_LEVEL_CALL, dest:TMP_1729(IPublicVault), function:beforePayment, arguments:['TMP_1732']  
+EXPRESSION:IPublicVault(lienOwner).beforePayment(IPublicVault.BeforePaymentParams(owed - stack.point.amount,stack.point.amount,calculateSlope(stack)))	NodeType.EXPRESSION" -> "BlockID: 2475
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

@@ -1,0 +1,668 @@
+digraph {
+"BlockID: 1640
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1641
+Call context: 
+None
+MODIFIER_CALL, ReentrancyGuard.nonReentrant()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION";
+"BlockID: 1642
+Call context: 
+None
+pendingQueueIndex(uint256) := _pendingQueueIndex(uint256)
+REF_370(IPoolWithWithdrawalQueues.DeployedQueue) -> _deployedQueues[pendingQueueIndex]
+queue(IPoolWithWithdrawalQueues.DeployedQueue) := REF_370(IPoolWithWithdrawalQueues.DeployedQueue)
+REF_371(uint96) -> queue.deployedTime
+TMP_1484(uint256) = block.timestamp (c)- REF_371
+TMP_1485(bool) = TMP_1484 < getMinTimeBetweenWithdrawalQueues
+CONDITION TMP_1485
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION
+pendingQueueIndex = _pendingQueueIndex	NodeType.VARIABLE
+pendingQueueIndex = _pendingQueueIndex	NodeType.EXPRESSION
+queue = _deployedQueues[pendingQueueIndex]	NodeType.VARIABLE
+queue = _deployedQueues[pendingQueueIndex]	NodeType.EXPRESSION
+block.timestamp - queue.deployedTime < getMinTimeBetweenWithdrawalQueues	NodeType.IF";
+"BlockID: 1643
+Call context: 
+True
+TMP_1486(None) = SOLIDITY_CALL revert TooSoonError()()
+EXPRESSION:revert TooSoonError()()	NodeType.EXPRESSION";
+"BlockID: 1644
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1645
+Call context: 
+None
+REF_372(address) -> queue.contractAddress
+TMP_1487 = CONVERT REF_372 to WithdrawalQueue
+TMP_1488(uint256) = HIGH_LEVEL_CALL, dest:TMP_1487(WithdrawalQueue), function:getTotalShares, arguments:[]  
+EXPRESSION:";
+"BlockID: 1646
+Call context: 
+None
+sharesPendingWithdrawal(uint256) := TMP_1488(uint256)
+TMP_1489(bool) = sharesPendingWithdrawal == 0
+CONDITION TMP_1489
+EXPRESSION:sharesPendingWithdrawal = WithdrawalQueue(queue.contractAddress).getTotalShares()	NodeType.VARIABLE
+sharesPendingWithdrawal = WithdrawalQueue(queue.contractAddress).getTotalShares()	NodeType.EXPRESSION
+sharesPendingWithdrawal == 0	NodeType.IF" [shape=box];
+"BlockID: 1647
+Call context: 
+True
+TMP_1490(None) = SOLIDITY_CALL revert NoSharesPendingWithdrawalError()()
+EXPRESSION:revert NoSharesPendingWithdrawalError()()	NodeType.EXPRESSION";
+"BlockID: 1648
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1649
+Call context: 
+None
+REF_374 -> LENGTH _deployedQueues
+totalQueues(uint256) := REF_374(uint256)
+TMP_1491(uint256) = pendingQueueIndex (c)+ 1
+TMP_1492(uint256) = TMP_1491 % totalQueues
+lastQueueIndex(uint256) := TMP_1492(uint256)
+totalSupplyCached(uint256) := totalSupply(uint256)
+TMP_1493(uint256) = INTERNAL_CALL, Pool._getUndeployedAssets()()
+EXPRESSION:totalQueues = _deployedQueues.length	NodeType.VARIABLE
+totalQueues = _deployedQueues.length	NodeType.EXPRESSION
+lastQueueIndex = (pendingQueueIndex + 1) % totalQueues	NodeType.VARIABLE
+lastQueueIndex = (pendingQueueIndex + 1) % totalQueues	NodeType.EXPRESSION
+totalSupplyCached = totalSupply	NodeType.VARIABLE
+totalSupplyCached = totalSupply	NodeType.EXPRESSION";
+"BlockID: 1650
+Call context: 
+None
+TMP_1494(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivDown(uint256,uint256,uint256), arguments:['TMP_1493', 'sharesPendingWithdrawal', 'totalSupplyCached'] 
+EXPRESSION:" [shape=box];
+"BlockID: 1651
+Call context: 
+None
+proRataLiquid(uint256) := TMP_1494(uint256)
+TMP_1495(uint256) = totalSupplyCached (c)- sharesPendingWithdrawal
+TMP_1496(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivDown(uint256,uint256,uint256), arguments:['TMP_1495', 'PRINCIPAL_PRECISION', 'totalSupplyCached'] 
+EXPRESSION:proRataLiquid = _getUndeployedAssets().mulDivDown(sharesPendingWithdrawal,totalSupplyCached)	NodeType.VARIABLE
+proRataLiquid = _getUndeployedAssets().mulDivDown(sharesPendingWithdrawal,totalSupplyCached)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1652
+Call context: 
+None
+TMP_1497 = CONVERT TMP_1496 to uint128
+poolFraction(uint128) := TMP_1497(uint128)
+REF_377(Pool.QueueAccounting) -> _queueAccounting[pendingQueueIndex]
+TMP_1498(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivDown(uint256,uint256,uint256), arguments:['sharesPendingWithdrawal', 'PRINCIPAL_PRECISION', 'totalSupplyCached'] 
+EXPRESSION:poolFraction = uint128((totalSupplyCached - sharesPendingWithdrawal).mulDivDown(PRINCIPAL_PRECISION,totalSupplyCached))	NodeType.VARIABLE
+poolFraction = uint128((totalSupplyCached - sharesPendingWithdrawal).mulDivDown(PRINCIPAL_PRECISION,totalSupplyCached))	NodeType.EXPRESSION
+_queueAccounting[pendingQueueIndex] = QueueAccounting(uint128(sharesPendingWithdrawal.mulDivDown(PRINCIPAL_PRECISION,totalSupplyCached)),poolFraction)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1653
+Call context: 
+None
+TMP_1499 = CONVERT TMP_1498 to uint128
+TMP_1500(Pool.QueueAccounting) = new QueueAccounting(TMP_1499,poolFraction)
+REF_377(Pool.QueueAccounting) (->_queueAccounting) := TMP_1500(Pool.QueueAccounting)
+TMP_1501(uint256) = proRataLiquid (c)+ getAvailableToWithdraw
+INTERNAL_CALL, Pool._queueClaimAll(uint256,uint256)(TMP_1501,pendingQueueIndex)
+EXPRESSION:_queueAccounting[pendingQueueIndex] = QueueAccounting(uint128(sharesPendingWithdrawal.mulDivDown(PRINCIPAL_PRECISION,totalSupplyCached)),poolFraction)	NodeType.EXPRESSION
+_queueClaimAll(proRataLiquid + getAvailableToWithdraw,pendingQueueIndex)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1654
+Call context: 
+None
+REF_380(address) -> queue.contractAddress
+LIBRARY_CALL, dest:SafeTransferLib, function:SafeTransferLib.safeTransfer(ERC20,address,uint256), arguments:['asset', 'REF_380', 'proRataLiquid'] 
+EXPRESSION:_queueClaimAll(proRataLiquid + getAvailableToWithdraw,pendingQueueIndex)	NodeType.EXPRESSION
+asset.safeTransfer(queue.contractAddress,proRataLiquid)	NodeType.EXPRESSION";
+"BlockID: 1655
+Call context: 
+None
+REF_381(IPoolWithWithdrawalQueues.DeployedQueue) -> _deployedQueues[lastQueueIndex]
+TMP_1504(IPoolWithWithdrawalQueues.DeployedQueue) = INTERNAL_CALL, Pool._deployQueue(ERC20)(asset)
+EXPRESSION:asset.safeTransfer(queue.contractAddress,proRataLiquid)	NodeType.EXPRESSION
+_deployedQueues[lastQueueIndex] = _deployQueue(asset)	NodeType.EXPRESSION";
+"BlockID: 1656
+Call context: 
+None
+REF_381(IPoolWithWithdrawalQueues.DeployedQueue) (->_deployedQueues) := TMP_1504(IPoolWithWithdrawalQueues.DeployedQueue)
+TMP_1505(uint256) = pendingQueueIndex (c)+ totalQueues
+baseIdx(uint256) := TMP_1505(uint256)
+i(uint256) := 1(uint256)
+EXPRESSION:_deployedQueues[lastQueueIndex] = _deployQueue(asset)	NodeType.EXPRESSION
+baseIdx = pendingQueueIndex + totalQueues	NodeType.VARIABLE
+baseIdx = pendingQueueIndex + totalQueues	NodeType.EXPRESSION
+i = 1	NodeType.VARIABLE
+i = 1	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1657
+Call context: 
+None
+BEGIN_LOOP
+TMP_1506(uint256) = totalQueues (c)- 1
+TMP_1507(bool) = i < TMP_1506
+CONDITION TMP_1507
+EXPRESSION:None	NodeType.STARTLOOP
+i < totalQueues - 1	NodeType.IFLOOP";
+"BlockID: 1658
+Call context: 
+True
+TMP_1508(uint256) = baseIdx (c)- i
+TMP_1509(uint256) = TMP_1508 % totalQueues
+idx(uint256) := TMP_1509(uint256)
+REF_382(IPoolWithWithdrawalQueues.DeployedQueue) -> _deployedQueues[idx]
+REF_383(address) -> REF_382.contractAddress
+TMP_1510 = CONVERT 0 to address
+TMP_1511(bool) = REF_383 == TMP_1510
+CONDITION TMP_1511
+EXPRESSION:idx = (baseIdx - i) % totalQueues	NodeType.VARIABLE
+idx = (baseIdx - i) % totalQueues	NodeType.EXPRESSION
+_deployedQueues[idx].contractAddress == address(0)	NodeType.IF";
+"BlockID: 1659
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 1660
+Call context: 
+None
+REF_389(Pool.OutstandingValues) -> _queueOutstandingValues[pendingQueueIndex]
+REF_389(Pool.OutstandingValues) (->_queueOutstandingValues) := _outstandingValues(Pool.OutstandingValues)
+REF_390(Pool.OutstandingValues) -> _queueOutstandingValues[lastQueueIndex]
+_queueOutstandingValues = delete REF_390 
+_outstandingValues = delete _outstandingValues 
+INTERNAL_CALL, Pool._updateLoanLastIds()()
+EXPRESSION:_queueOutstandingValues[pendingQueueIndex] = _outstandingValues	NodeType.EXPRESSION
+delete _queueOutstandingValues[lastQueueIndex]	NodeType.EXPRESSION
+delete _outstandingValues	NodeType.EXPRESSION
+_updateLoanLastIds()	NodeType.EXPRESSION";
+"BlockID: 1661
+Call context: 
+None
+_pendingQueueIndex(uint256) := lastQueueIndex(uint256)
+totalSupply(uint256) = totalSupply - sharesPendingWithdrawal
+EXPRESSION:_updateLoanLastIds()	NodeType.EXPRESSION
+_pendingQueueIndex = lastQueueIndex	NodeType.EXPRESSION
+totalSupply -= sharesPendingWithdrawal	NodeType.EXPRESSION";
+"BlockID: 1662
+Call context: 
+True
+BREAK
+EXPRESSION:None	NodeType.BREAK";
+"BlockID: 1663
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1664
+Call context: 
+None
+REF_384(Pool.QueueAccounting) -> _queueAccounting[idx]
+thisQueueAccounting(Pool.QueueAccounting) := REF_384(Pool.QueueAccounting)
+REF_385(uint128) -> thisQueueAccounting.netPoolFraction
+TMP_1512(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivDown(uint256,uint256,uint256), arguments:['REF_385', 'sharesPendingWithdrawal', 'totalSupplyCached'] 
+EXPRESSION:thisQueueAccounting = _queueAccounting[idx]	NodeType.VARIABLE
+thisQueueAccounting = _queueAccounting[idx]	NodeType.EXPRESSION";
+"BlockID: 1665
+Call context: 
+None
+TMP_1513 = CONVERT TMP_1512 to uint128
+newQueueFraction(uint128) := TMP_1513(uint128)
+REF_387(Pool.QueueAccounting) -> _queueAccounting[idx]
+REF_388(uint128) -> REF_387.netPoolFraction
+REF_388(-> _queueAccounting) = REF_388 (c)- newQueueFraction
+i(uint256) = i + 1
+EXPRESSION:newQueueFraction = uint128(thisQueueAccounting.netPoolFraction.mulDivDown(sharesPendingWithdrawal,totalSupplyCached))	NodeType.VARIABLE
+newQueueFraction = uint128(thisQueueAccounting.netPoolFraction.mulDivDown(sharesPendingWithdrawal,totalSupplyCached))	NodeType.EXPRESSION
+_queueAccounting[idx].netPoolFraction -= newQueueFraction	NodeType.EXPRESSION
+++ i	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1640
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1641
+Call context: 
+None
+MODIFIER_CALL, ReentrancyGuard.nonReentrant()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1641
+Call context: 
+None
+MODIFIER_CALL, ReentrancyGuard.nonReentrant()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION" -> "BlockID: 1642
+Call context: 
+None
+pendingQueueIndex(uint256) := _pendingQueueIndex(uint256)
+REF_370(IPoolWithWithdrawalQueues.DeployedQueue) -> _deployedQueues[pendingQueueIndex]
+queue(IPoolWithWithdrawalQueues.DeployedQueue) := REF_370(IPoolWithWithdrawalQueues.DeployedQueue)
+REF_371(uint96) -> queue.deployedTime
+TMP_1484(uint256) = block.timestamp (c)- REF_371
+TMP_1485(bool) = TMP_1484 < getMinTimeBetweenWithdrawalQueues
+CONDITION TMP_1485
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION
+pendingQueueIndex = _pendingQueueIndex	NodeType.VARIABLE
+pendingQueueIndex = _pendingQueueIndex	NodeType.EXPRESSION
+queue = _deployedQueues[pendingQueueIndex]	NodeType.VARIABLE
+queue = _deployedQueues[pendingQueueIndex]	NodeType.EXPRESSION
+block.timestamp - queue.deployedTime < getMinTimeBetweenWithdrawalQueues	NodeType.IF" [key=0];
+"BlockID: 1642
+Call context: 
+None
+pendingQueueIndex(uint256) := _pendingQueueIndex(uint256)
+REF_370(IPoolWithWithdrawalQueues.DeployedQueue) -> _deployedQueues[pendingQueueIndex]
+queue(IPoolWithWithdrawalQueues.DeployedQueue) := REF_370(IPoolWithWithdrawalQueues.DeployedQueue)
+REF_371(uint96) -> queue.deployedTime
+TMP_1484(uint256) = block.timestamp (c)- REF_371
+TMP_1485(bool) = TMP_1484 < getMinTimeBetweenWithdrawalQueues
+CONDITION TMP_1485
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION
+pendingQueueIndex = _pendingQueueIndex	NodeType.VARIABLE
+pendingQueueIndex = _pendingQueueIndex	NodeType.EXPRESSION
+queue = _deployedQueues[pendingQueueIndex]	NodeType.VARIABLE
+queue = _deployedQueues[pendingQueueIndex]	NodeType.EXPRESSION
+block.timestamp - queue.deployedTime < getMinTimeBetweenWithdrawalQueues	NodeType.IF" -> "BlockID: 1643
+Call context: 
+True
+TMP_1486(None) = SOLIDITY_CALL revert TooSoonError()()
+EXPRESSION:revert TooSoonError()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1642
+Call context: 
+None
+pendingQueueIndex(uint256) := _pendingQueueIndex(uint256)
+REF_370(IPoolWithWithdrawalQueues.DeployedQueue) -> _deployedQueues[pendingQueueIndex]
+queue(IPoolWithWithdrawalQueues.DeployedQueue) := REF_370(IPoolWithWithdrawalQueues.DeployedQueue)
+REF_371(uint96) -> queue.deployedTime
+TMP_1484(uint256) = block.timestamp (c)- REF_371
+TMP_1485(bool) = TMP_1484 < getMinTimeBetweenWithdrawalQueues
+CONDITION TMP_1485
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION
+pendingQueueIndex = _pendingQueueIndex	NodeType.VARIABLE
+pendingQueueIndex = _pendingQueueIndex	NodeType.EXPRESSION
+queue = _deployedQueues[pendingQueueIndex]	NodeType.VARIABLE
+queue = _deployedQueues[pendingQueueIndex]	NodeType.EXPRESSION
+block.timestamp - queue.deployedTime < getMinTimeBetweenWithdrawalQueues	NodeType.IF" -> "BlockID: 1644
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1644
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1645
+Call context: 
+None
+REF_372(address) -> queue.contractAddress
+TMP_1487 = CONVERT REF_372 to WithdrawalQueue
+TMP_1488(uint256) = HIGH_LEVEL_CALL, dest:TMP_1487(WithdrawalQueue), function:getTotalShares, arguments:[]  
+EXPRESSION:" [key=0];
+"BlockID: 1645
+Call context: 
+None
+REF_372(address) -> queue.contractAddress
+TMP_1487 = CONVERT REF_372 to WithdrawalQueue
+TMP_1488(uint256) = HIGH_LEVEL_CALL, dest:TMP_1487(WithdrawalQueue), function:getTotalShares, arguments:[]  
+EXPRESSION:" -> "BlockID: 1646
+Call context: 
+None
+sharesPendingWithdrawal(uint256) := TMP_1488(uint256)
+TMP_1489(bool) = sharesPendingWithdrawal == 0
+CONDITION TMP_1489
+EXPRESSION:sharesPendingWithdrawal = WithdrawalQueue(queue.contractAddress).getTotalShares()	NodeType.VARIABLE
+sharesPendingWithdrawal = WithdrawalQueue(queue.contractAddress).getTotalShares()	NodeType.EXPRESSION
+sharesPendingWithdrawal == 0	NodeType.IF" [key=0];
+"BlockID: 1646
+Call context: 
+None
+sharesPendingWithdrawal(uint256) := TMP_1488(uint256)
+TMP_1489(bool) = sharesPendingWithdrawal == 0
+CONDITION TMP_1489
+EXPRESSION:sharesPendingWithdrawal = WithdrawalQueue(queue.contractAddress).getTotalShares()	NodeType.VARIABLE
+sharesPendingWithdrawal = WithdrawalQueue(queue.contractAddress).getTotalShares()	NodeType.EXPRESSION
+sharesPendingWithdrawal == 0	NodeType.IF" -> "BlockID: 1647
+Call context: 
+True
+TMP_1490(None) = SOLIDITY_CALL revert NoSharesPendingWithdrawalError()()
+EXPRESSION:revert NoSharesPendingWithdrawalError()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1646
+Call context: 
+None
+sharesPendingWithdrawal(uint256) := TMP_1488(uint256)
+TMP_1489(bool) = sharesPendingWithdrawal == 0
+CONDITION TMP_1489
+EXPRESSION:sharesPendingWithdrawal = WithdrawalQueue(queue.contractAddress).getTotalShares()	NodeType.VARIABLE
+sharesPendingWithdrawal = WithdrawalQueue(queue.contractAddress).getTotalShares()	NodeType.EXPRESSION
+sharesPendingWithdrawal == 0	NodeType.IF" -> "BlockID: 1648
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1648
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1649
+Call context: 
+None
+REF_374 -> LENGTH _deployedQueues
+totalQueues(uint256) := REF_374(uint256)
+TMP_1491(uint256) = pendingQueueIndex (c)+ 1
+TMP_1492(uint256) = TMP_1491 % totalQueues
+lastQueueIndex(uint256) := TMP_1492(uint256)
+totalSupplyCached(uint256) := totalSupply(uint256)
+TMP_1493(uint256) = INTERNAL_CALL, Pool._getUndeployedAssets()()
+EXPRESSION:totalQueues = _deployedQueues.length	NodeType.VARIABLE
+totalQueues = _deployedQueues.length	NodeType.EXPRESSION
+lastQueueIndex = (pendingQueueIndex + 1) % totalQueues	NodeType.VARIABLE
+lastQueueIndex = (pendingQueueIndex + 1) % totalQueues	NodeType.EXPRESSION
+totalSupplyCached = totalSupply	NodeType.VARIABLE
+totalSupplyCached = totalSupply	NodeType.EXPRESSION" [key=0];
+"BlockID: 1649
+Call context: 
+None
+REF_374 -> LENGTH _deployedQueues
+totalQueues(uint256) := REF_374(uint256)
+TMP_1491(uint256) = pendingQueueIndex (c)+ 1
+TMP_1492(uint256) = TMP_1491 % totalQueues
+lastQueueIndex(uint256) := TMP_1492(uint256)
+totalSupplyCached(uint256) := totalSupply(uint256)
+TMP_1493(uint256) = INTERNAL_CALL, Pool._getUndeployedAssets()()
+EXPRESSION:totalQueues = _deployedQueues.length	NodeType.VARIABLE
+totalQueues = _deployedQueues.length	NodeType.EXPRESSION
+lastQueueIndex = (pendingQueueIndex + 1) % totalQueues	NodeType.VARIABLE
+lastQueueIndex = (pendingQueueIndex + 1) % totalQueues	NodeType.EXPRESSION
+totalSupplyCached = totalSupply	NodeType.VARIABLE
+totalSupplyCached = totalSupply	NodeType.EXPRESSION" -> "BlockID: 1650
+Call context: 
+None
+TMP_1494(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivDown(uint256,uint256,uint256), arguments:['TMP_1493', 'sharesPendingWithdrawal', 'totalSupplyCached'] 
+EXPRESSION:" [key=0];
+"BlockID: 1650
+Call context: 
+None
+TMP_1494(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivDown(uint256,uint256,uint256), arguments:['TMP_1493', 'sharesPendingWithdrawal', 'totalSupplyCached'] 
+EXPRESSION:" -> "BlockID: 1651
+Call context: 
+None
+proRataLiquid(uint256) := TMP_1494(uint256)
+TMP_1495(uint256) = totalSupplyCached (c)- sharesPendingWithdrawal
+TMP_1496(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivDown(uint256,uint256,uint256), arguments:['TMP_1495', 'PRINCIPAL_PRECISION', 'totalSupplyCached'] 
+EXPRESSION:proRataLiquid = _getUndeployedAssets().mulDivDown(sharesPendingWithdrawal,totalSupplyCached)	NodeType.VARIABLE
+proRataLiquid = _getUndeployedAssets().mulDivDown(sharesPendingWithdrawal,totalSupplyCached)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1651
+Call context: 
+None
+proRataLiquid(uint256) := TMP_1494(uint256)
+TMP_1495(uint256) = totalSupplyCached (c)- sharesPendingWithdrawal
+TMP_1496(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivDown(uint256,uint256,uint256), arguments:['TMP_1495', 'PRINCIPAL_PRECISION', 'totalSupplyCached'] 
+EXPRESSION:proRataLiquid = _getUndeployedAssets().mulDivDown(sharesPendingWithdrawal,totalSupplyCached)	NodeType.VARIABLE
+proRataLiquid = _getUndeployedAssets().mulDivDown(sharesPendingWithdrawal,totalSupplyCached)	NodeType.EXPRESSION" -> "BlockID: 1652
+Call context: 
+None
+TMP_1497 = CONVERT TMP_1496 to uint128
+poolFraction(uint128) := TMP_1497(uint128)
+REF_377(Pool.QueueAccounting) -> _queueAccounting[pendingQueueIndex]
+TMP_1498(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivDown(uint256,uint256,uint256), arguments:['sharesPendingWithdrawal', 'PRINCIPAL_PRECISION', 'totalSupplyCached'] 
+EXPRESSION:poolFraction = uint128((totalSupplyCached - sharesPendingWithdrawal).mulDivDown(PRINCIPAL_PRECISION,totalSupplyCached))	NodeType.VARIABLE
+poolFraction = uint128((totalSupplyCached - sharesPendingWithdrawal).mulDivDown(PRINCIPAL_PRECISION,totalSupplyCached))	NodeType.EXPRESSION
+_queueAccounting[pendingQueueIndex] = QueueAccounting(uint128(sharesPendingWithdrawal.mulDivDown(PRINCIPAL_PRECISION,totalSupplyCached)),poolFraction)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1652
+Call context: 
+None
+TMP_1497 = CONVERT TMP_1496 to uint128
+poolFraction(uint128) := TMP_1497(uint128)
+REF_377(Pool.QueueAccounting) -> _queueAccounting[pendingQueueIndex]
+TMP_1498(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivDown(uint256,uint256,uint256), arguments:['sharesPendingWithdrawal', 'PRINCIPAL_PRECISION', 'totalSupplyCached'] 
+EXPRESSION:poolFraction = uint128((totalSupplyCached - sharesPendingWithdrawal).mulDivDown(PRINCIPAL_PRECISION,totalSupplyCached))	NodeType.VARIABLE
+poolFraction = uint128((totalSupplyCached - sharesPendingWithdrawal).mulDivDown(PRINCIPAL_PRECISION,totalSupplyCached))	NodeType.EXPRESSION
+_queueAccounting[pendingQueueIndex] = QueueAccounting(uint128(sharesPendingWithdrawal.mulDivDown(PRINCIPAL_PRECISION,totalSupplyCached)),poolFraction)	NodeType.EXPRESSION" -> "BlockID: 1653
+Call context: 
+None
+TMP_1499 = CONVERT TMP_1498 to uint128
+TMP_1500(Pool.QueueAccounting) = new QueueAccounting(TMP_1499,poolFraction)
+REF_377(Pool.QueueAccounting) (->_queueAccounting) := TMP_1500(Pool.QueueAccounting)
+TMP_1501(uint256) = proRataLiquid (c)+ getAvailableToWithdraw
+INTERNAL_CALL, Pool._queueClaimAll(uint256,uint256)(TMP_1501,pendingQueueIndex)
+EXPRESSION:_queueAccounting[pendingQueueIndex] = QueueAccounting(uint128(sharesPendingWithdrawal.mulDivDown(PRINCIPAL_PRECISION,totalSupplyCached)),poolFraction)	NodeType.EXPRESSION
+_queueClaimAll(proRataLiquid + getAvailableToWithdraw,pendingQueueIndex)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1653
+Call context: 
+None
+TMP_1499 = CONVERT TMP_1498 to uint128
+TMP_1500(Pool.QueueAccounting) = new QueueAccounting(TMP_1499,poolFraction)
+REF_377(Pool.QueueAccounting) (->_queueAccounting) := TMP_1500(Pool.QueueAccounting)
+TMP_1501(uint256) = proRataLiquid (c)+ getAvailableToWithdraw
+INTERNAL_CALL, Pool._queueClaimAll(uint256,uint256)(TMP_1501,pendingQueueIndex)
+EXPRESSION:_queueAccounting[pendingQueueIndex] = QueueAccounting(uint128(sharesPendingWithdrawal.mulDivDown(PRINCIPAL_PRECISION,totalSupplyCached)),poolFraction)	NodeType.EXPRESSION
+_queueClaimAll(proRataLiquid + getAvailableToWithdraw,pendingQueueIndex)	NodeType.EXPRESSION" -> "BlockID: 1654
+Call context: 
+None
+REF_380(address) -> queue.contractAddress
+LIBRARY_CALL, dest:SafeTransferLib, function:SafeTransferLib.safeTransfer(ERC20,address,uint256), arguments:['asset', 'REF_380', 'proRataLiquid'] 
+EXPRESSION:_queueClaimAll(proRataLiquid + getAvailableToWithdraw,pendingQueueIndex)	NodeType.EXPRESSION
+asset.safeTransfer(queue.contractAddress,proRataLiquid)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1654
+Call context: 
+None
+REF_380(address) -> queue.contractAddress
+LIBRARY_CALL, dest:SafeTransferLib, function:SafeTransferLib.safeTransfer(ERC20,address,uint256), arguments:['asset', 'REF_380', 'proRataLiquid'] 
+EXPRESSION:_queueClaimAll(proRataLiquid + getAvailableToWithdraw,pendingQueueIndex)	NodeType.EXPRESSION
+asset.safeTransfer(queue.contractAddress,proRataLiquid)	NodeType.EXPRESSION" -> "BlockID: 1655
+Call context: 
+None
+REF_381(IPoolWithWithdrawalQueues.DeployedQueue) -> _deployedQueues[lastQueueIndex]
+TMP_1504(IPoolWithWithdrawalQueues.DeployedQueue) = INTERNAL_CALL, Pool._deployQueue(ERC20)(asset)
+EXPRESSION:asset.safeTransfer(queue.contractAddress,proRataLiquid)	NodeType.EXPRESSION
+_deployedQueues[lastQueueIndex] = _deployQueue(asset)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1655
+Call context: 
+None
+REF_381(IPoolWithWithdrawalQueues.DeployedQueue) -> _deployedQueues[lastQueueIndex]
+TMP_1504(IPoolWithWithdrawalQueues.DeployedQueue) = INTERNAL_CALL, Pool._deployQueue(ERC20)(asset)
+EXPRESSION:asset.safeTransfer(queue.contractAddress,proRataLiquid)	NodeType.EXPRESSION
+_deployedQueues[lastQueueIndex] = _deployQueue(asset)	NodeType.EXPRESSION" -> "BlockID: 1656
+Call context: 
+None
+REF_381(IPoolWithWithdrawalQueues.DeployedQueue) (->_deployedQueues) := TMP_1504(IPoolWithWithdrawalQueues.DeployedQueue)
+TMP_1505(uint256) = pendingQueueIndex (c)+ totalQueues
+baseIdx(uint256) := TMP_1505(uint256)
+i(uint256) := 1(uint256)
+EXPRESSION:_deployedQueues[lastQueueIndex] = _deployQueue(asset)	NodeType.EXPRESSION
+baseIdx = pendingQueueIndex + totalQueues	NodeType.VARIABLE
+baseIdx = pendingQueueIndex + totalQueues	NodeType.EXPRESSION
+i = 1	NodeType.VARIABLE
+i = 1	NodeType.EXPRESSION" [key=0];
+"BlockID: 1656
+Call context: 
+None
+REF_381(IPoolWithWithdrawalQueues.DeployedQueue) (->_deployedQueues) := TMP_1504(IPoolWithWithdrawalQueues.DeployedQueue)
+TMP_1505(uint256) = pendingQueueIndex (c)+ totalQueues
+baseIdx(uint256) := TMP_1505(uint256)
+i(uint256) := 1(uint256)
+EXPRESSION:_deployedQueues[lastQueueIndex] = _deployQueue(asset)	NodeType.EXPRESSION
+baseIdx = pendingQueueIndex + totalQueues	NodeType.VARIABLE
+baseIdx = pendingQueueIndex + totalQueues	NodeType.EXPRESSION
+i = 1	NodeType.VARIABLE
+i = 1	NodeType.EXPRESSION" -> "BlockID: 1657
+Call context: 
+None
+BEGIN_LOOP
+TMP_1506(uint256) = totalQueues (c)- 1
+TMP_1507(bool) = i < TMP_1506
+CONDITION TMP_1507
+EXPRESSION:None	NodeType.STARTLOOP
+i < totalQueues - 1	NodeType.IFLOOP" [key=0];
+"BlockID: 1657
+Call context: 
+None
+BEGIN_LOOP
+TMP_1506(uint256) = totalQueues (c)- 1
+TMP_1507(bool) = i < TMP_1506
+CONDITION TMP_1507
+EXPRESSION:None	NodeType.STARTLOOP
+i < totalQueues - 1	NodeType.IFLOOP" -> "BlockID: 1658
+Call context: 
+True
+TMP_1508(uint256) = baseIdx (c)- i
+TMP_1509(uint256) = TMP_1508 % totalQueues
+idx(uint256) := TMP_1509(uint256)
+REF_382(IPoolWithWithdrawalQueues.DeployedQueue) -> _deployedQueues[idx]
+REF_383(address) -> REF_382.contractAddress
+TMP_1510 = CONVERT 0 to address
+TMP_1511(bool) = REF_383 == TMP_1510
+CONDITION TMP_1511
+EXPRESSION:idx = (baseIdx - i) % totalQueues	NodeType.VARIABLE
+idx = (baseIdx - i) % totalQueues	NodeType.EXPRESSION
+_deployedQueues[idx].contractAddress == address(0)	NodeType.IF" [key=0];
+"BlockID: 1657
+Call context: 
+None
+BEGIN_LOOP
+TMP_1506(uint256) = totalQueues (c)- 1
+TMP_1507(bool) = i < TMP_1506
+CONDITION TMP_1507
+EXPRESSION:None	NodeType.STARTLOOP
+i < totalQueues - 1	NodeType.IFLOOP" -> "BlockID: 1659
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 1658
+Call context: 
+True
+TMP_1508(uint256) = baseIdx (c)- i
+TMP_1509(uint256) = TMP_1508 % totalQueues
+idx(uint256) := TMP_1509(uint256)
+REF_382(IPoolWithWithdrawalQueues.DeployedQueue) -> _deployedQueues[idx]
+REF_383(address) -> REF_382.contractAddress
+TMP_1510 = CONVERT 0 to address
+TMP_1511(bool) = REF_383 == TMP_1510
+CONDITION TMP_1511
+EXPRESSION:idx = (baseIdx - i) % totalQueues	NodeType.VARIABLE
+idx = (baseIdx - i) % totalQueues	NodeType.EXPRESSION
+_deployedQueues[idx].contractAddress == address(0)	NodeType.IF" -> "BlockID: 1662
+Call context: 
+True
+BREAK
+EXPRESSION:None	NodeType.BREAK" [key=0];
+"BlockID: 1658
+Call context: 
+True
+TMP_1508(uint256) = baseIdx (c)- i
+TMP_1509(uint256) = TMP_1508 % totalQueues
+idx(uint256) := TMP_1509(uint256)
+REF_382(IPoolWithWithdrawalQueues.DeployedQueue) -> _deployedQueues[idx]
+REF_383(address) -> REF_382.contractAddress
+TMP_1510 = CONVERT 0 to address
+TMP_1511(bool) = REF_383 == TMP_1510
+CONDITION TMP_1511
+EXPRESSION:idx = (baseIdx - i) % totalQueues	NodeType.VARIABLE
+idx = (baseIdx - i) % totalQueues	NodeType.EXPRESSION
+_deployedQueues[idx].contractAddress == address(0)	NodeType.IF" -> "BlockID: 1663
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1659
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 1660
+Call context: 
+None
+REF_389(Pool.OutstandingValues) -> _queueOutstandingValues[pendingQueueIndex]
+REF_389(Pool.OutstandingValues) (->_queueOutstandingValues) := _outstandingValues(Pool.OutstandingValues)
+REF_390(Pool.OutstandingValues) -> _queueOutstandingValues[lastQueueIndex]
+_queueOutstandingValues = delete REF_390 
+_outstandingValues = delete _outstandingValues 
+INTERNAL_CALL, Pool._updateLoanLastIds()()
+EXPRESSION:_queueOutstandingValues[pendingQueueIndex] = _outstandingValues	NodeType.EXPRESSION
+delete _queueOutstandingValues[lastQueueIndex]	NodeType.EXPRESSION
+delete _outstandingValues	NodeType.EXPRESSION
+_updateLoanLastIds()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1660
+Call context: 
+None
+REF_389(Pool.OutstandingValues) -> _queueOutstandingValues[pendingQueueIndex]
+REF_389(Pool.OutstandingValues) (->_queueOutstandingValues) := _outstandingValues(Pool.OutstandingValues)
+REF_390(Pool.OutstandingValues) -> _queueOutstandingValues[lastQueueIndex]
+_queueOutstandingValues = delete REF_390 
+_outstandingValues = delete _outstandingValues 
+INTERNAL_CALL, Pool._updateLoanLastIds()()
+EXPRESSION:_queueOutstandingValues[pendingQueueIndex] = _outstandingValues	NodeType.EXPRESSION
+delete _queueOutstandingValues[lastQueueIndex]	NodeType.EXPRESSION
+delete _outstandingValues	NodeType.EXPRESSION
+_updateLoanLastIds()	NodeType.EXPRESSION" -> "BlockID: 1661
+Call context: 
+None
+_pendingQueueIndex(uint256) := lastQueueIndex(uint256)
+totalSupply(uint256) = totalSupply - sharesPendingWithdrawal
+EXPRESSION:_updateLoanLastIds()	NodeType.EXPRESSION
+_pendingQueueIndex = lastQueueIndex	NodeType.EXPRESSION
+totalSupply -= sharesPendingWithdrawal	NodeType.EXPRESSION" [key=0];
+"BlockID: 1662
+Call context: 
+True
+BREAK
+EXPRESSION:None	NodeType.BREAK" -> "BlockID: 1659
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 1663
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1664
+Call context: 
+None
+REF_384(Pool.QueueAccounting) -> _queueAccounting[idx]
+thisQueueAccounting(Pool.QueueAccounting) := REF_384(Pool.QueueAccounting)
+REF_385(uint128) -> thisQueueAccounting.netPoolFraction
+TMP_1512(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivDown(uint256,uint256,uint256), arguments:['REF_385', 'sharesPendingWithdrawal', 'totalSupplyCached'] 
+EXPRESSION:thisQueueAccounting = _queueAccounting[idx]	NodeType.VARIABLE
+thisQueueAccounting = _queueAccounting[idx]	NodeType.EXPRESSION" [key=0];
+"BlockID: 1664
+Call context: 
+None
+REF_384(Pool.QueueAccounting) -> _queueAccounting[idx]
+thisQueueAccounting(Pool.QueueAccounting) := REF_384(Pool.QueueAccounting)
+REF_385(uint128) -> thisQueueAccounting.netPoolFraction
+TMP_1512(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivDown(uint256,uint256,uint256), arguments:['REF_385', 'sharesPendingWithdrawal', 'totalSupplyCached'] 
+EXPRESSION:thisQueueAccounting = _queueAccounting[idx]	NodeType.VARIABLE
+thisQueueAccounting = _queueAccounting[idx]	NodeType.EXPRESSION" -> "BlockID: 1665
+Call context: 
+None
+TMP_1513 = CONVERT TMP_1512 to uint128
+newQueueFraction(uint128) := TMP_1513(uint128)
+REF_387(Pool.QueueAccounting) -> _queueAccounting[idx]
+REF_388(uint128) -> REF_387.netPoolFraction
+REF_388(-> _queueAccounting) = REF_388 (c)- newQueueFraction
+i(uint256) = i + 1
+EXPRESSION:newQueueFraction = uint128(thisQueueAccounting.netPoolFraction.mulDivDown(sharesPendingWithdrawal,totalSupplyCached))	NodeType.VARIABLE
+newQueueFraction = uint128(thisQueueAccounting.netPoolFraction.mulDivDown(sharesPendingWithdrawal,totalSupplyCached))	NodeType.EXPRESSION
+_queueAccounting[idx].netPoolFraction -= newQueueFraction	NodeType.EXPRESSION
+++ i	NodeType.EXPRESSION" [key=0];
+"BlockID: 1665
+Call context: 
+None
+TMP_1513 = CONVERT TMP_1512 to uint128
+newQueueFraction(uint128) := TMP_1513(uint128)
+REF_387(Pool.QueueAccounting) -> _queueAccounting[idx]
+REF_388(uint128) -> REF_387.netPoolFraction
+REF_388(-> _queueAccounting) = REF_388 (c)- newQueueFraction
+i(uint256) = i + 1
+EXPRESSION:newQueueFraction = uint128(thisQueueAccounting.netPoolFraction.mulDivDown(sharesPendingWithdrawal,totalSupplyCached))	NodeType.VARIABLE
+newQueueFraction = uint128(thisQueueAccounting.netPoolFraction.mulDivDown(sharesPendingWithdrawal,totalSupplyCached))	NodeType.EXPRESSION
+_queueAccounting[idx].netPoolFraction -= newQueueFraction	NodeType.EXPRESSION
+++ i	NodeType.EXPRESSION" -> "BlockID: 1657
+Call context: 
+None
+BEGIN_LOOP
+TMP_1506(uint256) = totalQueues (c)- 1
+TMP_1507(bool) = i < TMP_1506
+CONDITION TMP_1507
+EXPRESSION:None	NodeType.STARTLOOP
+i < totalQueues - 1	NodeType.IFLOOP" [key=0];
+}

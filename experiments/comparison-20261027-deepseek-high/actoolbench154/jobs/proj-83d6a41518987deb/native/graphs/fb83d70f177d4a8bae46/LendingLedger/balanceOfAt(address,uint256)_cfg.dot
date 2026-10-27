@@ -1,0 +1,524 @@
+digraph {
+"BlockID: 488
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 490
+Call context: 
+True
+TMP_358(uint256) = INTERNAL_CALL, VotingEscrow._findUserBlockEpoch(address,uint256)(_owner,_blockNumber)
+EXPRESSION:";
+"BlockID: 491
+Call context: 
+None
+userEpoch(uint256) := TMP_358(uint256)
+TMP_359(bool) = userEpoch == 0
+CONDITION TMP_359
+EXPRESSION:userEpoch = _findUserBlockEpoch(_owner,_blockNumber)	NodeType.VARIABLE
+userEpoch = _findUserBlockEpoch(_owner,_blockNumber)	NodeType.EXPRESSION
+userEpoch == 0	NodeType.IF" [shape=box];
+"BlockID: 492
+Call context: 
+True
+RETURN 0
+EXPRESSION:0	NodeType.RETURN";
+"BlockID: 493
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 494
+Call context: 
+None
+REF_175(VotingEscrow.Point[1000000000]) -> userPointHistory[_owner]
+REF_176(VotingEscrow.Point) -> REF_175[userEpoch]
+upoint(VotingEscrow.Point) := REF_176(VotingEscrow.Point)
+maxEpoch(uint256) := globalEpoch(uint256)
+TMP_360(uint256) = INTERNAL_CALL, VotingEscrow._findBlockEpoch(uint256,uint256)(_blockNumber,maxEpoch)
+EXPRESSION:upoint = userPointHistory[_owner][userEpoch]	NodeType.VARIABLE
+upoint = userPointHistory[_owner][userEpoch]	NodeType.EXPRESSION
+maxEpoch = globalEpoch	NodeType.VARIABLE
+maxEpoch = globalEpoch	NodeType.EXPRESSION";
+"BlockID: 495
+Call context: 
+None
+epoch(uint256) := TMP_360(uint256)
+REF_177(VotingEscrow.Point) -> pointHistory[epoch]
+point0(VotingEscrow.Point) := REF_177(VotingEscrow.Point)
+dBlock(uint256) := 0(uint256)
+dTime(uint256) := 0(uint256)
+TMP_361(bool) = epoch < maxEpoch
+CONDITION TMP_361
+EXPRESSION:epoch = _findBlockEpoch(_blockNumber,maxEpoch)	NodeType.VARIABLE
+epoch = _findBlockEpoch(_blockNumber,maxEpoch)	NodeType.EXPRESSION
+point0 = pointHistory[epoch]	NodeType.VARIABLE
+point0 = pointHistory[epoch]	NodeType.EXPRESSION
+dBlock = 0	NodeType.VARIABLE
+dBlock = 0	NodeType.EXPRESSION
+dTime = 0	NodeType.VARIABLE
+dTime = 0	NodeType.EXPRESSION
+epoch < maxEpoch	NodeType.IF" [shape=box];
+"BlockID: 496
+Call context: 
+True
+TMP_362(uint256) = epoch (c)+ 1
+REF_178(VotingEscrow.Point) -> pointHistory[TMP_362]
+point1(VotingEscrow.Point) := REF_178(VotingEscrow.Point)
+REF_179(uint256) -> point1.blk
+REF_180(uint256) -> point0.blk
+TMP_363(uint256) = REF_179 (c)- REF_180
+dBlock(uint256) := TMP_363(uint256)
+REF_181(uint256) -> point1.ts
+REF_182(uint256) -> point0.ts
+TMP_364(uint256) = REF_181 (c)- REF_182
+dTime(uint256) := TMP_364(uint256)
+EXPRESSION:point1 = pointHistory[epoch + 1]	NodeType.VARIABLE
+point1 = pointHistory[epoch + 1]	NodeType.EXPRESSION
+dBlock = point1.blk - point0.blk	NodeType.EXPRESSION
+dTime = point1.ts - point0.ts	NodeType.EXPRESSION";
+"BlockID: 497
+Call context: 
+False
+REF_183(uint256) -> point0.blk
+TMP_365(uint256) = block.number (c)- REF_183
+dBlock(uint256) := TMP_365(uint256)
+REF_184(uint256) -> point0.ts
+TMP_366(uint256) = block.timestamp (c)- REF_184
+dTime(uint256) := TMP_366(uint256)
+EXPRESSION:dBlock = block.number - point0.blk	NodeType.EXPRESSION
+dTime = block.timestamp - point0.ts	NodeType.EXPRESSION";
+"BlockID: 498
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 499
+Call context: 
+None
+REF_185(uint256) -> point0.ts
+blockTime(uint256) := REF_185(uint256)
+TMP_367(bool) = dBlock != 0
+CONDITION TMP_367
+EXPRESSION:blockTime = point0.ts	NodeType.VARIABLE
+blockTime = point0.ts	NodeType.EXPRESSION
+dBlock != 0	NodeType.IF";
+"BlockID: 500
+Call context: 
+True
+REF_186(uint256) -> point0.blk
+TMP_368(uint256) = _blockNumber (c)- REF_186
+TMP_369(uint256) = dTime (c)* TMP_368
+TMP_370(uint256) = TMP_369 (c)/ dBlock
+TMP_371(uint256) = blockTime (c)+ TMP_370
+blockTime(uint256) := TMP_371(uint256)
+EXPRESSION:blockTime = blockTime + ((dTime * (_blockNumber - point0.blk)) / dBlock)	NodeType.EXPRESSION";
+"BlockID: 501
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 502
+Call context: 
+None
+REF_187(int128) -> upoint.bias
+REF_188(int128) -> upoint.bias
+REF_189(int128) -> upoint.slope
+REF_190(uint256) -> upoint.ts
+TMP_372(uint256) = blockTime (c)- REF_190
+TMP_373 = CONVERT TMP_372 to int256
+TMP_374 = CONVERT TMP_373 to int128
+TMP_375(int128) = REF_189 (c)* TMP_374
+TMP_376(int128) = REF_188 (c)- TMP_375
+REF_187(int128) (->upoint) := TMP_376(int128)
+REF_191(int128) -> upoint.bias
+TMP_377(bool) = REF_191 >= 0
+CONDITION TMP_377
+EXPRESSION:upoint.bias = upoint.bias - (upoint.slope * int128(int256(blockTime - upoint.ts)))	NodeType.EXPRESSION
+upoint.bias >= 0	NodeType.IF";
+"BlockID: 503
+Call context: 
+True
+REF_192(int128) -> upoint.bias
+TMP_378 = CONVERT REF_192 to uint128
+TMP_379 = CONVERT TMP_378 to uint256
+RETURN TMP_379
+EXPRESSION:uint256(uint128(upoint.bias))	NodeType.RETURN";
+"BlockID: 504
+Call context: 
+False
+RETURN 0
+EXPRESSION:0	NodeType.RETURN";
+"BlockID: 505
+Call context: 
+None
+TMP_356(bool) = _blockNumber <= block.number
+CONDITION TMP_356
+EXPRESSION:TMP_356(bool) = _blockNumber <= block.number	NodeType.IF";
+"BlockID: 506
+Call context: 
+True
+TMP_357(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 507
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 488
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 505
+Call context: 
+None
+TMP_356(bool) = _blockNumber <= block.number
+CONDITION TMP_356
+EXPRESSION:TMP_356(bool) = _blockNumber <= block.number	NodeType.IF" [key=0];
+"BlockID: 490
+Call context: 
+True
+TMP_358(uint256) = INTERNAL_CALL, VotingEscrow._findUserBlockEpoch(address,uint256)(_owner,_blockNumber)
+EXPRESSION:" -> "BlockID: 491
+Call context: 
+None
+userEpoch(uint256) := TMP_358(uint256)
+TMP_359(bool) = userEpoch == 0
+CONDITION TMP_359
+EXPRESSION:userEpoch = _findUserBlockEpoch(_owner,_blockNumber)	NodeType.VARIABLE
+userEpoch = _findUserBlockEpoch(_owner,_blockNumber)	NodeType.EXPRESSION
+userEpoch == 0	NodeType.IF" [key=0];
+"BlockID: 491
+Call context: 
+None
+userEpoch(uint256) := TMP_358(uint256)
+TMP_359(bool) = userEpoch == 0
+CONDITION TMP_359
+EXPRESSION:userEpoch = _findUserBlockEpoch(_owner,_blockNumber)	NodeType.VARIABLE
+userEpoch = _findUserBlockEpoch(_owner,_blockNumber)	NodeType.EXPRESSION
+userEpoch == 0	NodeType.IF" -> "BlockID: 492
+Call context: 
+True
+RETURN 0
+EXPRESSION:0	NodeType.RETURN" [key=0];
+"BlockID: 491
+Call context: 
+None
+userEpoch(uint256) := TMP_358(uint256)
+TMP_359(bool) = userEpoch == 0
+CONDITION TMP_359
+EXPRESSION:userEpoch = _findUserBlockEpoch(_owner,_blockNumber)	NodeType.VARIABLE
+userEpoch = _findUserBlockEpoch(_owner,_blockNumber)	NodeType.EXPRESSION
+userEpoch == 0	NodeType.IF" -> "BlockID: 493
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 493
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 494
+Call context: 
+None
+REF_175(VotingEscrow.Point[1000000000]) -> userPointHistory[_owner]
+REF_176(VotingEscrow.Point) -> REF_175[userEpoch]
+upoint(VotingEscrow.Point) := REF_176(VotingEscrow.Point)
+maxEpoch(uint256) := globalEpoch(uint256)
+TMP_360(uint256) = INTERNAL_CALL, VotingEscrow._findBlockEpoch(uint256,uint256)(_blockNumber,maxEpoch)
+EXPRESSION:upoint = userPointHistory[_owner][userEpoch]	NodeType.VARIABLE
+upoint = userPointHistory[_owner][userEpoch]	NodeType.EXPRESSION
+maxEpoch = globalEpoch	NodeType.VARIABLE
+maxEpoch = globalEpoch	NodeType.EXPRESSION" [key=0];
+"BlockID: 494
+Call context: 
+None
+REF_175(VotingEscrow.Point[1000000000]) -> userPointHistory[_owner]
+REF_176(VotingEscrow.Point) -> REF_175[userEpoch]
+upoint(VotingEscrow.Point) := REF_176(VotingEscrow.Point)
+maxEpoch(uint256) := globalEpoch(uint256)
+TMP_360(uint256) = INTERNAL_CALL, VotingEscrow._findBlockEpoch(uint256,uint256)(_blockNumber,maxEpoch)
+EXPRESSION:upoint = userPointHistory[_owner][userEpoch]	NodeType.VARIABLE
+upoint = userPointHistory[_owner][userEpoch]	NodeType.EXPRESSION
+maxEpoch = globalEpoch	NodeType.VARIABLE
+maxEpoch = globalEpoch	NodeType.EXPRESSION" -> "BlockID: 495
+Call context: 
+None
+epoch(uint256) := TMP_360(uint256)
+REF_177(VotingEscrow.Point) -> pointHistory[epoch]
+point0(VotingEscrow.Point) := REF_177(VotingEscrow.Point)
+dBlock(uint256) := 0(uint256)
+dTime(uint256) := 0(uint256)
+TMP_361(bool) = epoch < maxEpoch
+CONDITION TMP_361
+EXPRESSION:epoch = _findBlockEpoch(_blockNumber,maxEpoch)	NodeType.VARIABLE
+epoch = _findBlockEpoch(_blockNumber,maxEpoch)	NodeType.EXPRESSION
+point0 = pointHistory[epoch]	NodeType.VARIABLE
+point0 = pointHistory[epoch]	NodeType.EXPRESSION
+dBlock = 0	NodeType.VARIABLE
+dBlock = 0	NodeType.EXPRESSION
+dTime = 0	NodeType.VARIABLE
+dTime = 0	NodeType.EXPRESSION
+epoch < maxEpoch	NodeType.IF" [key=0];
+"BlockID: 495
+Call context: 
+None
+epoch(uint256) := TMP_360(uint256)
+REF_177(VotingEscrow.Point) -> pointHistory[epoch]
+point0(VotingEscrow.Point) := REF_177(VotingEscrow.Point)
+dBlock(uint256) := 0(uint256)
+dTime(uint256) := 0(uint256)
+TMP_361(bool) = epoch < maxEpoch
+CONDITION TMP_361
+EXPRESSION:epoch = _findBlockEpoch(_blockNumber,maxEpoch)	NodeType.VARIABLE
+epoch = _findBlockEpoch(_blockNumber,maxEpoch)	NodeType.EXPRESSION
+point0 = pointHistory[epoch]	NodeType.VARIABLE
+point0 = pointHistory[epoch]	NodeType.EXPRESSION
+dBlock = 0	NodeType.VARIABLE
+dBlock = 0	NodeType.EXPRESSION
+dTime = 0	NodeType.VARIABLE
+dTime = 0	NodeType.EXPRESSION
+epoch < maxEpoch	NodeType.IF" -> "BlockID: 496
+Call context: 
+True
+TMP_362(uint256) = epoch (c)+ 1
+REF_178(VotingEscrow.Point) -> pointHistory[TMP_362]
+point1(VotingEscrow.Point) := REF_178(VotingEscrow.Point)
+REF_179(uint256) -> point1.blk
+REF_180(uint256) -> point0.blk
+TMP_363(uint256) = REF_179 (c)- REF_180
+dBlock(uint256) := TMP_363(uint256)
+REF_181(uint256) -> point1.ts
+REF_182(uint256) -> point0.ts
+TMP_364(uint256) = REF_181 (c)- REF_182
+dTime(uint256) := TMP_364(uint256)
+EXPRESSION:point1 = pointHistory[epoch + 1]	NodeType.VARIABLE
+point1 = pointHistory[epoch + 1]	NodeType.EXPRESSION
+dBlock = point1.blk - point0.blk	NodeType.EXPRESSION
+dTime = point1.ts - point0.ts	NodeType.EXPRESSION" [key=0];
+"BlockID: 495
+Call context: 
+None
+epoch(uint256) := TMP_360(uint256)
+REF_177(VotingEscrow.Point) -> pointHistory[epoch]
+point0(VotingEscrow.Point) := REF_177(VotingEscrow.Point)
+dBlock(uint256) := 0(uint256)
+dTime(uint256) := 0(uint256)
+TMP_361(bool) = epoch < maxEpoch
+CONDITION TMP_361
+EXPRESSION:epoch = _findBlockEpoch(_blockNumber,maxEpoch)	NodeType.VARIABLE
+epoch = _findBlockEpoch(_blockNumber,maxEpoch)	NodeType.EXPRESSION
+point0 = pointHistory[epoch]	NodeType.VARIABLE
+point0 = pointHistory[epoch]	NodeType.EXPRESSION
+dBlock = 0	NodeType.VARIABLE
+dBlock = 0	NodeType.EXPRESSION
+dTime = 0	NodeType.VARIABLE
+dTime = 0	NodeType.EXPRESSION
+epoch < maxEpoch	NodeType.IF" -> "BlockID: 497
+Call context: 
+False
+REF_183(uint256) -> point0.blk
+TMP_365(uint256) = block.number (c)- REF_183
+dBlock(uint256) := TMP_365(uint256)
+REF_184(uint256) -> point0.ts
+TMP_366(uint256) = block.timestamp (c)- REF_184
+dTime(uint256) := TMP_366(uint256)
+EXPRESSION:dBlock = block.number - point0.blk	NodeType.EXPRESSION
+dTime = block.timestamp - point0.ts	NodeType.EXPRESSION" [key=0];
+"BlockID: 496
+Call context: 
+True
+TMP_362(uint256) = epoch (c)+ 1
+REF_178(VotingEscrow.Point) -> pointHistory[TMP_362]
+point1(VotingEscrow.Point) := REF_178(VotingEscrow.Point)
+REF_179(uint256) -> point1.blk
+REF_180(uint256) -> point0.blk
+TMP_363(uint256) = REF_179 (c)- REF_180
+dBlock(uint256) := TMP_363(uint256)
+REF_181(uint256) -> point1.ts
+REF_182(uint256) -> point0.ts
+TMP_364(uint256) = REF_181 (c)- REF_182
+dTime(uint256) := TMP_364(uint256)
+EXPRESSION:point1 = pointHistory[epoch + 1]	NodeType.VARIABLE
+point1 = pointHistory[epoch + 1]	NodeType.EXPRESSION
+dBlock = point1.blk - point0.blk	NodeType.EXPRESSION
+dTime = point1.ts - point0.ts	NodeType.EXPRESSION" -> "BlockID: 498
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 497
+Call context: 
+False
+REF_183(uint256) -> point0.blk
+TMP_365(uint256) = block.number (c)- REF_183
+dBlock(uint256) := TMP_365(uint256)
+REF_184(uint256) -> point0.ts
+TMP_366(uint256) = block.timestamp (c)- REF_184
+dTime(uint256) := TMP_366(uint256)
+EXPRESSION:dBlock = block.number - point0.blk	NodeType.EXPRESSION
+dTime = block.timestamp - point0.ts	NodeType.EXPRESSION" -> "BlockID: 498
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 498
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 499
+Call context: 
+None
+REF_185(uint256) -> point0.ts
+blockTime(uint256) := REF_185(uint256)
+TMP_367(bool) = dBlock != 0
+CONDITION TMP_367
+EXPRESSION:blockTime = point0.ts	NodeType.VARIABLE
+blockTime = point0.ts	NodeType.EXPRESSION
+dBlock != 0	NodeType.IF" [key=0];
+"BlockID: 499
+Call context: 
+None
+REF_185(uint256) -> point0.ts
+blockTime(uint256) := REF_185(uint256)
+TMP_367(bool) = dBlock != 0
+CONDITION TMP_367
+EXPRESSION:blockTime = point0.ts	NodeType.VARIABLE
+blockTime = point0.ts	NodeType.EXPRESSION
+dBlock != 0	NodeType.IF" -> "BlockID: 500
+Call context: 
+True
+REF_186(uint256) -> point0.blk
+TMP_368(uint256) = _blockNumber (c)- REF_186
+TMP_369(uint256) = dTime (c)* TMP_368
+TMP_370(uint256) = TMP_369 (c)/ dBlock
+TMP_371(uint256) = blockTime (c)+ TMP_370
+blockTime(uint256) := TMP_371(uint256)
+EXPRESSION:blockTime = blockTime + ((dTime * (_blockNumber - point0.blk)) / dBlock)	NodeType.EXPRESSION" [key=0];
+"BlockID: 499
+Call context: 
+None
+REF_185(uint256) -> point0.ts
+blockTime(uint256) := REF_185(uint256)
+TMP_367(bool) = dBlock != 0
+CONDITION TMP_367
+EXPRESSION:blockTime = point0.ts	NodeType.VARIABLE
+blockTime = point0.ts	NodeType.EXPRESSION
+dBlock != 0	NodeType.IF" -> "BlockID: 501
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 500
+Call context: 
+True
+REF_186(uint256) -> point0.blk
+TMP_368(uint256) = _blockNumber (c)- REF_186
+TMP_369(uint256) = dTime (c)* TMP_368
+TMP_370(uint256) = TMP_369 (c)/ dBlock
+TMP_371(uint256) = blockTime (c)+ TMP_370
+blockTime(uint256) := TMP_371(uint256)
+EXPRESSION:blockTime = blockTime + ((dTime * (_blockNumber - point0.blk)) / dBlock)	NodeType.EXPRESSION" -> "BlockID: 501
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 501
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 502
+Call context: 
+None
+REF_187(int128) -> upoint.bias
+REF_188(int128) -> upoint.bias
+REF_189(int128) -> upoint.slope
+REF_190(uint256) -> upoint.ts
+TMP_372(uint256) = blockTime (c)- REF_190
+TMP_373 = CONVERT TMP_372 to int256
+TMP_374 = CONVERT TMP_373 to int128
+TMP_375(int128) = REF_189 (c)* TMP_374
+TMP_376(int128) = REF_188 (c)- TMP_375
+REF_187(int128) (->upoint) := TMP_376(int128)
+REF_191(int128) -> upoint.bias
+TMP_377(bool) = REF_191 >= 0
+CONDITION TMP_377
+EXPRESSION:upoint.bias = upoint.bias - (upoint.slope * int128(int256(blockTime - upoint.ts)))	NodeType.EXPRESSION
+upoint.bias >= 0	NodeType.IF" [key=0];
+"BlockID: 502
+Call context: 
+None
+REF_187(int128) -> upoint.bias
+REF_188(int128) -> upoint.bias
+REF_189(int128) -> upoint.slope
+REF_190(uint256) -> upoint.ts
+TMP_372(uint256) = blockTime (c)- REF_190
+TMP_373 = CONVERT TMP_372 to int256
+TMP_374 = CONVERT TMP_373 to int128
+TMP_375(int128) = REF_189 (c)* TMP_374
+TMP_376(int128) = REF_188 (c)- TMP_375
+REF_187(int128) (->upoint) := TMP_376(int128)
+REF_191(int128) -> upoint.bias
+TMP_377(bool) = REF_191 >= 0
+CONDITION TMP_377
+EXPRESSION:upoint.bias = upoint.bias - (upoint.slope * int128(int256(blockTime - upoint.ts)))	NodeType.EXPRESSION
+upoint.bias >= 0	NodeType.IF" -> "BlockID: 503
+Call context: 
+True
+REF_192(int128) -> upoint.bias
+TMP_378 = CONVERT REF_192 to uint128
+TMP_379 = CONVERT TMP_378 to uint256
+RETURN TMP_379
+EXPRESSION:uint256(uint128(upoint.bias))	NodeType.RETURN" [key=0];
+"BlockID: 502
+Call context: 
+None
+REF_187(int128) -> upoint.bias
+REF_188(int128) -> upoint.bias
+REF_189(int128) -> upoint.slope
+REF_190(uint256) -> upoint.ts
+TMP_372(uint256) = blockTime (c)- REF_190
+TMP_373 = CONVERT TMP_372 to int256
+TMP_374 = CONVERT TMP_373 to int128
+TMP_375(int128) = REF_189 (c)* TMP_374
+TMP_376(int128) = REF_188 (c)- TMP_375
+REF_187(int128) (->upoint) := TMP_376(int128)
+REF_191(int128) -> upoint.bias
+TMP_377(bool) = REF_191 >= 0
+CONDITION TMP_377
+EXPRESSION:upoint.bias = upoint.bias - (upoint.slope * int128(int256(blockTime - upoint.ts)))	NodeType.EXPRESSION
+upoint.bias >= 0	NodeType.IF" -> "BlockID: 504
+Call context: 
+False
+RETURN 0
+EXPRESSION:0	NodeType.RETURN" [key=0];
+"BlockID: 505
+Call context: 
+None
+TMP_356(bool) = _blockNumber <= block.number
+CONDITION TMP_356
+EXPRESSION:TMP_356(bool) = _blockNumber <= block.number	NodeType.IF" -> "BlockID: 506
+Call context: 
+True
+TMP_357(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 505
+Call context: 
+None
+TMP_356(bool) = _blockNumber <= block.number
+CONDITION TMP_356
+EXPRESSION:TMP_356(bool) = _blockNumber <= block.number	NodeType.IF" -> "BlockID: 507
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 507
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 490
+Call context: 
+True
+TMP_358(uint256) = INTERNAL_CALL, VotingEscrow._findUserBlockEpoch(address,uint256)(_owner,_blockNumber)
+EXPRESSION:" [key=0];
+}

@@ -1,0 +1,464 @@
+digraph {
+"BlockID: 2305
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 2306
+Call context: 
+None
+REF_761 -> LENGTH stack
+REF_762(uint8) -> s.maxLiens
+TMP_1634(bool) = REF_761 >= REF_762
+CONDITION TMP_1634
+EXPRESSION:stack.length >= s.maxLiens	NodeType.IF";
+"BlockID: 2307
+Call context: 
+True
+REF_763(ILienToken.InvalidStates) -> InvalidStates.MAX_LIENS
+TMP_1635(None) = SOLIDITY_CALL revert InvalidState(ILienToken.InvalidStates)(REF_763)
+EXPRESSION:revert InvalidState(ILienToken.InvalidStates)(InvalidStates.MAX_LIENS)	NodeType.EXPRESSION";
+"BlockID: 2308
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2309
+Call context: 
+None
+REF_764 -> LENGTH stack
+TMP_1637(uint256) = REF_764 (c)+ 1
+TMP_1638ILienToken.Stack[])  = new ILienToken.Stack[](TMP_1637)
+newStack(ILienToken.Stack[]) =  ['TMP_1638(ILienToken.Stack[])']
+REF_765 -> LENGTH stack
+REF_766(ILienToken.Stack) -> newStack[REF_765]
+REF_766(ILienToken.Stack) (->newStack) := newSlot(ILienToken.Stack)
+REF_767(ILienToken.Point) -> newSlot.point
+REF_768(uint40) -> REF_767.end
+TMP_1639(uint88) = INTERNAL_CALL, LienToken._getOwed(ILienToken.Stack,uint256)(newSlot,REF_768)
+EXPRESSION:newStack = new ILienToken.Stack[](stack.length + 1)	NodeType.EXPRESSION
+newStack[stack.length] = newSlot	NodeType.EXPRESSION";
+"BlockID: 2310
+Call context: 
+None
+potentialDebt(uint256) := TMP_1639(uint88)
+REF_769 -> LENGTH stack
+i(uint256) := REF_769(uint256)
+EXPRESSION:potentialDebt = _getOwed(newSlot,newSlot.point.end)	NodeType.VARIABLE
+potentialDebt = _getOwed(newSlot,newSlot.point.end)	NodeType.EXPRESSION
+i = stack.length	NodeType.VARIABLE
+i = stack.length	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2311
+Call context: 
+None
+BEGIN_LOOP
+TMP_1640(bool) = i > 0
+CONDITION TMP_1640
+EXPRESSION:None	NodeType.STARTLOOP
+i > 0	NodeType.IFLOOP";
+"BlockID: 2312
+Call context: 
+True
+TMP_1641(uint256) = i (c)- 1
+j(uint256) := TMP_1641(uint256)
+REF_770(ILienToken.Stack) -> newStack[j]
+REF_771(ILienToken.Stack) -> stack[j]
+REF_770(ILienToken.Stack) (->newStack) := REF_771(ILienToken.Stack)
+REF_772(ILienToken.Stack) -> newStack[j]
+REF_773(ILienToken.Point) -> REF_772.point
+REF_774(uint40) -> REF_773.end
+TMP_1642(bool) = block.timestamp >= REF_774
+CONDITION TMP_1642
+EXPRESSION:j = i - 1	NodeType.VARIABLE
+j = i - 1	NodeType.EXPRESSION
+newStack[j] = stack[j]	NodeType.EXPRESSION
+block.timestamp >= newStack[j].point.end	NodeType.IF";
+"BlockID: 2313
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 2314
+Call context: 
+None
+REF_785 -> LENGTH stack
+TMP_1647(bool) = REF_785 > 0
+REF_786(ILienToken.Lien) -> newSlot.lien
+REF_787(ILienToken.Details) -> REF_786.details
+REF_788(uint256) -> REF_787.maxPotentialDebt
+TMP_1648(bool) = potentialDebt > REF_788
+TMP_1649(bool) = TMP_1647 && TMP_1648
+CONDITION TMP_1649
+EXPRESSION:stack.length > 0 && potentialDebt > newSlot.lien.details.maxPotentialDebt	NodeType.IF";
+"BlockID: 2315
+Call context: 
+True
+REF_789(ILienToken.InvalidStates) -> InvalidStates.DEBT_LIMIT
+TMP_1650(None) = SOLIDITY_CALL revert InvalidState(ILienToken.InvalidStates)(REF_789)
+EXPRESSION:revert InvalidState(ILienToken.InvalidStates)(InvalidStates.DEBT_LIMIT)	NodeType.EXPRESSION";
+"BlockID: 2316
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2318
+Call context: 
+True
+REF_775(ILienToken.InvalidStates) -> InvalidStates.EXPIRED_LIEN
+TMP_1643(None) = SOLIDITY_CALL revert InvalidState(ILienToken.InvalidStates)(REF_775)
+EXPRESSION:revert InvalidState(ILienToken.InvalidStates)(InvalidStates.EXPIRED_LIEN)	NodeType.EXPRESSION";
+"BlockID: 2319
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2320
+Call context: 
+None
+REF_776(ILienToken.Stack) -> newStack[j]
+REF_777(ILienToken.Stack) -> newStack[j]
+REF_778(ILienToken.Point) -> REF_777.point
+REF_779(uint40) -> REF_778.end
+TMP_1644(uint88) = INTERNAL_CALL, LienToken._getOwed(ILienToken.Stack,uint256)(REF_776,REF_779)
+EXPRESSION:potentialDebt += _getOwed(newStack[j],newStack[j].point.end)	NodeType.EXPRESSION";
+"BlockID: 2321
+Call context: 
+None
+potentialDebt(uint256) = potentialDebt + TMP_1644
+REF_780(ILienToken.Stack) -> newStack[j]
+REF_781(ILienToken.Lien) -> REF_780.lien
+REF_782(ILienToken.Details) -> REF_781.details
+REF_783(uint256) -> REF_782.liquidationInitialAsk
+TMP_1645(bool) = potentialDebt > REF_783
+CONDITION TMP_1645
+EXPRESSION:potentialDebt += _getOwed(newStack[j],newStack[j].point.end)	NodeType.EXPRESSION
+potentialDebt > newStack[j].lien.details.liquidationInitialAsk	NodeType.IF" [shape=box];
+"BlockID: 2322
+Call context: 
+True
+REF_784(ILienToken.InvalidStates) -> InvalidStates.INITIAL_ASK_EXCEEDED
+TMP_1646(None) = SOLIDITY_CALL revert InvalidState(ILienToken.InvalidStates)(REF_784)
+EXPRESSION:revert InvalidState(ILienToken.InvalidStates)(InvalidStates.INITIAL_ASK_EXCEEDED)	NodeType.EXPRESSION";
+"BlockID: 2323
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2324
+Call context: 
+None
+i(uint256) = i - 1
+EXPRESSION:-- i	NodeType.EXPRESSION";
+"BlockID: 2305
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 2306
+Call context: 
+None
+REF_761 -> LENGTH stack
+REF_762(uint8) -> s.maxLiens
+TMP_1634(bool) = REF_761 >= REF_762
+CONDITION TMP_1634
+EXPRESSION:stack.length >= s.maxLiens	NodeType.IF" [key=0];
+"BlockID: 2306
+Call context: 
+None
+REF_761 -> LENGTH stack
+REF_762(uint8) -> s.maxLiens
+TMP_1634(bool) = REF_761 >= REF_762
+CONDITION TMP_1634
+EXPRESSION:stack.length >= s.maxLiens	NodeType.IF" -> "BlockID: 2307
+Call context: 
+True
+REF_763(ILienToken.InvalidStates) -> InvalidStates.MAX_LIENS
+TMP_1635(None) = SOLIDITY_CALL revert InvalidState(ILienToken.InvalidStates)(REF_763)
+EXPRESSION:revert InvalidState(ILienToken.InvalidStates)(InvalidStates.MAX_LIENS)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2306
+Call context: 
+None
+REF_761 -> LENGTH stack
+REF_762(uint8) -> s.maxLiens
+TMP_1634(bool) = REF_761 >= REF_762
+CONDITION TMP_1634
+EXPRESSION:stack.length >= s.maxLiens	NodeType.IF" -> "BlockID: 2308
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2308
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2309
+Call context: 
+None
+REF_764 -> LENGTH stack
+TMP_1637(uint256) = REF_764 (c)+ 1
+TMP_1638ILienToken.Stack[])  = new ILienToken.Stack[](TMP_1637)
+newStack(ILienToken.Stack[]) =  ['TMP_1638(ILienToken.Stack[])']
+REF_765 -> LENGTH stack
+REF_766(ILienToken.Stack) -> newStack[REF_765]
+REF_766(ILienToken.Stack) (->newStack) := newSlot(ILienToken.Stack)
+REF_767(ILienToken.Point) -> newSlot.point
+REF_768(uint40) -> REF_767.end
+TMP_1639(uint88) = INTERNAL_CALL, LienToken._getOwed(ILienToken.Stack,uint256)(newSlot,REF_768)
+EXPRESSION:newStack = new ILienToken.Stack[](stack.length + 1)	NodeType.EXPRESSION
+newStack[stack.length] = newSlot	NodeType.EXPRESSION" [key=0];
+"BlockID: 2309
+Call context: 
+None
+REF_764 -> LENGTH stack
+TMP_1637(uint256) = REF_764 (c)+ 1
+TMP_1638ILienToken.Stack[])  = new ILienToken.Stack[](TMP_1637)
+newStack(ILienToken.Stack[]) =  ['TMP_1638(ILienToken.Stack[])']
+REF_765 -> LENGTH stack
+REF_766(ILienToken.Stack) -> newStack[REF_765]
+REF_766(ILienToken.Stack) (->newStack) := newSlot(ILienToken.Stack)
+REF_767(ILienToken.Point) -> newSlot.point
+REF_768(uint40) -> REF_767.end
+TMP_1639(uint88) = INTERNAL_CALL, LienToken._getOwed(ILienToken.Stack,uint256)(newSlot,REF_768)
+EXPRESSION:newStack = new ILienToken.Stack[](stack.length + 1)	NodeType.EXPRESSION
+newStack[stack.length] = newSlot	NodeType.EXPRESSION" -> "BlockID: 2310
+Call context: 
+None
+potentialDebt(uint256) := TMP_1639(uint88)
+REF_769 -> LENGTH stack
+i(uint256) := REF_769(uint256)
+EXPRESSION:potentialDebt = _getOwed(newSlot,newSlot.point.end)	NodeType.VARIABLE
+potentialDebt = _getOwed(newSlot,newSlot.point.end)	NodeType.EXPRESSION
+i = stack.length	NodeType.VARIABLE
+i = stack.length	NodeType.EXPRESSION" [key=0];
+"BlockID: 2310
+Call context: 
+None
+potentialDebt(uint256) := TMP_1639(uint88)
+REF_769 -> LENGTH stack
+i(uint256) := REF_769(uint256)
+EXPRESSION:potentialDebt = _getOwed(newSlot,newSlot.point.end)	NodeType.VARIABLE
+potentialDebt = _getOwed(newSlot,newSlot.point.end)	NodeType.EXPRESSION
+i = stack.length	NodeType.VARIABLE
+i = stack.length	NodeType.EXPRESSION" -> "BlockID: 2311
+Call context: 
+None
+BEGIN_LOOP
+TMP_1640(bool) = i > 0
+CONDITION TMP_1640
+EXPRESSION:None	NodeType.STARTLOOP
+i > 0	NodeType.IFLOOP" [key=0];
+"BlockID: 2311
+Call context: 
+None
+BEGIN_LOOP
+TMP_1640(bool) = i > 0
+CONDITION TMP_1640
+EXPRESSION:None	NodeType.STARTLOOP
+i > 0	NodeType.IFLOOP" -> "BlockID: 2312
+Call context: 
+True
+TMP_1641(uint256) = i (c)- 1
+j(uint256) := TMP_1641(uint256)
+REF_770(ILienToken.Stack) -> newStack[j]
+REF_771(ILienToken.Stack) -> stack[j]
+REF_770(ILienToken.Stack) (->newStack) := REF_771(ILienToken.Stack)
+REF_772(ILienToken.Stack) -> newStack[j]
+REF_773(ILienToken.Point) -> REF_772.point
+REF_774(uint40) -> REF_773.end
+TMP_1642(bool) = block.timestamp >= REF_774
+CONDITION TMP_1642
+EXPRESSION:j = i - 1	NodeType.VARIABLE
+j = i - 1	NodeType.EXPRESSION
+newStack[j] = stack[j]	NodeType.EXPRESSION
+block.timestamp >= newStack[j].point.end	NodeType.IF" [key=0];
+"BlockID: 2311
+Call context: 
+None
+BEGIN_LOOP
+TMP_1640(bool) = i > 0
+CONDITION TMP_1640
+EXPRESSION:None	NodeType.STARTLOOP
+i > 0	NodeType.IFLOOP" -> "BlockID: 2313
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 2312
+Call context: 
+True
+TMP_1641(uint256) = i (c)- 1
+j(uint256) := TMP_1641(uint256)
+REF_770(ILienToken.Stack) -> newStack[j]
+REF_771(ILienToken.Stack) -> stack[j]
+REF_770(ILienToken.Stack) (->newStack) := REF_771(ILienToken.Stack)
+REF_772(ILienToken.Stack) -> newStack[j]
+REF_773(ILienToken.Point) -> REF_772.point
+REF_774(uint40) -> REF_773.end
+TMP_1642(bool) = block.timestamp >= REF_774
+CONDITION TMP_1642
+EXPRESSION:j = i - 1	NodeType.VARIABLE
+j = i - 1	NodeType.EXPRESSION
+newStack[j] = stack[j]	NodeType.EXPRESSION
+block.timestamp >= newStack[j].point.end	NodeType.IF" -> "BlockID: 2318
+Call context: 
+True
+REF_775(ILienToken.InvalidStates) -> InvalidStates.EXPIRED_LIEN
+TMP_1643(None) = SOLIDITY_CALL revert InvalidState(ILienToken.InvalidStates)(REF_775)
+EXPRESSION:revert InvalidState(ILienToken.InvalidStates)(InvalidStates.EXPIRED_LIEN)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2312
+Call context: 
+True
+TMP_1641(uint256) = i (c)- 1
+j(uint256) := TMP_1641(uint256)
+REF_770(ILienToken.Stack) -> newStack[j]
+REF_771(ILienToken.Stack) -> stack[j]
+REF_770(ILienToken.Stack) (->newStack) := REF_771(ILienToken.Stack)
+REF_772(ILienToken.Stack) -> newStack[j]
+REF_773(ILienToken.Point) -> REF_772.point
+REF_774(uint40) -> REF_773.end
+TMP_1642(bool) = block.timestamp >= REF_774
+CONDITION TMP_1642
+EXPRESSION:j = i - 1	NodeType.VARIABLE
+j = i - 1	NodeType.EXPRESSION
+newStack[j] = stack[j]	NodeType.EXPRESSION
+block.timestamp >= newStack[j].point.end	NodeType.IF" -> "BlockID: 2319
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2313
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 2314
+Call context: 
+None
+REF_785 -> LENGTH stack
+TMP_1647(bool) = REF_785 > 0
+REF_786(ILienToken.Lien) -> newSlot.lien
+REF_787(ILienToken.Details) -> REF_786.details
+REF_788(uint256) -> REF_787.maxPotentialDebt
+TMP_1648(bool) = potentialDebt > REF_788
+TMP_1649(bool) = TMP_1647 && TMP_1648
+CONDITION TMP_1649
+EXPRESSION:stack.length > 0 && potentialDebt > newSlot.lien.details.maxPotentialDebt	NodeType.IF" [key=0];
+"BlockID: 2314
+Call context: 
+None
+REF_785 -> LENGTH stack
+TMP_1647(bool) = REF_785 > 0
+REF_786(ILienToken.Lien) -> newSlot.lien
+REF_787(ILienToken.Details) -> REF_786.details
+REF_788(uint256) -> REF_787.maxPotentialDebt
+TMP_1648(bool) = potentialDebt > REF_788
+TMP_1649(bool) = TMP_1647 && TMP_1648
+CONDITION TMP_1649
+EXPRESSION:stack.length > 0 && potentialDebt > newSlot.lien.details.maxPotentialDebt	NodeType.IF" -> "BlockID: 2315
+Call context: 
+True
+REF_789(ILienToken.InvalidStates) -> InvalidStates.DEBT_LIMIT
+TMP_1650(None) = SOLIDITY_CALL revert InvalidState(ILienToken.InvalidStates)(REF_789)
+EXPRESSION:revert InvalidState(ILienToken.InvalidStates)(InvalidStates.DEBT_LIMIT)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2314
+Call context: 
+None
+REF_785 -> LENGTH stack
+TMP_1647(bool) = REF_785 > 0
+REF_786(ILienToken.Lien) -> newSlot.lien
+REF_787(ILienToken.Details) -> REF_786.details
+REF_788(uint256) -> REF_787.maxPotentialDebt
+TMP_1648(bool) = potentialDebt > REF_788
+TMP_1649(bool) = TMP_1647 && TMP_1648
+CONDITION TMP_1649
+EXPRESSION:stack.length > 0 && potentialDebt > newSlot.lien.details.maxPotentialDebt	NodeType.IF" -> "BlockID: 2316
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2319
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2320
+Call context: 
+None
+REF_776(ILienToken.Stack) -> newStack[j]
+REF_777(ILienToken.Stack) -> newStack[j]
+REF_778(ILienToken.Point) -> REF_777.point
+REF_779(uint40) -> REF_778.end
+TMP_1644(uint88) = INTERNAL_CALL, LienToken._getOwed(ILienToken.Stack,uint256)(REF_776,REF_779)
+EXPRESSION:potentialDebt += _getOwed(newStack[j],newStack[j].point.end)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2320
+Call context: 
+None
+REF_776(ILienToken.Stack) -> newStack[j]
+REF_777(ILienToken.Stack) -> newStack[j]
+REF_778(ILienToken.Point) -> REF_777.point
+REF_779(uint40) -> REF_778.end
+TMP_1644(uint88) = INTERNAL_CALL, LienToken._getOwed(ILienToken.Stack,uint256)(REF_776,REF_779)
+EXPRESSION:potentialDebt += _getOwed(newStack[j],newStack[j].point.end)	NodeType.EXPRESSION" -> "BlockID: 2321
+Call context: 
+None
+potentialDebt(uint256) = potentialDebt + TMP_1644
+REF_780(ILienToken.Stack) -> newStack[j]
+REF_781(ILienToken.Lien) -> REF_780.lien
+REF_782(ILienToken.Details) -> REF_781.details
+REF_783(uint256) -> REF_782.liquidationInitialAsk
+TMP_1645(bool) = potentialDebt > REF_783
+CONDITION TMP_1645
+EXPRESSION:potentialDebt += _getOwed(newStack[j],newStack[j].point.end)	NodeType.EXPRESSION
+potentialDebt > newStack[j].lien.details.liquidationInitialAsk	NodeType.IF" [key=0];
+"BlockID: 2321
+Call context: 
+None
+potentialDebt(uint256) = potentialDebt + TMP_1644
+REF_780(ILienToken.Stack) -> newStack[j]
+REF_781(ILienToken.Lien) -> REF_780.lien
+REF_782(ILienToken.Details) -> REF_781.details
+REF_783(uint256) -> REF_782.liquidationInitialAsk
+TMP_1645(bool) = potentialDebt > REF_783
+CONDITION TMP_1645
+EXPRESSION:potentialDebt += _getOwed(newStack[j],newStack[j].point.end)	NodeType.EXPRESSION
+potentialDebt > newStack[j].lien.details.liquidationInitialAsk	NodeType.IF" -> "BlockID: 2322
+Call context: 
+True
+REF_784(ILienToken.InvalidStates) -> InvalidStates.INITIAL_ASK_EXCEEDED
+TMP_1646(None) = SOLIDITY_CALL revert InvalidState(ILienToken.InvalidStates)(REF_784)
+EXPRESSION:revert InvalidState(ILienToken.InvalidStates)(InvalidStates.INITIAL_ASK_EXCEEDED)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2321
+Call context: 
+None
+potentialDebt(uint256) = potentialDebt + TMP_1644
+REF_780(ILienToken.Stack) -> newStack[j]
+REF_781(ILienToken.Lien) -> REF_780.lien
+REF_782(ILienToken.Details) -> REF_781.details
+REF_783(uint256) -> REF_782.liquidationInitialAsk
+TMP_1645(bool) = potentialDebt > REF_783
+CONDITION TMP_1645
+EXPRESSION:potentialDebt += _getOwed(newStack[j],newStack[j].point.end)	NodeType.EXPRESSION
+potentialDebt > newStack[j].lien.details.liquidationInitialAsk	NodeType.IF" -> "BlockID: 2323
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2323
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2324
+Call context: 
+None
+i(uint256) = i - 1
+EXPRESSION:-- i	NodeType.EXPRESSION" [key=0];
+"BlockID: 2324
+Call context: 
+None
+i(uint256) = i - 1
+EXPRESSION:-- i	NodeType.EXPRESSION" -> "BlockID: 2311
+Call context: 
+None
+BEGIN_LOOP
+TMP_1640(bool) = i > 0
+CONDITION TMP_1640
+EXPRESSION:None	NodeType.STARTLOOP
+i > 0	NodeType.IFLOOP" [key=0];
+}

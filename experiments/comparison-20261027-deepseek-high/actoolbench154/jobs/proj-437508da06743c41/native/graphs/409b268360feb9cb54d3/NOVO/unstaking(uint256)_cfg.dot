@@ -1,0 +1,730 @@
+digraph {
+"BlockID: 2425
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 2426
+Call context: 
+None
+TMP_870(address) = INTERNAL_CALL, ERC721Upgradeable.ownerOf(uint256)(_tokenId)
+EXPRESSION:require(bool,string)(ownerOf(_tokenId) == msg.sender,Invalid Token Owner)	NodeType.EXPRESSION";
+"BlockID: 2430
+Call context: 
+True
+TMP_881(uint256) = INTERNAL_CALL, NovoNFT.getLockedAmountByTokenId(uint256)(_tokenId)
+EXPRESSION:";
+"BlockID: 2431
+Call context: 
+None
+lockedAmount(uint256) := TMP_881(uint256)
+totalBagSize(uint256) = totalBagSize (c)- lockedAmount
+REF_226(NovoNFT.Stake) -> mapStakers[_tokenId]
+REF_227(uint80) -> REF_226.stakingTimestamp
+TMP_882(uint80) = REF_227 (c)- baseTimestamp
+totalDiffTimestamp(uint256) = totalDiffTimestamp (c)- TMP_882
+REF_228(NovoNFT.Stake) -> mapStakers[_tokenId]
+REF_229(uint256) -> REF_228.principalBalance
+REF_229(uint256) (->mapStakers) := 0(uint256)
+REF_230(NovoNFT.Stake) -> mapStakers[_tokenId]
+REF_231(uint256) -> REF_230.bagSizeReward
+REF_231(uint256) (->mapStakers) := 0(uint256)
+REF_232(NovoNFT.Stake) -> mapStakers[_tokenId]
+REF_233(uint256) -> REF_232.stakingTimeReward
+REF_233(uint256) (->mapStakers) := 0(uint256)
+REF_234(NovoNFT.Stake) -> mapStakers[_tokenId]
+mapStakers = delete REF_234 
+REF_235(uint256) -> mapLockStatus[_tokenId]
+TMP_883(bool) = REF_235 != DESTROYED
+CONDITION TMP_883
+EXPRESSION:lockedAmount = getLockedAmountByTokenId(_tokenId)	NodeType.VARIABLE
+lockedAmount = getLockedAmountByTokenId(_tokenId)	NodeType.EXPRESSION
+totalBagSize -= lockedAmount	NodeType.EXPRESSION
+totalDiffTimestamp -= (mapStakers[_tokenId].stakingTimestamp - baseTimestamp)	NodeType.EXPRESSION
+mapStakers[_tokenId].principalBalance = 0	NodeType.EXPRESSION
+mapStakers[_tokenId].bagSizeReward = 0	NodeType.EXPRESSION
+mapStakers[_tokenId].stakingTimeReward = 0	NodeType.EXPRESSION
+delete mapStakers[_tokenId]	NodeType.EXPRESSION
+mapLockStatus[_tokenId] != DESTROYED	NodeType.IF" [shape=box];
+"BlockID: 2432
+Call context: 
+True
+REF_236 -> LENGTH stakingNFTs
+TMP_884(uint256) = REF_236 (c)- 1
+REF_237(uint256) -> stakingNFTs[TMP_884]
+lastTokenId(uint256) := REF_237(uint256)
+REF_238(uint256) -> mapLockStatus[_tokenId]
+REF_239(uint256) -> stakingNFTs[REF_238]
+REF_239(uint256) (->stakingNFTs) := lastTokenId(uint256)
+REF_241 -> LENGTH stakingNFTs
+TMP_886(uint256) = REF_241 (c)- 1
+REF_242(uint256) -> stakingNFTs[TMP_886]
+stakingNFTs = delete REF_242 
+REF_243 -> LENGTH stakingNFTs
+REF_243(uint256) (->stakingNFTs) := TMP_886(uint256)
+REF_244(uint256) -> mapLockStatus[lastTokenId]
+REF_245(uint256) -> mapLockStatus[_tokenId]
+REF_244(uint256) (->mapLockStatus) := REF_245(uint256)
+REF_246(uint256) -> mapLockStatus[_tokenId]
+REF_246(uint256) (->mapLockStatus) := DESTROYED(uint256)
+INTERNAL_CALL, ERC721Upgradeable._burn(uint256)(_tokenId)
+EXPRESSION:lastTokenId = stakingNFTs[stakingNFTs.length - 1]	NodeType.VARIABLE
+lastTokenId = stakingNFTs[stakingNFTs.length - 1]	NodeType.EXPRESSION
+stakingNFTs[mapLockStatus[_tokenId]] = lastTokenId	NodeType.EXPRESSION
+stakingNFTs.pop()	NodeType.EXPRESSION
+mapLockStatus[lastTokenId] = mapLockStatus[_tokenId]	NodeType.EXPRESSION
+mapLockStatus[_tokenId] = DESTROYED	NodeType.EXPRESSION
+_burn(_tokenId)	NodeType.EXPRESSION";
+"BlockID: 2433
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2434
+Call context: 
+None
+TMP_888(bool) = diffTime < maxLockDays
+CONDITION TMP_888
+EXPRESSION:diffTime < maxLockDays	NodeType.IF";
+"BlockID: 2435
+Call context: 
+True
+feeAmount(uint256) := 0(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:feeAmount = 0	NodeType.VARIABLE
+feeAmount = 0	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION";
+"BlockID: 2436
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2438
+Call context: 
+None
+BEGIN_LOOP
+REF_247 -> LENGTH lockDays
+TMP_889(bool) = i < REF_247
+CONDITION TMP_889
+EXPRESSION:None	NodeType.STARTLOOP
+i < lockDays.length	NodeType.IFLOOP";
+"BlockID: 2439
+Call context: 
+True
+TMP_890(uint32) = maxLockDays (c)- diffTime
+REF_248(uint80) -> lockDays[i]
+TMP_891(bool) = TMP_890 < REF_248
+CONDITION TMP_891
+EXPRESSION:(maxLockDays - diffTime) < lockDays[i]	NodeType.IF";
+"BlockID: 2440
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 2442
+Call context: 
+True
+REF_249(uint8) -> feesByLockDays[i]
+TMP_892(uint256) = lockedAmount (c)* REF_249
+TMP_893(uint256) = TMP_892 (c)/ 1000
+feeAmount(uint256) := TMP_893(uint256)
+TMP_894(bool) = feeAmount > 0
+CONDITION TMP_894
+EXPRESSION:feeAmount = (lockedAmount * feesByLockDays[i]) / 1000	NodeType.EXPRESSION
+feeAmount > 0	NodeType.IF";
+"BlockID: 2443
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2444
+Call context: 
+None
+TMP_897(uint256) := i(uint256)
+i(uint256) = i (c)+ 1
+EXPRESSION:i ++	NodeType.EXPRESSION";
+"BlockID: 2445
+Call context: 
+True
+TMP_895 = CONVERT this to address
+TMP_896(bool) = HIGH_LEVEL_CALL, dest:novo(INOVO), function:transferFrom, arguments:['msg.sender', 'TMP_895', 'feeAmount']  
+EXPRESSION:novo.transferFrom(msg.sender,address(this),feeAmount)	NodeType.EXPRESSION";
+"BlockID: 2447
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2448
+Call context: 
+None
+BREAK
+EXPRESSION:None	NodeType.BREAK";
+"BlockID: 2450
+Call context: 
+None
+TMP_871(bool) = TMP_870 == msg.sender
+CONDITION TMP_871
+EXPRESSION:TMP_871(bool) = TMP_870 == msg.sender	NodeType.IF";
+"BlockID: 2451
+Call context: 
+True
+TMP_872(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 2452
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2453
+Call context: 
+None
+REF_220(NovoNFT.Stake) -> mapStakers[_tokenId]
+REF_221(uint256) -> REF_220.principalBalance
+TMP_873(bool) = REF_221 > 0
+CONDITION TMP_873
+EXPRESSION:TMP_873(bool) = REF_221 > 0	NodeType.IF";
+"BlockID: 2454
+Call context: 
+True
+TMP_874(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 2455
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2456
+Call context: 
+None
+TMP_875 = CONVERT block.timestamp to uint80
+REF_222(NovoNFT.Stake) -> mapStakers[_tokenId]
+REF_223(uint80) -> REF_222.stakingTimestamp
+TMP_876(uint80) = TMP_875 (c)- REF_223
+diffTime(uint80) := TMP_876(uint80)
+REF_224 -> LENGTH lockDays
+TMP_877(uint256) = REF_224 (c)- 1
+REF_225(uint80) -> lockDays[TMP_877]
+TMP_878(uint32) = maxLockDays (c)- REF_225
+TMP_879(bool) = diffTime >= TMP_878
+CONDITION TMP_879
+EXPRESSION:TMP_879(bool) = diffTime >= TMP_878	NodeType.IF";
+"BlockID: 2457
+Call context: 
+True
+TMP_880(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 2458
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2425
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 2426
+Call context: 
+None
+TMP_870(address) = INTERNAL_CALL, ERC721Upgradeable.ownerOf(uint256)(_tokenId)
+EXPRESSION:require(bool,string)(ownerOf(_tokenId) == msg.sender,Invalid Token Owner)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2426
+Call context: 
+None
+TMP_870(address) = INTERNAL_CALL, ERC721Upgradeable.ownerOf(uint256)(_tokenId)
+EXPRESSION:require(bool,string)(ownerOf(_tokenId) == msg.sender,Invalid Token Owner)	NodeType.EXPRESSION" -> "BlockID: 2450
+Call context: 
+None
+TMP_871(bool) = TMP_870 == msg.sender
+CONDITION TMP_871
+EXPRESSION:TMP_871(bool) = TMP_870 == msg.sender	NodeType.IF" [key=0];
+"BlockID: 2430
+Call context: 
+True
+TMP_881(uint256) = INTERNAL_CALL, NovoNFT.getLockedAmountByTokenId(uint256)(_tokenId)
+EXPRESSION:" -> "BlockID: 2431
+Call context: 
+None
+lockedAmount(uint256) := TMP_881(uint256)
+totalBagSize(uint256) = totalBagSize (c)- lockedAmount
+REF_226(NovoNFT.Stake) -> mapStakers[_tokenId]
+REF_227(uint80) -> REF_226.stakingTimestamp
+TMP_882(uint80) = REF_227 (c)- baseTimestamp
+totalDiffTimestamp(uint256) = totalDiffTimestamp (c)- TMP_882
+REF_228(NovoNFT.Stake) -> mapStakers[_tokenId]
+REF_229(uint256) -> REF_228.principalBalance
+REF_229(uint256) (->mapStakers) := 0(uint256)
+REF_230(NovoNFT.Stake) -> mapStakers[_tokenId]
+REF_231(uint256) -> REF_230.bagSizeReward
+REF_231(uint256) (->mapStakers) := 0(uint256)
+REF_232(NovoNFT.Stake) -> mapStakers[_tokenId]
+REF_233(uint256) -> REF_232.stakingTimeReward
+REF_233(uint256) (->mapStakers) := 0(uint256)
+REF_234(NovoNFT.Stake) -> mapStakers[_tokenId]
+mapStakers = delete REF_234 
+REF_235(uint256) -> mapLockStatus[_tokenId]
+TMP_883(bool) = REF_235 != DESTROYED
+CONDITION TMP_883
+EXPRESSION:lockedAmount = getLockedAmountByTokenId(_tokenId)	NodeType.VARIABLE
+lockedAmount = getLockedAmountByTokenId(_tokenId)	NodeType.EXPRESSION
+totalBagSize -= lockedAmount	NodeType.EXPRESSION
+totalDiffTimestamp -= (mapStakers[_tokenId].stakingTimestamp - baseTimestamp)	NodeType.EXPRESSION
+mapStakers[_tokenId].principalBalance = 0	NodeType.EXPRESSION
+mapStakers[_tokenId].bagSizeReward = 0	NodeType.EXPRESSION
+mapStakers[_tokenId].stakingTimeReward = 0	NodeType.EXPRESSION
+delete mapStakers[_tokenId]	NodeType.EXPRESSION
+mapLockStatus[_tokenId] != DESTROYED	NodeType.IF" [key=0];
+"BlockID: 2431
+Call context: 
+None
+lockedAmount(uint256) := TMP_881(uint256)
+totalBagSize(uint256) = totalBagSize (c)- lockedAmount
+REF_226(NovoNFT.Stake) -> mapStakers[_tokenId]
+REF_227(uint80) -> REF_226.stakingTimestamp
+TMP_882(uint80) = REF_227 (c)- baseTimestamp
+totalDiffTimestamp(uint256) = totalDiffTimestamp (c)- TMP_882
+REF_228(NovoNFT.Stake) -> mapStakers[_tokenId]
+REF_229(uint256) -> REF_228.principalBalance
+REF_229(uint256) (->mapStakers) := 0(uint256)
+REF_230(NovoNFT.Stake) -> mapStakers[_tokenId]
+REF_231(uint256) -> REF_230.bagSizeReward
+REF_231(uint256) (->mapStakers) := 0(uint256)
+REF_232(NovoNFT.Stake) -> mapStakers[_tokenId]
+REF_233(uint256) -> REF_232.stakingTimeReward
+REF_233(uint256) (->mapStakers) := 0(uint256)
+REF_234(NovoNFT.Stake) -> mapStakers[_tokenId]
+mapStakers = delete REF_234 
+REF_235(uint256) -> mapLockStatus[_tokenId]
+TMP_883(bool) = REF_235 != DESTROYED
+CONDITION TMP_883
+EXPRESSION:lockedAmount = getLockedAmountByTokenId(_tokenId)	NodeType.VARIABLE
+lockedAmount = getLockedAmountByTokenId(_tokenId)	NodeType.EXPRESSION
+totalBagSize -= lockedAmount	NodeType.EXPRESSION
+totalDiffTimestamp -= (mapStakers[_tokenId].stakingTimestamp - baseTimestamp)	NodeType.EXPRESSION
+mapStakers[_tokenId].principalBalance = 0	NodeType.EXPRESSION
+mapStakers[_tokenId].bagSizeReward = 0	NodeType.EXPRESSION
+mapStakers[_tokenId].stakingTimeReward = 0	NodeType.EXPRESSION
+delete mapStakers[_tokenId]	NodeType.EXPRESSION
+mapLockStatus[_tokenId] != DESTROYED	NodeType.IF" -> "BlockID: 2432
+Call context: 
+True
+REF_236 -> LENGTH stakingNFTs
+TMP_884(uint256) = REF_236 (c)- 1
+REF_237(uint256) -> stakingNFTs[TMP_884]
+lastTokenId(uint256) := REF_237(uint256)
+REF_238(uint256) -> mapLockStatus[_tokenId]
+REF_239(uint256) -> stakingNFTs[REF_238]
+REF_239(uint256) (->stakingNFTs) := lastTokenId(uint256)
+REF_241 -> LENGTH stakingNFTs
+TMP_886(uint256) = REF_241 (c)- 1
+REF_242(uint256) -> stakingNFTs[TMP_886]
+stakingNFTs = delete REF_242 
+REF_243 -> LENGTH stakingNFTs
+REF_243(uint256) (->stakingNFTs) := TMP_886(uint256)
+REF_244(uint256) -> mapLockStatus[lastTokenId]
+REF_245(uint256) -> mapLockStatus[_tokenId]
+REF_244(uint256) (->mapLockStatus) := REF_245(uint256)
+REF_246(uint256) -> mapLockStatus[_tokenId]
+REF_246(uint256) (->mapLockStatus) := DESTROYED(uint256)
+INTERNAL_CALL, ERC721Upgradeable._burn(uint256)(_tokenId)
+EXPRESSION:lastTokenId = stakingNFTs[stakingNFTs.length - 1]	NodeType.VARIABLE
+lastTokenId = stakingNFTs[stakingNFTs.length - 1]	NodeType.EXPRESSION
+stakingNFTs[mapLockStatus[_tokenId]] = lastTokenId	NodeType.EXPRESSION
+stakingNFTs.pop()	NodeType.EXPRESSION
+mapLockStatus[lastTokenId] = mapLockStatus[_tokenId]	NodeType.EXPRESSION
+mapLockStatus[_tokenId] = DESTROYED	NodeType.EXPRESSION
+_burn(_tokenId)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2431
+Call context: 
+None
+lockedAmount(uint256) := TMP_881(uint256)
+totalBagSize(uint256) = totalBagSize (c)- lockedAmount
+REF_226(NovoNFT.Stake) -> mapStakers[_tokenId]
+REF_227(uint80) -> REF_226.stakingTimestamp
+TMP_882(uint80) = REF_227 (c)- baseTimestamp
+totalDiffTimestamp(uint256) = totalDiffTimestamp (c)- TMP_882
+REF_228(NovoNFT.Stake) -> mapStakers[_tokenId]
+REF_229(uint256) -> REF_228.principalBalance
+REF_229(uint256) (->mapStakers) := 0(uint256)
+REF_230(NovoNFT.Stake) -> mapStakers[_tokenId]
+REF_231(uint256) -> REF_230.bagSizeReward
+REF_231(uint256) (->mapStakers) := 0(uint256)
+REF_232(NovoNFT.Stake) -> mapStakers[_tokenId]
+REF_233(uint256) -> REF_232.stakingTimeReward
+REF_233(uint256) (->mapStakers) := 0(uint256)
+REF_234(NovoNFT.Stake) -> mapStakers[_tokenId]
+mapStakers = delete REF_234 
+REF_235(uint256) -> mapLockStatus[_tokenId]
+TMP_883(bool) = REF_235 != DESTROYED
+CONDITION TMP_883
+EXPRESSION:lockedAmount = getLockedAmountByTokenId(_tokenId)	NodeType.VARIABLE
+lockedAmount = getLockedAmountByTokenId(_tokenId)	NodeType.EXPRESSION
+totalBagSize -= lockedAmount	NodeType.EXPRESSION
+totalDiffTimestamp -= (mapStakers[_tokenId].stakingTimestamp - baseTimestamp)	NodeType.EXPRESSION
+mapStakers[_tokenId].principalBalance = 0	NodeType.EXPRESSION
+mapStakers[_tokenId].bagSizeReward = 0	NodeType.EXPRESSION
+mapStakers[_tokenId].stakingTimeReward = 0	NodeType.EXPRESSION
+delete mapStakers[_tokenId]	NodeType.EXPRESSION
+mapLockStatus[_tokenId] != DESTROYED	NodeType.IF" -> "BlockID: 2433
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2432
+Call context: 
+True
+REF_236 -> LENGTH stakingNFTs
+TMP_884(uint256) = REF_236 (c)- 1
+REF_237(uint256) -> stakingNFTs[TMP_884]
+lastTokenId(uint256) := REF_237(uint256)
+REF_238(uint256) -> mapLockStatus[_tokenId]
+REF_239(uint256) -> stakingNFTs[REF_238]
+REF_239(uint256) (->stakingNFTs) := lastTokenId(uint256)
+REF_241 -> LENGTH stakingNFTs
+TMP_886(uint256) = REF_241 (c)- 1
+REF_242(uint256) -> stakingNFTs[TMP_886]
+stakingNFTs = delete REF_242 
+REF_243 -> LENGTH stakingNFTs
+REF_243(uint256) (->stakingNFTs) := TMP_886(uint256)
+REF_244(uint256) -> mapLockStatus[lastTokenId]
+REF_245(uint256) -> mapLockStatus[_tokenId]
+REF_244(uint256) (->mapLockStatus) := REF_245(uint256)
+REF_246(uint256) -> mapLockStatus[_tokenId]
+REF_246(uint256) (->mapLockStatus) := DESTROYED(uint256)
+INTERNAL_CALL, ERC721Upgradeable._burn(uint256)(_tokenId)
+EXPRESSION:lastTokenId = stakingNFTs[stakingNFTs.length - 1]	NodeType.VARIABLE
+lastTokenId = stakingNFTs[stakingNFTs.length - 1]	NodeType.EXPRESSION
+stakingNFTs[mapLockStatus[_tokenId]] = lastTokenId	NodeType.EXPRESSION
+stakingNFTs.pop()	NodeType.EXPRESSION
+mapLockStatus[lastTokenId] = mapLockStatus[_tokenId]	NodeType.EXPRESSION
+mapLockStatus[_tokenId] = DESTROYED	NodeType.EXPRESSION
+_burn(_tokenId)	NodeType.EXPRESSION" -> "BlockID: 2433
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2433
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2434
+Call context: 
+None
+TMP_888(bool) = diffTime < maxLockDays
+CONDITION TMP_888
+EXPRESSION:diffTime < maxLockDays	NodeType.IF" [key=0];
+"BlockID: 2434
+Call context: 
+None
+TMP_888(bool) = diffTime < maxLockDays
+CONDITION TMP_888
+EXPRESSION:diffTime < maxLockDays	NodeType.IF" -> "BlockID: 2435
+Call context: 
+True
+feeAmount(uint256) := 0(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:feeAmount = 0	NodeType.VARIABLE
+feeAmount = 0	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 2434
+Call context: 
+None
+TMP_888(bool) = diffTime < maxLockDays
+CONDITION TMP_888
+EXPRESSION:diffTime < maxLockDays	NodeType.IF" -> "BlockID: 2436
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2435
+Call context: 
+True
+feeAmount(uint256) := 0(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:feeAmount = 0	NodeType.VARIABLE
+feeAmount = 0	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" -> "BlockID: 2438
+Call context: 
+None
+BEGIN_LOOP
+REF_247 -> LENGTH lockDays
+TMP_889(bool) = i < REF_247
+CONDITION TMP_889
+EXPRESSION:None	NodeType.STARTLOOP
+i < lockDays.length	NodeType.IFLOOP" [key=0];
+"BlockID: 2438
+Call context: 
+None
+BEGIN_LOOP
+REF_247 -> LENGTH lockDays
+TMP_889(bool) = i < REF_247
+CONDITION TMP_889
+EXPRESSION:None	NodeType.STARTLOOP
+i < lockDays.length	NodeType.IFLOOP" -> "BlockID: 2439
+Call context: 
+True
+TMP_890(uint32) = maxLockDays (c)- diffTime
+REF_248(uint80) -> lockDays[i]
+TMP_891(bool) = TMP_890 < REF_248
+CONDITION TMP_891
+EXPRESSION:(maxLockDays - diffTime) < lockDays[i]	NodeType.IF" [key=0];
+"BlockID: 2438
+Call context: 
+None
+BEGIN_LOOP
+REF_247 -> LENGTH lockDays
+TMP_889(bool) = i < REF_247
+CONDITION TMP_889
+EXPRESSION:None	NodeType.STARTLOOP
+i < lockDays.length	NodeType.IFLOOP" -> "BlockID: 2440
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 2439
+Call context: 
+True
+TMP_890(uint32) = maxLockDays (c)- diffTime
+REF_248(uint80) -> lockDays[i]
+TMP_891(bool) = TMP_890 < REF_248
+CONDITION TMP_891
+EXPRESSION:(maxLockDays - diffTime) < lockDays[i]	NodeType.IF" -> "BlockID: 2442
+Call context: 
+True
+REF_249(uint8) -> feesByLockDays[i]
+TMP_892(uint256) = lockedAmount (c)* REF_249
+TMP_893(uint256) = TMP_892 (c)/ 1000
+feeAmount(uint256) := TMP_893(uint256)
+TMP_894(bool) = feeAmount > 0
+CONDITION TMP_894
+EXPRESSION:feeAmount = (lockedAmount * feesByLockDays[i]) / 1000	NodeType.EXPRESSION
+feeAmount > 0	NodeType.IF" [key=0];
+"BlockID: 2439
+Call context: 
+True
+TMP_890(uint32) = maxLockDays (c)- diffTime
+REF_248(uint80) -> lockDays[i]
+TMP_891(bool) = TMP_890 < REF_248
+CONDITION TMP_891
+EXPRESSION:(maxLockDays - diffTime) < lockDays[i]	NodeType.IF" -> "BlockID: 2443
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2440
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 2436
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2442
+Call context: 
+True
+REF_249(uint8) -> feesByLockDays[i]
+TMP_892(uint256) = lockedAmount (c)* REF_249
+TMP_893(uint256) = TMP_892 (c)/ 1000
+feeAmount(uint256) := TMP_893(uint256)
+TMP_894(bool) = feeAmount > 0
+CONDITION TMP_894
+EXPRESSION:feeAmount = (lockedAmount * feesByLockDays[i]) / 1000	NodeType.EXPRESSION
+feeAmount > 0	NodeType.IF" -> "BlockID: 2445
+Call context: 
+True
+TMP_895 = CONVERT this to address
+TMP_896(bool) = HIGH_LEVEL_CALL, dest:novo(INOVO), function:transferFrom, arguments:['msg.sender', 'TMP_895', 'feeAmount']  
+EXPRESSION:novo.transferFrom(msg.sender,address(this),feeAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2442
+Call context: 
+True
+REF_249(uint8) -> feesByLockDays[i]
+TMP_892(uint256) = lockedAmount (c)* REF_249
+TMP_893(uint256) = TMP_892 (c)/ 1000
+feeAmount(uint256) := TMP_893(uint256)
+TMP_894(bool) = feeAmount > 0
+CONDITION TMP_894
+EXPRESSION:feeAmount = (lockedAmount * feesByLockDays[i]) / 1000	NodeType.EXPRESSION
+feeAmount > 0	NodeType.IF" -> "BlockID: 2447
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2443
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2444
+Call context: 
+None
+TMP_897(uint256) := i(uint256)
+i(uint256) = i (c)+ 1
+EXPRESSION:i ++	NodeType.EXPRESSION" [key=0];
+"BlockID: 2444
+Call context: 
+None
+TMP_897(uint256) := i(uint256)
+i(uint256) = i (c)+ 1
+EXPRESSION:i ++	NodeType.EXPRESSION" -> "BlockID: 2438
+Call context: 
+None
+BEGIN_LOOP
+REF_247 -> LENGTH lockDays
+TMP_889(bool) = i < REF_247
+CONDITION TMP_889
+EXPRESSION:None	NodeType.STARTLOOP
+i < lockDays.length	NodeType.IFLOOP" [key=0];
+"BlockID: 2445
+Call context: 
+True
+TMP_895 = CONVERT this to address
+TMP_896(bool) = HIGH_LEVEL_CALL, dest:novo(INOVO), function:transferFrom, arguments:['msg.sender', 'TMP_895', 'feeAmount']  
+EXPRESSION:novo.transferFrom(msg.sender,address(this),feeAmount)	NodeType.EXPRESSION" -> "BlockID: 2447
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2447
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2448
+Call context: 
+None
+BREAK
+EXPRESSION:None	NodeType.BREAK" [key=0];
+"BlockID: 2448
+Call context: 
+None
+BREAK
+EXPRESSION:None	NodeType.BREAK" -> "BlockID: 2440
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 2450
+Call context: 
+None
+TMP_871(bool) = TMP_870 == msg.sender
+CONDITION TMP_871
+EXPRESSION:TMP_871(bool) = TMP_870 == msg.sender	NodeType.IF" -> "BlockID: 2451
+Call context: 
+True
+TMP_872(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2450
+Call context: 
+None
+TMP_871(bool) = TMP_870 == msg.sender
+CONDITION TMP_871
+EXPRESSION:TMP_871(bool) = TMP_870 == msg.sender	NodeType.IF" -> "BlockID: 2452
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2452
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2453
+Call context: 
+None
+REF_220(NovoNFT.Stake) -> mapStakers[_tokenId]
+REF_221(uint256) -> REF_220.principalBalance
+TMP_873(bool) = REF_221 > 0
+CONDITION TMP_873
+EXPRESSION:TMP_873(bool) = REF_221 > 0	NodeType.IF" [key=0];
+"BlockID: 2453
+Call context: 
+None
+REF_220(NovoNFT.Stake) -> mapStakers[_tokenId]
+REF_221(uint256) -> REF_220.principalBalance
+TMP_873(bool) = REF_221 > 0
+CONDITION TMP_873
+EXPRESSION:TMP_873(bool) = REF_221 > 0	NodeType.IF" -> "BlockID: 2454
+Call context: 
+True
+TMP_874(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2453
+Call context: 
+None
+REF_220(NovoNFT.Stake) -> mapStakers[_tokenId]
+REF_221(uint256) -> REF_220.principalBalance
+TMP_873(bool) = REF_221 > 0
+CONDITION TMP_873
+EXPRESSION:TMP_873(bool) = REF_221 > 0	NodeType.IF" -> "BlockID: 2455
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2455
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2456
+Call context: 
+None
+TMP_875 = CONVERT block.timestamp to uint80
+REF_222(NovoNFT.Stake) -> mapStakers[_tokenId]
+REF_223(uint80) -> REF_222.stakingTimestamp
+TMP_876(uint80) = TMP_875 (c)- REF_223
+diffTime(uint80) := TMP_876(uint80)
+REF_224 -> LENGTH lockDays
+TMP_877(uint256) = REF_224 (c)- 1
+REF_225(uint80) -> lockDays[TMP_877]
+TMP_878(uint32) = maxLockDays (c)- REF_225
+TMP_879(bool) = diffTime >= TMP_878
+CONDITION TMP_879
+EXPRESSION:TMP_879(bool) = diffTime >= TMP_878	NodeType.IF" [key=0];
+"BlockID: 2456
+Call context: 
+None
+TMP_875 = CONVERT block.timestamp to uint80
+REF_222(NovoNFT.Stake) -> mapStakers[_tokenId]
+REF_223(uint80) -> REF_222.stakingTimestamp
+TMP_876(uint80) = TMP_875 (c)- REF_223
+diffTime(uint80) := TMP_876(uint80)
+REF_224 -> LENGTH lockDays
+TMP_877(uint256) = REF_224 (c)- 1
+REF_225(uint80) -> lockDays[TMP_877]
+TMP_878(uint32) = maxLockDays (c)- REF_225
+TMP_879(bool) = diffTime >= TMP_878
+CONDITION TMP_879
+EXPRESSION:TMP_879(bool) = diffTime >= TMP_878	NodeType.IF" -> "BlockID: 2457
+Call context: 
+True
+TMP_880(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2456
+Call context: 
+None
+TMP_875 = CONVERT block.timestamp to uint80
+REF_222(NovoNFT.Stake) -> mapStakers[_tokenId]
+REF_223(uint80) -> REF_222.stakingTimestamp
+TMP_876(uint80) = TMP_875 (c)- REF_223
+diffTime(uint80) := TMP_876(uint80)
+REF_224 -> LENGTH lockDays
+TMP_877(uint256) = REF_224 (c)- 1
+REF_225(uint80) -> lockDays[TMP_877]
+TMP_878(uint32) = maxLockDays (c)- REF_225
+TMP_879(bool) = diffTime >= TMP_878
+CONDITION TMP_879
+EXPRESSION:TMP_879(bool) = diffTime >= TMP_878	NodeType.IF" -> "BlockID: 2458
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2458
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2430
+Call context: 
+True
+TMP_881(uint256) = INTERNAL_CALL, NovoNFT.getLockedAmountByTokenId(uint256)(_tokenId)
+EXPRESSION:" [key=0];
+}

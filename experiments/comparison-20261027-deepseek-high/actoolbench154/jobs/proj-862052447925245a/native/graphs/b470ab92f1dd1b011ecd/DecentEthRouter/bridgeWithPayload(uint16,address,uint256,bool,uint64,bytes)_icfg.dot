@@ -1,0 +1,351 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+NEW VARIABLE destinationBridge
+NEW VARIABLE adapterParams
+NEW VARIABLE payload
+GAS_FOR_RELAY(uint256) := 100000(uint256)
+TMP_17(uint256) = GAS_FOR_RELAY (c)+ _dstGasForCall
+gasAmount(uint256) := TMP_17(uint256)
+TMP_18(bytes) = SOLIDITY_CALL abi.encodePacked()(PT_SEND_AND_CALL,gasAmount)
+adapterParams(bytes) := TMP_18(bytes)
+REF_3(address) -> destinationBridges[_dstChainId]
+TMP_19(bytes) = SOLIDITY_CALL abi.encode()(REF_3)
+TMP_20 = CONVERT TMP_19 to bytes32
+destBridge(bytes32) := TMP_20(bytes32)
+TMP_21(bool) = msgType == MT_ETH_TRANSFER
+CONDITION TMP_21
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+GAS_FOR_RELAY = 100000	NodeType.VARIABLE
+GAS_FOR_RELAY = 100000	NodeType.EXPRESSION
+gasAmount = GAS_FOR_RELAY + _dstGasForCall	NodeType.VARIABLE
+gasAmount = GAS_FOR_RELAY + _dstGasForCall	NodeType.EXPRESSION
+adapterParams = abi.encodePacked(PT_SEND_AND_CALL,gasAmount)	NodeType.EXPRESSION
+destBridge = bytes32(abi.encode(destinationBridges[_dstChainId]))	NodeType.EXPRESSION
+msgType == MT_ETH_TRANSFER	NodeType.IF";
+"BlockID: 6
+Call context: bridgeWithPayload
+True
+HIGH_LEVEL_CALL, dest:weth(IWETH), function:deposit, arguments:[] value:_amount 
+EXPRESSION:weth.deposit{value: _amount}()	NodeType.EXPRESSION";
+"BlockID: 7
+Call context: bridgeWithPayload
+False
+TMP_29 = CONVERT this to address
+TMP_30(bool) = HIGH_LEVEL_CALL, dest:weth(IWETH), function:transferFrom, arguments:['msg.sender', 'TMP_29', '_amount']  
+EXPRESSION:weth.transferFrom(msg.sender,address(this),_amount)	NodeType.EXPRESSION";
+"BlockID: 9
+Call context: bridgeWithPayload
+None
+gasValue(uint256) := msg.value(uint256)
+EXPRESSION:weth.transferFrom(msg.sender,address(this),_amount)	NodeType.EXPRESSION
+gasValue = msg.value	NodeType.EXPRESSION";
+"BlockID: 10
+Call context: bridgeWithPayload
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 11
+Call context: bridgeWithPayload
+None
+TMP_31 = CONVERT this to address
+HIGH_LEVEL_CALL, dest:dcntEth(IDcntEth), function:sendAndCall, arguments:['TMP_31', '_dstChainId', 'destinationBridge', '_amount', 'payload', '_dstGasForCall', 'callParams'] value:gasValue 
+RETURN TMP_33
+EXPRESSION:dcntEth.sendAndCall{value: gasValue}(address(this),_dstChainId,destinationBridge,_amount,payload,_dstGasForCall,callParams)	NodeType.EXPRESSION
+_bridgeWithPayload(MT_ETH_TRANSFER_WITH_PAYLOAD,_dstChainId,_toAddress,_amount,_dstGasForCall,additionalPayload,deliverEth)	NodeType.RETURN";
+"BlockID: 8
+Call context: bridgeWithPayload
+None
+TMP_28(uint256) = msg.value (c)- _amount
+gasValue(uint256) := TMP_28(uint256)
+EXPRESSION:weth.deposit{value: _amount}()	NodeType.EXPRESSION
+gasValue = msg.value - _amount	NodeType.EXPRESSION";
+"BlockID: 2
+Call context: bridgeWithPayload,_bridgeWithPayload
+True
+TMP_22(bytes) = SOLIDITY_CALL abi.encode()(msgType,msg.sender,_toAddress,deliverEth)
+payload(bytes) := TMP_22(bytes)
+EXPRESSION:payload = abi.encode(msgType,msg.sender,_toAddress,deliverEth)	NodeType.EXPRESSION";
+"BlockID: 3
+Call context: bridgeWithPayload,_bridgeWithPayload
+False
+TMP_23(bytes) = SOLIDITY_CALL abi.encode()(msgType,msg.sender,_toAddress,deliverEth,additionalPayload)
+payload(bytes) := TMP_23(bytes)
+EXPRESSION:payload = abi.encode(msgType,msg.sender,_toAddress,deliverEth,additionalPayload)	NodeType.EXPRESSION";
+"BlockID: 4
+Call context: bridgeWithPayload,_bridgeWithPayload
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 5
+Call context: bridgeWithPayload
+None
+TMP_111(None) := payload(bytes)
+TMP_111(None) := adapterParams(bytes)
+TMP_111(None) := destBridge(bytes32)
+destinationBridge(bytes32)= UNPACK TUPLE_2 index: 0 
+adapterParams(bytes)= UNPACK TUPLE_2 index: 1 
+payload(bytes)= UNPACK TUPLE_2 index: 2 
+TMP_24 = CONVERT msg.sender to address
+TMP_25 = CONVERT 0 to address
+TMP_26(ICommonOFT.LzCallParams) = new LzCallParams(TMP_24,TMP_25,adapterParams)
+callParams(ICommonOFT.LzCallParams) := TMP_26(ICommonOFT.LzCallParams)
+NEW VARIABLE gasValue
+CONDITION gasCurrencyIsEth
+EXPRESSION:(destinationBridge,adapterParams,payload) = _getCallParams(msgType,_toAddress,_dstChainId,_dstGasForCall,deliverEth,additionalPayload)	NodeType.EXPRESSION
+callParams = ICommonOFT.LzCallParams(address(msg.sender),address(0x0),adapterParams)	NodeType.VARIABLE
+callParams = ICommonOFT.LzCallParams(address(msg.sender),address(0x0),adapterParams)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+gasCurrencyIsEth	NodeType.IF";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+NEW VARIABLE destinationBridge
+NEW VARIABLE adapterParams
+NEW VARIABLE payload
+GAS_FOR_RELAY(uint256) := 100000(uint256)
+TMP_17(uint256) = GAS_FOR_RELAY (c)+ _dstGasForCall
+gasAmount(uint256) := TMP_17(uint256)
+TMP_18(bytes) = SOLIDITY_CALL abi.encodePacked()(PT_SEND_AND_CALL,gasAmount)
+adapterParams(bytes) := TMP_18(bytes)
+REF_3(address) -> destinationBridges[_dstChainId]
+TMP_19(bytes) = SOLIDITY_CALL abi.encode()(REF_3)
+TMP_20 = CONVERT TMP_19 to bytes32
+destBridge(bytes32) := TMP_20(bytes32)
+TMP_21(bool) = msgType == MT_ETH_TRANSFER
+CONDITION TMP_21
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+GAS_FOR_RELAY = 100000	NodeType.VARIABLE
+GAS_FOR_RELAY = 100000	NodeType.EXPRESSION
+gasAmount = GAS_FOR_RELAY + _dstGasForCall	NodeType.VARIABLE
+gasAmount = GAS_FOR_RELAY + _dstGasForCall	NodeType.EXPRESSION
+adapterParams = abi.encodePacked(PT_SEND_AND_CALL,gasAmount)	NodeType.EXPRESSION
+destBridge = bytes32(abi.encode(destinationBridges[_dstChainId]))	NodeType.EXPRESSION
+msgType == MT_ETH_TRANSFER	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+NEW VARIABLE destinationBridge
+NEW VARIABLE adapterParams
+NEW VARIABLE payload
+GAS_FOR_RELAY(uint256) := 100000(uint256)
+TMP_17(uint256) = GAS_FOR_RELAY (c)+ _dstGasForCall
+gasAmount(uint256) := TMP_17(uint256)
+TMP_18(bytes) = SOLIDITY_CALL abi.encodePacked()(PT_SEND_AND_CALL,gasAmount)
+adapterParams(bytes) := TMP_18(bytes)
+REF_3(address) -> destinationBridges[_dstChainId]
+TMP_19(bytes) = SOLIDITY_CALL abi.encode()(REF_3)
+TMP_20 = CONVERT TMP_19 to bytes32
+destBridge(bytes32) := TMP_20(bytes32)
+TMP_21(bool) = msgType == MT_ETH_TRANSFER
+CONDITION TMP_21
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+GAS_FOR_RELAY = 100000	NodeType.VARIABLE
+GAS_FOR_RELAY = 100000	NodeType.EXPRESSION
+gasAmount = GAS_FOR_RELAY + _dstGasForCall	NodeType.VARIABLE
+gasAmount = GAS_FOR_RELAY + _dstGasForCall	NodeType.EXPRESSION
+adapterParams = abi.encodePacked(PT_SEND_AND_CALL,gasAmount)	NodeType.EXPRESSION
+destBridge = bytes32(abi.encode(destinationBridges[_dstChainId]))	NodeType.EXPRESSION
+msgType == MT_ETH_TRANSFER	NodeType.IF" -> "BlockID: 2
+Call context: bridgeWithPayload,_bridgeWithPayload
+True
+TMP_22(bytes) = SOLIDITY_CALL abi.encode()(msgType,msg.sender,_toAddress,deliverEth)
+payload(bytes) := TMP_22(bytes)
+EXPRESSION:payload = abi.encode(msgType,msg.sender,_toAddress,deliverEth)	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+NEW VARIABLE destinationBridge
+NEW VARIABLE adapterParams
+NEW VARIABLE payload
+GAS_FOR_RELAY(uint256) := 100000(uint256)
+TMP_17(uint256) = GAS_FOR_RELAY (c)+ _dstGasForCall
+gasAmount(uint256) := TMP_17(uint256)
+TMP_18(bytes) = SOLIDITY_CALL abi.encodePacked()(PT_SEND_AND_CALL,gasAmount)
+adapterParams(bytes) := TMP_18(bytes)
+REF_3(address) -> destinationBridges[_dstChainId]
+TMP_19(bytes) = SOLIDITY_CALL abi.encode()(REF_3)
+TMP_20 = CONVERT TMP_19 to bytes32
+destBridge(bytes32) := TMP_20(bytes32)
+TMP_21(bool) = msgType == MT_ETH_TRANSFER
+CONDITION TMP_21
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+GAS_FOR_RELAY = 100000	NodeType.VARIABLE
+GAS_FOR_RELAY = 100000	NodeType.EXPRESSION
+gasAmount = GAS_FOR_RELAY + _dstGasForCall	NodeType.VARIABLE
+gasAmount = GAS_FOR_RELAY + _dstGasForCall	NodeType.EXPRESSION
+adapterParams = abi.encodePacked(PT_SEND_AND_CALL,gasAmount)	NodeType.EXPRESSION
+destBridge = bytes32(abi.encode(destinationBridges[_dstChainId]))	NodeType.EXPRESSION
+msgType == MT_ETH_TRANSFER	NodeType.IF" -> "BlockID: 3
+Call context: bridgeWithPayload,_bridgeWithPayload
+False
+TMP_23(bytes) = SOLIDITY_CALL abi.encode()(msgType,msg.sender,_toAddress,deliverEth,additionalPayload)
+payload(bytes) := TMP_23(bytes)
+EXPRESSION:payload = abi.encode(msgType,msg.sender,_toAddress,deliverEth,additionalPayload)	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 6
+Call context: bridgeWithPayload
+True
+HIGH_LEVEL_CALL, dest:weth(IWETH), function:deposit, arguments:[] value:_amount 
+EXPRESSION:weth.deposit{value: _amount}()	NodeType.EXPRESSION" -> "BlockID: 8
+Call context: bridgeWithPayload
+None
+TMP_28(uint256) = msg.value (c)- _amount
+gasValue(uint256) := TMP_28(uint256)
+EXPRESSION:weth.deposit{value: _amount}()	NodeType.EXPRESSION
+gasValue = msg.value - _amount	NodeType.EXPRESSION" [key=0];
+"BlockID: 7
+Call context: bridgeWithPayload
+False
+TMP_29 = CONVERT this to address
+TMP_30(bool) = HIGH_LEVEL_CALL, dest:weth(IWETH), function:transferFrom, arguments:['msg.sender', 'TMP_29', '_amount']  
+EXPRESSION:weth.transferFrom(msg.sender,address(this),_amount)	NodeType.EXPRESSION" -> "BlockID: 9
+Call context: bridgeWithPayload
+None
+gasValue(uint256) := msg.value(uint256)
+EXPRESSION:weth.transferFrom(msg.sender,address(this),_amount)	NodeType.EXPRESSION
+gasValue = msg.value	NodeType.EXPRESSION" [key=0];
+"BlockID: 9
+Call context: bridgeWithPayload
+None
+gasValue(uint256) := msg.value(uint256)
+EXPRESSION:weth.transferFrom(msg.sender,address(this),_amount)	NodeType.EXPRESSION
+gasValue = msg.value	NodeType.EXPRESSION" -> "BlockID: 10
+Call context: bridgeWithPayload
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 10
+Call context: bridgeWithPayload
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 11
+Call context: bridgeWithPayload
+None
+TMP_31 = CONVERT this to address
+HIGH_LEVEL_CALL, dest:dcntEth(IDcntEth), function:sendAndCall, arguments:['TMP_31', '_dstChainId', 'destinationBridge', '_amount', 'payload', '_dstGasForCall', 'callParams'] value:gasValue 
+RETURN TMP_33
+EXPRESSION:dcntEth.sendAndCall{value: gasValue}(address(this),_dstChainId,destinationBridge,_amount,payload,_dstGasForCall,callParams)	NodeType.EXPRESSION
+_bridgeWithPayload(MT_ETH_TRANSFER_WITH_PAYLOAD,_dstChainId,_toAddress,_amount,_dstGasForCall,additionalPayload,deliverEth)	NodeType.RETURN" [key=0];
+"BlockID: 8
+Call context: bridgeWithPayload
+None
+TMP_28(uint256) = msg.value (c)- _amount
+gasValue(uint256) := TMP_28(uint256)
+EXPRESSION:weth.deposit{value: _amount}()	NodeType.EXPRESSION
+gasValue = msg.value - _amount	NodeType.EXPRESSION" -> "BlockID: 10
+Call context: bridgeWithPayload
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2
+Call context: bridgeWithPayload,_bridgeWithPayload
+True
+TMP_22(bytes) = SOLIDITY_CALL abi.encode()(msgType,msg.sender,_toAddress,deliverEth)
+payload(bytes) := TMP_22(bytes)
+EXPRESSION:payload = abi.encode(msgType,msg.sender,_toAddress,deliverEth)	NodeType.EXPRESSION" -> "BlockID: 4
+Call context: bridgeWithPayload,_bridgeWithPayload
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3
+Call context: bridgeWithPayload,_bridgeWithPayload
+False
+TMP_23(bytes) = SOLIDITY_CALL abi.encode()(msgType,msg.sender,_toAddress,deliverEth,additionalPayload)
+payload(bytes) := TMP_23(bytes)
+EXPRESSION:payload = abi.encode(msgType,msg.sender,_toAddress,deliverEth,additionalPayload)	NodeType.EXPRESSION" -> "BlockID: 4
+Call context: bridgeWithPayload,_bridgeWithPayload
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 4
+Call context: bridgeWithPayload,_bridgeWithPayload
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 5
+Call context: bridgeWithPayload
+None
+TMP_111(None) := payload(bytes)
+TMP_111(None) := adapterParams(bytes)
+TMP_111(None) := destBridge(bytes32)
+destinationBridge(bytes32)= UNPACK TUPLE_2 index: 0 
+adapterParams(bytes)= UNPACK TUPLE_2 index: 1 
+payload(bytes)= UNPACK TUPLE_2 index: 2 
+TMP_24 = CONVERT msg.sender to address
+TMP_25 = CONVERT 0 to address
+TMP_26(ICommonOFT.LzCallParams) = new LzCallParams(TMP_24,TMP_25,adapterParams)
+callParams(ICommonOFT.LzCallParams) := TMP_26(ICommonOFT.LzCallParams)
+NEW VARIABLE gasValue
+CONDITION gasCurrencyIsEth
+EXPRESSION:(destinationBridge,adapterParams,payload) = _getCallParams(msgType,_toAddress,_dstChainId,_dstGasForCall,deliverEth,additionalPayload)	NodeType.EXPRESSION
+callParams = ICommonOFT.LzCallParams(address(msg.sender),address(0x0),adapterParams)	NodeType.VARIABLE
+callParams = ICommonOFT.LzCallParams(address(msg.sender),address(0x0),adapterParams)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+gasCurrencyIsEth	NodeType.IF" [key=N, ref=N];
+"BlockID: 5
+Call context: bridgeWithPayload
+None
+TMP_111(None) := payload(bytes)
+TMP_111(None) := adapterParams(bytes)
+TMP_111(None) := destBridge(bytes32)
+destinationBridge(bytes32)= UNPACK TUPLE_2 index: 0 
+adapterParams(bytes)= UNPACK TUPLE_2 index: 1 
+payload(bytes)= UNPACK TUPLE_2 index: 2 
+TMP_24 = CONVERT msg.sender to address
+TMP_25 = CONVERT 0 to address
+TMP_26(ICommonOFT.LzCallParams) = new LzCallParams(TMP_24,TMP_25,adapterParams)
+callParams(ICommonOFT.LzCallParams) := TMP_26(ICommonOFT.LzCallParams)
+NEW VARIABLE gasValue
+CONDITION gasCurrencyIsEth
+EXPRESSION:(destinationBridge,adapterParams,payload) = _getCallParams(msgType,_toAddress,_dstChainId,_dstGasForCall,deliverEth,additionalPayload)	NodeType.EXPRESSION
+callParams = ICommonOFT.LzCallParams(address(msg.sender),address(0x0),adapterParams)	NodeType.VARIABLE
+callParams = ICommonOFT.LzCallParams(address(msg.sender),address(0x0),adapterParams)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+gasCurrencyIsEth	NodeType.IF" -> "BlockID: 6
+Call context: bridgeWithPayload
+True
+HIGH_LEVEL_CALL, dest:weth(IWETH), function:deposit, arguments:[] value:_amount 
+EXPRESSION:weth.deposit{value: _amount}()	NodeType.EXPRESSION" [key="successor_2"];
+"BlockID: 5
+Call context: bridgeWithPayload
+None
+TMP_111(None) := payload(bytes)
+TMP_111(None) := adapterParams(bytes)
+TMP_111(None) := destBridge(bytes32)
+destinationBridge(bytes32)= UNPACK TUPLE_2 index: 0 
+adapterParams(bytes)= UNPACK TUPLE_2 index: 1 
+payload(bytes)= UNPACK TUPLE_2 index: 2 
+TMP_24 = CONVERT msg.sender to address
+TMP_25 = CONVERT 0 to address
+TMP_26(ICommonOFT.LzCallParams) = new LzCallParams(TMP_24,TMP_25,adapterParams)
+callParams(ICommonOFT.LzCallParams) := TMP_26(ICommonOFT.LzCallParams)
+NEW VARIABLE gasValue
+CONDITION gasCurrencyIsEth
+EXPRESSION:(destinationBridge,adapterParams,payload) = _getCallParams(msgType,_toAddress,_dstChainId,_dstGasForCall,deliverEth,additionalPayload)	NodeType.EXPRESSION
+callParams = ICommonOFT.LzCallParams(address(msg.sender),address(0x0),adapterParams)	NodeType.VARIABLE
+callParams = ICommonOFT.LzCallParams(address(msg.sender),address(0x0),adapterParams)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+gasCurrencyIsEth	NodeType.IF" -> "BlockID: 7
+Call context: bridgeWithPayload
+False
+TMP_29 = CONVERT this to address
+TMP_30(bool) = HIGH_LEVEL_CALL, dest:weth(IWETH), function:transferFrom, arguments:['msg.sender', 'TMP_29', '_amount']  
+EXPRESSION:weth.transferFrom(msg.sender,address(this),_amount)	NodeType.EXPRESSION" [key="successor_2"];
+}

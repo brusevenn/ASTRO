@@ -1,0 +1,543 @@
+digraph {
+"BlockID: 1517
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1518
+Call context: 
+None
+TMP_1150(bool) = _wad > 0
+CONDITION TMP_1150
+EXPRESSION:_wad > 0	NodeType.IF";
+"BlockID: 1519
+Call context: 
+True
+TMP_1151 = CONVERT sai to TubInterface
+tub(TubInterface) := TMP_1151(TubInterface)
+TMP_1152 = CONVERT ude to UniswapExchange
+daiEx(UniswapExchange) := TMP_1152(UniswapExchange)
+TMP_1153 = CONVERT ume to UniswapExchange
+mkrEx(UniswapExchange) := TMP_1153(UniswapExchange)
+TMP_1154(ERC20Interface) = HIGH_LEVEL_CALL, dest:tub(TubInterface), function:sai, arguments:[]  
+EXPRESSION:tub = TubInterface(sai)	NodeType.VARIABLE
+tub = TubInterface(sai)	NodeType.EXPRESSION
+daiEx = UniswapExchange(ude)	NodeType.VARIABLE
+daiEx = UniswapExchange(ude)	NodeType.EXPRESSION
+mkrEx = UniswapExchange(ume)	NodeType.VARIABLE
+mkrEx = UniswapExchange(ume)	NodeType.EXPRESSION";
+"BlockID: 1520
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1522
+Call context: 
+None
+dai(ERC20Interface) := TMP_1154(ERC20Interface)
+TMP_1155(ERC20Interface) = HIGH_LEVEL_CALL, dest:tub(TubInterface), function:gov, arguments:[]  
+EXPRESSION:dai = tub.sai()	NodeType.VARIABLE
+dai = tub.sai()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1523
+Call context: 
+None
+mkr(ERC20Interface) := TMP_1155(ERC20Interface)
+TMP_1156 = CONVERT cdpNum to bytes32
+cup(bytes32) := TMP_1156(bytes32)
+NEW VARIABLE lad
+TUPLE_16(address,uint256,uint256,uint256) = HIGH_LEVEL_CALL, dest:tub(TubInterface), function:cups, arguments:['cup']  
+EXPRESSION:mkr = tub.gov()	NodeType.VARIABLE
+mkr = tub.gov()	NodeType.EXPRESSION
+cup = bytes32(cdpNum)	NodeType.VARIABLE
+cup = bytes32(cdpNum)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+(lad) = tub.cups(cup)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1525
+Call context: 
+True
+INTERNAL_CALL, Helper.setAllowance(ERC20Interface,address)(dai,sai)
+EXPRESSION:setAllowance(dai,sai)	NodeType.EXPRESSION";
+"BlockID: 1526
+Call context: 
+None
+INTERNAL_CALL, Helper.setAllowance(ERC20Interface,address)(mkr,sai)
+EXPRESSION:setAllowance(dai,sai)	NodeType.EXPRESSION
+setAllowance(mkr,sai)	NodeType.EXPRESSION";
+"BlockID: 1527
+Call context: 
+None
+INTERNAL_CALL, Helper.setAllowance(ERC20Interface,address)(dai,ude)
+EXPRESSION:setAllowance(mkr,sai)	NodeType.EXPRESSION
+setAllowance(dai,ude)	NodeType.EXPRESSION";
+"BlockID: 1528
+Call context: 
+None
+NEW VARIABLE val
+NEW VARIABLE ok
+TMP_1163(PepInterface) = HIGH_LEVEL_CALL, dest:tub(TubInterface), function:pep, arguments:[]  
+EXPRESSION:setAllowance(dai,ude)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(val,ok) = tub.pep().peek()	NodeType.EXPRESSION";
+"BlockID: 1529
+Call context: 
+None
+TUPLE_17(bytes32,bool) = HIGH_LEVEL_CALL, dest:TMP_1163(PepInterface), function:peek, arguments:[]  
+EXPRESSION:(val,ok) = tub.pep().peek()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1530
+Call context: 
+None
+val(bytes32)= UNPACK TUPLE_17 index: 0 
+ok(bool)= UNPACK TUPLE_17 index: 1 
+TMP_1164(uint256) = HIGH_LEVEL_CALL, dest:tub(TubInterface), function:rap, arguments:['cup']  
+EXPRESSION:(val,ok) = tub.pep().peek()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1531
+Call context: 
+None
+TMP_1165(uint256) = HIGH_LEVEL_CALL, dest:tub(TubInterface), function:tab, arguments:['cup']  
+EXPRESSION:" [shape=box];
+"BlockID: 1532
+Call context: 
+None
+TMP_1166(uint256) = INTERNAL_CALL, DSMath.rdiv(uint256,uint256)(TMP_1164,TMP_1165)
+EXPRESSION:" [shape=box];
+"BlockID: 1533
+Call context: 
+None
+TMP_1167(uint256) = INTERNAL_CALL, DSMath.rmul(uint256,uint256)(_wad,TMP_1166)
+EXPRESSION:" [shape=box];
+"BlockID: 1534
+Call context: 
+None
+TMP_1168 = CONVERT val to uint256
+TMP_1169(uint256) = INTERNAL_CALL, DSMath.wdiv(uint256,uint256)(TMP_1167,TMP_1168)
+EXPRESSION:" [shape=box];
+"BlockID: 1535
+Call context: 
+None
+mkrFee(uint256) := TMP_1169(uint256)
+TMP_1170(uint256) = HIGH_LEVEL_CALL, dest:mkrEx(UniswapExchange), function:getEthToTokenOutputPrice, arguments:['mkrFee']  
+EXPRESSION:mkrFee = wdiv(rmul(_wad,rdiv(tub.rap(cup),tub.tab(cup))),uint256(val))	NodeType.VARIABLE
+mkrFee = wdiv(rmul(_wad,rdiv(tub.rap(cup),tub.tab(cup))),uint256(val))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1536
+Call context: 
+None
+TMP_1171(uint256) = HIGH_LEVEL_CALL, dest:daiEx(UniswapExchange), function:getTokenToEthOutputPrice, arguments:['TMP_1170']  
+EXPRESSION:" [shape=box];
+"BlockID: 1537
+Call context: 
+None
+daiFeeAmt(uint256) := TMP_1171(uint256)
+TMP_1172(uint256) = INTERNAL_CALL, DSMath.add(uint256,uint256)(_wad,daiFeeAmt)
+EXPRESSION:daiFeeAmt = daiEx.getTokenToEthOutputPrice(mkrEx.getEthToTokenOutputPrice(mkrFee))	NodeType.VARIABLE
+daiFeeAmt = daiEx.getTokenToEthOutputPrice(mkrEx.getEthToTokenOutputPrice(mkrFee))	NodeType.EXPRESSION
+daiAmt = add(_wad,daiFeeAmt)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1538
+Call context: 
+None
+daiAmt(uint256) := TMP_1172(uint256)
+INTERNAL_CALL, CompoundResolver.redeemUnderlying(address,uint256)(cDai,daiAmt)
+EXPRESSION:daiAmt = add(_wad,daiFeeAmt)	NodeType.EXPRESSION
+redeemUnderlying(cDai,daiAmt)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1539
+Call context: 
+None
+TMP_1174(bool) = val != 0
+TMP_1175(bool) = ok && TMP_1174
+CONDITION TMP_1175
+EXPRESSION:redeemUnderlying(cDai,daiAmt)	NodeType.EXPRESSION
+ok && val != 0	NodeType.IF";
+"BlockID: 1540
+Call context: 
+True
+TMP_1176 = CONVERT 999000000000000000000 to uint256
+TMP_1177 = CONVERT 1899063809 to uint256
+TMP_1178 = CONVERT mkr to address
+TMP_1179(uint256) = HIGH_LEVEL_CALL, dest:daiEx(UniswapExchange), function:tokenToTokenSwapOutput, arguments:['mkrFee', 'daiAmt', 'TMP_1176', 'TMP_1177', 'TMP_1178']  
+EXPRESSION:daiEx.tokenToTokenSwapOutput(mkrFee,daiAmt,uint256(999000000000000000000),uint256(1899063809),address(mkr))	NodeType.EXPRESSION";
+"BlockID: 1542
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1543
+Call context: 
+None
+HIGH_LEVEL_CALL, dest:tub(TubInterface), function:wipe, arguments:['cup', '_wad']  
+EXPRESSION:tub.wipe(cup,_wad)	NodeType.EXPRESSION";
+"BlockID: 1545
+Call context: 
+None
+lad(address)= UNPACK TUPLE_16 index: 0 
+TMP_1157 = CONVERT this to address
+TMP_1158(bool) = lad == TMP_1157
+CONDITION TMP_1158
+EXPRESSION:TMP_1158(bool) = lad == TMP_1157	NodeType.IF";
+"BlockID: 1546
+Call context: 
+True
+TMP_1159(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 1547
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1517
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1518
+Call context: 
+None
+TMP_1150(bool) = _wad > 0
+CONDITION TMP_1150
+EXPRESSION:_wad > 0	NodeType.IF" [key=0];
+"BlockID: 1518
+Call context: 
+None
+TMP_1150(bool) = _wad > 0
+CONDITION TMP_1150
+EXPRESSION:_wad > 0	NodeType.IF" -> "BlockID: 1519
+Call context: 
+True
+TMP_1151 = CONVERT sai to TubInterface
+tub(TubInterface) := TMP_1151(TubInterface)
+TMP_1152 = CONVERT ude to UniswapExchange
+daiEx(UniswapExchange) := TMP_1152(UniswapExchange)
+TMP_1153 = CONVERT ume to UniswapExchange
+mkrEx(UniswapExchange) := TMP_1153(UniswapExchange)
+TMP_1154(ERC20Interface) = HIGH_LEVEL_CALL, dest:tub(TubInterface), function:sai, arguments:[]  
+EXPRESSION:tub = TubInterface(sai)	NodeType.VARIABLE
+tub = TubInterface(sai)	NodeType.EXPRESSION
+daiEx = UniswapExchange(ude)	NodeType.VARIABLE
+daiEx = UniswapExchange(ude)	NodeType.EXPRESSION
+mkrEx = UniswapExchange(ume)	NodeType.VARIABLE
+mkrEx = UniswapExchange(ume)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1518
+Call context: 
+None
+TMP_1150(bool) = _wad > 0
+CONDITION TMP_1150
+EXPRESSION:_wad > 0	NodeType.IF" -> "BlockID: 1520
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1519
+Call context: 
+True
+TMP_1151 = CONVERT sai to TubInterface
+tub(TubInterface) := TMP_1151(TubInterface)
+TMP_1152 = CONVERT ude to UniswapExchange
+daiEx(UniswapExchange) := TMP_1152(UniswapExchange)
+TMP_1153 = CONVERT ume to UniswapExchange
+mkrEx(UniswapExchange) := TMP_1153(UniswapExchange)
+TMP_1154(ERC20Interface) = HIGH_LEVEL_CALL, dest:tub(TubInterface), function:sai, arguments:[]  
+EXPRESSION:tub = TubInterface(sai)	NodeType.VARIABLE
+tub = TubInterface(sai)	NodeType.EXPRESSION
+daiEx = UniswapExchange(ude)	NodeType.VARIABLE
+daiEx = UniswapExchange(ude)	NodeType.EXPRESSION
+mkrEx = UniswapExchange(ume)	NodeType.VARIABLE
+mkrEx = UniswapExchange(ume)	NodeType.EXPRESSION" -> "BlockID: 1522
+Call context: 
+None
+dai(ERC20Interface) := TMP_1154(ERC20Interface)
+TMP_1155(ERC20Interface) = HIGH_LEVEL_CALL, dest:tub(TubInterface), function:gov, arguments:[]  
+EXPRESSION:dai = tub.sai()	NodeType.VARIABLE
+dai = tub.sai()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1522
+Call context: 
+None
+dai(ERC20Interface) := TMP_1154(ERC20Interface)
+TMP_1155(ERC20Interface) = HIGH_LEVEL_CALL, dest:tub(TubInterface), function:gov, arguments:[]  
+EXPRESSION:dai = tub.sai()	NodeType.VARIABLE
+dai = tub.sai()	NodeType.EXPRESSION" -> "BlockID: 1523
+Call context: 
+None
+mkr(ERC20Interface) := TMP_1155(ERC20Interface)
+TMP_1156 = CONVERT cdpNum to bytes32
+cup(bytes32) := TMP_1156(bytes32)
+NEW VARIABLE lad
+TUPLE_16(address,uint256,uint256,uint256) = HIGH_LEVEL_CALL, dest:tub(TubInterface), function:cups, arguments:['cup']  
+EXPRESSION:mkr = tub.gov()	NodeType.VARIABLE
+mkr = tub.gov()	NodeType.EXPRESSION
+cup = bytes32(cdpNum)	NodeType.VARIABLE
+cup = bytes32(cdpNum)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+(lad) = tub.cups(cup)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1523
+Call context: 
+None
+mkr(ERC20Interface) := TMP_1155(ERC20Interface)
+TMP_1156 = CONVERT cdpNum to bytes32
+cup(bytes32) := TMP_1156(bytes32)
+NEW VARIABLE lad
+TUPLE_16(address,uint256,uint256,uint256) = HIGH_LEVEL_CALL, dest:tub(TubInterface), function:cups, arguments:['cup']  
+EXPRESSION:mkr = tub.gov()	NodeType.VARIABLE
+mkr = tub.gov()	NodeType.EXPRESSION
+cup = bytes32(cdpNum)	NodeType.VARIABLE
+cup = bytes32(cdpNum)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+(lad) = tub.cups(cup)	NodeType.EXPRESSION" -> "BlockID: 1545
+Call context: 
+None
+lad(address)= UNPACK TUPLE_16 index: 0 
+TMP_1157 = CONVERT this to address
+TMP_1158(bool) = lad == TMP_1157
+CONDITION TMP_1158
+EXPRESSION:TMP_1158(bool) = lad == TMP_1157	NodeType.IF" [key=0];
+"BlockID: 1525
+Call context: 
+True
+INTERNAL_CALL, Helper.setAllowance(ERC20Interface,address)(dai,sai)
+EXPRESSION:setAllowance(dai,sai)	NodeType.EXPRESSION" -> "BlockID: 1526
+Call context: 
+None
+INTERNAL_CALL, Helper.setAllowance(ERC20Interface,address)(mkr,sai)
+EXPRESSION:setAllowance(dai,sai)	NodeType.EXPRESSION
+setAllowance(mkr,sai)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1526
+Call context: 
+None
+INTERNAL_CALL, Helper.setAllowance(ERC20Interface,address)(mkr,sai)
+EXPRESSION:setAllowance(dai,sai)	NodeType.EXPRESSION
+setAllowance(mkr,sai)	NodeType.EXPRESSION" -> "BlockID: 1527
+Call context: 
+None
+INTERNAL_CALL, Helper.setAllowance(ERC20Interface,address)(dai,ude)
+EXPRESSION:setAllowance(mkr,sai)	NodeType.EXPRESSION
+setAllowance(dai,ude)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1527
+Call context: 
+None
+INTERNAL_CALL, Helper.setAllowance(ERC20Interface,address)(dai,ude)
+EXPRESSION:setAllowance(mkr,sai)	NodeType.EXPRESSION
+setAllowance(dai,ude)	NodeType.EXPRESSION" -> "BlockID: 1528
+Call context: 
+None
+NEW VARIABLE val
+NEW VARIABLE ok
+TMP_1163(PepInterface) = HIGH_LEVEL_CALL, dest:tub(TubInterface), function:pep, arguments:[]  
+EXPRESSION:setAllowance(dai,ude)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(val,ok) = tub.pep().peek()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1528
+Call context: 
+None
+NEW VARIABLE val
+NEW VARIABLE ok
+TMP_1163(PepInterface) = HIGH_LEVEL_CALL, dest:tub(TubInterface), function:pep, arguments:[]  
+EXPRESSION:setAllowance(dai,ude)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(val,ok) = tub.pep().peek()	NodeType.EXPRESSION" -> "BlockID: 1529
+Call context: 
+None
+TUPLE_17(bytes32,bool) = HIGH_LEVEL_CALL, dest:TMP_1163(PepInterface), function:peek, arguments:[]  
+EXPRESSION:(val,ok) = tub.pep().peek()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1529
+Call context: 
+None
+TUPLE_17(bytes32,bool) = HIGH_LEVEL_CALL, dest:TMP_1163(PepInterface), function:peek, arguments:[]  
+EXPRESSION:(val,ok) = tub.pep().peek()	NodeType.EXPRESSION" -> "BlockID: 1530
+Call context: 
+None
+val(bytes32)= UNPACK TUPLE_17 index: 0 
+ok(bool)= UNPACK TUPLE_17 index: 1 
+TMP_1164(uint256) = HIGH_LEVEL_CALL, dest:tub(TubInterface), function:rap, arguments:['cup']  
+EXPRESSION:(val,ok) = tub.pep().peek()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1530
+Call context: 
+None
+val(bytes32)= UNPACK TUPLE_17 index: 0 
+ok(bool)= UNPACK TUPLE_17 index: 1 
+TMP_1164(uint256) = HIGH_LEVEL_CALL, dest:tub(TubInterface), function:rap, arguments:['cup']  
+EXPRESSION:(val,ok) = tub.pep().peek()	NodeType.EXPRESSION" -> "BlockID: 1531
+Call context: 
+None
+TMP_1165(uint256) = HIGH_LEVEL_CALL, dest:tub(TubInterface), function:tab, arguments:['cup']  
+EXPRESSION:" [key=0];
+"BlockID: 1531
+Call context: 
+None
+TMP_1165(uint256) = HIGH_LEVEL_CALL, dest:tub(TubInterface), function:tab, arguments:['cup']  
+EXPRESSION:" -> "BlockID: 1532
+Call context: 
+None
+TMP_1166(uint256) = INTERNAL_CALL, DSMath.rdiv(uint256,uint256)(TMP_1164,TMP_1165)
+EXPRESSION:" [key=0];
+"BlockID: 1532
+Call context: 
+None
+TMP_1166(uint256) = INTERNAL_CALL, DSMath.rdiv(uint256,uint256)(TMP_1164,TMP_1165)
+EXPRESSION:" -> "BlockID: 1533
+Call context: 
+None
+TMP_1167(uint256) = INTERNAL_CALL, DSMath.rmul(uint256,uint256)(_wad,TMP_1166)
+EXPRESSION:" [key=0];
+"BlockID: 1533
+Call context: 
+None
+TMP_1167(uint256) = INTERNAL_CALL, DSMath.rmul(uint256,uint256)(_wad,TMP_1166)
+EXPRESSION:" -> "BlockID: 1534
+Call context: 
+None
+TMP_1168 = CONVERT val to uint256
+TMP_1169(uint256) = INTERNAL_CALL, DSMath.wdiv(uint256,uint256)(TMP_1167,TMP_1168)
+EXPRESSION:" [key=0];
+"BlockID: 1534
+Call context: 
+None
+TMP_1168 = CONVERT val to uint256
+TMP_1169(uint256) = INTERNAL_CALL, DSMath.wdiv(uint256,uint256)(TMP_1167,TMP_1168)
+EXPRESSION:" -> "BlockID: 1535
+Call context: 
+None
+mkrFee(uint256) := TMP_1169(uint256)
+TMP_1170(uint256) = HIGH_LEVEL_CALL, dest:mkrEx(UniswapExchange), function:getEthToTokenOutputPrice, arguments:['mkrFee']  
+EXPRESSION:mkrFee = wdiv(rmul(_wad,rdiv(tub.rap(cup),tub.tab(cup))),uint256(val))	NodeType.VARIABLE
+mkrFee = wdiv(rmul(_wad,rdiv(tub.rap(cup),tub.tab(cup))),uint256(val))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1535
+Call context: 
+None
+mkrFee(uint256) := TMP_1169(uint256)
+TMP_1170(uint256) = HIGH_LEVEL_CALL, dest:mkrEx(UniswapExchange), function:getEthToTokenOutputPrice, arguments:['mkrFee']  
+EXPRESSION:mkrFee = wdiv(rmul(_wad,rdiv(tub.rap(cup),tub.tab(cup))),uint256(val))	NodeType.VARIABLE
+mkrFee = wdiv(rmul(_wad,rdiv(tub.rap(cup),tub.tab(cup))),uint256(val))	NodeType.EXPRESSION" -> "BlockID: 1536
+Call context: 
+None
+TMP_1171(uint256) = HIGH_LEVEL_CALL, dest:daiEx(UniswapExchange), function:getTokenToEthOutputPrice, arguments:['TMP_1170']  
+EXPRESSION:" [key=0];
+"BlockID: 1536
+Call context: 
+None
+TMP_1171(uint256) = HIGH_LEVEL_CALL, dest:daiEx(UniswapExchange), function:getTokenToEthOutputPrice, arguments:['TMP_1170']  
+EXPRESSION:" -> "BlockID: 1537
+Call context: 
+None
+daiFeeAmt(uint256) := TMP_1171(uint256)
+TMP_1172(uint256) = INTERNAL_CALL, DSMath.add(uint256,uint256)(_wad,daiFeeAmt)
+EXPRESSION:daiFeeAmt = daiEx.getTokenToEthOutputPrice(mkrEx.getEthToTokenOutputPrice(mkrFee))	NodeType.VARIABLE
+daiFeeAmt = daiEx.getTokenToEthOutputPrice(mkrEx.getEthToTokenOutputPrice(mkrFee))	NodeType.EXPRESSION
+daiAmt = add(_wad,daiFeeAmt)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1537
+Call context: 
+None
+daiFeeAmt(uint256) := TMP_1171(uint256)
+TMP_1172(uint256) = INTERNAL_CALL, DSMath.add(uint256,uint256)(_wad,daiFeeAmt)
+EXPRESSION:daiFeeAmt = daiEx.getTokenToEthOutputPrice(mkrEx.getEthToTokenOutputPrice(mkrFee))	NodeType.VARIABLE
+daiFeeAmt = daiEx.getTokenToEthOutputPrice(mkrEx.getEthToTokenOutputPrice(mkrFee))	NodeType.EXPRESSION
+daiAmt = add(_wad,daiFeeAmt)	NodeType.EXPRESSION" -> "BlockID: 1538
+Call context: 
+None
+daiAmt(uint256) := TMP_1172(uint256)
+INTERNAL_CALL, CompoundResolver.redeemUnderlying(address,uint256)(cDai,daiAmt)
+EXPRESSION:daiAmt = add(_wad,daiFeeAmt)	NodeType.EXPRESSION
+redeemUnderlying(cDai,daiAmt)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1538
+Call context: 
+None
+daiAmt(uint256) := TMP_1172(uint256)
+INTERNAL_CALL, CompoundResolver.redeemUnderlying(address,uint256)(cDai,daiAmt)
+EXPRESSION:daiAmt = add(_wad,daiFeeAmt)	NodeType.EXPRESSION
+redeemUnderlying(cDai,daiAmt)	NodeType.EXPRESSION" -> "BlockID: 1539
+Call context: 
+None
+TMP_1174(bool) = val != 0
+TMP_1175(bool) = ok && TMP_1174
+CONDITION TMP_1175
+EXPRESSION:redeemUnderlying(cDai,daiAmt)	NodeType.EXPRESSION
+ok && val != 0	NodeType.IF" [key=0];
+"BlockID: 1539
+Call context: 
+None
+TMP_1174(bool) = val != 0
+TMP_1175(bool) = ok && TMP_1174
+CONDITION TMP_1175
+EXPRESSION:redeemUnderlying(cDai,daiAmt)	NodeType.EXPRESSION
+ok && val != 0	NodeType.IF" -> "BlockID: 1540
+Call context: 
+True
+TMP_1176 = CONVERT 999000000000000000000 to uint256
+TMP_1177 = CONVERT 1899063809 to uint256
+TMP_1178 = CONVERT mkr to address
+TMP_1179(uint256) = HIGH_LEVEL_CALL, dest:daiEx(UniswapExchange), function:tokenToTokenSwapOutput, arguments:['mkrFee', 'daiAmt', 'TMP_1176', 'TMP_1177', 'TMP_1178']  
+EXPRESSION:daiEx.tokenToTokenSwapOutput(mkrFee,daiAmt,uint256(999000000000000000000),uint256(1899063809),address(mkr))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1539
+Call context: 
+None
+TMP_1174(bool) = val != 0
+TMP_1175(bool) = ok && TMP_1174
+CONDITION TMP_1175
+EXPRESSION:redeemUnderlying(cDai,daiAmt)	NodeType.EXPRESSION
+ok && val != 0	NodeType.IF" -> "BlockID: 1542
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1540
+Call context: 
+True
+TMP_1176 = CONVERT 999000000000000000000 to uint256
+TMP_1177 = CONVERT 1899063809 to uint256
+TMP_1178 = CONVERT mkr to address
+TMP_1179(uint256) = HIGH_LEVEL_CALL, dest:daiEx(UniswapExchange), function:tokenToTokenSwapOutput, arguments:['mkrFee', 'daiAmt', 'TMP_1176', 'TMP_1177', 'TMP_1178']  
+EXPRESSION:daiEx.tokenToTokenSwapOutput(mkrFee,daiAmt,uint256(999000000000000000000),uint256(1899063809),address(mkr))	NodeType.EXPRESSION" -> "BlockID: 1542
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1542
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1543
+Call context: 
+None
+HIGH_LEVEL_CALL, dest:tub(TubInterface), function:wipe, arguments:['cup', '_wad']  
+EXPRESSION:tub.wipe(cup,_wad)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1543
+Call context: 
+None
+HIGH_LEVEL_CALL, dest:tub(TubInterface), function:wipe, arguments:['cup', '_wad']  
+EXPRESSION:tub.wipe(cup,_wad)	NodeType.EXPRESSION" -> "BlockID: 1520
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1545
+Call context: 
+None
+lad(address)= UNPACK TUPLE_16 index: 0 
+TMP_1157 = CONVERT this to address
+TMP_1158(bool) = lad == TMP_1157
+CONDITION TMP_1158
+EXPRESSION:TMP_1158(bool) = lad == TMP_1157	NodeType.IF" -> "BlockID: 1546
+Call context: 
+True
+TMP_1159(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1545
+Call context: 
+None
+lad(address)= UNPACK TUPLE_16 index: 0 
+TMP_1157 = CONVERT this to address
+TMP_1158(bool) = lad == TMP_1157
+CONDITION TMP_1158
+EXPRESSION:TMP_1158(bool) = lad == TMP_1157	NodeType.IF" -> "BlockID: 1547
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1547
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1525
+Call context: 
+True
+INTERNAL_CALL, Helper.setAllowance(ERC20Interface,address)(dai,sai)
+EXPRESSION:setAllowance(dai,sai)	NodeType.EXPRESSION" [key=0];
+}

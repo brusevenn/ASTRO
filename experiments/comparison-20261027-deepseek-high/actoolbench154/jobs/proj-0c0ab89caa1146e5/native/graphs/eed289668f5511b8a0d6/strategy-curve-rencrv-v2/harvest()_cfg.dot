@@ -1,0 +1,457 @@
+digraph {
+"BlockID: 482
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 483
+Call context: 
+None
+MODIFIER_CALL, StrategyBase.onlyBenevolent()()
+EXPRESSION:onlyBenevolent()	NodeType.EXPRESSION";
+"BlockID: 484
+Call context: 
+None
+NEW VARIABLE to
+NEW VARIABLE toIndex
+TUPLE_2(address,uint256) = INTERNAL_CALL, StrategyCurveRenCRVv2.getMostPremium()()
+EXPRESSION:onlyBenevolent()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(to,toIndex) = getMostPremium()	NodeType.EXPRESSION";
+"BlockID: 485
+Call context: 
+None
+to(address)= UNPACK TUPLE_2 index: 0 
+toIndex(uint256)= UNPACK TUPLE_2 index: 1 
+TMP_316 = CONVERT mintr to ICurveMintr
+HIGH_LEVEL_CALL, dest:TMP_316(ICurveMintr), function:mint, arguments:['gauge']  
+EXPRESSION:(to,toIndex) = getMostPremium()	NodeType.EXPRESSION
+ICurveMintr(mintr).mint(gauge)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 486
+Call context: 
+None
+TMP_318 = CONVERT crv to IERC20
+TMP_319 = CONVERT this to address
+TMP_320(uint256) = HIGH_LEVEL_CALL, dest:TMP_318(IERC20), function:balanceOf, arguments:['TMP_319']  
+EXPRESSION:ICurveMintr(mintr).mint(gauge)	NodeType.EXPRESSION";
+"BlockID: 487
+Call context: 
+None
+_crv(uint256) := TMP_320(uint256)
+TMP_321(bool) = _crv > 0
+CONDITION TMP_321
+EXPRESSION:_crv = IERC20(crv).balanceOf(address(this))	NodeType.VARIABLE
+_crv = IERC20(crv).balanceOf(address(this))	NodeType.EXPRESSION
+_crv > 0	NodeType.IF" [shape=box];
+"BlockID: 488
+Call context: 
+True
+TMP_322(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['_crv', 'keepCRV'] 
+EXPRESSION:";
+"BlockID: 491
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 492
+Call context: 
+None
+TMP_331 = CONVERT to to IERC20
+TMP_332 = CONVERT this to address
+TMP_333(uint256) = HIGH_LEVEL_CALL, dest:TMP_331(IERC20), function:balanceOf, arguments:['TMP_332']  
+EXPRESSION:";
+"BlockID: 493
+Call context: 
+None
+_to(uint256) := TMP_333(uint256)
+TMP_334(bool) = _to > 0
+CONDITION TMP_334
+EXPRESSION:_to = IERC20(to).balanceOf(address(this))	NodeType.VARIABLE
+_to = IERC20(to).balanceOf(address(this))	NodeType.EXPRESSION
+_to > 0	NodeType.IF" [shape=box];
+"BlockID: 494
+Call context: 
+True
+TMP_335 = CONVERT to to IERC20
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeApprove(IERC20,address,uint256), arguments:['TMP_335', 'curve', '0'] 
+EXPRESSION:IERC20(to).safeApprove(curve,0)	NodeType.EXPRESSION";
+"BlockID: 496
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 497
+Call context: 
+None
+INTERNAL_CALL, StrategyBase._distributePerformanceFeesAndDeposit()()
+EXPRESSION:_distributePerformanceFeesAndDeposit()	NodeType.EXPRESSION";
+"BlockID: 495
+Call context: 
+None
+TMP_337 = CONVERT to to IERC20
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeApprove(IERC20,address,uint256), arguments:['TMP_337', 'curve', '_to'] 
+EXPRESSION:IERC20(to).safeApprove(curve,0)	NodeType.EXPRESSION
+IERC20(to).safeApprove(curve,_to)	NodeType.EXPRESSION";
+"BlockID: 499
+Call context: 
+None
+NEW VARIABLE liquidity
+REF_123(uint256) -> liquidity[toIndex]
+REF_123(uint256) (->liquidity) := _to(uint256)
+TMP_339 = CONVERT curve to ICurveFi_2
+HIGH_LEVEL_CALL, dest:TMP_339(ICurveFi_2), function:add_liquidity, arguments:['liquidity', '0']  
+EXPRESSION:IERC20(to).safeApprove(curve,_to)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+liquidity[toIndex] = _to	NodeType.EXPRESSION
+ICurveFi_2(curve).add_liquidity(liquidity,0)	NodeType.EXPRESSION";
+"BlockID: 489
+Call context: 
+None
+TMP_323(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_322', 'keepCRVMax'] 
+EXPRESSION:" [shape=box];
+"BlockID: 490
+Call context: 
+None
+_keepCRV(uint256) := TMP_323(uint256)
+TMP_324(bool) = _keepCRV > 0
+CONDITION TMP_324
+EXPRESSION:_keepCRV = _crv.mul(keepCRV).div(keepCRVMax)	NodeType.VARIABLE
+_keepCRV = _crv.mul(keepCRV).div(keepCRVMax)	NodeType.EXPRESSION
+_keepCRV > 0	NodeType.IF" [shape=box];
+"BlockID: 501
+Call context: 
+True
+TMP_325 = CONVERT crv to IERC20
+TMP_326 = CONVERT controller to IController
+TMP_327(address) = HIGH_LEVEL_CALL, dest:TMP_326(IController), function:treasury, arguments:[]  
+EXPRESSION:IERC20(crv).safeTransfer(IController(controller).treasury(),_keepCRV)	NodeType.EXPRESSION";
+"BlockID: 504
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 505
+Call context: 
+None
+TMP_329(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['_crv', '_keepCRV'] 
+EXPRESSION:_crv = _crv.sub(_keepCRV)	NodeType.EXPRESSION";
+"BlockID: 506
+Call context: 
+None
+_crv(uint256) := TMP_329(uint256)
+INTERNAL_CALL, StrategyBase._swapUniswap(address,address,uint256)(crv,to,_crv)
+EXPRESSION:_crv = _crv.sub(_keepCRV)	NodeType.EXPRESSION
+_swapUniswap(crv,to,_crv)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 502
+Call context: 
+None
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['TMP_325', 'TMP_327', '_keepCRV'] 
+EXPRESSION:IERC20(crv).safeTransfer(IController(controller).treasury(),_keepCRV)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 482
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 483
+Call context: 
+None
+MODIFIER_CALL, StrategyBase.onlyBenevolent()()
+EXPRESSION:onlyBenevolent()	NodeType.EXPRESSION" [key=0];
+"BlockID: 483
+Call context: 
+None
+MODIFIER_CALL, StrategyBase.onlyBenevolent()()
+EXPRESSION:onlyBenevolent()	NodeType.EXPRESSION" -> "BlockID: 484
+Call context: 
+None
+NEW VARIABLE to
+NEW VARIABLE toIndex
+TUPLE_2(address,uint256) = INTERNAL_CALL, StrategyCurveRenCRVv2.getMostPremium()()
+EXPRESSION:onlyBenevolent()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(to,toIndex) = getMostPremium()	NodeType.EXPRESSION" [key=0];
+"BlockID: 484
+Call context: 
+None
+NEW VARIABLE to
+NEW VARIABLE toIndex
+TUPLE_2(address,uint256) = INTERNAL_CALL, StrategyCurveRenCRVv2.getMostPremium()()
+EXPRESSION:onlyBenevolent()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(to,toIndex) = getMostPremium()	NodeType.EXPRESSION" -> "BlockID: 485
+Call context: 
+None
+to(address)= UNPACK TUPLE_2 index: 0 
+toIndex(uint256)= UNPACK TUPLE_2 index: 1 
+TMP_316 = CONVERT mintr to ICurveMintr
+HIGH_LEVEL_CALL, dest:TMP_316(ICurveMintr), function:mint, arguments:['gauge']  
+EXPRESSION:(to,toIndex) = getMostPremium()	NodeType.EXPRESSION
+ICurveMintr(mintr).mint(gauge)	NodeType.EXPRESSION" [key=0];
+"BlockID: 485
+Call context: 
+None
+to(address)= UNPACK TUPLE_2 index: 0 
+toIndex(uint256)= UNPACK TUPLE_2 index: 1 
+TMP_316 = CONVERT mintr to ICurveMintr
+HIGH_LEVEL_CALL, dest:TMP_316(ICurveMintr), function:mint, arguments:['gauge']  
+EXPRESSION:(to,toIndex) = getMostPremium()	NodeType.EXPRESSION
+ICurveMintr(mintr).mint(gauge)	NodeType.EXPRESSION" -> "BlockID: 486
+Call context: 
+None
+TMP_318 = CONVERT crv to IERC20
+TMP_319 = CONVERT this to address
+TMP_320(uint256) = HIGH_LEVEL_CALL, dest:TMP_318(IERC20), function:balanceOf, arguments:['TMP_319']  
+EXPRESSION:ICurveMintr(mintr).mint(gauge)	NodeType.EXPRESSION" [key=0];
+"BlockID: 486
+Call context: 
+None
+TMP_318 = CONVERT crv to IERC20
+TMP_319 = CONVERT this to address
+TMP_320(uint256) = HIGH_LEVEL_CALL, dest:TMP_318(IERC20), function:balanceOf, arguments:['TMP_319']  
+EXPRESSION:ICurveMintr(mintr).mint(gauge)	NodeType.EXPRESSION" -> "BlockID: 487
+Call context: 
+None
+_crv(uint256) := TMP_320(uint256)
+TMP_321(bool) = _crv > 0
+CONDITION TMP_321
+EXPRESSION:_crv = IERC20(crv).balanceOf(address(this))	NodeType.VARIABLE
+_crv = IERC20(crv).balanceOf(address(this))	NodeType.EXPRESSION
+_crv > 0	NodeType.IF" [key=0];
+"BlockID: 487
+Call context: 
+None
+_crv(uint256) := TMP_320(uint256)
+TMP_321(bool) = _crv > 0
+CONDITION TMP_321
+EXPRESSION:_crv = IERC20(crv).balanceOf(address(this))	NodeType.VARIABLE
+_crv = IERC20(crv).balanceOf(address(this))	NodeType.EXPRESSION
+_crv > 0	NodeType.IF" -> "BlockID: 488
+Call context: 
+True
+TMP_322(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['_crv', 'keepCRV'] 
+EXPRESSION:" [key=0];
+"BlockID: 487
+Call context: 
+None
+_crv(uint256) := TMP_320(uint256)
+TMP_321(bool) = _crv > 0
+CONDITION TMP_321
+EXPRESSION:_crv = IERC20(crv).balanceOf(address(this))	NodeType.VARIABLE
+_crv = IERC20(crv).balanceOf(address(this))	NodeType.EXPRESSION
+_crv > 0	NodeType.IF" -> "BlockID: 491
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 488
+Call context: 
+True
+TMP_322(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['_crv', 'keepCRV'] 
+EXPRESSION:" -> "BlockID: 489
+Call context: 
+None
+TMP_323(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_322', 'keepCRVMax'] 
+EXPRESSION:" [key=0];
+"BlockID: 491
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 492
+Call context: 
+None
+TMP_331 = CONVERT to to IERC20
+TMP_332 = CONVERT this to address
+TMP_333(uint256) = HIGH_LEVEL_CALL, dest:TMP_331(IERC20), function:balanceOf, arguments:['TMP_332']  
+EXPRESSION:" [key=0];
+"BlockID: 492
+Call context: 
+None
+TMP_331 = CONVERT to to IERC20
+TMP_332 = CONVERT this to address
+TMP_333(uint256) = HIGH_LEVEL_CALL, dest:TMP_331(IERC20), function:balanceOf, arguments:['TMP_332']  
+EXPRESSION:" -> "BlockID: 493
+Call context: 
+None
+_to(uint256) := TMP_333(uint256)
+TMP_334(bool) = _to > 0
+CONDITION TMP_334
+EXPRESSION:_to = IERC20(to).balanceOf(address(this))	NodeType.VARIABLE
+_to = IERC20(to).balanceOf(address(this))	NodeType.EXPRESSION
+_to > 0	NodeType.IF" [key=0];
+"BlockID: 493
+Call context: 
+None
+_to(uint256) := TMP_333(uint256)
+TMP_334(bool) = _to > 0
+CONDITION TMP_334
+EXPRESSION:_to = IERC20(to).balanceOf(address(this))	NodeType.VARIABLE
+_to = IERC20(to).balanceOf(address(this))	NodeType.EXPRESSION
+_to > 0	NodeType.IF" -> "BlockID: 494
+Call context: 
+True
+TMP_335 = CONVERT to to IERC20
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeApprove(IERC20,address,uint256), arguments:['TMP_335', 'curve', '0'] 
+EXPRESSION:IERC20(to).safeApprove(curve,0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 493
+Call context: 
+None
+_to(uint256) := TMP_333(uint256)
+TMP_334(bool) = _to > 0
+CONDITION TMP_334
+EXPRESSION:_to = IERC20(to).balanceOf(address(this))	NodeType.VARIABLE
+_to = IERC20(to).balanceOf(address(this))	NodeType.EXPRESSION
+_to > 0	NodeType.IF" -> "BlockID: 496
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 494
+Call context: 
+True
+TMP_335 = CONVERT to to IERC20
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeApprove(IERC20,address,uint256), arguments:['TMP_335', 'curve', '0'] 
+EXPRESSION:IERC20(to).safeApprove(curve,0)	NodeType.EXPRESSION" -> "BlockID: 495
+Call context: 
+None
+TMP_337 = CONVERT to to IERC20
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeApprove(IERC20,address,uint256), arguments:['TMP_337', 'curve', '_to'] 
+EXPRESSION:IERC20(to).safeApprove(curve,0)	NodeType.EXPRESSION
+IERC20(to).safeApprove(curve,_to)	NodeType.EXPRESSION" [key=0];
+"BlockID: 496
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 497
+Call context: 
+None
+INTERNAL_CALL, StrategyBase._distributePerformanceFeesAndDeposit()()
+EXPRESSION:_distributePerformanceFeesAndDeposit()	NodeType.EXPRESSION" [key=0];
+"BlockID: 495
+Call context: 
+None
+TMP_337 = CONVERT to to IERC20
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeApprove(IERC20,address,uint256), arguments:['TMP_337', 'curve', '_to'] 
+EXPRESSION:IERC20(to).safeApprove(curve,0)	NodeType.EXPRESSION
+IERC20(to).safeApprove(curve,_to)	NodeType.EXPRESSION" -> "BlockID: 499
+Call context: 
+None
+NEW VARIABLE liquidity
+REF_123(uint256) -> liquidity[toIndex]
+REF_123(uint256) (->liquidity) := _to(uint256)
+TMP_339 = CONVERT curve to ICurveFi_2
+HIGH_LEVEL_CALL, dest:TMP_339(ICurveFi_2), function:add_liquidity, arguments:['liquidity', '0']  
+EXPRESSION:IERC20(to).safeApprove(curve,_to)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+liquidity[toIndex] = _to	NodeType.EXPRESSION
+ICurveFi_2(curve).add_liquidity(liquidity,0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 499
+Call context: 
+None
+NEW VARIABLE liquidity
+REF_123(uint256) -> liquidity[toIndex]
+REF_123(uint256) (->liquidity) := _to(uint256)
+TMP_339 = CONVERT curve to ICurveFi_2
+HIGH_LEVEL_CALL, dest:TMP_339(ICurveFi_2), function:add_liquidity, arguments:['liquidity', '0']  
+EXPRESSION:IERC20(to).safeApprove(curve,_to)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+liquidity[toIndex] = _to	NodeType.EXPRESSION
+ICurveFi_2(curve).add_liquidity(liquidity,0)	NodeType.EXPRESSION" -> "BlockID: 496
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 489
+Call context: 
+None
+TMP_323(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_322', 'keepCRVMax'] 
+EXPRESSION:" -> "BlockID: 490
+Call context: 
+None
+_keepCRV(uint256) := TMP_323(uint256)
+TMP_324(bool) = _keepCRV > 0
+CONDITION TMP_324
+EXPRESSION:_keepCRV = _crv.mul(keepCRV).div(keepCRVMax)	NodeType.VARIABLE
+_keepCRV = _crv.mul(keepCRV).div(keepCRVMax)	NodeType.EXPRESSION
+_keepCRV > 0	NodeType.IF" [key=0];
+"BlockID: 490
+Call context: 
+None
+_keepCRV(uint256) := TMP_323(uint256)
+TMP_324(bool) = _keepCRV > 0
+CONDITION TMP_324
+EXPRESSION:_keepCRV = _crv.mul(keepCRV).div(keepCRVMax)	NodeType.VARIABLE
+_keepCRV = _crv.mul(keepCRV).div(keepCRVMax)	NodeType.EXPRESSION
+_keepCRV > 0	NodeType.IF" -> "BlockID: 501
+Call context: 
+True
+TMP_325 = CONVERT crv to IERC20
+TMP_326 = CONVERT controller to IController
+TMP_327(address) = HIGH_LEVEL_CALL, dest:TMP_326(IController), function:treasury, arguments:[]  
+EXPRESSION:IERC20(crv).safeTransfer(IController(controller).treasury(),_keepCRV)	NodeType.EXPRESSION" [key=0];
+"BlockID: 490
+Call context: 
+None
+_keepCRV(uint256) := TMP_323(uint256)
+TMP_324(bool) = _keepCRV > 0
+CONDITION TMP_324
+EXPRESSION:_keepCRV = _crv.mul(keepCRV).div(keepCRVMax)	NodeType.VARIABLE
+_keepCRV = _crv.mul(keepCRV).div(keepCRVMax)	NodeType.EXPRESSION
+_keepCRV > 0	NodeType.IF" -> "BlockID: 504
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 501
+Call context: 
+True
+TMP_325 = CONVERT crv to IERC20
+TMP_326 = CONVERT controller to IController
+TMP_327(address) = HIGH_LEVEL_CALL, dest:TMP_326(IController), function:treasury, arguments:[]  
+EXPRESSION:IERC20(crv).safeTransfer(IController(controller).treasury(),_keepCRV)	NodeType.EXPRESSION" -> "BlockID: 502
+Call context: 
+None
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['TMP_325', 'TMP_327', '_keepCRV'] 
+EXPRESSION:IERC20(crv).safeTransfer(IController(controller).treasury(),_keepCRV)	NodeType.EXPRESSION" [key=0];
+"BlockID: 504
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 505
+Call context: 
+None
+TMP_329(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['_crv', '_keepCRV'] 
+EXPRESSION:_crv = _crv.sub(_keepCRV)	NodeType.EXPRESSION" [key=0];
+"BlockID: 505
+Call context: 
+None
+TMP_329(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['_crv', '_keepCRV'] 
+EXPRESSION:_crv = _crv.sub(_keepCRV)	NodeType.EXPRESSION" -> "BlockID: 506
+Call context: 
+None
+_crv(uint256) := TMP_329(uint256)
+INTERNAL_CALL, StrategyBase._swapUniswap(address,address,uint256)(crv,to,_crv)
+EXPRESSION:_crv = _crv.sub(_keepCRV)	NodeType.EXPRESSION
+_swapUniswap(crv,to,_crv)	NodeType.EXPRESSION" [key=0];
+"BlockID: 506
+Call context: 
+None
+_crv(uint256) := TMP_329(uint256)
+INTERNAL_CALL, StrategyBase._swapUniswap(address,address,uint256)(crv,to,_crv)
+EXPRESSION:_crv = _crv.sub(_keepCRV)	NodeType.EXPRESSION
+_swapUniswap(crv,to,_crv)	NodeType.EXPRESSION" -> "BlockID: 491
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 502
+Call context: 
+None
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['TMP_325', 'TMP_327', '_keepCRV'] 
+EXPRESSION:IERC20(crv).safeTransfer(IController(controller).treasury(),_keepCRV)	NodeType.EXPRESSION" -> "BlockID: 504
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

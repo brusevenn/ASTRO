@@ -1,0 +1,521 @@
+digraph {
+"BlockID: 140
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 142
+Call context: 
+True
+TMP_83 = CONVERT _token to IERC20
+TMP_84 = CONVERT this to address
+TMP_85(uint256) = HIGH_LEVEL_CALL, dest:TMP_83(IERC20), function:balanceOf, arguments:['TMP_84']  
+EXPRESSION:";
+"BlockID: 143
+Call context: 
+None
+_before(uint256) := TMP_85(uint256)
+TMP_86 = CONVERT _strategy to IStrategy
+HIGH_LEVEL_CALL, dest:TMP_86(IStrategy), function:withdraw, arguments:['_token']  
+EXPRESSION:_before = IERC20(_token).balanceOf(address(this))	NodeType.VARIABLE
+_before = IERC20(_token).balanceOf(address(this))	NodeType.EXPRESSION
+IStrategy(_strategy).withdraw(_token)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 144
+Call context: 
+None
+TMP_88 = CONVERT _token to IERC20
+TMP_89 = CONVERT this to address
+TMP_90(uint256) = HIGH_LEVEL_CALL, dest:TMP_88(IERC20), function:balanceOf, arguments:['TMP_89']  
+EXPRESSION:IStrategy(_strategy).withdraw(_token)	NodeType.EXPRESSION";
+"BlockID: 145
+Call context: 
+None
+_after(uint256) := TMP_90(uint256)
+TMP_91(bool) = _after > _before
+CONDITION TMP_91
+EXPRESSION:_after = IERC20(_token).balanceOf(address(this))	NodeType.VARIABLE
+_after = IERC20(_token).balanceOf(address(this))	NodeType.EXPRESSION
+_after > _before	NodeType.IF" [shape=box];
+"BlockID: 146
+Call context: 
+True
+TMP_92(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['_after', '_before'] 
+EXPRESSION:";
+"BlockID: 148
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 147
+Call context: 
+None
+_amount(uint256) := TMP_92(uint256)
+TMP_93 = CONVERT _strategy to IStrategy
+TMP_94(address) = HIGH_LEVEL_CALL, dest:TMP_93(IStrategy), function:want, arguments:[]  
+EXPRESSION:_amount = _after.sub(_before)	NodeType.VARIABLE
+_amount = _after.sub(_before)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 150
+Call context: 
+None
+_want(address) := TMP_94(address)
+NEW VARIABLE _distribution
+NEW VARIABLE _expected
+TMP_95 = CONVERT _want to IERC20
+TMP_96 = CONVERT this to address
+TMP_97(uint256) = HIGH_LEVEL_CALL, dest:TMP_95(IERC20), function:balanceOf, arguments:['TMP_96']  
+EXPRESSION:_want = IStrategy(_strategy).want()	NodeType.VARIABLE
+_want = IStrategy(_strategy).want()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+_before = IERC20(_want).balanceOf(address(this))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 151
+Call context: 
+None
+_before(uint256) := TMP_97(uint256)
+TMP_98 = CONVERT _token to IERC20
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeApprove(IERC20,address,uint256), arguments:['TMP_98', 'onesplit', '0'] 
+EXPRESSION:_before = IERC20(_want).balanceOf(address(this))	NodeType.EXPRESSION
+IERC20(_token).safeApprove(onesplit,0)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 152
+Call context: 
+None
+TMP_100 = CONVERT _token to IERC20
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeApprove(IERC20,address,uint256), arguments:['TMP_100', 'onesplit', '_amount'] 
+EXPRESSION:IERC20(_token).safeApprove(onesplit,0)	NodeType.EXPRESSION
+IERC20(_token).safeApprove(onesplit,_amount)	NodeType.EXPRESSION";
+"BlockID: 153
+Call context: 
+None
+TMP_102 = CONVERT onesplit to OneSplitAudit
+TUPLE_1(uint256,uint256[]) = HIGH_LEVEL_CALL, dest:TMP_102(OneSplitAudit), function:getExpectedReturn, arguments:['_token', '_want', '_amount', 'parts', '0']  
+EXPRESSION:IERC20(_token).safeApprove(onesplit,_amount)	NodeType.EXPRESSION
+(_expected,_distribution) = OneSplitAudit(onesplit).getExpectedReturn(_token,_want,_amount,parts,0)	NodeType.EXPRESSION";
+"BlockID: 154
+Call context: 
+None
+_expected(uint256)= UNPACK TUPLE_1 index: 0 
+_distribution(uint256[])= UNPACK TUPLE_1 index: 1 
+TMP_103 = CONVERT onesplit to OneSplitAudit
+HIGH_LEVEL_CALL, dest:TMP_103(OneSplitAudit), function:swap, arguments:['_token', '_want', '_amount', '_expected', '_distribution', '0']  
+EXPRESSION:(_expected,_distribution) = OneSplitAudit(onesplit).getExpectedReturn(_token,_want,_amount,parts,0)	NodeType.EXPRESSION
+OneSplitAudit(onesplit).swap(_token,_want,_amount,_expected,_distribution,0)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 155
+Call context: 
+None
+TMP_105 = CONVERT _want to IERC20
+TMP_106 = CONVERT this to address
+TMP_107(uint256) = HIGH_LEVEL_CALL, dest:TMP_105(IERC20), function:balanceOf, arguments:['TMP_106']  
+EXPRESSION:OneSplitAudit(onesplit).swap(_token,_want,_amount,_expected,_distribution,0)	NodeType.EXPRESSION
+_after = IERC20(_want).balanceOf(address(this))	NodeType.EXPRESSION";
+"BlockID: 156
+Call context: 
+None
+_after(uint256) := TMP_107(uint256)
+TMP_108(bool) = _after > _before
+CONDITION TMP_108
+EXPRESSION:_after = IERC20(_want).balanceOf(address(this))	NodeType.EXPRESSION
+_after > _before	NodeType.IF" [shape=box];
+"BlockID: 157
+Call context: 
+True
+TMP_109(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['_after', '_before'] 
+EXPRESSION:_amount = _after.sub(_before)	NodeType.EXPRESSION";
+"BlockID: 159
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 158
+Call context: 
+None
+_amount(uint256) := TMP_109(uint256)
+TMP_110(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['_amount', 'split'] 
+EXPRESSION:_amount = _after.sub(_before)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 161
+Call context: 
+None
+TMP_111(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_110', 'max'] 
+EXPRESSION:" [shape=box];
+"BlockID: 162
+Call context: 
+None
+_treasury(uint256) := TMP_111(uint256)
+TMP_112(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['_amount', '_treasury'] 
+EXPRESSION:_treasury = _amount.mul(split).div(max)	NodeType.VARIABLE
+_treasury = _amount.mul(split).div(max)	NodeType.EXPRESSION
+earn(_want,_amount.sub(_treasury))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 163
+Call context: 
+None
+INTERNAL_CALL, ControllerV4.earn(address,uint256)(_want,TMP_112)
+EXPRESSION:earn(_want,_amount.sub(_treasury))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 164
+Call context: 
+None
+TMP_114 = CONVERT _want to IERC20
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['TMP_114', 'treasury', '_treasury'] 
+EXPRESSION:earn(_want,_amount.sub(_treasury))	NodeType.EXPRESSION
+IERC20(_want).safeTransfer(treasury,_treasury)	NodeType.EXPRESSION";
+"BlockID: 166
+Call context: 
+None
+TMP_79(bool) = msg.sender == strategist
+TMP_80(bool) = msg.sender == governance
+TMP_81(bool) = TMP_79 || TMP_80
+CONDITION TMP_81
+EXPRESSION:TMP_81(bool) = TMP_79 || TMP_80	NodeType.IF";
+"BlockID: 167
+Call context: 
+True
+TMP_82(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 168
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 140
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 166
+Call context: 
+None
+TMP_79(bool) = msg.sender == strategist
+TMP_80(bool) = msg.sender == governance
+TMP_81(bool) = TMP_79 || TMP_80
+CONDITION TMP_81
+EXPRESSION:TMP_81(bool) = TMP_79 || TMP_80	NodeType.IF" [key=0];
+"BlockID: 142
+Call context: 
+True
+TMP_83 = CONVERT _token to IERC20
+TMP_84 = CONVERT this to address
+TMP_85(uint256) = HIGH_LEVEL_CALL, dest:TMP_83(IERC20), function:balanceOf, arguments:['TMP_84']  
+EXPRESSION:" -> "BlockID: 143
+Call context: 
+None
+_before(uint256) := TMP_85(uint256)
+TMP_86 = CONVERT _strategy to IStrategy
+HIGH_LEVEL_CALL, dest:TMP_86(IStrategy), function:withdraw, arguments:['_token']  
+EXPRESSION:_before = IERC20(_token).balanceOf(address(this))	NodeType.VARIABLE
+_before = IERC20(_token).balanceOf(address(this))	NodeType.EXPRESSION
+IStrategy(_strategy).withdraw(_token)	NodeType.EXPRESSION" [key=0];
+"BlockID: 143
+Call context: 
+None
+_before(uint256) := TMP_85(uint256)
+TMP_86 = CONVERT _strategy to IStrategy
+HIGH_LEVEL_CALL, dest:TMP_86(IStrategy), function:withdraw, arguments:['_token']  
+EXPRESSION:_before = IERC20(_token).balanceOf(address(this))	NodeType.VARIABLE
+_before = IERC20(_token).balanceOf(address(this))	NodeType.EXPRESSION
+IStrategy(_strategy).withdraw(_token)	NodeType.EXPRESSION" -> "BlockID: 144
+Call context: 
+None
+TMP_88 = CONVERT _token to IERC20
+TMP_89 = CONVERT this to address
+TMP_90(uint256) = HIGH_LEVEL_CALL, dest:TMP_88(IERC20), function:balanceOf, arguments:['TMP_89']  
+EXPRESSION:IStrategy(_strategy).withdraw(_token)	NodeType.EXPRESSION" [key=0];
+"BlockID: 144
+Call context: 
+None
+TMP_88 = CONVERT _token to IERC20
+TMP_89 = CONVERT this to address
+TMP_90(uint256) = HIGH_LEVEL_CALL, dest:TMP_88(IERC20), function:balanceOf, arguments:['TMP_89']  
+EXPRESSION:IStrategy(_strategy).withdraw(_token)	NodeType.EXPRESSION" -> "BlockID: 145
+Call context: 
+None
+_after(uint256) := TMP_90(uint256)
+TMP_91(bool) = _after > _before
+CONDITION TMP_91
+EXPRESSION:_after = IERC20(_token).balanceOf(address(this))	NodeType.VARIABLE
+_after = IERC20(_token).balanceOf(address(this))	NodeType.EXPRESSION
+_after > _before	NodeType.IF" [key=0];
+"BlockID: 145
+Call context: 
+None
+_after(uint256) := TMP_90(uint256)
+TMP_91(bool) = _after > _before
+CONDITION TMP_91
+EXPRESSION:_after = IERC20(_token).balanceOf(address(this))	NodeType.VARIABLE
+_after = IERC20(_token).balanceOf(address(this))	NodeType.EXPRESSION
+_after > _before	NodeType.IF" -> "BlockID: 146
+Call context: 
+True
+TMP_92(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['_after', '_before'] 
+EXPRESSION:" [key=0];
+"BlockID: 145
+Call context: 
+None
+_after(uint256) := TMP_90(uint256)
+TMP_91(bool) = _after > _before
+CONDITION TMP_91
+EXPRESSION:_after = IERC20(_token).balanceOf(address(this))	NodeType.VARIABLE
+_after = IERC20(_token).balanceOf(address(this))	NodeType.EXPRESSION
+_after > _before	NodeType.IF" -> "BlockID: 148
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 146
+Call context: 
+True
+TMP_92(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['_after', '_before'] 
+EXPRESSION:" -> "BlockID: 147
+Call context: 
+None
+_amount(uint256) := TMP_92(uint256)
+TMP_93 = CONVERT _strategy to IStrategy
+TMP_94(address) = HIGH_LEVEL_CALL, dest:TMP_93(IStrategy), function:want, arguments:[]  
+EXPRESSION:_amount = _after.sub(_before)	NodeType.VARIABLE
+_amount = _after.sub(_before)	NodeType.EXPRESSION" [key=0];
+"BlockID: 147
+Call context: 
+None
+_amount(uint256) := TMP_92(uint256)
+TMP_93 = CONVERT _strategy to IStrategy
+TMP_94(address) = HIGH_LEVEL_CALL, dest:TMP_93(IStrategy), function:want, arguments:[]  
+EXPRESSION:_amount = _after.sub(_before)	NodeType.VARIABLE
+_amount = _after.sub(_before)	NodeType.EXPRESSION" -> "BlockID: 150
+Call context: 
+None
+_want(address) := TMP_94(address)
+NEW VARIABLE _distribution
+NEW VARIABLE _expected
+TMP_95 = CONVERT _want to IERC20
+TMP_96 = CONVERT this to address
+TMP_97(uint256) = HIGH_LEVEL_CALL, dest:TMP_95(IERC20), function:balanceOf, arguments:['TMP_96']  
+EXPRESSION:_want = IStrategy(_strategy).want()	NodeType.VARIABLE
+_want = IStrategy(_strategy).want()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+_before = IERC20(_want).balanceOf(address(this))	NodeType.EXPRESSION" [key=0];
+"BlockID: 150
+Call context: 
+None
+_want(address) := TMP_94(address)
+NEW VARIABLE _distribution
+NEW VARIABLE _expected
+TMP_95 = CONVERT _want to IERC20
+TMP_96 = CONVERT this to address
+TMP_97(uint256) = HIGH_LEVEL_CALL, dest:TMP_95(IERC20), function:balanceOf, arguments:['TMP_96']  
+EXPRESSION:_want = IStrategy(_strategy).want()	NodeType.VARIABLE
+_want = IStrategy(_strategy).want()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+_before = IERC20(_want).balanceOf(address(this))	NodeType.EXPRESSION" -> "BlockID: 151
+Call context: 
+None
+_before(uint256) := TMP_97(uint256)
+TMP_98 = CONVERT _token to IERC20
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeApprove(IERC20,address,uint256), arguments:['TMP_98', 'onesplit', '0'] 
+EXPRESSION:_before = IERC20(_want).balanceOf(address(this))	NodeType.EXPRESSION
+IERC20(_token).safeApprove(onesplit,0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 151
+Call context: 
+None
+_before(uint256) := TMP_97(uint256)
+TMP_98 = CONVERT _token to IERC20
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeApprove(IERC20,address,uint256), arguments:['TMP_98', 'onesplit', '0'] 
+EXPRESSION:_before = IERC20(_want).balanceOf(address(this))	NodeType.EXPRESSION
+IERC20(_token).safeApprove(onesplit,0)	NodeType.EXPRESSION" -> "BlockID: 152
+Call context: 
+None
+TMP_100 = CONVERT _token to IERC20
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeApprove(IERC20,address,uint256), arguments:['TMP_100', 'onesplit', '_amount'] 
+EXPRESSION:IERC20(_token).safeApprove(onesplit,0)	NodeType.EXPRESSION
+IERC20(_token).safeApprove(onesplit,_amount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 152
+Call context: 
+None
+TMP_100 = CONVERT _token to IERC20
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeApprove(IERC20,address,uint256), arguments:['TMP_100', 'onesplit', '_amount'] 
+EXPRESSION:IERC20(_token).safeApprove(onesplit,0)	NodeType.EXPRESSION
+IERC20(_token).safeApprove(onesplit,_amount)	NodeType.EXPRESSION" -> "BlockID: 153
+Call context: 
+None
+TMP_102 = CONVERT onesplit to OneSplitAudit
+TUPLE_1(uint256,uint256[]) = HIGH_LEVEL_CALL, dest:TMP_102(OneSplitAudit), function:getExpectedReturn, arguments:['_token', '_want', '_amount', 'parts', '0']  
+EXPRESSION:IERC20(_token).safeApprove(onesplit,_amount)	NodeType.EXPRESSION
+(_expected,_distribution) = OneSplitAudit(onesplit).getExpectedReturn(_token,_want,_amount,parts,0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 153
+Call context: 
+None
+TMP_102 = CONVERT onesplit to OneSplitAudit
+TUPLE_1(uint256,uint256[]) = HIGH_LEVEL_CALL, dest:TMP_102(OneSplitAudit), function:getExpectedReturn, arguments:['_token', '_want', '_amount', 'parts', '0']  
+EXPRESSION:IERC20(_token).safeApprove(onesplit,_amount)	NodeType.EXPRESSION
+(_expected,_distribution) = OneSplitAudit(onesplit).getExpectedReturn(_token,_want,_amount,parts,0)	NodeType.EXPRESSION" -> "BlockID: 154
+Call context: 
+None
+_expected(uint256)= UNPACK TUPLE_1 index: 0 
+_distribution(uint256[])= UNPACK TUPLE_1 index: 1 
+TMP_103 = CONVERT onesplit to OneSplitAudit
+HIGH_LEVEL_CALL, dest:TMP_103(OneSplitAudit), function:swap, arguments:['_token', '_want', '_amount', '_expected', '_distribution', '0']  
+EXPRESSION:(_expected,_distribution) = OneSplitAudit(onesplit).getExpectedReturn(_token,_want,_amount,parts,0)	NodeType.EXPRESSION
+OneSplitAudit(onesplit).swap(_token,_want,_amount,_expected,_distribution,0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 154
+Call context: 
+None
+_expected(uint256)= UNPACK TUPLE_1 index: 0 
+_distribution(uint256[])= UNPACK TUPLE_1 index: 1 
+TMP_103 = CONVERT onesplit to OneSplitAudit
+HIGH_LEVEL_CALL, dest:TMP_103(OneSplitAudit), function:swap, arguments:['_token', '_want', '_amount', '_expected', '_distribution', '0']  
+EXPRESSION:(_expected,_distribution) = OneSplitAudit(onesplit).getExpectedReturn(_token,_want,_amount,parts,0)	NodeType.EXPRESSION
+OneSplitAudit(onesplit).swap(_token,_want,_amount,_expected,_distribution,0)	NodeType.EXPRESSION" -> "BlockID: 155
+Call context: 
+None
+TMP_105 = CONVERT _want to IERC20
+TMP_106 = CONVERT this to address
+TMP_107(uint256) = HIGH_LEVEL_CALL, dest:TMP_105(IERC20), function:balanceOf, arguments:['TMP_106']  
+EXPRESSION:OneSplitAudit(onesplit).swap(_token,_want,_amount,_expected,_distribution,0)	NodeType.EXPRESSION
+_after = IERC20(_want).balanceOf(address(this))	NodeType.EXPRESSION" [key=0];
+"BlockID: 155
+Call context: 
+None
+TMP_105 = CONVERT _want to IERC20
+TMP_106 = CONVERT this to address
+TMP_107(uint256) = HIGH_LEVEL_CALL, dest:TMP_105(IERC20), function:balanceOf, arguments:['TMP_106']  
+EXPRESSION:OneSplitAudit(onesplit).swap(_token,_want,_amount,_expected,_distribution,0)	NodeType.EXPRESSION
+_after = IERC20(_want).balanceOf(address(this))	NodeType.EXPRESSION" -> "BlockID: 156
+Call context: 
+None
+_after(uint256) := TMP_107(uint256)
+TMP_108(bool) = _after > _before
+CONDITION TMP_108
+EXPRESSION:_after = IERC20(_want).balanceOf(address(this))	NodeType.EXPRESSION
+_after > _before	NodeType.IF" [key=0];
+"BlockID: 156
+Call context: 
+None
+_after(uint256) := TMP_107(uint256)
+TMP_108(bool) = _after > _before
+CONDITION TMP_108
+EXPRESSION:_after = IERC20(_want).balanceOf(address(this))	NodeType.EXPRESSION
+_after > _before	NodeType.IF" -> "BlockID: 157
+Call context: 
+True
+TMP_109(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['_after', '_before'] 
+EXPRESSION:_amount = _after.sub(_before)	NodeType.EXPRESSION" [key=0];
+"BlockID: 156
+Call context: 
+None
+_after(uint256) := TMP_107(uint256)
+TMP_108(bool) = _after > _before
+CONDITION TMP_108
+EXPRESSION:_after = IERC20(_want).balanceOf(address(this))	NodeType.EXPRESSION
+_after > _before	NodeType.IF" -> "BlockID: 159
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 157
+Call context: 
+True
+TMP_109(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['_after', '_before'] 
+EXPRESSION:_amount = _after.sub(_before)	NodeType.EXPRESSION" -> "BlockID: 158
+Call context: 
+None
+_amount(uint256) := TMP_109(uint256)
+TMP_110(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['_amount', 'split'] 
+EXPRESSION:_amount = _after.sub(_before)	NodeType.EXPRESSION" [key=0];
+"BlockID: 159
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 148
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 158
+Call context: 
+None
+_amount(uint256) := TMP_109(uint256)
+TMP_110(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['_amount', 'split'] 
+EXPRESSION:_amount = _after.sub(_before)	NodeType.EXPRESSION" -> "BlockID: 161
+Call context: 
+None
+TMP_111(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_110', 'max'] 
+EXPRESSION:" [key=0];
+"BlockID: 161
+Call context: 
+None
+TMP_111(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_110', 'max'] 
+EXPRESSION:" -> "BlockID: 162
+Call context: 
+None
+_treasury(uint256) := TMP_111(uint256)
+TMP_112(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['_amount', '_treasury'] 
+EXPRESSION:_treasury = _amount.mul(split).div(max)	NodeType.VARIABLE
+_treasury = _amount.mul(split).div(max)	NodeType.EXPRESSION
+earn(_want,_amount.sub(_treasury))	NodeType.EXPRESSION" [key=0];
+"BlockID: 162
+Call context: 
+None
+_treasury(uint256) := TMP_111(uint256)
+TMP_112(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.sub(uint256,uint256), arguments:['_amount', '_treasury'] 
+EXPRESSION:_treasury = _amount.mul(split).div(max)	NodeType.VARIABLE
+_treasury = _amount.mul(split).div(max)	NodeType.EXPRESSION
+earn(_want,_amount.sub(_treasury))	NodeType.EXPRESSION" -> "BlockID: 163
+Call context: 
+None
+INTERNAL_CALL, ControllerV4.earn(address,uint256)(_want,TMP_112)
+EXPRESSION:earn(_want,_amount.sub(_treasury))	NodeType.EXPRESSION" [key=0];
+"BlockID: 163
+Call context: 
+None
+INTERNAL_CALL, ControllerV4.earn(address,uint256)(_want,TMP_112)
+EXPRESSION:earn(_want,_amount.sub(_treasury))	NodeType.EXPRESSION" -> "BlockID: 164
+Call context: 
+None
+TMP_114 = CONVERT _want to IERC20
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['TMP_114', 'treasury', '_treasury'] 
+EXPRESSION:earn(_want,_amount.sub(_treasury))	NodeType.EXPRESSION
+IERC20(_want).safeTransfer(treasury,_treasury)	NodeType.EXPRESSION" [key=0];
+"BlockID: 164
+Call context: 
+None
+TMP_114 = CONVERT _want to IERC20
+LIBRARY_CALL, dest:SafeERC20, function:SafeERC20.safeTransfer(IERC20,address,uint256), arguments:['TMP_114', 'treasury', '_treasury'] 
+EXPRESSION:earn(_want,_amount.sub(_treasury))	NodeType.EXPRESSION
+IERC20(_want).safeTransfer(treasury,_treasury)	NodeType.EXPRESSION" -> "BlockID: 159
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 166
+Call context: 
+None
+TMP_79(bool) = msg.sender == strategist
+TMP_80(bool) = msg.sender == governance
+TMP_81(bool) = TMP_79 || TMP_80
+CONDITION TMP_81
+EXPRESSION:TMP_81(bool) = TMP_79 || TMP_80	NodeType.IF" -> "BlockID: 167
+Call context: 
+True
+TMP_82(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 166
+Call context: 
+None
+TMP_79(bool) = msg.sender == strategist
+TMP_80(bool) = msg.sender == governance
+TMP_81(bool) = TMP_79 || TMP_80
+CONDITION TMP_81
+EXPRESSION:TMP_81(bool) = TMP_79 || TMP_80	NodeType.IF" -> "BlockID: 168
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 168
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 142
+Call context: 
+True
+TMP_83 = CONVERT _token to IERC20
+TMP_84 = CONVERT this to address
+TMP_85(uint256) = HIGH_LEVEL_CALL, dest:TMP_83(IERC20), function:balanceOf, arguments:['TMP_84']  
+EXPRESSION:" [key=0];
+}

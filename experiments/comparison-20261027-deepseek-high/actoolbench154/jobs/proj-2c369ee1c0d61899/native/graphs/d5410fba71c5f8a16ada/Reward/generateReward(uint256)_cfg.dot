@@ -1,0 +1,816 @@
+digraph {
+"BlockID: 62
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 63
+Call context: 
+None
+TMP_50(bool) = coinPrice == 0
+CONDITION TMP_50
+EXPRESSION:coinPrice == 0	NodeType.IF";
+"BlockID: 64
+Call context: 
+True
+TMP_51(uint256) = 10 (c)** _decimals
+TMP_52(uint256) = 1 (c)* TMP_51
+coinPrice(uint256) := TMP_52(uint256)
+EXPRESSION:coinPrice = 1 * 10 ** _decimals	NodeType.EXPRESSION";
+"BlockID: 65
+Call context: 
+False
+coinPrice(uint256) := coinPrice(uint256)
+EXPRESSION:coinPrice = coinPrice	NodeType.EXPRESSION";
+"BlockID: 66
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 67
+Call context: 
+None
+i(uint256) := 0(uint256)
+EXPRESSION:i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION";
+"BlockID: 68
+Call context: 
+None
+BEGIN_LOOP
+REF_9 -> LENGTH rewardKeys
+TMP_28(bool) = i < REF_9
+CONDITION TMP_28
+EXPRESSION:None	NodeType.STARTLOOP
+i < rewardKeys.length	NodeType.IFLOOP";
+"BlockID: 69
+Call context: 
+True
+j(uint256) := 0(uint256)
+EXPRESSION:j = 0	NodeType.VARIABLE
+j = 0	NodeType.EXPRESSION";
+"BlockID: 70
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 72
+Call context: 
+None
+BEGIN_LOOP
+REF_10(address) -> rewardKeys[i]
+REF_11(Reward.RewardData[]) -> reward[REF_10]
+REF_12 -> LENGTH REF_11
+TMP_29(bool) = j < REF_12
+CONDITION TMP_29
+EXPRESSION:None	NodeType.STARTLOOP
+j < reward[rewardKeys[i]].length	NodeType.IFLOOP";
+"BlockID: 73
+Call context: 
+True
+REF_13(address) -> rewardKeys[i]
+REF_14(Reward.RewardData[]) -> reward[REF_13]
+REF_15(Reward.RewardData) -> REF_14[j]
+REF_16(uint256) -> REF_15.remain
+TMP_30(bool) = REF_16 == 0
+CONDITION TMP_30
+EXPRESSION:reward[rewardKeys[i]][j].remain == 0	NodeType.IF";
+"BlockID: 74
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 75
+Call context: 
+None
+TMP_49(uint256) := i(uint256)
+i(uint256) = i (c)+ 1
+EXPRESSION:i ++	NodeType.EXPRESSION";
+"BlockID: 76
+Call context: 
+True
+CONTINUE
+EXPRESSION:None	NodeType.CONTINUE";
+"BlockID: 77
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 78
+Call context: 
+None
+REF_17(address) -> rewardKeys[i]
+REF_18(Reward.RewardData[]) -> reward[REF_17]
+REF_19(Reward.RewardData) -> REF_18[j]
+REF_20(uint256) -> REF_19.price
+pawnPrice(uint256) := REF_20(uint256)
+REF_21(address) -> rewardKeys[i]
+REF_22(Reward.RewardData[]) -> reward[REF_21]
+REF_23(Reward.RewardData) -> REF_22[j]
+REF_24(uint256) -> REF_23.amount
+TMP_31(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['REF_24', '_mineDaliyRatio'] 
+EXPRESSION:pawnPrice = reward[rewardKeys[i]][j].price	NodeType.VARIABLE
+pawnPrice = reward[rewardKeys[i]][j].price	NodeType.EXPRESSION";
+"BlockID: 79
+Call context: 
+None
+TMP_32(uint256) = TMP_31 (c)/ 100
+targetRelease(uint256) := TMP_32(uint256)
+TMP_33(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['targetRelease', '_fixMineCoinRatio'] 
+EXPRESSION:targetRelease = reward[rewardKeys[i]][j].amount.mul(_mineDaliyRatio) / 100	NodeType.VARIABLE
+targetRelease = reward[rewardKeys[i]][j].amount.mul(_mineDaliyRatio) / 100	NodeType.EXPRESSION" [shape=box];
+"BlockID: 80
+Call context: 
+None
+TMP_34(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_33', '100'] 
+EXPRESSION:" [shape=box];
+"BlockID: 81
+Call context: 
+None
+fixMineCoin(uint256) := TMP_34(uint256)
+TMP_35(uint256) = targetRelease (c)- fixMineCoin
+TMP_36(uint256) = TMP_35 (c)* pawnPrice
+TMP_37(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_36', 'coinPrice'] 
+EXPRESSION:fixMineCoin = targetRelease.mul(_fixMineCoinRatio).div(100)	NodeType.VARIABLE
+fixMineCoin = targetRelease.mul(_fixMineCoinRatio).div(100)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 82
+Call context: 
+None
+sameCoinValue(uint256) := TMP_37(uint256)
+TMP_38(uint256) = sameCoinValue (c)+ fixMineCoin
+release(uint256) := TMP_38(uint256)
+REF_29(address) -> rewardKeys[i]
+REF_30(Reward.RewardData[]) -> reward[REF_29]
+REF_31(Reward.RewardData) -> REF_30[j]
+REF_32(uint256) -> REF_31.remain
+TMP_39(bool) = REF_32 < release
+CONDITION TMP_39
+EXPRESSION:sameCoinValue = (((targetRelease - fixMineCoin) * pawnPrice).div(coinPrice))	NodeType.VARIABLE
+sameCoinValue = (((targetRelease - fixMineCoin) * pawnPrice).div(coinPrice))	NodeType.EXPRESSION
+release = sameCoinValue + fixMineCoin	NodeType.VARIABLE
+release = sameCoinValue + fixMineCoin	NodeType.EXPRESSION
+reward[rewardKeys[i]][j].remain < release	NodeType.IF" [shape=box];
+"BlockID: 83
+Call context: 
+True
+REF_33(address) -> rewardKeys[i]
+REF_34(Reward.RewardData[]) -> reward[REF_33]
+REF_35(Reward.RewardData) -> REF_34[j]
+REF_36(uint256) -> REF_35.remain
+release(uint256) := REF_36(uint256)
+EXPRESSION:release = reward[rewardKeys[i]][j].remain	NodeType.EXPRESSION";
+"BlockID: 84
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 85
+Call context: 
+None
+REF_37(address) -> rewardKeys[i]
+REF_38(uint256) -> waitRelease[REF_37]
+TMP_40(bool) = REF_38 != 0
+CONDITION TMP_40
+EXPRESSION:waitRelease[rewardKeys[i]] != 0	NodeType.IF";
+"BlockID: 86
+Call context: 
+True
+REF_39(address) -> rewardKeys[i]
+REF_40(uint256) -> waitRelease[REF_39]
+REF_40(-> waitRelease) = REF_40 (c)+ release
+EXPRESSION:waitRelease[rewardKeys[i]] += release	NodeType.EXPRESSION";
+"BlockID: 87
+Call context: 
+False
+REF_41(address) -> rewardKeys[i]
+REF_42(uint256) -> waitRelease[REF_41]
+REF_42(uint256) (->waitRelease) := release(uint256)
+EXPRESSION:waitRelease[rewardKeys[i]] = release	NodeType.EXPRESSION";
+"BlockID: 88
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 89
+Call context: 
+None
+REF_43(address) -> rewardKeys[i]
+REF_44(uint256) -> historyTotal[REF_43]
+TMP_41(bool) = REF_44 != 0
+CONDITION TMP_41
+EXPRESSION:historyTotal[rewardKeys[i]] != 0	NodeType.IF";
+"BlockID: 90
+Call context: 
+True
+REF_45(address) -> rewardKeys[i]
+REF_46(uint256) -> historyTotal[REF_45]
+REF_46(-> historyTotal) = REF_46 (c)+ release
+EXPRESSION:historyTotal[rewardKeys[i]] += release	NodeType.EXPRESSION";
+"BlockID: 91
+Call context: 
+False
+REF_47(address) -> rewardKeys[i]
+REF_48(uint256) -> historyTotal[REF_47]
+REF_48(uint256) (->historyTotal) := release(uint256)
+EXPRESSION:historyTotal[rewardKeys[i]] = release	NodeType.EXPRESSION";
+"BlockID: 92
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 93
+Call context: 
+None
+REF_49(address) -> rewardKeys[i]
+REF_50(Reward.RewardData[]) -> reward[REF_49]
+REF_51(Reward.RewardData) -> REF_50[j]
+REF_52(uint256) -> REF_51.remain
+REF_53(address) -> rewardKeys[i]
+REF_54(Reward.RewardData[]) -> reward[REF_53]
+REF_55(Reward.RewardData) -> REF_54[j]
+REF_56(uint256) -> REF_55.remain
+TMP_42(uint256) = REF_56 (c)- release
+REF_52(uint256) (->reward) := TMP_42(uint256)
+REF_57(address) -> rewardKeys[i]
+REF_58(Reward.RewardHistory[]) -> history[REF_57]
+TMP_43(Reward.RewardHistory) = new RewardHistory(release,sameCoinValue,fixMineCoin,coinPrice,block.timestamp)
+REF_60 -> LENGTH REF_58
+TMP_45(uint256) := REF_60(uint256)
+TMP_46(uint256) = TMP_45 (c)+ 1
+REF_60(uint256) (->history) := TMP_46(uint256)
+REF_61(Reward.RewardHistory) -> REF_58[TMP_45]
+REF_61(Reward.RewardHistory) (->history) := TMP_43(Reward.RewardHistory)
+_totalMineCnt(uint256) = _totalMineCnt (c)+ release
+TMP_48(uint256) := j(uint256)
+j(uint256) = j (c)+ 1
+EXPRESSION:reward[rewardKeys[i]][j].remain = reward[rewardKeys[i]][j].remain - release	NodeType.EXPRESSION
+history[rewardKeys[i]].push(RewardHistory(release,sameCoinValue,fixMineCoin,coinPrice,block.timestamp))	NodeType.EXPRESSION
+_totalMineCnt += release	NodeType.EXPRESSION
+j ++	NodeType.EXPRESSION";
+"BlockID: 62
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 63
+Call context: 
+None
+TMP_50(bool) = coinPrice == 0
+CONDITION TMP_50
+EXPRESSION:coinPrice == 0	NodeType.IF" [key=0];
+"BlockID: 63
+Call context: 
+None
+TMP_50(bool) = coinPrice == 0
+CONDITION TMP_50
+EXPRESSION:coinPrice == 0	NodeType.IF" -> "BlockID: 64
+Call context: 
+True
+TMP_51(uint256) = 10 (c)** _decimals
+TMP_52(uint256) = 1 (c)* TMP_51
+coinPrice(uint256) := TMP_52(uint256)
+EXPRESSION:coinPrice = 1 * 10 ** _decimals	NodeType.EXPRESSION" [key=0];
+"BlockID: 63
+Call context: 
+None
+TMP_50(bool) = coinPrice == 0
+CONDITION TMP_50
+EXPRESSION:coinPrice == 0	NodeType.IF" -> "BlockID: 65
+Call context: 
+False
+coinPrice(uint256) := coinPrice(uint256)
+EXPRESSION:coinPrice = coinPrice	NodeType.EXPRESSION" [key=0];
+"BlockID: 64
+Call context: 
+True
+TMP_51(uint256) = 10 (c)** _decimals
+TMP_52(uint256) = 1 (c)* TMP_51
+coinPrice(uint256) := TMP_52(uint256)
+EXPRESSION:coinPrice = 1 * 10 ** _decimals	NodeType.EXPRESSION" -> "BlockID: 66
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 65
+Call context: 
+False
+coinPrice(uint256) := coinPrice(uint256)
+EXPRESSION:coinPrice = coinPrice	NodeType.EXPRESSION" -> "BlockID: 66
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 66
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 67
+Call context: 
+None
+i(uint256) := 0(uint256)
+EXPRESSION:i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 67
+Call context: 
+None
+i(uint256) := 0(uint256)
+EXPRESSION:i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" -> "BlockID: 68
+Call context: 
+None
+BEGIN_LOOP
+REF_9 -> LENGTH rewardKeys
+TMP_28(bool) = i < REF_9
+CONDITION TMP_28
+EXPRESSION:None	NodeType.STARTLOOP
+i < rewardKeys.length	NodeType.IFLOOP" [key=0];
+"BlockID: 68
+Call context: 
+None
+BEGIN_LOOP
+REF_9 -> LENGTH rewardKeys
+TMP_28(bool) = i < REF_9
+CONDITION TMP_28
+EXPRESSION:None	NodeType.STARTLOOP
+i < rewardKeys.length	NodeType.IFLOOP" -> "BlockID: 69
+Call context: 
+True
+j(uint256) := 0(uint256)
+EXPRESSION:j = 0	NodeType.VARIABLE
+j = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 68
+Call context: 
+None
+BEGIN_LOOP
+REF_9 -> LENGTH rewardKeys
+TMP_28(bool) = i < REF_9
+CONDITION TMP_28
+EXPRESSION:None	NodeType.STARTLOOP
+i < rewardKeys.length	NodeType.IFLOOP" -> "BlockID: 70
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 69
+Call context: 
+True
+j(uint256) := 0(uint256)
+EXPRESSION:j = 0	NodeType.VARIABLE
+j = 0	NodeType.EXPRESSION" -> "BlockID: 72
+Call context: 
+None
+BEGIN_LOOP
+REF_10(address) -> rewardKeys[i]
+REF_11(Reward.RewardData[]) -> reward[REF_10]
+REF_12 -> LENGTH REF_11
+TMP_29(bool) = j < REF_12
+CONDITION TMP_29
+EXPRESSION:None	NodeType.STARTLOOP
+j < reward[rewardKeys[i]].length	NodeType.IFLOOP" [key=0];
+"BlockID: 72
+Call context: 
+None
+BEGIN_LOOP
+REF_10(address) -> rewardKeys[i]
+REF_11(Reward.RewardData[]) -> reward[REF_10]
+REF_12 -> LENGTH REF_11
+TMP_29(bool) = j < REF_12
+CONDITION TMP_29
+EXPRESSION:None	NodeType.STARTLOOP
+j < reward[rewardKeys[i]].length	NodeType.IFLOOP" -> "BlockID: 73
+Call context: 
+True
+REF_13(address) -> rewardKeys[i]
+REF_14(Reward.RewardData[]) -> reward[REF_13]
+REF_15(Reward.RewardData) -> REF_14[j]
+REF_16(uint256) -> REF_15.remain
+TMP_30(bool) = REF_16 == 0
+CONDITION TMP_30
+EXPRESSION:reward[rewardKeys[i]][j].remain == 0	NodeType.IF" [key=0];
+"BlockID: 72
+Call context: 
+None
+BEGIN_LOOP
+REF_10(address) -> rewardKeys[i]
+REF_11(Reward.RewardData[]) -> reward[REF_10]
+REF_12 -> LENGTH REF_11
+TMP_29(bool) = j < REF_12
+CONDITION TMP_29
+EXPRESSION:None	NodeType.STARTLOOP
+j < reward[rewardKeys[i]].length	NodeType.IFLOOP" -> "BlockID: 74
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 73
+Call context: 
+True
+REF_13(address) -> rewardKeys[i]
+REF_14(Reward.RewardData[]) -> reward[REF_13]
+REF_15(Reward.RewardData) -> REF_14[j]
+REF_16(uint256) -> REF_15.remain
+TMP_30(bool) = REF_16 == 0
+CONDITION TMP_30
+EXPRESSION:reward[rewardKeys[i]][j].remain == 0	NodeType.IF" -> "BlockID: 76
+Call context: 
+True
+CONTINUE
+EXPRESSION:None	NodeType.CONTINUE" [key=0];
+"BlockID: 73
+Call context: 
+True
+REF_13(address) -> rewardKeys[i]
+REF_14(Reward.RewardData[]) -> reward[REF_13]
+REF_15(Reward.RewardData) -> REF_14[j]
+REF_16(uint256) -> REF_15.remain
+TMP_30(bool) = REF_16 == 0
+CONDITION TMP_30
+EXPRESSION:reward[rewardKeys[i]][j].remain == 0	NodeType.IF" -> "BlockID: 77
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 74
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 75
+Call context: 
+None
+TMP_49(uint256) := i(uint256)
+i(uint256) = i (c)+ 1
+EXPRESSION:i ++	NodeType.EXPRESSION" [key=0];
+"BlockID: 75
+Call context: 
+None
+TMP_49(uint256) := i(uint256)
+i(uint256) = i (c)+ 1
+EXPRESSION:i ++	NodeType.EXPRESSION" -> "BlockID: 68
+Call context: 
+None
+BEGIN_LOOP
+REF_9 -> LENGTH rewardKeys
+TMP_28(bool) = i < REF_9
+CONDITION TMP_28
+EXPRESSION:None	NodeType.STARTLOOP
+i < rewardKeys.length	NodeType.IFLOOP" [key=0];
+"BlockID: 76
+Call context: 
+True
+CONTINUE
+EXPRESSION:None	NodeType.CONTINUE" -> "BlockID: 72
+Call context: 
+None
+BEGIN_LOOP
+REF_10(address) -> rewardKeys[i]
+REF_11(Reward.RewardData[]) -> reward[REF_10]
+REF_12 -> LENGTH REF_11
+TMP_29(bool) = j < REF_12
+CONDITION TMP_29
+EXPRESSION:None	NodeType.STARTLOOP
+j < reward[rewardKeys[i]].length	NodeType.IFLOOP" [key=0];
+"BlockID: 77
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 78
+Call context: 
+None
+REF_17(address) -> rewardKeys[i]
+REF_18(Reward.RewardData[]) -> reward[REF_17]
+REF_19(Reward.RewardData) -> REF_18[j]
+REF_20(uint256) -> REF_19.price
+pawnPrice(uint256) := REF_20(uint256)
+REF_21(address) -> rewardKeys[i]
+REF_22(Reward.RewardData[]) -> reward[REF_21]
+REF_23(Reward.RewardData) -> REF_22[j]
+REF_24(uint256) -> REF_23.amount
+TMP_31(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['REF_24', '_mineDaliyRatio'] 
+EXPRESSION:pawnPrice = reward[rewardKeys[i]][j].price	NodeType.VARIABLE
+pawnPrice = reward[rewardKeys[i]][j].price	NodeType.EXPRESSION" [key=0];
+"BlockID: 78
+Call context: 
+None
+REF_17(address) -> rewardKeys[i]
+REF_18(Reward.RewardData[]) -> reward[REF_17]
+REF_19(Reward.RewardData) -> REF_18[j]
+REF_20(uint256) -> REF_19.price
+pawnPrice(uint256) := REF_20(uint256)
+REF_21(address) -> rewardKeys[i]
+REF_22(Reward.RewardData[]) -> reward[REF_21]
+REF_23(Reward.RewardData) -> REF_22[j]
+REF_24(uint256) -> REF_23.amount
+TMP_31(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['REF_24', '_mineDaliyRatio'] 
+EXPRESSION:pawnPrice = reward[rewardKeys[i]][j].price	NodeType.VARIABLE
+pawnPrice = reward[rewardKeys[i]][j].price	NodeType.EXPRESSION" -> "BlockID: 79
+Call context: 
+None
+TMP_32(uint256) = TMP_31 (c)/ 100
+targetRelease(uint256) := TMP_32(uint256)
+TMP_33(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['targetRelease', '_fixMineCoinRatio'] 
+EXPRESSION:targetRelease = reward[rewardKeys[i]][j].amount.mul(_mineDaliyRatio) / 100	NodeType.VARIABLE
+targetRelease = reward[rewardKeys[i]][j].amount.mul(_mineDaliyRatio) / 100	NodeType.EXPRESSION" [key=0];
+"BlockID: 79
+Call context: 
+None
+TMP_32(uint256) = TMP_31 (c)/ 100
+targetRelease(uint256) := TMP_32(uint256)
+TMP_33(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['targetRelease', '_fixMineCoinRatio'] 
+EXPRESSION:targetRelease = reward[rewardKeys[i]][j].amount.mul(_mineDaliyRatio) / 100	NodeType.VARIABLE
+targetRelease = reward[rewardKeys[i]][j].amount.mul(_mineDaliyRatio) / 100	NodeType.EXPRESSION" -> "BlockID: 80
+Call context: 
+None
+TMP_34(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_33', '100'] 
+EXPRESSION:" [key=0];
+"BlockID: 80
+Call context: 
+None
+TMP_34(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_33', '100'] 
+EXPRESSION:" -> "BlockID: 81
+Call context: 
+None
+fixMineCoin(uint256) := TMP_34(uint256)
+TMP_35(uint256) = targetRelease (c)- fixMineCoin
+TMP_36(uint256) = TMP_35 (c)* pawnPrice
+TMP_37(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_36', 'coinPrice'] 
+EXPRESSION:fixMineCoin = targetRelease.mul(_fixMineCoinRatio).div(100)	NodeType.VARIABLE
+fixMineCoin = targetRelease.mul(_fixMineCoinRatio).div(100)	NodeType.EXPRESSION" [key=0];
+"BlockID: 81
+Call context: 
+None
+fixMineCoin(uint256) := TMP_34(uint256)
+TMP_35(uint256) = targetRelease (c)- fixMineCoin
+TMP_36(uint256) = TMP_35 (c)* pawnPrice
+TMP_37(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.div(uint256,uint256), arguments:['TMP_36', 'coinPrice'] 
+EXPRESSION:fixMineCoin = targetRelease.mul(_fixMineCoinRatio).div(100)	NodeType.VARIABLE
+fixMineCoin = targetRelease.mul(_fixMineCoinRatio).div(100)	NodeType.EXPRESSION" -> "BlockID: 82
+Call context: 
+None
+sameCoinValue(uint256) := TMP_37(uint256)
+TMP_38(uint256) = sameCoinValue (c)+ fixMineCoin
+release(uint256) := TMP_38(uint256)
+REF_29(address) -> rewardKeys[i]
+REF_30(Reward.RewardData[]) -> reward[REF_29]
+REF_31(Reward.RewardData) -> REF_30[j]
+REF_32(uint256) -> REF_31.remain
+TMP_39(bool) = REF_32 < release
+CONDITION TMP_39
+EXPRESSION:sameCoinValue = (((targetRelease - fixMineCoin) * pawnPrice).div(coinPrice))	NodeType.VARIABLE
+sameCoinValue = (((targetRelease - fixMineCoin) * pawnPrice).div(coinPrice))	NodeType.EXPRESSION
+release = sameCoinValue + fixMineCoin	NodeType.VARIABLE
+release = sameCoinValue + fixMineCoin	NodeType.EXPRESSION
+reward[rewardKeys[i]][j].remain < release	NodeType.IF" [key=0];
+"BlockID: 82
+Call context: 
+None
+sameCoinValue(uint256) := TMP_37(uint256)
+TMP_38(uint256) = sameCoinValue (c)+ fixMineCoin
+release(uint256) := TMP_38(uint256)
+REF_29(address) -> rewardKeys[i]
+REF_30(Reward.RewardData[]) -> reward[REF_29]
+REF_31(Reward.RewardData) -> REF_30[j]
+REF_32(uint256) -> REF_31.remain
+TMP_39(bool) = REF_32 < release
+CONDITION TMP_39
+EXPRESSION:sameCoinValue = (((targetRelease - fixMineCoin) * pawnPrice).div(coinPrice))	NodeType.VARIABLE
+sameCoinValue = (((targetRelease - fixMineCoin) * pawnPrice).div(coinPrice))	NodeType.EXPRESSION
+release = sameCoinValue + fixMineCoin	NodeType.VARIABLE
+release = sameCoinValue + fixMineCoin	NodeType.EXPRESSION
+reward[rewardKeys[i]][j].remain < release	NodeType.IF" -> "BlockID: 83
+Call context: 
+True
+REF_33(address) -> rewardKeys[i]
+REF_34(Reward.RewardData[]) -> reward[REF_33]
+REF_35(Reward.RewardData) -> REF_34[j]
+REF_36(uint256) -> REF_35.remain
+release(uint256) := REF_36(uint256)
+EXPRESSION:release = reward[rewardKeys[i]][j].remain	NodeType.EXPRESSION" [key=0];
+"BlockID: 82
+Call context: 
+None
+sameCoinValue(uint256) := TMP_37(uint256)
+TMP_38(uint256) = sameCoinValue (c)+ fixMineCoin
+release(uint256) := TMP_38(uint256)
+REF_29(address) -> rewardKeys[i]
+REF_30(Reward.RewardData[]) -> reward[REF_29]
+REF_31(Reward.RewardData) -> REF_30[j]
+REF_32(uint256) -> REF_31.remain
+TMP_39(bool) = REF_32 < release
+CONDITION TMP_39
+EXPRESSION:sameCoinValue = (((targetRelease - fixMineCoin) * pawnPrice).div(coinPrice))	NodeType.VARIABLE
+sameCoinValue = (((targetRelease - fixMineCoin) * pawnPrice).div(coinPrice))	NodeType.EXPRESSION
+release = sameCoinValue + fixMineCoin	NodeType.VARIABLE
+release = sameCoinValue + fixMineCoin	NodeType.EXPRESSION
+reward[rewardKeys[i]][j].remain < release	NodeType.IF" -> "BlockID: 84
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 83
+Call context: 
+True
+REF_33(address) -> rewardKeys[i]
+REF_34(Reward.RewardData[]) -> reward[REF_33]
+REF_35(Reward.RewardData) -> REF_34[j]
+REF_36(uint256) -> REF_35.remain
+release(uint256) := REF_36(uint256)
+EXPRESSION:release = reward[rewardKeys[i]][j].remain	NodeType.EXPRESSION" -> "BlockID: 84
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 84
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 85
+Call context: 
+None
+REF_37(address) -> rewardKeys[i]
+REF_38(uint256) -> waitRelease[REF_37]
+TMP_40(bool) = REF_38 != 0
+CONDITION TMP_40
+EXPRESSION:waitRelease[rewardKeys[i]] != 0	NodeType.IF" [key=0];
+"BlockID: 85
+Call context: 
+None
+REF_37(address) -> rewardKeys[i]
+REF_38(uint256) -> waitRelease[REF_37]
+TMP_40(bool) = REF_38 != 0
+CONDITION TMP_40
+EXPRESSION:waitRelease[rewardKeys[i]] != 0	NodeType.IF" -> "BlockID: 86
+Call context: 
+True
+REF_39(address) -> rewardKeys[i]
+REF_40(uint256) -> waitRelease[REF_39]
+REF_40(-> waitRelease) = REF_40 (c)+ release
+EXPRESSION:waitRelease[rewardKeys[i]] += release	NodeType.EXPRESSION" [key=0];
+"BlockID: 85
+Call context: 
+None
+REF_37(address) -> rewardKeys[i]
+REF_38(uint256) -> waitRelease[REF_37]
+TMP_40(bool) = REF_38 != 0
+CONDITION TMP_40
+EXPRESSION:waitRelease[rewardKeys[i]] != 0	NodeType.IF" -> "BlockID: 87
+Call context: 
+False
+REF_41(address) -> rewardKeys[i]
+REF_42(uint256) -> waitRelease[REF_41]
+REF_42(uint256) (->waitRelease) := release(uint256)
+EXPRESSION:waitRelease[rewardKeys[i]] = release	NodeType.EXPRESSION" [key=0];
+"BlockID: 86
+Call context: 
+True
+REF_39(address) -> rewardKeys[i]
+REF_40(uint256) -> waitRelease[REF_39]
+REF_40(-> waitRelease) = REF_40 (c)+ release
+EXPRESSION:waitRelease[rewardKeys[i]] += release	NodeType.EXPRESSION" -> "BlockID: 88
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 87
+Call context: 
+False
+REF_41(address) -> rewardKeys[i]
+REF_42(uint256) -> waitRelease[REF_41]
+REF_42(uint256) (->waitRelease) := release(uint256)
+EXPRESSION:waitRelease[rewardKeys[i]] = release	NodeType.EXPRESSION" -> "BlockID: 88
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 88
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 89
+Call context: 
+None
+REF_43(address) -> rewardKeys[i]
+REF_44(uint256) -> historyTotal[REF_43]
+TMP_41(bool) = REF_44 != 0
+CONDITION TMP_41
+EXPRESSION:historyTotal[rewardKeys[i]] != 0	NodeType.IF" [key=0];
+"BlockID: 89
+Call context: 
+None
+REF_43(address) -> rewardKeys[i]
+REF_44(uint256) -> historyTotal[REF_43]
+TMP_41(bool) = REF_44 != 0
+CONDITION TMP_41
+EXPRESSION:historyTotal[rewardKeys[i]] != 0	NodeType.IF" -> "BlockID: 90
+Call context: 
+True
+REF_45(address) -> rewardKeys[i]
+REF_46(uint256) -> historyTotal[REF_45]
+REF_46(-> historyTotal) = REF_46 (c)+ release
+EXPRESSION:historyTotal[rewardKeys[i]] += release	NodeType.EXPRESSION" [key=0];
+"BlockID: 89
+Call context: 
+None
+REF_43(address) -> rewardKeys[i]
+REF_44(uint256) -> historyTotal[REF_43]
+TMP_41(bool) = REF_44 != 0
+CONDITION TMP_41
+EXPRESSION:historyTotal[rewardKeys[i]] != 0	NodeType.IF" -> "BlockID: 91
+Call context: 
+False
+REF_47(address) -> rewardKeys[i]
+REF_48(uint256) -> historyTotal[REF_47]
+REF_48(uint256) (->historyTotal) := release(uint256)
+EXPRESSION:historyTotal[rewardKeys[i]] = release	NodeType.EXPRESSION" [key=0];
+"BlockID: 90
+Call context: 
+True
+REF_45(address) -> rewardKeys[i]
+REF_46(uint256) -> historyTotal[REF_45]
+REF_46(-> historyTotal) = REF_46 (c)+ release
+EXPRESSION:historyTotal[rewardKeys[i]] += release	NodeType.EXPRESSION" -> "BlockID: 92
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 91
+Call context: 
+False
+REF_47(address) -> rewardKeys[i]
+REF_48(uint256) -> historyTotal[REF_47]
+REF_48(uint256) (->historyTotal) := release(uint256)
+EXPRESSION:historyTotal[rewardKeys[i]] = release	NodeType.EXPRESSION" -> "BlockID: 92
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 92
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 93
+Call context: 
+None
+REF_49(address) -> rewardKeys[i]
+REF_50(Reward.RewardData[]) -> reward[REF_49]
+REF_51(Reward.RewardData) -> REF_50[j]
+REF_52(uint256) -> REF_51.remain
+REF_53(address) -> rewardKeys[i]
+REF_54(Reward.RewardData[]) -> reward[REF_53]
+REF_55(Reward.RewardData) -> REF_54[j]
+REF_56(uint256) -> REF_55.remain
+TMP_42(uint256) = REF_56 (c)- release
+REF_52(uint256) (->reward) := TMP_42(uint256)
+REF_57(address) -> rewardKeys[i]
+REF_58(Reward.RewardHistory[]) -> history[REF_57]
+TMP_43(Reward.RewardHistory) = new RewardHistory(release,sameCoinValue,fixMineCoin,coinPrice,block.timestamp)
+REF_60 -> LENGTH REF_58
+TMP_45(uint256) := REF_60(uint256)
+TMP_46(uint256) = TMP_45 (c)+ 1
+REF_60(uint256) (->history) := TMP_46(uint256)
+REF_61(Reward.RewardHistory) -> REF_58[TMP_45]
+REF_61(Reward.RewardHistory) (->history) := TMP_43(Reward.RewardHistory)
+_totalMineCnt(uint256) = _totalMineCnt (c)+ release
+TMP_48(uint256) := j(uint256)
+j(uint256) = j (c)+ 1
+EXPRESSION:reward[rewardKeys[i]][j].remain = reward[rewardKeys[i]][j].remain - release	NodeType.EXPRESSION
+history[rewardKeys[i]].push(RewardHistory(release,sameCoinValue,fixMineCoin,coinPrice,block.timestamp))	NodeType.EXPRESSION
+_totalMineCnt += release	NodeType.EXPRESSION
+j ++	NodeType.EXPRESSION" [key=0];
+"BlockID: 93
+Call context: 
+None
+REF_49(address) -> rewardKeys[i]
+REF_50(Reward.RewardData[]) -> reward[REF_49]
+REF_51(Reward.RewardData) -> REF_50[j]
+REF_52(uint256) -> REF_51.remain
+REF_53(address) -> rewardKeys[i]
+REF_54(Reward.RewardData[]) -> reward[REF_53]
+REF_55(Reward.RewardData) -> REF_54[j]
+REF_56(uint256) -> REF_55.remain
+TMP_42(uint256) = REF_56 (c)- release
+REF_52(uint256) (->reward) := TMP_42(uint256)
+REF_57(address) -> rewardKeys[i]
+REF_58(Reward.RewardHistory[]) -> history[REF_57]
+TMP_43(Reward.RewardHistory) = new RewardHistory(release,sameCoinValue,fixMineCoin,coinPrice,block.timestamp)
+REF_60 -> LENGTH REF_58
+TMP_45(uint256) := REF_60(uint256)
+TMP_46(uint256) = TMP_45 (c)+ 1
+REF_60(uint256) (->history) := TMP_46(uint256)
+REF_61(Reward.RewardHistory) -> REF_58[TMP_45]
+REF_61(Reward.RewardHistory) (->history) := TMP_43(Reward.RewardHistory)
+_totalMineCnt(uint256) = _totalMineCnt (c)+ release
+TMP_48(uint256) := j(uint256)
+j(uint256) = j (c)+ 1
+EXPRESSION:reward[rewardKeys[i]][j].remain = reward[rewardKeys[i]][j].remain - release	NodeType.EXPRESSION
+history[rewardKeys[i]].push(RewardHistory(release,sameCoinValue,fixMineCoin,coinPrice,block.timestamp))	NodeType.EXPRESSION
+_totalMineCnt += release	NodeType.EXPRESSION
+j ++	NodeType.EXPRESSION" -> "BlockID: 72
+Call context: 
+None
+BEGIN_LOOP
+REF_10(address) -> rewardKeys[i]
+REF_11(Reward.RewardData[]) -> reward[REF_10]
+REF_12 -> LENGTH REF_11
+TMP_29(bool) = j < REF_12
+CONDITION TMP_29
+EXPRESSION:None	NodeType.STARTLOOP
+j < reward[rewardKeys[i]].length	NodeType.IFLOOP" [key=0];
+}

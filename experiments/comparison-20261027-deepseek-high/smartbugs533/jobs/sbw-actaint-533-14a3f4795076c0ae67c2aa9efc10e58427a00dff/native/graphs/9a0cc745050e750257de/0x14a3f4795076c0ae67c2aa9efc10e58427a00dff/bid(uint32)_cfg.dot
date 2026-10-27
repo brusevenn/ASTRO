@@ -1,0 +1,425 @@
+digraph {
+"BlockID: 183
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 186
+Call context: 
+True
+REF_67(EtherShipsCore.ShipEntity) -> ships[_shipID]
+REF_68(uint256) -> REF_67.auctionEntity
+REF_69(EtherShipsCore.AuctionEntity) -> auctions[REF_68]
+currentAuction(EtherShipsCore.AuctionEntity) := REF_69(EtherShipsCore.AuctionEntity)
+REF_70(uint256) -> currentAuction.startPrice
+REF_71(uint256) -> currentAuction.startPrice
+REF_72(uint256) -> currentAuction.finishPrice
+TMP_180(uint256) = REF_71 - REF_72
+REF_73(uint256) -> currentAuction.duration
+TMP_181(uint256) = TMP_180 / REF_73
+REF_74(uint256) -> currentAuction.startTime
+TMP_182(uint256) = now - REF_74
+TMP_183(uint256) = TMP_181 * TMP_182
+TMP_184(uint256) = REF_70 - TMP_183
+currentPrice(uint256) := TMP_184(uint256)
+REF_75(uint256) -> currentAuction.finishPrice
+TMP_185(bool) = currentPrice < REF_75
+CONDITION TMP_185
+EXPRESSION:currentAuction = auctions[ships[_shipID].auctionEntity]	NodeType.VARIABLE
+currentAuction = auctions[ships[_shipID].auctionEntity]	NodeType.EXPRESSION
+currentPrice = currentAuction.startPrice - (((currentAuction.startPrice - currentAuction.finishPrice) / (currentAuction.duration)) * (now - currentAuction.startTime))	NodeType.VARIABLE
+currentPrice = currentAuction.startPrice - (((currentAuction.startPrice - currentAuction.finishPrice) / (currentAuction.duration)) * (now - currentAuction.startTime))	NodeType.EXPRESSION
+currentPrice < currentAuction.finishPrice	NodeType.IF";
+"BlockID: 187
+Call context: 
+True
+REF_76(uint256) -> currentAuction.finishPrice
+currentPrice(uint256) := REF_76(uint256)
+EXPRESSION:currentPrice = currentAuction.finishPrice	NodeType.EXPRESSION";
+"BlockID: 188
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 191
+Call context: 
+True
+TMP_190(uint256) = currentPrice / 100
+TMP_191(uint256) = TMP_190 * 3
+marketFee(uint256) := TMP_191(uint256)
+REF_77(EtherShipsCore.ShipEntity) -> ships[_shipID]
+REF_78(address) -> REF_77.owner
+REF_79(uint256) -> balances[REF_78]
+TMP_192(uint256) = currentPrice - marketFee
+REF_79(-> balances) = REF_79 + TMP_192
+REF_80(uint256) -> balances[AuctionMaster]
+REF_80(-> balances) = REF_80 + marketFee
+REF_81(uint256) -> balances[msg.sender]
+TMP_193(uint256) = msg.value - currentPrice
+REF_81(-> balances) = REF_81 + TMP_193
+REF_82(EtherShipsCore.ShipEntity) -> ships[_shipID]
+REF_83(address) -> REF_82.owner
+REF_83(address) (->ships) := msg.sender(address)
+REF_84(EtherShipsCore.ShipEntity) -> ships[_shipID]
+REF_85(bool) -> REF_84.selling
+REF_85(bool) (->ships) := False(bool)
+REF_86(EtherShipsCore.ShipEntity) -> ships[_shipID]
+REF_87(uint256) -> REF_86.auctionEntity
+REF_88(EtherShipsCore.AuctionEntity) -> auctions[REF_87]
+auctions = delete REF_88 
+REF_89(EtherShipsCore.ShipEntity) -> ships[_shipID]
+REF_90(uint256) -> REF_89.auctionEntity
+REF_90(uint256) (->ships) := 0(uint256)
+EXPRESSION:marketFee = (currentPrice / 100) * 3	NodeType.VARIABLE
+marketFee = (currentPrice / 100) * 3	NodeType.EXPRESSION
+balances[ships[_shipID].owner] += currentPrice - marketFee	NodeType.EXPRESSION
+balances[AuctionMaster] += marketFee	NodeType.EXPRESSION
+balances[msg.sender] += msg.value - currentPrice	NodeType.EXPRESSION
+ships[_shipID].owner = msg.sender	NodeType.EXPRESSION
+ships[_shipID].selling = false	NodeType.EXPRESSION
+delete auctions[ships[_shipID].auctionEntity]	NodeType.EXPRESSION
+ships[_shipID].auctionEntity = 0	NodeType.EXPRESSION";
+"BlockID: 192
+Call context: 
+None
+TMP_174(bool) = _shipID > 0
+TMP_175(bool) = _shipID < newIdShip
+TMP_176(bool) = TMP_174 && TMP_175
+CONDITION TMP_176
+EXPRESSION:TMP_176(bool) = TMP_174 && TMP_175	NodeType.IF";
+"BlockID: 193
+Call context: 
+True
+TMP_177(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 194
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 195
+Call context: 
+None
+REF_65(EtherShipsCore.ShipEntity) -> ships[_shipID]
+REF_66(bool) -> REF_65.selling
+TMP_178(bool) = REF_66 == True
+CONDITION TMP_178
+EXPRESSION:TMP_178(bool) = REF_66 == True	NodeType.IF";
+"BlockID: 196
+Call context: 
+True
+TMP_179(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 197
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 198
+Call context: 
+None
+TMP_186(bool) = currentPrice >= 0
+CONDITION TMP_186
+EXPRESSION:TMP_186(bool) = currentPrice >= 0	NodeType.IF";
+"BlockID: 199
+Call context: 
+True
+TMP_187(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 200
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 201
+Call context: 
+None
+TMP_188(bool) = msg.value >= currentPrice
+CONDITION TMP_188
+EXPRESSION:TMP_188(bool) = msg.value >= currentPrice	NodeType.IF";
+"BlockID: 202
+Call context: 
+True
+TMP_189(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 203
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 183
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 192
+Call context: 
+None
+TMP_174(bool) = _shipID > 0
+TMP_175(bool) = _shipID < newIdShip
+TMP_176(bool) = TMP_174 && TMP_175
+CONDITION TMP_176
+EXPRESSION:TMP_176(bool) = TMP_174 && TMP_175	NodeType.IF" [key=0];
+"BlockID: 186
+Call context: 
+True
+REF_67(EtherShipsCore.ShipEntity) -> ships[_shipID]
+REF_68(uint256) -> REF_67.auctionEntity
+REF_69(EtherShipsCore.AuctionEntity) -> auctions[REF_68]
+currentAuction(EtherShipsCore.AuctionEntity) := REF_69(EtherShipsCore.AuctionEntity)
+REF_70(uint256) -> currentAuction.startPrice
+REF_71(uint256) -> currentAuction.startPrice
+REF_72(uint256) -> currentAuction.finishPrice
+TMP_180(uint256) = REF_71 - REF_72
+REF_73(uint256) -> currentAuction.duration
+TMP_181(uint256) = TMP_180 / REF_73
+REF_74(uint256) -> currentAuction.startTime
+TMP_182(uint256) = now - REF_74
+TMP_183(uint256) = TMP_181 * TMP_182
+TMP_184(uint256) = REF_70 - TMP_183
+currentPrice(uint256) := TMP_184(uint256)
+REF_75(uint256) -> currentAuction.finishPrice
+TMP_185(bool) = currentPrice < REF_75
+CONDITION TMP_185
+EXPRESSION:currentAuction = auctions[ships[_shipID].auctionEntity]	NodeType.VARIABLE
+currentAuction = auctions[ships[_shipID].auctionEntity]	NodeType.EXPRESSION
+currentPrice = currentAuction.startPrice - (((currentAuction.startPrice - currentAuction.finishPrice) / (currentAuction.duration)) * (now - currentAuction.startTime))	NodeType.VARIABLE
+currentPrice = currentAuction.startPrice - (((currentAuction.startPrice - currentAuction.finishPrice) / (currentAuction.duration)) * (now - currentAuction.startTime))	NodeType.EXPRESSION
+currentPrice < currentAuction.finishPrice	NodeType.IF" -> "BlockID: 187
+Call context: 
+True
+REF_76(uint256) -> currentAuction.finishPrice
+currentPrice(uint256) := REF_76(uint256)
+EXPRESSION:currentPrice = currentAuction.finishPrice	NodeType.EXPRESSION" [key=0];
+"BlockID: 186
+Call context: 
+True
+REF_67(EtherShipsCore.ShipEntity) -> ships[_shipID]
+REF_68(uint256) -> REF_67.auctionEntity
+REF_69(EtherShipsCore.AuctionEntity) -> auctions[REF_68]
+currentAuction(EtherShipsCore.AuctionEntity) := REF_69(EtherShipsCore.AuctionEntity)
+REF_70(uint256) -> currentAuction.startPrice
+REF_71(uint256) -> currentAuction.startPrice
+REF_72(uint256) -> currentAuction.finishPrice
+TMP_180(uint256) = REF_71 - REF_72
+REF_73(uint256) -> currentAuction.duration
+TMP_181(uint256) = TMP_180 / REF_73
+REF_74(uint256) -> currentAuction.startTime
+TMP_182(uint256) = now - REF_74
+TMP_183(uint256) = TMP_181 * TMP_182
+TMP_184(uint256) = REF_70 - TMP_183
+currentPrice(uint256) := TMP_184(uint256)
+REF_75(uint256) -> currentAuction.finishPrice
+TMP_185(bool) = currentPrice < REF_75
+CONDITION TMP_185
+EXPRESSION:currentAuction = auctions[ships[_shipID].auctionEntity]	NodeType.VARIABLE
+currentAuction = auctions[ships[_shipID].auctionEntity]	NodeType.EXPRESSION
+currentPrice = currentAuction.startPrice - (((currentAuction.startPrice - currentAuction.finishPrice) / (currentAuction.duration)) * (now - currentAuction.startTime))	NodeType.VARIABLE
+currentPrice = currentAuction.startPrice - (((currentAuction.startPrice - currentAuction.finishPrice) / (currentAuction.duration)) * (now - currentAuction.startTime))	NodeType.EXPRESSION
+currentPrice < currentAuction.finishPrice	NodeType.IF" -> "BlockID: 188
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 187
+Call context: 
+True
+REF_76(uint256) -> currentAuction.finishPrice
+currentPrice(uint256) := REF_76(uint256)
+EXPRESSION:currentPrice = currentAuction.finishPrice	NodeType.EXPRESSION" -> "BlockID: 188
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 188
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 198
+Call context: 
+None
+TMP_186(bool) = currentPrice >= 0
+CONDITION TMP_186
+EXPRESSION:TMP_186(bool) = currentPrice >= 0	NodeType.IF" [key=0];
+"BlockID: 192
+Call context: 
+None
+TMP_174(bool) = _shipID > 0
+TMP_175(bool) = _shipID < newIdShip
+TMP_176(bool) = TMP_174 && TMP_175
+CONDITION TMP_176
+EXPRESSION:TMP_176(bool) = TMP_174 && TMP_175	NodeType.IF" -> "BlockID: 193
+Call context: 
+True
+TMP_177(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 192
+Call context: 
+None
+TMP_174(bool) = _shipID > 0
+TMP_175(bool) = _shipID < newIdShip
+TMP_176(bool) = TMP_174 && TMP_175
+CONDITION TMP_176
+EXPRESSION:TMP_176(bool) = TMP_174 && TMP_175	NodeType.IF" -> "BlockID: 194
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 194
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 195
+Call context: 
+None
+REF_65(EtherShipsCore.ShipEntity) -> ships[_shipID]
+REF_66(bool) -> REF_65.selling
+TMP_178(bool) = REF_66 == True
+CONDITION TMP_178
+EXPRESSION:TMP_178(bool) = REF_66 == True	NodeType.IF" [key=0];
+"BlockID: 195
+Call context: 
+None
+REF_65(EtherShipsCore.ShipEntity) -> ships[_shipID]
+REF_66(bool) -> REF_65.selling
+TMP_178(bool) = REF_66 == True
+CONDITION TMP_178
+EXPRESSION:TMP_178(bool) = REF_66 == True	NodeType.IF" -> "BlockID: 196
+Call context: 
+True
+TMP_179(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 195
+Call context: 
+None
+REF_65(EtherShipsCore.ShipEntity) -> ships[_shipID]
+REF_66(bool) -> REF_65.selling
+TMP_178(bool) = REF_66 == True
+CONDITION TMP_178
+EXPRESSION:TMP_178(bool) = REF_66 == True	NodeType.IF" -> "BlockID: 197
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 197
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 186
+Call context: 
+True
+REF_67(EtherShipsCore.ShipEntity) -> ships[_shipID]
+REF_68(uint256) -> REF_67.auctionEntity
+REF_69(EtherShipsCore.AuctionEntity) -> auctions[REF_68]
+currentAuction(EtherShipsCore.AuctionEntity) := REF_69(EtherShipsCore.AuctionEntity)
+REF_70(uint256) -> currentAuction.startPrice
+REF_71(uint256) -> currentAuction.startPrice
+REF_72(uint256) -> currentAuction.finishPrice
+TMP_180(uint256) = REF_71 - REF_72
+REF_73(uint256) -> currentAuction.duration
+TMP_181(uint256) = TMP_180 / REF_73
+REF_74(uint256) -> currentAuction.startTime
+TMP_182(uint256) = now - REF_74
+TMP_183(uint256) = TMP_181 * TMP_182
+TMP_184(uint256) = REF_70 - TMP_183
+currentPrice(uint256) := TMP_184(uint256)
+REF_75(uint256) -> currentAuction.finishPrice
+TMP_185(bool) = currentPrice < REF_75
+CONDITION TMP_185
+EXPRESSION:currentAuction = auctions[ships[_shipID].auctionEntity]	NodeType.VARIABLE
+currentAuction = auctions[ships[_shipID].auctionEntity]	NodeType.EXPRESSION
+currentPrice = currentAuction.startPrice - (((currentAuction.startPrice - currentAuction.finishPrice) / (currentAuction.duration)) * (now - currentAuction.startTime))	NodeType.VARIABLE
+currentPrice = currentAuction.startPrice - (((currentAuction.startPrice - currentAuction.finishPrice) / (currentAuction.duration)) * (now - currentAuction.startTime))	NodeType.EXPRESSION
+currentPrice < currentAuction.finishPrice	NodeType.IF" [key=0];
+"BlockID: 198
+Call context: 
+None
+TMP_186(bool) = currentPrice >= 0
+CONDITION TMP_186
+EXPRESSION:TMP_186(bool) = currentPrice >= 0	NodeType.IF" -> "BlockID: 199
+Call context: 
+True
+TMP_187(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 198
+Call context: 
+None
+TMP_186(bool) = currentPrice >= 0
+CONDITION TMP_186
+EXPRESSION:TMP_186(bool) = currentPrice >= 0	NodeType.IF" -> "BlockID: 200
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 200
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 201
+Call context: 
+None
+TMP_188(bool) = msg.value >= currentPrice
+CONDITION TMP_188
+EXPRESSION:TMP_188(bool) = msg.value >= currentPrice	NodeType.IF" [key=0];
+"BlockID: 201
+Call context: 
+None
+TMP_188(bool) = msg.value >= currentPrice
+CONDITION TMP_188
+EXPRESSION:TMP_188(bool) = msg.value >= currentPrice	NodeType.IF" -> "BlockID: 202
+Call context: 
+True
+TMP_189(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 201
+Call context: 
+None
+TMP_188(bool) = msg.value >= currentPrice
+CONDITION TMP_188
+EXPRESSION:TMP_188(bool) = msg.value >= currentPrice	NodeType.IF" -> "BlockID: 203
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 203
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 191
+Call context: 
+True
+TMP_190(uint256) = currentPrice / 100
+TMP_191(uint256) = TMP_190 * 3
+marketFee(uint256) := TMP_191(uint256)
+REF_77(EtherShipsCore.ShipEntity) -> ships[_shipID]
+REF_78(address) -> REF_77.owner
+REF_79(uint256) -> balances[REF_78]
+TMP_192(uint256) = currentPrice - marketFee
+REF_79(-> balances) = REF_79 + TMP_192
+REF_80(uint256) -> balances[AuctionMaster]
+REF_80(-> balances) = REF_80 + marketFee
+REF_81(uint256) -> balances[msg.sender]
+TMP_193(uint256) = msg.value - currentPrice
+REF_81(-> balances) = REF_81 + TMP_193
+REF_82(EtherShipsCore.ShipEntity) -> ships[_shipID]
+REF_83(address) -> REF_82.owner
+REF_83(address) (->ships) := msg.sender(address)
+REF_84(EtherShipsCore.ShipEntity) -> ships[_shipID]
+REF_85(bool) -> REF_84.selling
+REF_85(bool) (->ships) := False(bool)
+REF_86(EtherShipsCore.ShipEntity) -> ships[_shipID]
+REF_87(uint256) -> REF_86.auctionEntity
+REF_88(EtherShipsCore.AuctionEntity) -> auctions[REF_87]
+auctions = delete REF_88 
+REF_89(EtherShipsCore.ShipEntity) -> ships[_shipID]
+REF_90(uint256) -> REF_89.auctionEntity
+REF_90(uint256) (->ships) := 0(uint256)
+EXPRESSION:marketFee = (currentPrice / 100) * 3	NodeType.VARIABLE
+marketFee = (currentPrice / 100) * 3	NodeType.EXPRESSION
+balances[ships[_shipID].owner] += currentPrice - marketFee	NodeType.EXPRESSION
+balances[AuctionMaster] += marketFee	NodeType.EXPRESSION
+balances[msg.sender] += msg.value - currentPrice	NodeType.EXPRESSION
+ships[_shipID].owner = msg.sender	NodeType.EXPRESSION
+ships[_shipID].selling = false	NodeType.EXPRESSION
+delete auctions[ships[_shipID].auctionEntity]	NodeType.EXPRESSION
+ships[_shipID].auctionEntity = 0	NodeType.EXPRESSION" [key=0];
+}

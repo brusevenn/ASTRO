@@ -1,0 +1,928 @@
+digraph {
+"BlockID: 2873
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 2874
+Call context: 
+None
+MODIFIER_CALL, leveragedPool.ensure(uint256)(deadLine)
+EXPRESSION:ensure(deadLine)	NodeType.EXPRESSION";
+"BlockID: 2875
+Call context: 
+None
+MODIFIER_CALL, ReentrancyGuard.nonReentrant()()
+EXPRESSION:ensure(deadLine)	NodeType.EXPRESSION
+nonReentrant()	NodeType.EXPRESSION";
+"BlockID: 2876
+Call context: 
+None
+MODIFIER_CALL, leveragedPool.getUnderlyingPrice()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION
+getUnderlyingPrice()	NodeType.EXPRESSION";
+"BlockID: 2878
+Call context: 
+True
+REF_222(IRebaseToken) -> coinInfo.leverageToken
+TMP_806(uint256) = HIGH_LEVEL_CALL, dest:REF_222(IRebaseToken), function:totalSupply, arguments:[]  
+EXPRESSION:";
+"BlockID: 2879
+Call context: 
+None
+total(uint256) := TMP_806(uint256)
+REF_224(IStakePool) -> coinInfo.stakePool
+TMP_807 = CONVERT this to address
+TMP_808(uint256) = HIGH_LEVEL_CALL, dest:REF_224(IStakePool), function:loan, arguments:['TMP_807']  
+EXPRESSION:total = coinInfo.leverageToken.totalSupply()	NodeType.VARIABLE
+total = coinInfo.leverageToken.totalSupply()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2880
+Call context: 
+None
+TMP_809(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['TMP_808', 'calDecimal'] 
+EXPRESSION:" [shape=box];
+"BlockID: 2881
+Call context: 
+None
+getLoan(uint256) := TMP_809(uint256)
+NEW VARIABLE userLoan
+NEW VARIABLE sellAmount
+NEW VARIABLE userPayback
+TMP_810(bool) = total == amount
+CONDITION TMP_810
+EXPRESSION:getLoan = coinInfo.stakePool.loan(address(this)).mul(calDecimal)	NodeType.VARIABLE
+getLoan = coinInfo.stakePool.loan(address(this)).mul(calDecimal)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+total == amount	NodeType.IF" [shape=box];
+"BlockID: 2882
+Call context: 
+True
+userLoan(uint256) := getLoan(uint256)
+REF_227(uint8) -> coinInfo.id
+TMP_811(uint256) = INTERNAL_CALL, leveragedPool.underlyingBalance(uint8)(REF_227)
+EXPRESSION:userLoan = getLoan	NodeType.EXPRESSION
+sellAmount = underlyingBalance(coinInfo.id)	NodeType.EXPRESSION";
+"BlockID: 2883
+Call context: 
+False
+REF_229(uint256) -> coinInfo.rebalanceWorth
+TMP_812(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['amount', 'REF_229'] 
+EXPRESSION:userLoan = (amount.mul(coinInfo.rebalanceWorth) / feeDecimal).mul(coinInfo.leverageRate - feeDecimal)	NodeType.EXPRESSION";
+"BlockID: 2884
+Call context: 
+None
+TMP_813(uint256) = TMP_812 / feeDecimal
+REF_231(uint256) -> coinInfo.leverageRate
+TMP_814(uint256) = REF_231 - feeDecimal
+TMP_815(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['TMP_813', 'TMP_814'] 
+EXPRESSION:userLoan = (amount.mul(coinInfo.rebalanceWorth) / feeDecimal).mul(coinInfo.leverageRate - feeDecimal)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2885
+Call context: 
+None
+userLoan(uint256) := TMP_815(uint256)
+TMP_816(bool) = userLoan > getLoan
+CONDITION TMP_816
+EXPRESSION:userLoan = (amount.mul(coinInfo.rebalanceWorth) / feeDecimal).mul(coinInfo.leverageRate - feeDecimal)	NodeType.EXPRESSION
+userLoan > getLoan	NodeType.IF" [shape=box];
+"BlockID: 2886
+Call context: 
+True
+userLoan(uint256) := getLoan(uint256)
+EXPRESSION:userLoan = getLoan	NodeType.EXPRESSION";
+"BlockID: 2887
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2888
+Call context: 
+None
+TMP_817(uint256) = INTERNAL_CALL, leveragedPool._tokenNetworth(leveragedData.leverageInfo,uint256[2])(coinInfo,currentPrice)
+EXPRESSION:userPayback = amount.mul(_tokenNetworth(coinInfo,currentPrice))	NodeType.EXPRESSION";
+"BlockID: 2889
+Call context: 
+None
+TMP_818(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['amount', 'TMP_817'] 
+EXPRESSION:userPayback = amount.mul(_tokenNetworth(coinInfo,currentPrice))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2890
+Call context: 
+None
+userPayback(uint256) := TMP_818(uint256)
+TMP_819(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['userLoan', 'userPayback'] 
+EXPRESSION:userPayback = amount.mul(_tokenNetworth(coinInfo,currentPrice))	NodeType.EXPRESSION
+sellAmount = userLoan.add(userPayback).divPrice(currentPrice,coinInfo.id)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2891
+Call context: 
+None
+REF_235(uint8) -> coinInfo.id
+TMP_820(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.divPrice(uint256,uint256[2],uint8), arguments:['TMP_819', 'currentPrice', 'REF_235'] 
+EXPRESSION:sellAmount = userLoan.add(userPayback).divPrice(currentPrice,coinInfo.id)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2892
+Call context: 
+None
+sellAmount(uint256) := TMP_820(uint256)
+EXPRESSION:sellAmount = userLoan.add(userPayback).divPrice(currentPrice,coinInfo.id)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2893
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2894
+Call context: 
+None
+TMP_821(uint256) = userLoan / calDecimal
+userLoan(uint256) := TMP_821(uint256)
+NEW VARIABLE outputToken
+NEW VARIABLE sellPrice
+CONDITION bFirstToken
+EXPRESSION:userLoan = userLoan / calDecimal	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+bFirstToken	NodeType.IF";
+"BlockID: 2895
+Call context: 
+True
+REF_236(uint8) -> coinInfo.id
+TMP_822(uint256) = INTERNAL_CALL, leveragedPool._sellSwap(uint8,uint256,uint256)(REF_236,sellAmount,userLoan)
+EXPRESSION:userPayback = _sellSwap(coinInfo.id,sellAmount,userLoan)	NodeType.EXPRESSION";
+"BlockID: 2897
+Call context: 
+False
+REF_241(uint8) -> coinInfo.id
+TMP_825(uint256) = INTERNAL_CALL, leveragedPool._sellSwap2(uint8,uint256,uint256)(REF_241,sellAmount,userLoan)
+EXPRESSION:userPayback = _sellSwap2(coinInfo.id,sellAmount,userLoan)	NodeType.EXPRESSION";
+"BlockID: 2898
+Call context: 
+None
+userPayback(uint256) := TMP_825(uint256)
+REF_247(uint8) -> coinInfo.id
+TMP_840(bool) = REF_247 == 0
+CONDITION TMP_840
+EXPRESSION:userPayback = _sellSwap2(coinInfo.id,sellAmount,userLoan)	NodeType.EXPRESSION
+coinInfo.id == 0	NodeType.IF" [shape=box];
+"BlockID: 2899
+Call context: 
+True
+REF_248(address) -> hedgeCoin.token
+outputToken(address) := REF_248(address)
+EXPRESSION:outputToken = hedgeCoin.token	NodeType.EXPRESSION";
+"BlockID: 2900
+Call context: 
+False
+REF_249(address) -> leverageCoin.token
+outputToken(address) := REF_249(address)
+EXPRESSION:outputToken = leverageCoin.token	NodeType.EXPRESSION";
+"BlockID: 2901
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2902
+Call context: 
+None
+REF_250(uint8) -> coinInfo.id
+TMP_841(bool) = REF_250 == 0
+CONDITION TMP_841
+EXPRESSION:coinInfo.id == 0	NodeType.IF";
+"BlockID: 2903
+Call context: 
+True
+id(uint256) := 1(uint256)
+EXPRESSION:id = 1	NodeType.EXPRESSION";
+"BlockID: 2904
+Call context: 
+False
+id(uint256) := 0(uint256)
+EXPRESSION:id = 0	NodeType.EXPRESSION";
+"BlockID: 2905
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2906
+Call context: 
+None
+REF_243(uint256) -> currentPrice[id]
+TMP_826(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['userPayback', 'REF_243'] 
+EXPRESSION:sellPrice = userPayback.mul(currentPrice[id]) / amount	NodeType.EXPRESSION";
+"BlockID: 2907
+Call context: 
+None
+TMP_827(uint256) = TMP_826 / amount
+sellPrice(uint256) := TMP_827(uint256)
+EXPRESSION:sellPrice = userPayback.mul(currentPrice[id]) / amount	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2908
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2909
+Call context: 
+None
+TMP_828(uint256) = INTERNAL_CALL, leveragedPool.redeemFees(uint256,address,uint256)(sellFee,outputToken,userPayback)
+EXPRESSION:userPayback = redeemFees(sellFee,outputToken,userPayback)	NodeType.EXPRESSION";
+"BlockID: 2911
+Call context: 
+True
+INTERNAL_CALL, leveragedPool._repay(leveragedData.leverageInfo,uint256,bool)(coinInfo,userLoan,False)
+EXPRESSION:_repay(coinInfo,userLoan,false)	NodeType.EXPRESSION";
+"BlockID: 2912
+Call context: 
+None
+INTERNAL_CALL, safeTransfer._redeem(address,address,uint256)(msg.sender,outputToken,userPayback)
+EXPRESSION:_repay(coinInfo,userLoan,false)	NodeType.EXPRESSION
+_redeem(msg.sender,outputToken,userPayback)	NodeType.EXPRESSION";
+"BlockID: 2913
+Call context: 
+None
+REF_244(IRebaseToken) -> coinInfo.leverageToken
+HIGH_LEVEL_CALL, dest:REF_244(IRebaseToken), function:burn, arguments:['msg.sender', 'amount']  
+EXPRESSION:_redeem(msg.sender,outputToken,userPayback)	NodeType.EXPRESSION
+coinInfo.leverageToken.burn(msg.sender,amount)	NodeType.EXPRESSION";
+"BlockID: 2914
+Call context: 
+None
+REF_246(uint8) -> coinInfo.id
+EXPRESSION:coinInfo.leverageToken.burn(msg.sender,amount)	NodeType.EXPRESSION";
+"BlockID: 2896
+Call context: 
+None
+userPayback(uint256) := TMP_822(uint256)
+REF_237(address) -> coinInfo.token
+outputToken(address) := REF_237(address)
+REF_239(uint8) -> coinInfo.id
+REF_240(uint256) -> currentPrice[REF_239]
+TMP_823(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['userPayback', 'REF_240'] 
+EXPRESSION:userPayback = _sellSwap(coinInfo.id,sellAmount,userLoan)	NodeType.EXPRESSION
+outputToken = coinInfo.token	NodeType.EXPRESSION
+sellPrice = userPayback.mul(currentPrice[coinInfo.id]) / amount	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2921
+Call context: 
+None
+TMP_824(uint256) = TMP_823 / amount
+sellPrice(uint256) := TMP_824(uint256)
+EXPRESSION:sellPrice = userPayback.mul(currentPrice[coinInfo.id]) / amount	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2922
+Call context: 
+None
+sellAmount(uint256) := TMP_811(uint256)
+EXPRESSION:sellAmount = underlyingBalance(coinInfo.id)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2923
+Call context: 
+None
+TMP_804(bool) = amount > 0
+CONDITION TMP_804
+EXPRESSION:TMP_804(bool) = amount > 0	NodeType.IF";
+"BlockID: 2924
+Call context: 
+True
+TMP_805(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 2925
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2926
+Call context: 
+None
+userPayback(uint256) := TMP_828(uint256)
+TMP_829(bool) = userPayback >= minAmount
+CONDITION TMP_829
+EXPRESSION:TMP_829(bool) = userPayback >= minAmount	NodeType.IF";
+"BlockID: 2927
+Call context: 
+True
+TMP_830(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 2928
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2873
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 2874
+Call context: 
+None
+MODIFIER_CALL, leveragedPool.ensure(uint256)(deadLine)
+EXPRESSION:ensure(deadLine)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2874
+Call context: 
+None
+MODIFIER_CALL, leveragedPool.ensure(uint256)(deadLine)
+EXPRESSION:ensure(deadLine)	NodeType.EXPRESSION" -> "BlockID: 2875
+Call context: 
+None
+MODIFIER_CALL, ReentrancyGuard.nonReentrant()()
+EXPRESSION:ensure(deadLine)	NodeType.EXPRESSION
+nonReentrant()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2875
+Call context: 
+None
+MODIFIER_CALL, ReentrancyGuard.nonReentrant()()
+EXPRESSION:ensure(deadLine)	NodeType.EXPRESSION
+nonReentrant()	NodeType.EXPRESSION" -> "BlockID: 2876
+Call context: 
+None
+MODIFIER_CALL, leveragedPool.getUnderlyingPrice()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION
+getUnderlyingPrice()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2876
+Call context: 
+None
+MODIFIER_CALL, leveragedPool.getUnderlyingPrice()()
+EXPRESSION:nonReentrant()	NodeType.EXPRESSION
+getUnderlyingPrice()	NodeType.EXPRESSION" -> "BlockID: 2923
+Call context: 
+None
+TMP_804(bool) = amount > 0
+CONDITION TMP_804
+EXPRESSION:TMP_804(bool) = amount > 0	NodeType.IF" [key=0];
+"BlockID: 2878
+Call context: 
+True
+REF_222(IRebaseToken) -> coinInfo.leverageToken
+TMP_806(uint256) = HIGH_LEVEL_CALL, dest:REF_222(IRebaseToken), function:totalSupply, arguments:[]  
+EXPRESSION:" -> "BlockID: 2879
+Call context: 
+None
+total(uint256) := TMP_806(uint256)
+REF_224(IStakePool) -> coinInfo.stakePool
+TMP_807 = CONVERT this to address
+TMP_808(uint256) = HIGH_LEVEL_CALL, dest:REF_224(IStakePool), function:loan, arguments:['TMP_807']  
+EXPRESSION:total = coinInfo.leverageToken.totalSupply()	NodeType.VARIABLE
+total = coinInfo.leverageToken.totalSupply()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2879
+Call context: 
+None
+total(uint256) := TMP_806(uint256)
+REF_224(IStakePool) -> coinInfo.stakePool
+TMP_807 = CONVERT this to address
+TMP_808(uint256) = HIGH_LEVEL_CALL, dest:REF_224(IStakePool), function:loan, arguments:['TMP_807']  
+EXPRESSION:total = coinInfo.leverageToken.totalSupply()	NodeType.VARIABLE
+total = coinInfo.leverageToken.totalSupply()	NodeType.EXPRESSION" -> "BlockID: 2880
+Call context: 
+None
+TMP_809(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['TMP_808', 'calDecimal'] 
+EXPRESSION:" [key=0];
+"BlockID: 2880
+Call context: 
+None
+TMP_809(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['TMP_808', 'calDecimal'] 
+EXPRESSION:" -> "BlockID: 2881
+Call context: 
+None
+getLoan(uint256) := TMP_809(uint256)
+NEW VARIABLE userLoan
+NEW VARIABLE sellAmount
+NEW VARIABLE userPayback
+TMP_810(bool) = total == amount
+CONDITION TMP_810
+EXPRESSION:getLoan = coinInfo.stakePool.loan(address(this)).mul(calDecimal)	NodeType.VARIABLE
+getLoan = coinInfo.stakePool.loan(address(this)).mul(calDecimal)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+total == amount	NodeType.IF" [key=0];
+"BlockID: 2881
+Call context: 
+None
+getLoan(uint256) := TMP_809(uint256)
+NEW VARIABLE userLoan
+NEW VARIABLE sellAmount
+NEW VARIABLE userPayback
+TMP_810(bool) = total == amount
+CONDITION TMP_810
+EXPRESSION:getLoan = coinInfo.stakePool.loan(address(this)).mul(calDecimal)	NodeType.VARIABLE
+getLoan = coinInfo.stakePool.loan(address(this)).mul(calDecimal)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+total == amount	NodeType.IF" -> "BlockID: 2882
+Call context: 
+True
+userLoan(uint256) := getLoan(uint256)
+REF_227(uint8) -> coinInfo.id
+TMP_811(uint256) = INTERNAL_CALL, leveragedPool.underlyingBalance(uint8)(REF_227)
+EXPRESSION:userLoan = getLoan	NodeType.EXPRESSION
+sellAmount = underlyingBalance(coinInfo.id)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2881
+Call context: 
+None
+getLoan(uint256) := TMP_809(uint256)
+NEW VARIABLE userLoan
+NEW VARIABLE sellAmount
+NEW VARIABLE userPayback
+TMP_810(bool) = total == amount
+CONDITION TMP_810
+EXPRESSION:getLoan = coinInfo.stakePool.loan(address(this)).mul(calDecimal)	NodeType.VARIABLE
+getLoan = coinInfo.stakePool.loan(address(this)).mul(calDecimal)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+total == amount	NodeType.IF" -> "BlockID: 2883
+Call context: 
+False
+REF_229(uint256) -> coinInfo.rebalanceWorth
+TMP_812(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['amount', 'REF_229'] 
+EXPRESSION:userLoan = (amount.mul(coinInfo.rebalanceWorth) / feeDecimal).mul(coinInfo.leverageRate - feeDecimal)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2882
+Call context: 
+True
+userLoan(uint256) := getLoan(uint256)
+REF_227(uint8) -> coinInfo.id
+TMP_811(uint256) = INTERNAL_CALL, leveragedPool.underlyingBalance(uint8)(REF_227)
+EXPRESSION:userLoan = getLoan	NodeType.EXPRESSION
+sellAmount = underlyingBalance(coinInfo.id)	NodeType.EXPRESSION" -> "BlockID: 2922
+Call context: 
+None
+sellAmount(uint256) := TMP_811(uint256)
+EXPRESSION:sellAmount = underlyingBalance(coinInfo.id)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2883
+Call context: 
+False
+REF_229(uint256) -> coinInfo.rebalanceWorth
+TMP_812(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['amount', 'REF_229'] 
+EXPRESSION:userLoan = (amount.mul(coinInfo.rebalanceWorth) / feeDecimal).mul(coinInfo.leverageRate - feeDecimal)	NodeType.EXPRESSION" -> "BlockID: 2884
+Call context: 
+None
+TMP_813(uint256) = TMP_812 / feeDecimal
+REF_231(uint256) -> coinInfo.leverageRate
+TMP_814(uint256) = REF_231 - feeDecimal
+TMP_815(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['TMP_813', 'TMP_814'] 
+EXPRESSION:userLoan = (amount.mul(coinInfo.rebalanceWorth) / feeDecimal).mul(coinInfo.leverageRate - feeDecimal)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2884
+Call context: 
+None
+TMP_813(uint256) = TMP_812 / feeDecimal
+REF_231(uint256) -> coinInfo.leverageRate
+TMP_814(uint256) = REF_231 - feeDecimal
+TMP_815(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['TMP_813', 'TMP_814'] 
+EXPRESSION:userLoan = (amount.mul(coinInfo.rebalanceWorth) / feeDecimal).mul(coinInfo.leverageRate - feeDecimal)	NodeType.EXPRESSION" -> "BlockID: 2885
+Call context: 
+None
+userLoan(uint256) := TMP_815(uint256)
+TMP_816(bool) = userLoan > getLoan
+CONDITION TMP_816
+EXPRESSION:userLoan = (amount.mul(coinInfo.rebalanceWorth) / feeDecimal).mul(coinInfo.leverageRate - feeDecimal)	NodeType.EXPRESSION
+userLoan > getLoan	NodeType.IF" [key=0];
+"BlockID: 2885
+Call context: 
+None
+userLoan(uint256) := TMP_815(uint256)
+TMP_816(bool) = userLoan > getLoan
+CONDITION TMP_816
+EXPRESSION:userLoan = (amount.mul(coinInfo.rebalanceWorth) / feeDecimal).mul(coinInfo.leverageRate - feeDecimal)	NodeType.EXPRESSION
+userLoan > getLoan	NodeType.IF" -> "BlockID: 2886
+Call context: 
+True
+userLoan(uint256) := getLoan(uint256)
+EXPRESSION:userLoan = getLoan	NodeType.EXPRESSION" [key=0];
+"BlockID: 2885
+Call context: 
+None
+userLoan(uint256) := TMP_815(uint256)
+TMP_816(bool) = userLoan > getLoan
+CONDITION TMP_816
+EXPRESSION:userLoan = (amount.mul(coinInfo.rebalanceWorth) / feeDecimal).mul(coinInfo.leverageRate - feeDecimal)	NodeType.EXPRESSION
+userLoan > getLoan	NodeType.IF" -> "BlockID: 2887
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2886
+Call context: 
+True
+userLoan(uint256) := getLoan(uint256)
+EXPRESSION:userLoan = getLoan	NodeType.EXPRESSION" -> "BlockID: 2887
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2887
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2888
+Call context: 
+None
+TMP_817(uint256) = INTERNAL_CALL, leveragedPool._tokenNetworth(leveragedData.leverageInfo,uint256[2])(coinInfo,currentPrice)
+EXPRESSION:userPayback = amount.mul(_tokenNetworth(coinInfo,currentPrice))	NodeType.EXPRESSION" [key=0];
+"BlockID: 2888
+Call context: 
+None
+TMP_817(uint256) = INTERNAL_CALL, leveragedPool._tokenNetworth(leveragedData.leverageInfo,uint256[2])(coinInfo,currentPrice)
+EXPRESSION:userPayback = amount.mul(_tokenNetworth(coinInfo,currentPrice))	NodeType.EXPRESSION" -> "BlockID: 2889
+Call context: 
+None
+TMP_818(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['amount', 'TMP_817'] 
+EXPRESSION:userPayback = amount.mul(_tokenNetworth(coinInfo,currentPrice))	NodeType.EXPRESSION" [key=0];
+"BlockID: 2889
+Call context: 
+None
+TMP_818(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['amount', 'TMP_817'] 
+EXPRESSION:userPayback = amount.mul(_tokenNetworth(coinInfo,currentPrice))	NodeType.EXPRESSION" -> "BlockID: 2890
+Call context: 
+None
+userPayback(uint256) := TMP_818(uint256)
+TMP_819(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['userLoan', 'userPayback'] 
+EXPRESSION:userPayback = amount.mul(_tokenNetworth(coinInfo,currentPrice))	NodeType.EXPRESSION
+sellAmount = userLoan.add(userPayback).divPrice(currentPrice,coinInfo.id)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2890
+Call context: 
+None
+userPayback(uint256) := TMP_818(uint256)
+TMP_819(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['userLoan', 'userPayback'] 
+EXPRESSION:userPayback = amount.mul(_tokenNetworth(coinInfo,currentPrice))	NodeType.EXPRESSION
+sellAmount = userLoan.add(userPayback).divPrice(currentPrice,coinInfo.id)	NodeType.EXPRESSION" -> "BlockID: 2891
+Call context: 
+None
+REF_235(uint8) -> coinInfo.id
+TMP_820(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.divPrice(uint256,uint256[2],uint8), arguments:['TMP_819', 'currentPrice', 'REF_235'] 
+EXPRESSION:sellAmount = userLoan.add(userPayback).divPrice(currentPrice,coinInfo.id)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2891
+Call context: 
+None
+REF_235(uint8) -> coinInfo.id
+TMP_820(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.divPrice(uint256,uint256[2],uint8), arguments:['TMP_819', 'currentPrice', 'REF_235'] 
+EXPRESSION:sellAmount = userLoan.add(userPayback).divPrice(currentPrice,coinInfo.id)	NodeType.EXPRESSION" -> "BlockID: 2892
+Call context: 
+None
+sellAmount(uint256) := TMP_820(uint256)
+EXPRESSION:sellAmount = userLoan.add(userPayback).divPrice(currentPrice,coinInfo.id)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2892
+Call context: 
+None
+sellAmount(uint256) := TMP_820(uint256)
+EXPRESSION:sellAmount = userLoan.add(userPayback).divPrice(currentPrice,coinInfo.id)	NodeType.EXPRESSION" -> "BlockID: 2893
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2893
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2894
+Call context: 
+None
+TMP_821(uint256) = userLoan / calDecimal
+userLoan(uint256) := TMP_821(uint256)
+NEW VARIABLE outputToken
+NEW VARIABLE sellPrice
+CONDITION bFirstToken
+EXPRESSION:userLoan = userLoan / calDecimal	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+bFirstToken	NodeType.IF" [key=0];
+"BlockID: 2894
+Call context: 
+None
+TMP_821(uint256) = userLoan / calDecimal
+userLoan(uint256) := TMP_821(uint256)
+NEW VARIABLE outputToken
+NEW VARIABLE sellPrice
+CONDITION bFirstToken
+EXPRESSION:userLoan = userLoan / calDecimal	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+bFirstToken	NodeType.IF" -> "BlockID: 2895
+Call context: 
+True
+REF_236(uint8) -> coinInfo.id
+TMP_822(uint256) = INTERNAL_CALL, leveragedPool._sellSwap(uint8,uint256,uint256)(REF_236,sellAmount,userLoan)
+EXPRESSION:userPayback = _sellSwap(coinInfo.id,sellAmount,userLoan)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2894
+Call context: 
+None
+TMP_821(uint256) = userLoan / calDecimal
+userLoan(uint256) := TMP_821(uint256)
+NEW VARIABLE outputToken
+NEW VARIABLE sellPrice
+CONDITION bFirstToken
+EXPRESSION:userLoan = userLoan / calDecimal	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+bFirstToken	NodeType.IF" -> "BlockID: 2897
+Call context: 
+False
+REF_241(uint8) -> coinInfo.id
+TMP_825(uint256) = INTERNAL_CALL, leveragedPool._sellSwap2(uint8,uint256,uint256)(REF_241,sellAmount,userLoan)
+EXPRESSION:userPayback = _sellSwap2(coinInfo.id,sellAmount,userLoan)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2895
+Call context: 
+True
+REF_236(uint8) -> coinInfo.id
+TMP_822(uint256) = INTERNAL_CALL, leveragedPool._sellSwap(uint8,uint256,uint256)(REF_236,sellAmount,userLoan)
+EXPRESSION:userPayback = _sellSwap(coinInfo.id,sellAmount,userLoan)	NodeType.EXPRESSION" -> "BlockID: 2896
+Call context: 
+None
+userPayback(uint256) := TMP_822(uint256)
+REF_237(address) -> coinInfo.token
+outputToken(address) := REF_237(address)
+REF_239(uint8) -> coinInfo.id
+REF_240(uint256) -> currentPrice[REF_239]
+TMP_823(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['userPayback', 'REF_240'] 
+EXPRESSION:userPayback = _sellSwap(coinInfo.id,sellAmount,userLoan)	NodeType.EXPRESSION
+outputToken = coinInfo.token	NodeType.EXPRESSION
+sellPrice = userPayback.mul(currentPrice[coinInfo.id]) / amount	NodeType.EXPRESSION" [key=0];
+"BlockID: 2897
+Call context: 
+False
+REF_241(uint8) -> coinInfo.id
+TMP_825(uint256) = INTERNAL_CALL, leveragedPool._sellSwap2(uint8,uint256,uint256)(REF_241,sellAmount,userLoan)
+EXPRESSION:userPayback = _sellSwap2(coinInfo.id,sellAmount,userLoan)	NodeType.EXPRESSION" -> "BlockID: 2898
+Call context: 
+None
+userPayback(uint256) := TMP_825(uint256)
+REF_247(uint8) -> coinInfo.id
+TMP_840(bool) = REF_247 == 0
+CONDITION TMP_840
+EXPRESSION:userPayback = _sellSwap2(coinInfo.id,sellAmount,userLoan)	NodeType.EXPRESSION
+coinInfo.id == 0	NodeType.IF" [key=0];
+"BlockID: 2898
+Call context: 
+None
+userPayback(uint256) := TMP_825(uint256)
+REF_247(uint8) -> coinInfo.id
+TMP_840(bool) = REF_247 == 0
+CONDITION TMP_840
+EXPRESSION:userPayback = _sellSwap2(coinInfo.id,sellAmount,userLoan)	NodeType.EXPRESSION
+coinInfo.id == 0	NodeType.IF" -> "BlockID: 2899
+Call context: 
+True
+REF_248(address) -> hedgeCoin.token
+outputToken(address) := REF_248(address)
+EXPRESSION:outputToken = hedgeCoin.token	NodeType.EXPRESSION" [key=0];
+"BlockID: 2898
+Call context: 
+None
+userPayback(uint256) := TMP_825(uint256)
+REF_247(uint8) -> coinInfo.id
+TMP_840(bool) = REF_247 == 0
+CONDITION TMP_840
+EXPRESSION:userPayback = _sellSwap2(coinInfo.id,sellAmount,userLoan)	NodeType.EXPRESSION
+coinInfo.id == 0	NodeType.IF" -> "BlockID: 2900
+Call context: 
+False
+REF_249(address) -> leverageCoin.token
+outputToken(address) := REF_249(address)
+EXPRESSION:outputToken = leverageCoin.token	NodeType.EXPRESSION" [key=0];
+"BlockID: 2899
+Call context: 
+True
+REF_248(address) -> hedgeCoin.token
+outputToken(address) := REF_248(address)
+EXPRESSION:outputToken = hedgeCoin.token	NodeType.EXPRESSION" -> "BlockID: 2901
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2900
+Call context: 
+False
+REF_249(address) -> leverageCoin.token
+outputToken(address) := REF_249(address)
+EXPRESSION:outputToken = leverageCoin.token	NodeType.EXPRESSION" -> "BlockID: 2901
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2901
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2902
+Call context: 
+None
+REF_250(uint8) -> coinInfo.id
+TMP_841(bool) = REF_250 == 0
+CONDITION TMP_841
+EXPRESSION:coinInfo.id == 0	NodeType.IF" [key=0];
+"BlockID: 2902
+Call context: 
+None
+REF_250(uint8) -> coinInfo.id
+TMP_841(bool) = REF_250 == 0
+CONDITION TMP_841
+EXPRESSION:coinInfo.id == 0	NodeType.IF" -> "BlockID: 2903
+Call context: 
+True
+id(uint256) := 1(uint256)
+EXPRESSION:id = 1	NodeType.EXPRESSION" [key=0];
+"BlockID: 2902
+Call context: 
+None
+REF_250(uint8) -> coinInfo.id
+TMP_841(bool) = REF_250 == 0
+CONDITION TMP_841
+EXPRESSION:coinInfo.id == 0	NodeType.IF" -> "BlockID: 2904
+Call context: 
+False
+id(uint256) := 0(uint256)
+EXPRESSION:id = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 2903
+Call context: 
+True
+id(uint256) := 1(uint256)
+EXPRESSION:id = 1	NodeType.EXPRESSION" -> "BlockID: 2905
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2904
+Call context: 
+False
+id(uint256) := 0(uint256)
+EXPRESSION:id = 0	NodeType.EXPRESSION" -> "BlockID: 2905
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2905
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2906
+Call context: 
+None
+REF_243(uint256) -> currentPrice[id]
+TMP_826(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['userPayback', 'REF_243'] 
+EXPRESSION:sellPrice = userPayback.mul(currentPrice[id]) / amount	NodeType.EXPRESSION" [key=0];
+"BlockID: 2906
+Call context: 
+None
+REF_243(uint256) -> currentPrice[id]
+TMP_826(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['userPayback', 'REF_243'] 
+EXPRESSION:sellPrice = userPayback.mul(currentPrice[id]) / amount	NodeType.EXPRESSION" -> "BlockID: 2907
+Call context: 
+None
+TMP_827(uint256) = TMP_826 / amount
+sellPrice(uint256) := TMP_827(uint256)
+EXPRESSION:sellPrice = userPayback.mul(currentPrice[id]) / amount	NodeType.EXPRESSION" [key=0];
+"BlockID: 2907
+Call context: 
+None
+TMP_827(uint256) = TMP_826 / amount
+sellPrice(uint256) := TMP_827(uint256)
+EXPRESSION:sellPrice = userPayback.mul(currentPrice[id]) / amount	NodeType.EXPRESSION" -> "BlockID: 2908
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2908
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2909
+Call context: 
+None
+TMP_828(uint256) = INTERNAL_CALL, leveragedPool.redeemFees(uint256,address,uint256)(sellFee,outputToken,userPayback)
+EXPRESSION:userPayback = redeemFees(sellFee,outputToken,userPayback)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2909
+Call context: 
+None
+TMP_828(uint256) = INTERNAL_CALL, leveragedPool.redeemFees(uint256,address,uint256)(sellFee,outputToken,userPayback)
+EXPRESSION:userPayback = redeemFees(sellFee,outputToken,userPayback)	NodeType.EXPRESSION" -> "BlockID: 2926
+Call context: 
+None
+userPayback(uint256) := TMP_828(uint256)
+TMP_829(bool) = userPayback >= minAmount
+CONDITION TMP_829
+EXPRESSION:TMP_829(bool) = userPayback >= minAmount	NodeType.IF" [key=0];
+"BlockID: 2911
+Call context: 
+True
+INTERNAL_CALL, leveragedPool._repay(leveragedData.leverageInfo,uint256,bool)(coinInfo,userLoan,False)
+EXPRESSION:_repay(coinInfo,userLoan,false)	NodeType.EXPRESSION" -> "BlockID: 2912
+Call context: 
+None
+INTERNAL_CALL, safeTransfer._redeem(address,address,uint256)(msg.sender,outputToken,userPayback)
+EXPRESSION:_repay(coinInfo,userLoan,false)	NodeType.EXPRESSION
+_redeem(msg.sender,outputToken,userPayback)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2912
+Call context: 
+None
+INTERNAL_CALL, safeTransfer._redeem(address,address,uint256)(msg.sender,outputToken,userPayback)
+EXPRESSION:_repay(coinInfo,userLoan,false)	NodeType.EXPRESSION
+_redeem(msg.sender,outputToken,userPayback)	NodeType.EXPRESSION" -> "BlockID: 2913
+Call context: 
+None
+REF_244(IRebaseToken) -> coinInfo.leverageToken
+HIGH_LEVEL_CALL, dest:REF_244(IRebaseToken), function:burn, arguments:['msg.sender', 'amount']  
+EXPRESSION:_redeem(msg.sender,outputToken,userPayback)	NodeType.EXPRESSION
+coinInfo.leverageToken.burn(msg.sender,amount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2913
+Call context: 
+None
+REF_244(IRebaseToken) -> coinInfo.leverageToken
+HIGH_LEVEL_CALL, dest:REF_244(IRebaseToken), function:burn, arguments:['msg.sender', 'amount']  
+EXPRESSION:_redeem(msg.sender,outputToken,userPayback)	NodeType.EXPRESSION
+coinInfo.leverageToken.burn(msg.sender,amount)	NodeType.EXPRESSION" -> "BlockID: 2914
+Call context: 
+None
+REF_246(uint8) -> coinInfo.id
+EXPRESSION:coinInfo.leverageToken.burn(msg.sender,amount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2896
+Call context: 
+None
+userPayback(uint256) := TMP_822(uint256)
+REF_237(address) -> coinInfo.token
+outputToken(address) := REF_237(address)
+REF_239(uint8) -> coinInfo.id
+REF_240(uint256) -> currentPrice[REF_239]
+TMP_823(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.mul(uint256,uint256), arguments:['userPayback', 'REF_240'] 
+EXPRESSION:userPayback = _sellSwap(coinInfo.id,sellAmount,userLoan)	NodeType.EXPRESSION
+outputToken = coinInfo.token	NodeType.EXPRESSION
+sellPrice = userPayback.mul(currentPrice[coinInfo.id]) / amount	NodeType.EXPRESSION" -> "BlockID: 2921
+Call context: 
+None
+TMP_824(uint256) = TMP_823 / amount
+sellPrice(uint256) := TMP_824(uint256)
+EXPRESSION:sellPrice = userPayback.mul(currentPrice[coinInfo.id]) / amount	NodeType.EXPRESSION" [key=0];
+"BlockID: 2921
+Call context: 
+None
+TMP_824(uint256) = TMP_823 / amount
+sellPrice(uint256) := TMP_824(uint256)
+EXPRESSION:sellPrice = userPayback.mul(currentPrice[coinInfo.id]) / amount	NodeType.EXPRESSION" -> "BlockID: 2908
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2922
+Call context: 
+None
+sellAmount(uint256) := TMP_811(uint256)
+EXPRESSION:sellAmount = underlyingBalance(coinInfo.id)	NodeType.EXPRESSION" -> "BlockID: 2893
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2923
+Call context: 
+None
+TMP_804(bool) = amount > 0
+CONDITION TMP_804
+EXPRESSION:TMP_804(bool) = amount > 0	NodeType.IF" -> "BlockID: 2924
+Call context: 
+True
+TMP_805(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2923
+Call context: 
+None
+TMP_804(bool) = amount > 0
+CONDITION TMP_804
+EXPRESSION:TMP_804(bool) = amount > 0	NodeType.IF" -> "BlockID: 2925
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2925
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2878
+Call context: 
+True
+REF_222(IRebaseToken) -> coinInfo.leverageToken
+TMP_806(uint256) = HIGH_LEVEL_CALL, dest:REF_222(IRebaseToken), function:totalSupply, arguments:[]  
+EXPRESSION:" [key=0];
+"BlockID: 2926
+Call context: 
+None
+userPayback(uint256) := TMP_828(uint256)
+TMP_829(bool) = userPayback >= minAmount
+CONDITION TMP_829
+EXPRESSION:TMP_829(bool) = userPayback >= minAmount	NodeType.IF" -> "BlockID: 2927
+Call context: 
+True
+TMP_830(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 2926
+Call context: 
+None
+userPayback(uint256) := TMP_828(uint256)
+TMP_829(bool) = userPayback >= minAmount
+CONDITION TMP_829
+EXPRESSION:TMP_829(bool) = userPayback >= minAmount	NodeType.IF" -> "BlockID: 2928
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2928
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2911
+Call context: 
+True
+INTERNAL_CALL, leveragedPool._repay(leveragedData.leverageInfo,uint256,bool)(coinInfo,userLoan,False)
+EXPRESSION:_repay(coinInfo,userLoan,false)	NodeType.EXPRESSION" [key=0];
+}

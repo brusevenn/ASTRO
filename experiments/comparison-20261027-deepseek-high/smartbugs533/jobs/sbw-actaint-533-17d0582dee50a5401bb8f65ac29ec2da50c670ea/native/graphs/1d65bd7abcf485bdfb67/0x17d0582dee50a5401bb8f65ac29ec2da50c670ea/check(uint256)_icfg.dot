@@ -1,0 +1,1391 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 4
+Call context: 
+True
+i(uint256) := 0(uint256)
+currentAddr(address) := rollHead(address)
+EXPRESSION:i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION
+currentAddr = rollHead	NodeType.VARIABLE
+currentAddr = rollHead	NodeType.EXPRESSION";
+"BlockID: 5
+Call context: 
+None
+BEGIN_LOOP
+TMP_47(bool) = i < maxCount
+TMP_48 = CONVERT 0 to address
+TMP_49(bool) = currentAddr != TMP_48
+TMP_50(bool) = TMP_47 && TMP_49
+CONDITION TMP_50
+EXPRESSION:None	NodeType.STARTLOOP
+i < maxCount && currentAddr != address(0)	NodeType.IFLOOP";
+"BlockID: 6
+Call context: 
+True
+REF_19(Slot.Roll[]) -> rolls[currentAddr]
+REF_20(Slot.Roll) -> REF_19[0]
+rollReq(Slot.Roll) := REF_20(Slot.Roll)
+REF_21(uint256) -> rollReq.blocknum
+TMP_51(bool) = REF_21 >= block.number
+CONDITION TMP_51
+EXPRESSION:rollReq = rolls[currentAddr][0]	NodeType.VARIABLE
+rollReq = rolls[currentAddr][0]	NodeType.EXPRESSION
+rollReq.blocknum >= block.number	NodeType.IF";
+"BlockID: 7
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 8
+Call context: 
+True
+RETURN
+EXPRESSION:None	NodeType.RETURN";
+"BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 10
+Call context: 
+None
+totalWin(uint256) := 0(uint256)
+REF_24(uint256) -> rollReq.blocknum
+TMP_56(uint256) = REF_24 + BET_EXPIRATION_BLOCKS
+TMP_57(bool) = block.number <= TMP_56
+CONDITION TMP_57
+EXPRESSION:totalWin = 0	NodeType.VARIABLE
+totalWin = 0	NodeType.EXPRESSION
+block.number <= rollReq.blocknum + BET_EXPIRATION_BLOCKS	NodeType.IF";
+"BlockID: 25
+Call context: 
+None
+REF_22(address) -> rollReq.next
+rollHead(address) := REF_22(address)
+TMP_53(bool) = currentAddr == rollTail
+CONDITION TMP_53
+EXPRESSION:checkRoll(currentAddr,rollReq)	NodeType.EXPRESSION
+rollHead = rollReq.next	NodeType.EXPRESSION
+currentAddr == rollTail	NodeType.IF";
+"BlockID: 29
+Call context: 
+True
+TMP_54 = CONVERT 0 to address
+rollTail(address) := TMP_54(address)
+EXPRESSION:rollTail = address(0)	NodeType.EXPRESSION";
+"BlockID: 30
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 32
+Call context: 
+None
+REF_23(Slot.Roll[]) -> rolls[currentAddr]
+rolls = delete REF_23 
+currentAddr(address) := rollHead(address)
+TMP_55(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:delete rolls[currentAddr]	NodeType.EXPRESSION
+currentAddr = rollHead	NodeType.EXPRESSION
+i ++	NodeType.EXPRESSION";
+"BlockID: 1
+Call context: 
+None
+TMP_45(bool) = maxCount > 0
+CONDITION TMP_45
+EXPRESSION:TMP_45(bool) = maxCount > 0	NodeType.IF";
+"BlockID: 2
+Call context: 
+True
+TMP_46(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 3
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 11
+Call context: check
+True
+x(uint256) := 0(uint256)
+EXPRESSION:x = 0	NodeType.VARIABLE
+x = 0	NodeType.EXPRESSION";
+"BlockID: 12
+Call context: check
+False
+REF_29(uint256) -> rollReq.bet
+REF_30(uint8) -> rollReq.rollCount
+TMP_63(uint256) = REF_29 * REF_30
+TMP_64(uint256) = TMP_63 - 2300
+totalWin(uint256) := TMP_64(uint256)
+EXPRESSION:totalWin = rollReq.bet * rollReq.rollCount - 2300	NodeType.EXPRESSION";
+"BlockID: 14
+Call context: check
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 17
+Call context: check
+None
+REF_31(uint256) -> rollReq.bet
+REF_32(uint8) -> rollReq.rollCount
+TMP_65(uint256) = REF_31 * REF_32
+pendingBetAmount(uint256) = pendingBetAmount - TMP_65
+TMP_66(bool) = totalWin > 0
+CONDITION TMP_66
+EXPRESSION:pendingBetAmount -= rollReq.bet * rollReq.rollCount	NodeType.EXPRESSION
+totalWin > 0	NodeType.IF";
+"BlockID: 20
+Call context: check
+True
+TMP_67 = CONVERT this to address
+TMP_68(uint256) = SOLIDITY_CALL balance(address)(TMP_67)
+TMP_69(uint256) = totalWin + 2300
+TMP_70(bool) = TMP_68 > TMP_69
+CONDITION TMP_70
+EXPRESSION:address(this).balance > totalWin + 2300	NodeType.IF";
+"BlockID: 21
+Call context: check
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 23
+Call context: check
+True
+Transfer dest:addr value:totalWin
+EXPRESSION:addr.transfer(totalWin)	NodeType.EXPRESSION";
+"BlockID: 24
+Call context: check
+False
+TMP_72(uint256) = totalWin / 1000000000000000
+TMP_73(Slot.PartnerShare) = new PartnerShare(addr,TMP_72)
+REF_35 -> LENGTH partners
+TMP_75(uint256) := REF_35(uint256)
+TMP_76(uint256) = TMP_75 + 1
+REF_35(uint256) (->partners) := TMP_76(uint256)
+REF_36(Slot.PartnerShare) -> partners[TMP_75]
+REF_36(Slot.PartnerShare) (->partners) := TMP_73(Slot.PartnerShare)
+EXPRESSION:partners.push(PartnerShare(addr,totalWin / 1000000000000000))	NodeType.EXPRESSION";
+"BlockID: 28
+Call context: check
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 13
+Call context: check
+None
+BEGIN_LOOP
+REF_25(uint8) -> rollReq.rollCount
+TMP_58(bool) = x < REF_25
+CONDITION TMP_58
+EXPRESSION:None	NodeType.STARTLOOP
+x < rollReq.rollCount	NodeType.IFLOOP";
+"BlockID: 15
+Call context: check
+True
+REF_26(uint256) -> rollReq.bet
+REF_27(uint8) -> rollReq.lines
+REF_28(uint256) -> rollReq.blocknum
+TMP_59(uint256) = pendingBetAmount + rollTimes
+TMP_60(uint256) = TMP_59 + x
+NEW VARIABLE stops
+NEW VARIABLE winRate
+NEW VARIABLE entropy
+TMP_97(bool) = block.number > blocknum
+CONDITION TMP_97
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+TMP_97(bool) = block.number > blocknum	NodeType.IF";
+"BlockID: 16
+Call context: check
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 40
+Call context: check,checkRoll
+True
+TMP_83(uint256) = jackpotPool / 2
+win(uint256) := TMP_83(uint256)
+jackpotPool(uint256) = jackpotPool - win
+EXPRESSION:win = jackpotPool / 2	NodeType.EXPRESSION
+jackpotPool -= win	NodeType.EXPRESSION";
+"BlockID: 41
+Call context: check,checkRoll
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 42
+Call context: check,checkRoll
+None
+TMP_84(uint256) := rollTimes(uint256)
+rollTimes(uint256) = rollTimes + 1
+minipotWin(uint256) := 0(uint256)
+TMP_85(uint256) = entropy >> 32
+TMP_86(uint256) = TMP_85 & 65535
+TMP_87(uint256) = 65535 / TMP_86
+TMP_88(uint256) = minipotTimes + 1
+TMP_89(uint256) = 100 * TMP_88
+TMP_90(uint256) = TMP_89 - rollTimes
+TMP_91(bool) = TMP_87 > TMP_90
+CONDITION TMP_91
+EXPRESSION:rollTimes ++	NodeType.EXPRESSION
+minipotWin = 0	NodeType.VARIABLE
+minipotWin = 0	NodeType.EXPRESSION
+0xffff / (entropy >> 32 & 0xffff) > (100 * (minipotTimes + 1)) - rollTimes	NodeType.IF";
+"BlockID: 43
+Call context: check,checkRoll
+True
+TMP_92(uint256) := minipotTimes(uint256)
+minipotTimes(uint256) = minipotTimes + 1
+TMP_93(uint256) = minipotPool / 2
+minipotWin(uint256) := TMP_93(uint256)
+minipotPool(uint256) = minipotPool - minipotWin
+EXPRESSION:minipotTimes ++	NodeType.EXPRESSION
+minipotWin = minipotPool / 2	NodeType.EXPRESSION
+minipotPool -= minipotWin	NodeType.EXPRESSION";
+"BlockID: 44
+Call context: check,checkRoll
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 45
+Call context: check,checkRoll
+None
+TMP_96(uint256) = win + minipotWin
+TMP_159(None) := TMP_96(uint256)
+totalWin(uint256) = totalWin + TMP_61
+TMP_62(uint256) := x(uint256)
+x(uint256) = x + 1
+EXPRESSION:totalWin += doRoll(addr,rollReq.bet,rollReq.lines,rollReq.blocknum,pendingBetAmount + rollTimes + x)	NodeType.EXPRESSION
+x ++	NodeType.EXPRESSION";
+"BlockID: 31
+Call context: check,checkRoll,doRoll
+True
+TMP_102(uint256) = SOLIDITY_CALL blockhash(uint256)(blocknum)
+TMP_103(bytes) = SOLIDITY_CALL abi.encodePacked()(addr,TMP_102,seed)
+TMP_104(bytes32) = SOLIDITY_CALL keccak256()(TMP_103)
+TMP_105 = CONVERT TMP_104 to uint256
+entropy(uint256) := TMP_105(uint256)
+REF_41(uint256[]) -> REELS[0]
+REF_42(uint256[]) -> REELS[0]
+REF_43 -> LENGTH REF_42
+TMP_106(uint256) = entropy % REF_43
+REF_44(uint256) -> REF_41[TMP_106]
+REF_45(uint256[]) -> REELS[1]
+TMP_107(uint256) = entropy >> 8
+REF_46(uint256[]) -> REELS[1]
+REF_47 -> LENGTH REF_46
+TMP_108(uint256) = TMP_107 % REF_47
+REF_48(uint256) -> REF_45[TMP_108]
+REF_49(uint256[]) -> REELS[2]
+TMP_109(uint256) = entropy >> 16
+REF_50(uint256[]) -> REELS[2]
+REF_51 -> LENGTH REF_50
+TMP_110(uint256) = TMP_109 % REF_51
+REF_52(uint256) -> REF_49[TMP_110]
+stops(uint256[3]) =  ['REF_44(uint256)', 'REF_48(uint256)', 'REF_52(uint256)']
+REF_53(uint256) -> stops[0]
+REF_54(uint256) -> stops[1]
+REF_55(uint256) -> stops[2]
+REF_56(uint256) -> SYMBOL_MASK[p1]
+TMP_112(uint256) = REF_56 << 16
+REF_57(uint256) -> SYMBOL_MASK[p2]
+TMP_113(uint256) = REF_57 << 8
+TMP_114(uint256) = TMP_112 | TMP_113
+REF_58(uint256) -> SYMBOL_MASK[p3]
+TMP_115(uint256) = TMP_114 | REF_58
+line(uint256) := TMP_115(uint256)
+pay(uint256) := 0(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:entropy = uint256(keccak256()(abi.encodePacked(addr,blockhash(uint256)(blocknum),seed)))	NodeType.EXPRESSION
+stops = (REELS[0][entropy % REELS[0].length],REELS[1][(entropy >> 8) % REELS[1].length],REELS[2][(entropy >> 16) % REELS[2].length])	NodeType.EXPRESSION
+line = SYMBOL_MASK[p1] << 16 | SYMBOL_MASK[p2] << 8 | SYMBOL_MASK[p3]	NodeType.VARIABLE
+line = SYMBOL_MASK[p1] << 16 | SYMBOL_MASK[p2] << 8 | SYMBOL_MASK[p3]	NodeType.EXPRESSION
+pay = 0	NodeType.VARIABLE
+pay = 0	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION";
+"BlockID: 18
+Call context: check,checkRoll,doRoll
+True
+TMP_98(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 19
+Call context: check,checkRoll,doRoll
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 22
+Call context: check,checkRoll,doRoll
+None
+TMP_99(uint256) = blocknum + BET_EXPIRATION_BLOCKS
+TMP_100(bool) = block.number <= TMP_99
+CONDITION TMP_100
+EXPRESSION:TMP_100(bool) = block.number <= TMP_99	NodeType.IF";
+"BlockID: 26
+Call context: check,checkRoll,doRoll
+True
+TMP_101(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 27
+Call context: check,checkRoll,doRoll
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 33
+Call context: check,checkRoll,doRoll,calcRoll
+None
+BEGIN_LOOP
+REF_59 -> LENGTH PAYTABLE
+TMP_116(bool) = i < REF_59
+CONDITION TMP_116
+EXPRESSION:None	NodeType.STARTLOOP
+i < PAYTABLE.length	NodeType.IFLOOP";
+"BlockID: 34
+Call context: check,checkRoll,doRoll,calcRoll
+True
+REF_60(uint256[]) -> PAYTABLE[i]
+REF_61(uint256) -> REF_60[0]
+REF_62(uint256[]) -> PAYTABLE[i]
+REF_63(uint256) -> REF_62[0]
+TMP_117(uint256) = line & REF_63
+TMP_118(bool) = REF_61 == TMP_117
+CONDITION TMP_118
+EXPRESSION:PAYTABLE[i][0] == line & PAYTABLE[i][0]	NodeType.IF";
+"BlockID: 35
+Call context: check,checkRoll,doRoll,calcRoll
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 38
+Call context: check,checkRoll,doRoll,calcRoll
+None
+TMP_161(None) := pay(uint256)
+winValue(uint256) := TMP_111(uint256)
+TMP_160(None) := winValue(uint256)
+TMP_160(None) := entropy(uint256)
+TMP_160(None) := stops(uint256[3])
+stops(uint256[3])= UNPACK TUPLE_0 index: 0 
+winRate(uint256)= UNPACK TUPLE_0 index: 1 
+entropy(uint256)= UNPACK TUPLE_0 index: 2 
+REF_37(uint256) -> stops[0]
+TMP_77(uint256) = REF_37 << 16
+REF_38(uint256) -> stops[1]
+TMP_78(uint256) = REF_38 << 8
+TMP_79(uint256) = TMP_77 | TMP_78
+REF_39(uint256) -> stops[2]
+TMP_80(uint256) = TMP_79 | REF_39
+wheel(uint256) := TMP_80(uint256)
+TMP_81(uint256) = bet * winRate
+win(uint256) := TMP_81(uint256)
+TMP_82(bool) = winRate == 9999
+CONDITION TMP_82
+EXPRESSION:winValue = calcPayout(stops[0],stops[1],stops[2])	NodeType.EXPRESSION
+(stops,winRate,entropy) = calcRoll(addr,blocknum,seed)	NodeType.EXPRESSION
+wheel = stops[0] << 16 | stops[1] << 8 | stops[2]	NodeType.VARIABLE
+wheel = stops[0] << 16 | stops[1] << 8 | stops[2]	NodeType.EXPRESSION
+win = bet * winRate	NodeType.VARIABLE
+win = bet * winRate	NodeType.EXPRESSION
+winRate == 9999	NodeType.IF";
+"BlockID: 36
+Call context: check,checkRoll,doRoll,calcRoll
+True
+REF_64(uint256[]) -> PAYTABLE[i]
+REF_65(uint256) -> REF_64[1]
+pay(uint256) := REF_65(uint256)
+EXPRESSION:pay = PAYTABLE[i][1]	NodeType.EXPRESSION";
+"BlockID: 37
+Call context: check,checkRoll,doRoll,calcRoll
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 39
+Call context: check,checkRoll,doRoll,calcRoll
+None
+TMP_119(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:i ++	NodeType.EXPRESSION";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+TMP_45(bool) = maxCount > 0
+CONDITION TMP_45
+EXPRESSION:TMP_45(bool) = maxCount > 0	NodeType.IF" [key=0];
+"BlockID: 4
+Call context: 
+True
+i(uint256) := 0(uint256)
+currentAddr(address) := rollHead(address)
+EXPRESSION:i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION
+currentAddr = rollHead	NodeType.VARIABLE
+currentAddr = rollHead	NodeType.EXPRESSION" -> "BlockID: 5
+Call context: 
+None
+BEGIN_LOOP
+TMP_47(bool) = i < maxCount
+TMP_48 = CONVERT 0 to address
+TMP_49(bool) = currentAddr != TMP_48
+TMP_50(bool) = TMP_47 && TMP_49
+CONDITION TMP_50
+EXPRESSION:None	NodeType.STARTLOOP
+i < maxCount && currentAddr != address(0)	NodeType.IFLOOP" [key=0];
+"BlockID: 5
+Call context: 
+None
+BEGIN_LOOP
+TMP_47(bool) = i < maxCount
+TMP_48 = CONVERT 0 to address
+TMP_49(bool) = currentAddr != TMP_48
+TMP_50(bool) = TMP_47 && TMP_49
+CONDITION TMP_50
+EXPRESSION:None	NodeType.STARTLOOP
+i < maxCount && currentAddr != address(0)	NodeType.IFLOOP" -> "BlockID: 6
+Call context: 
+True
+REF_19(Slot.Roll[]) -> rolls[currentAddr]
+REF_20(Slot.Roll) -> REF_19[0]
+rollReq(Slot.Roll) := REF_20(Slot.Roll)
+REF_21(uint256) -> rollReq.blocknum
+TMP_51(bool) = REF_21 >= block.number
+CONDITION TMP_51
+EXPRESSION:rollReq = rolls[currentAddr][0]	NodeType.VARIABLE
+rollReq = rolls[currentAddr][0]	NodeType.EXPRESSION
+rollReq.blocknum >= block.number	NodeType.IF" [key=0];
+"BlockID: 5
+Call context: 
+None
+BEGIN_LOOP
+TMP_47(bool) = i < maxCount
+TMP_48 = CONVERT 0 to address
+TMP_49(bool) = currentAddr != TMP_48
+TMP_50(bool) = TMP_47 && TMP_49
+CONDITION TMP_50
+EXPRESSION:None	NodeType.STARTLOOP
+i < maxCount && currentAddr != address(0)	NodeType.IFLOOP" -> "BlockID: 7
+Call context: 
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 6
+Call context: 
+True
+REF_19(Slot.Roll[]) -> rolls[currentAddr]
+REF_20(Slot.Roll) -> REF_19[0]
+rollReq(Slot.Roll) := REF_20(Slot.Roll)
+REF_21(uint256) -> rollReq.blocknum
+TMP_51(bool) = REF_21 >= block.number
+CONDITION TMP_51
+EXPRESSION:rollReq = rolls[currentAddr][0]	NodeType.VARIABLE
+rollReq = rolls[currentAddr][0]	NodeType.EXPRESSION
+rollReq.blocknum >= block.number	NodeType.IF" -> "BlockID: 8
+Call context: 
+True
+RETURN
+EXPRESSION:None	NodeType.RETURN" [key=0];
+"BlockID: 6
+Call context: 
+True
+REF_19(Slot.Roll[]) -> rolls[currentAddr]
+REF_20(Slot.Roll) -> REF_19[0]
+rollReq(Slot.Roll) := REF_20(Slot.Roll)
+REF_21(uint256) -> rollReq.blocknum
+TMP_51(bool) = REF_21 >= block.number
+CONDITION TMP_51
+EXPRESSION:rollReq = rolls[currentAddr][0]	NodeType.VARIABLE
+rollReq = rolls[currentAddr][0]	NodeType.EXPRESSION
+rollReq.blocknum >= block.number	NodeType.IF" -> "BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 10
+Call context: 
+None
+totalWin(uint256) := 0(uint256)
+REF_24(uint256) -> rollReq.blocknum
+TMP_56(uint256) = REF_24 + BET_EXPIRATION_BLOCKS
+TMP_57(bool) = block.number <= TMP_56
+CONDITION TMP_57
+EXPRESSION:totalWin = 0	NodeType.VARIABLE
+totalWin = 0	NodeType.EXPRESSION
+block.number <= rollReq.blocknum + BET_EXPIRATION_BLOCKS	NodeType.IF" [key=0];
+"BlockID: 10
+Call context: 
+None
+totalWin(uint256) := 0(uint256)
+REF_24(uint256) -> rollReq.blocknum
+TMP_56(uint256) = REF_24 + BET_EXPIRATION_BLOCKS
+TMP_57(bool) = block.number <= TMP_56
+CONDITION TMP_57
+EXPRESSION:totalWin = 0	NodeType.VARIABLE
+totalWin = 0	NodeType.EXPRESSION
+block.number <= rollReq.blocknum + BET_EXPIRATION_BLOCKS	NodeType.IF" -> "BlockID: 11
+Call context: check
+True
+x(uint256) := 0(uint256)
+EXPRESSION:x = 0	NodeType.VARIABLE
+x = 0	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 10
+Call context: 
+None
+totalWin(uint256) := 0(uint256)
+REF_24(uint256) -> rollReq.blocknum
+TMP_56(uint256) = REF_24 + BET_EXPIRATION_BLOCKS
+TMP_57(bool) = block.number <= TMP_56
+CONDITION TMP_57
+EXPRESSION:totalWin = 0	NodeType.VARIABLE
+totalWin = 0	NodeType.EXPRESSION
+block.number <= rollReq.blocknum + BET_EXPIRATION_BLOCKS	NodeType.IF" -> "BlockID: 12
+Call context: check
+False
+REF_29(uint256) -> rollReq.bet
+REF_30(uint8) -> rollReq.rollCount
+TMP_63(uint256) = REF_29 * REF_30
+TMP_64(uint256) = TMP_63 - 2300
+totalWin(uint256) := TMP_64(uint256)
+EXPRESSION:totalWin = rollReq.bet * rollReq.rollCount - 2300	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 25
+Call context: 
+None
+REF_22(address) -> rollReq.next
+rollHead(address) := REF_22(address)
+TMP_53(bool) = currentAddr == rollTail
+CONDITION TMP_53
+EXPRESSION:checkRoll(currentAddr,rollReq)	NodeType.EXPRESSION
+rollHead = rollReq.next	NodeType.EXPRESSION
+currentAddr == rollTail	NodeType.IF" -> "BlockID: 29
+Call context: 
+True
+TMP_54 = CONVERT 0 to address
+rollTail(address) := TMP_54(address)
+EXPRESSION:rollTail = address(0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 25
+Call context: 
+None
+REF_22(address) -> rollReq.next
+rollHead(address) := REF_22(address)
+TMP_53(bool) = currentAddr == rollTail
+CONDITION TMP_53
+EXPRESSION:checkRoll(currentAddr,rollReq)	NodeType.EXPRESSION
+rollHead = rollReq.next	NodeType.EXPRESSION
+currentAddr == rollTail	NodeType.IF" -> "BlockID: 30
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 29
+Call context: 
+True
+TMP_54 = CONVERT 0 to address
+rollTail(address) := TMP_54(address)
+EXPRESSION:rollTail = address(0)	NodeType.EXPRESSION" -> "BlockID: 30
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 30
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 32
+Call context: 
+None
+REF_23(Slot.Roll[]) -> rolls[currentAddr]
+rolls = delete REF_23 
+currentAddr(address) := rollHead(address)
+TMP_55(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:delete rolls[currentAddr]	NodeType.EXPRESSION
+currentAddr = rollHead	NodeType.EXPRESSION
+i ++	NodeType.EXPRESSION" [key=0];
+"BlockID: 32
+Call context: 
+None
+REF_23(Slot.Roll[]) -> rolls[currentAddr]
+rolls = delete REF_23 
+currentAddr(address) := rollHead(address)
+TMP_55(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:delete rolls[currentAddr]	NodeType.EXPRESSION
+currentAddr = rollHead	NodeType.EXPRESSION
+i ++	NodeType.EXPRESSION" -> "BlockID: 5
+Call context: 
+None
+BEGIN_LOOP
+TMP_47(bool) = i < maxCount
+TMP_48 = CONVERT 0 to address
+TMP_49(bool) = currentAddr != TMP_48
+TMP_50(bool) = TMP_47 && TMP_49
+CONDITION TMP_50
+EXPRESSION:None	NodeType.STARTLOOP
+i < maxCount && currentAddr != address(0)	NodeType.IFLOOP" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_45(bool) = maxCount > 0
+CONDITION TMP_45
+EXPRESSION:TMP_45(bool) = maxCount > 0	NodeType.IF" -> "BlockID: 2
+Call context: 
+True
+TMP_46(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_45(bool) = maxCount > 0
+CONDITION TMP_45
+EXPRESSION:TMP_45(bool) = maxCount > 0	NodeType.IF" -> "BlockID: 3
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: 
+True
+i(uint256) := 0(uint256)
+currentAddr(address) := rollHead(address)
+EXPRESSION:i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION
+currentAddr = rollHead	NodeType.VARIABLE
+currentAddr = rollHead	NodeType.EXPRESSION" [key=0];
+"BlockID: 11
+Call context: check
+True
+x(uint256) := 0(uint256)
+EXPRESSION:x = 0	NodeType.VARIABLE
+x = 0	NodeType.EXPRESSION" -> "BlockID: 13
+Call context: check
+None
+BEGIN_LOOP
+REF_25(uint8) -> rollReq.rollCount
+TMP_58(bool) = x < REF_25
+CONDITION TMP_58
+EXPRESSION:None	NodeType.STARTLOOP
+x < rollReq.rollCount	NodeType.IFLOOP" [key=0];
+"BlockID: 12
+Call context: check
+False
+REF_29(uint256) -> rollReq.bet
+REF_30(uint8) -> rollReq.rollCount
+TMP_63(uint256) = REF_29 * REF_30
+TMP_64(uint256) = TMP_63 - 2300
+totalWin(uint256) := TMP_64(uint256)
+EXPRESSION:totalWin = rollReq.bet * rollReq.rollCount - 2300	NodeType.EXPRESSION" -> "BlockID: 14
+Call context: check
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 14
+Call context: check
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 17
+Call context: check
+None
+REF_31(uint256) -> rollReq.bet
+REF_32(uint8) -> rollReq.rollCount
+TMP_65(uint256) = REF_31 * REF_32
+pendingBetAmount(uint256) = pendingBetAmount - TMP_65
+TMP_66(bool) = totalWin > 0
+CONDITION TMP_66
+EXPRESSION:pendingBetAmount -= rollReq.bet * rollReq.rollCount	NodeType.EXPRESSION
+totalWin > 0	NodeType.IF" [key=0];
+"BlockID: 17
+Call context: check
+None
+REF_31(uint256) -> rollReq.bet
+REF_32(uint8) -> rollReq.rollCount
+TMP_65(uint256) = REF_31 * REF_32
+pendingBetAmount(uint256) = pendingBetAmount - TMP_65
+TMP_66(bool) = totalWin > 0
+CONDITION TMP_66
+EXPRESSION:pendingBetAmount -= rollReq.bet * rollReq.rollCount	NodeType.EXPRESSION
+totalWin > 0	NodeType.IF" -> "BlockID: 20
+Call context: check
+True
+TMP_67 = CONVERT this to address
+TMP_68(uint256) = SOLIDITY_CALL balance(address)(TMP_67)
+TMP_69(uint256) = totalWin + 2300
+TMP_70(bool) = TMP_68 > TMP_69
+CONDITION TMP_70
+EXPRESSION:address(this).balance > totalWin + 2300	NodeType.IF" [key=0];
+"BlockID: 17
+Call context: check
+None
+REF_31(uint256) -> rollReq.bet
+REF_32(uint8) -> rollReq.rollCount
+TMP_65(uint256) = REF_31 * REF_32
+pendingBetAmount(uint256) = pendingBetAmount - TMP_65
+TMP_66(bool) = totalWin > 0
+CONDITION TMP_66
+EXPRESSION:pendingBetAmount -= rollReq.bet * rollReq.rollCount	NodeType.EXPRESSION
+totalWin > 0	NodeType.IF" -> "BlockID: 21
+Call context: check
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 20
+Call context: check
+True
+TMP_67 = CONVERT this to address
+TMP_68(uint256) = SOLIDITY_CALL balance(address)(TMP_67)
+TMP_69(uint256) = totalWin + 2300
+TMP_70(bool) = TMP_68 > TMP_69
+CONDITION TMP_70
+EXPRESSION:address(this).balance > totalWin + 2300	NodeType.IF" -> "BlockID: 23
+Call context: check
+True
+Transfer dest:addr value:totalWin
+EXPRESSION:addr.transfer(totalWin)	NodeType.EXPRESSION" [key=0];
+"BlockID: 20
+Call context: check
+True
+TMP_67 = CONVERT this to address
+TMP_68(uint256) = SOLIDITY_CALL balance(address)(TMP_67)
+TMP_69(uint256) = totalWin + 2300
+TMP_70(bool) = TMP_68 > TMP_69
+CONDITION TMP_70
+EXPRESSION:address(this).balance > totalWin + 2300	NodeType.IF" -> "BlockID: 24
+Call context: check
+False
+TMP_72(uint256) = totalWin / 1000000000000000
+TMP_73(Slot.PartnerShare) = new PartnerShare(addr,TMP_72)
+REF_35 -> LENGTH partners
+TMP_75(uint256) := REF_35(uint256)
+TMP_76(uint256) = TMP_75 + 1
+REF_35(uint256) (->partners) := TMP_76(uint256)
+REF_36(Slot.PartnerShare) -> partners[TMP_75]
+REF_36(Slot.PartnerShare) (->partners) := TMP_73(Slot.PartnerShare)
+EXPRESSION:partners.push(PartnerShare(addr,totalWin / 1000000000000000))	NodeType.EXPRESSION" [key=0];
+"BlockID: 21
+Call context: check
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 25
+Call context: 
+None
+REF_22(address) -> rollReq.next
+rollHead(address) := REF_22(address)
+TMP_53(bool) = currentAddr == rollTail
+CONDITION TMP_53
+EXPRESSION:checkRoll(currentAddr,rollReq)	NodeType.EXPRESSION
+rollHead = rollReq.next	NodeType.EXPRESSION
+currentAddr == rollTail	NodeType.IF" [key="Exit: checkRoll", ref="Slot.checkRoll"];
+"BlockID: 23
+Call context: check
+True
+Transfer dest:addr value:totalWin
+EXPRESSION:addr.transfer(totalWin)	NodeType.EXPRESSION" -> "BlockID: 28
+Call context: check
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 24
+Call context: check
+False
+TMP_72(uint256) = totalWin / 1000000000000000
+TMP_73(Slot.PartnerShare) = new PartnerShare(addr,TMP_72)
+REF_35 -> LENGTH partners
+TMP_75(uint256) := REF_35(uint256)
+TMP_76(uint256) = TMP_75 + 1
+REF_35(uint256) (->partners) := TMP_76(uint256)
+REF_36(Slot.PartnerShare) -> partners[TMP_75]
+REF_36(Slot.PartnerShare) (->partners) := TMP_73(Slot.PartnerShare)
+EXPRESSION:partners.push(PartnerShare(addr,totalWin / 1000000000000000))	NodeType.EXPRESSION" -> "BlockID: 28
+Call context: check
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 28
+Call context: check
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 21
+Call context: check
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 13
+Call context: check
+None
+BEGIN_LOOP
+REF_25(uint8) -> rollReq.rollCount
+TMP_58(bool) = x < REF_25
+CONDITION TMP_58
+EXPRESSION:None	NodeType.STARTLOOP
+x < rollReq.rollCount	NodeType.IFLOOP" -> "BlockID: 15
+Call context: check
+True
+REF_26(uint256) -> rollReq.bet
+REF_27(uint8) -> rollReq.lines
+REF_28(uint256) -> rollReq.blocknum
+TMP_59(uint256) = pendingBetAmount + rollTimes
+TMP_60(uint256) = TMP_59 + x
+NEW VARIABLE stops
+NEW VARIABLE winRate
+NEW VARIABLE entropy
+TMP_97(bool) = block.number > blocknum
+CONDITION TMP_97
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+TMP_97(bool) = block.number > blocknum	NodeType.IF" [key=0];
+"BlockID: 13
+Call context: check
+None
+BEGIN_LOOP
+REF_25(uint8) -> rollReq.rollCount
+TMP_58(bool) = x < REF_25
+CONDITION TMP_58
+EXPRESSION:None	NodeType.STARTLOOP
+x < rollReq.rollCount	NodeType.IFLOOP" -> "BlockID: 16
+Call context: check
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 15
+Call context: check
+True
+REF_26(uint256) -> rollReq.bet
+REF_27(uint8) -> rollReq.lines
+REF_28(uint256) -> rollReq.blocknum
+TMP_59(uint256) = pendingBetAmount + rollTimes
+TMP_60(uint256) = TMP_59 + x
+NEW VARIABLE stops
+NEW VARIABLE winRate
+NEW VARIABLE entropy
+TMP_97(bool) = block.number > blocknum
+CONDITION TMP_97
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+TMP_97(bool) = block.number > blocknum	NodeType.IF" -> "BlockID: 18
+Call context: check,checkRoll,doRoll
+True
+TMP_98(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 15
+Call context: check
+True
+REF_26(uint256) -> rollReq.bet
+REF_27(uint8) -> rollReq.lines
+REF_28(uint256) -> rollReq.blocknum
+TMP_59(uint256) = pendingBetAmount + rollTimes
+TMP_60(uint256) = TMP_59 + x
+NEW VARIABLE stops
+NEW VARIABLE winRate
+NEW VARIABLE entropy
+TMP_97(bool) = block.number > blocknum
+CONDITION TMP_97
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+TMP_97(bool) = block.number > blocknum	NodeType.IF" -> "BlockID: 19
+Call context: check,checkRoll,doRoll
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 16
+Call context: check
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 14
+Call context: check
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 40
+Call context: check,checkRoll
+True
+TMP_83(uint256) = jackpotPool / 2
+win(uint256) := TMP_83(uint256)
+jackpotPool(uint256) = jackpotPool - win
+EXPRESSION:win = jackpotPool / 2	NodeType.EXPRESSION
+jackpotPool -= win	NodeType.EXPRESSION" -> "BlockID: 41
+Call context: check,checkRoll
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 41
+Call context: check,checkRoll
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 42
+Call context: check,checkRoll
+None
+TMP_84(uint256) := rollTimes(uint256)
+rollTimes(uint256) = rollTimes + 1
+minipotWin(uint256) := 0(uint256)
+TMP_85(uint256) = entropy >> 32
+TMP_86(uint256) = TMP_85 & 65535
+TMP_87(uint256) = 65535 / TMP_86
+TMP_88(uint256) = minipotTimes + 1
+TMP_89(uint256) = 100 * TMP_88
+TMP_90(uint256) = TMP_89 - rollTimes
+TMP_91(bool) = TMP_87 > TMP_90
+CONDITION TMP_91
+EXPRESSION:rollTimes ++	NodeType.EXPRESSION
+minipotWin = 0	NodeType.VARIABLE
+minipotWin = 0	NodeType.EXPRESSION
+0xffff / (entropy >> 32 & 0xffff) > (100 * (minipotTimes + 1)) - rollTimes	NodeType.IF" [key=0];
+"BlockID: 42
+Call context: check,checkRoll
+None
+TMP_84(uint256) := rollTimes(uint256)
+rollTimes(uint256) = rollTimes + 1
+minipotWin(uint256) := 0(uint256)
+TMP_85(uint256) = entropy >> 32
+TMP_86(uint256) = TMP_85 & 65535
+TMP_87(uint256) = 65535 / TMP_86
+TMP_88(uint256) = minipotTimes + 1
+TMP_89(uint256) = 100 * TMP_88
+TMP_90(uint256) = TMP_89 - rollTimes
+TMP_91(bool) = TMP_87 > TMP_90
+CONDITION TMP_91
+EXPRESSION:rollTimes ++	NodeType.EXPRESSION
+minipotWin = 0	NodeType.VARIABLE
+minipotWin = 0	NodeType.EXPRESSION
+0xffff / (entropy >> 32 & 0xffff) > (100 * (minipotTimes + 1)) - rollTimes	NodeType.IF" -> "BlockID: 43
+Call context: check,checkRoll
+True
+TMP_92(uint256) := minipotTimes(uint256)
+minipotTimes(uint256) = minipotTimes + 1
+TMP_93(uint256) = minipotPool / 2
+minipotWin(uint256) := TMP_93(uint256)
+minipotPool(uint256) = minipotPool - minipotWin
+EXPRESSION:minipotTimes ++	NodeType.EXPRESSION
+minipotWin = minipotPool / 2	NodeType.EXPRESSION
+minipotPool -= minipotWin	NodeType.EXPRESSION" [key=0];
+"BlockID: 42
+Call context: check,checkRoll
+None
+TMP_84(uint256) := rollTimes(uint256)
+rollTimes(uint256) = rollTimes + 1
+minipotWin(uint256) := 0(uint256)
+TMP_85(uint256) = entropy >> 32
+TMP_86(uint256) = TMP_85 & 65535
+TMP_87(uint256) = 65535 / TMP_86
+TMP_88(uint256) = minipotTimes + 1
+TMP_89(uint256) = 100 * TMP_88
+TMP_90(uint256) = TMP_89 - rollTimes
+TMP_91(bool) = TMP_87 > TMP_90
+CONDITION TMP_91
+EXPRESSION:rollTimes ++	NodeType.EXPRESSION
+minipotWin = 0	NodeType.VARIABLE
+minipotWin = 0	NodeType.EXPRESSION
+0xffff / (entropy >> 32 & 0xffff) > (100 * (minipotTimes + 1)) - rollTimes	NodeType.IF" -> "BlockID: 44
+Call context: check,checkRoll
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 43
+Call context: check,checkRoll
+True
+TMP_92(uint256) := minipotTimes(uint256)
+minipotTimes(uint256) = minipotTimes + 1
+TMP_93(uint256) = minipotPool / 2
+minipotWin(uint256) := TMP_93(uint256)
+minipotPool(uint256) = minipotPool - minipotWin
+EXPRESSION:minipotTimes ++	NodeType.EXPRESSION
+minipotWin = minipotPool / 2	NodeType.EXPRESSION
+minipotPool -= minipotWin	NodeType.EXPRESSION" -> "BlockID: 44
+Call context: check,checkRoll
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 44
+Call context: check,checkRoll
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 45
+Call context: check,checkRoll
+None
+TMP_96(uint256) = win + minipotWin
+TMP_159(None) := TMP_96(uint256)
+totalWin(uint256) = totalWin + TMP_61
+TMP_62(uint256) := x(uint256)
+x(uint256) = x + 1
+EXPRESSION:totalWin += doRoll(addr,rollReq.bet,rollReq.lines,rollReq.blocknum,pendingBetAmount + rollTimes + x)	NodeType.EXPRESSION
+x ++	NodeType.EXPRESSION" [key=0];
+"BlockID: 45
+Call context: check,checkRoll
+None
+TMP_96(uint256) = win + minipotWin
+TMP_159(None) := TMP_96(uint256)
+totalWin(uint256) = totalWin + TMP_61
+TMP_62(uint256) := x(uint256)
+x(uint256) = x + 1
+EXPRESSION:totalWin += doRoll(addr,rollReq.bet,rollReq.lines,rollReq.blocknum,pendingBetAmount + rollTimes + x)	NodeType.EXPRESSION
+x ++	NodeType.EXPRESSION" -> "BlockID: 13
+Call context: check
+None
+BEGIN_LOOP
+REF_25(uint8) -> rollReq.rollCount
+TMP_58(bool) = x < REF_25
+CONDITION TMP_58
+EXPRESSION:None	NodeType.STARTLOOP
+x < rollReq.rollCount	NodeType.IFLOOP" [key="successor_2"];
+"BlockID: 31
+Call context: check,checkRoll,doRoll
+True
+TMP_102(uint256) = SOLIDITY_CALL blockhash(uint256)(blocknum)
+TMP_103(bytes) = SOLIDITY_CALL abi.encodePacked()(addr,TMP_102,seed)
+TMP_104(bytes32) = SOLIDITY_CALL keccak256()(TMP_103)
+TMP_105 = CONVERT TMP_104 to uint256
+entropy(uint256) := TMP_105(uint256)
+REF_41(uint256[]) -> REELS[0]
+REF_42(uint256[]) -> REELS[0]
+REF_43 -> LENGTH REF_42
+TMP_106(uint256) = entropy % REF_43
+REF_44(uint256) -> REF_41[TMP_106]
+REF_45(uint256[]) -> REELS[1]
+TMP_107(uint256) = entropy >> 8
+REF_46(uint256[]) -> REELS[1]
+REF_47 -> LENGTH REF_46
+TMP_108(uint256) = TMP_107 % REF_47
+REF_48(uint256) -> REF_45[TMP_108]
+REF_49(uint256[]) -> REELS[2]
+TMP_109(uint256) = entropy >> 16
+REF_50(uint256[]) -> REELS[2]
+REF_51 -> LENGTH REF_50
+TMP_110(uint256) = TMP_109 % REF_51
+REF_52(uint256) -> REF_49[TMP_110]
+stops(uint256[3]) =  ['REF_44(uint256)', 'REF_48(uint256)', 'REF_52(uint256)']
+REF_53(uint256) -> stops[0]
+REF_54(uint256) -> stops[1]
+REF_55(uint256) -> stops[2]
+REF_56(uint256) -> SYMBOL_MASK[p1]
+TMP_112(uint256) = REF_56 << 16
+REF_57(uint256) -> SYMBOL_MASK[p2]
+TMP_113(uint256) = REF_57 << 8
+TMP_114(uint256) = TMP_112 | TMP_113
+REF_58(uint256) -> SYMBOL_MASK[p3]
+TMP_115(uint256) = TMP_114 | REF_58
+line(uint256) := TMP_115(uint256)
+pay(uint256) := 0(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:entropy = uint256(keccak256()(abi.encodePacked(addr,blockhash(uint256)(blocknum),seed)))	NodeType.EXPRESSION
+stops = (REELS[0][entropy % REELS[0].length],REELS[1][(entropy >> 8) % REELS[1].length],REELS[2][(entropy >> 16) % REELS[2].length])	NodeType.EXPRESSION
+line = SYMBOL_MASK[p1] << 16 | SYMBOL_MASK[p2] << 8 | SYMBOL_MASK[p3]	NodeType.VARIABLE
+line = SYMBOL_MASK[p1] << 16 | SYMBOL_MASK[p2] << 8 | SYMBOL_MASK[p3]	NodeType.EXPRESSION
+pay = 0	NodeType.VARIABLE
+pay = 0	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" -> "BlockID: 33
+Call context: check,checkRoll,doRoll,calcRoll
+None
+BEGIN_LOOP
+REF_59 -> LENGTH PAYTABLE
+TMP_116(bool) = i < REF_59
+CONDITION TMP_116
+EXPRESSION:None	NodeType.STARTLOOP
+i < PAYTABLE.length	NodeType.IFLOOP" [key="successor_5"];
+"BlockID: 19
+Call context: check,checkRoll,doRoll
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 22
+Call context: check,checkRoll,doRoll
+None
+TMP_99(uint256) = blocknum + BET_EXPIRATION_BLOCKS
+TMP_100(bool) = block.number <= TMP_99
+CONDITION TMP_100
+EXPRESSION:TMP_100(bool) = block.number <= TMP_99	NodeType.IF" [key=0];
+"BlockID: 22
+Call context: check,checkRoll,doRoll
+None
+TMP_99(uint256) = blocknum + BET_EXPIRATION_BLOCKS
+TMP_100(bool) = block.number <= TMP_99
+CONDITION TMP_100
+EXPRESSION:TMP_100(bool) = block.number <= TMP_99	NodeType.IF" -> "BlockID: 26
+Call context: check,checkRoll,doRoll
+True
+TMP_101(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 22
+Call context: check,checkRoll,doRoll
+None
+TMP_99(uint256) = blocknum + BET_EXPIRATION_BLOCKS
+TMP_100(bool) = block.number <= TMP_99
+CONDITION TMP_100
+EXPRESSION:TMP_100(bool) = block.number <= TMP_99	NodeType.IF" -> "BlockID: 27
+Call context: check,checkRoll,doRoll
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 27
+Call context: check,checkRoll,doRoll
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 31
+Call context: check,checkRoll,doRoll
+True
+TMP_102(uint256) = SOLIDITY_CALL blockhash(uint256)(blocknum)
+TMP_103(bytes) = SOLIDITY_CALL abi.encodePacked()(addr,TMP_102,seed)
+TMP_104(bytes32) = SOLIDITY_CALL keccak256()(TMP_103)
+TMP_105 = CONVERT TMP_104 to uint256
+entropy(uint256) := TMP_105(uint256)
+REF_41(uint256[]) -> REELS[0]
+REF_42(uint256[]) -> REELS[0]
+REF_43 -> LENGTH REF_42
+TMP_106(uint256) = entropy % REF_43
+REF_44(uint256) -> REF_41[TMP_106]
+REF_45(uint256[]) -> REELS[1]
+TMP_107(uint256) = entropy >> 8
+REF_46(uint256[]) -> REELS[1]
+REF_47 -> LENGTH REF_46
+TMP_108(uint256) = TMP_107 % REF_47
+REF_48(uint256) -> REF_45[TMP_108]
+REF_49(uint256[]) -> REELS[2]
+TMP_109(uint256) = entropy >> 16
+REF_50(uint256[]) -> REELS[2]
+REF_51 -> LENGTH REF_50
+TMP_110(uint256) = TMP_109 % REF_51
+REF_52(uint256) -> REF_49[TMP_110]
+stops(uint256[3]) =  ['REF_44(uint256)', 'REF_48(uint256)', 'REF_52(uint256)']
+REF_53(uint256) -> stops[0]
+REF_54(uint256) -> stops[1]
+REF_55(uint256) -> stops[2]
+REF_56(uint256) -> SYMBOL_MASK[p1]
+TMP_112(uint256) = REF_56 << 16
+REF_57(uint256) -> SYMBOL_MASK[p2]
+TMP_113(uint256) = REF_57 << 8
+TMP_114(uint256) = TMP_112 | TMP_113
+REF_58(uint256) -> SYMBOL_MASK[p3]
+TMP_115(uint256) = TMP_114 | REF_58
+line(uint256) := TMP_115(uint256)
+pay(uint256) := 0(uint256)
+i(uint256) := 0(uint256)
+EXPRESSION:entropy = uint256(keccak256()(abi.encodePacked(addr,blockhash(uint256)(blocknum),seed)))	NodeType.EXPRESSION
+stops = (REELS[0][entropy % REELS[0].length],REELS[1][(entropy >> 8) % REELS[1].length],REELS[2][(entropy >> 16) % REELS[2].length])	NodeType.EXPRESSION
+line = SYMBOL_MASK[p1] << 16 | SYMBOL_MASK[p2] << 8 | SYMBOL_MASK[p3]	NodeType.VARIABLE
+line = SYMBOL_MASK[p1] << 16 | SYMBOL_MASK[p2] << 8 | SYMBOL_MASK[p3]	NodeType.EXPRESSION
+pay = 0	NodeType.VARIABLE
+pay = 0	NodeType.EXPRESSION
+i = 0	NodeType.VARIABLE
+i = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 33
+Call context: check,checkRoll,doRoll,calcRoll
+None
+BEGIN_LOOP
+REF_59 -> LENGTH PAYTABLE
+TMP_116(bool) = i < REF_59
+CONDITION TMP_116
+EXPRESSION:None	NodeType.STARTLOOP
+i < PAYTABLE.length	NodeType.IFLOOP" -> "BlockID: 34
+Call context: check,checkRoll,doRoll,calcRoll
+True
+REF_60(uint256[]) -> PAYTABLE[i]
+REF_61(uint256) -> REF_60[0]
+REF_62(uint256[]) -> PAYTABLE[i]
+REF_63(uint256) -> REF_62[0]
+TMP_117(uint256) = line & REF_63
+TMP_118(bool) = REF_61 == TMP_117
+CONDITION TMP_118
+EXPRESSION:PAYTABLE[i][0] == line & PAYTABLE[i][0]	NodeType.IF" [key=0];
+"BlockID: 33
+Call context: check,checkRoll,doRoll,calcRoll
+None
+BEGIN_LOOP
+REF_59 -> LENGTH PAYTABLE
+TMP_116(bool) = i < REF_59
+CONDITION TMP_116
+EXPRESSION:None	NodeType.STARTLOOP
+i < PAYTABLE.length	NodeType.IFLOOP" -> "BlockID: 35
+Call context: check,checkRoll,doRoll,calcRoll
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 34
+Call context: check,checkRoll,doRoll,calcRoll
+True
+REF_60(uint256[]) -> PAYTABLE[i]
+REF_61(uint256) -> REF_60[0]
+REF_62(uint256[]) -> PAYTABLE[i]
+REF_63(uint256) -> REF_62[0]
+TMP_117(uint256) = line & REF_63
+TMP_118(bool) = REF_61 == TMP_117
+CONDITION TMP_118
+EXPRESSION:PAYTABLE[i][0] == line & PAYTABLE[i][0]	NodeType.IF" -> "BlockID: 36
+Call context: check,checkRoll,doRoll,calcRoll
+True
+REF_64(uint256[]) -> PAYTABLE[i]
+REF_65(uint256) -> REF_64[1]
+pay(uint256) := REF_65(uint256)
+EXPRESSION:pay = PAYTABLE[i][1]	NodeType.EXPRESSION" [key=0];
+"BlockID: 34
+Call context: check,checkRoll,doRoll,calcRoll
+True
+REF_60(uint256[]) -> PAYTABLE[i]
+REF_61(uint256) -> REF_60[0]
+REF_62(uint256[]) -> PAYTABLE[i]
+REF_63(uint256) -> REF_62[0]
+TMP_117(uint256) = line & REF_63
+TMP_118(bool) = REF_61 == TMP_117
+CONDITION TMP_118
+EXPRESSION:PAYTABLE[i][0] == line & PAYTABLE[i][0]	NodeType.IF" -> "BlockID: 37
+Call context: check,checkRoll,doRoll,calcRoll
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 35
+Call context: check,checkRoll,doRoll,calcRoll
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 38
+Call context: check,checkRoll,doRoll,calcRoll
+None
+TMP_161(None) := pay(uint256)
+winValue(uint256) := TMP_111(uint256)
+TMP_160(None) := winValue(uint256)
+TMP_160(None) := entropy(uint256)
+TMP_160(None) := stops(uint256[3])
+stops(uint256[3])= UNPACK TUPLE_0 index: 0 
+winRate(uint256)= UNPACK TUPLE_0 index: 1 
+entropy(uint256)= UNPACK TUPLE_0 index: 2 
+REF_37(uint256) -> stops[0]
+TMP_77(uint256) = REF_37 << 16
+REF_38(uint256) -> stops[1]
+TMP_78(uint256) = REF_38 << 8
+TMP_79(uint256) = TMP_77 | TMP_78
+REF_39(uint256) -> stops[2]
+TMP_80(uint256) = TMP_79 | REF_39
+wheel(uint256) := TMP_80(uint256)
+TMP_81(uint256) = bet * winRate
+win(uint256) := TMP_81(uint256)
+TMP_82(bool) = winRate == 9999
+CONDITION TMP_82
+EXPRESSION:winValue = calcPayout(stops[0],stops[1],stops[2])	NodeType.EXPRESSION
+(stops,winRate,entropy) = calcRoll(addr,blocknum,seed)	NodeType.EXPRESSION
+wheel = stops[0] << 16 | stops[1] << 8 | stops[2]	NodeType.VARIABLE
+wheel = stops[0] << 16 | stops[1] << 8 | stops[2]	NodeType.EXPRESSION
+win = bet * winRate	NodeType.VARIABLE
+win = bet * winRate	NodeType.EXPRESSION
+winRate == 9999	NodeType.IF" [key=0];
+"BlockID: 38
+Call context: check,checkRoll,doRoll,calcRoll
+None
+TMP_161(None) := pay(uint256)
+winValue(uint256) := TMP_111(uint256)
+TMP_160(None) := winValue(uint256)
+TMP_160(None) := entropy(uint256)
+TMP_160(None) := stops(uint256[3])
+stops(uint256[3])= UNPACK TUPLE_0 index: 0 
+winRate(uint256)= UNPACK TUPLE_0 index: 1 
+entropy(uint256)= UNPACK TUPLE_0 index: 2 
+REF_37(uint256) -> stops[0]
+TMP_77(uint256) = REF_37 << 16
+REF_38(uint256) -> stops[1]
+TMP_78(uint256) = REF_38 << 8
+TMP_79(uint256) = TMP_77 | TMP_78
+REF_39(uint256) -> stops[2]
+TMP_80(uint256) = TMP_79 | REF_39
+wheel(uint256) := TMP_80(uint256)
+TMP_81(uint256) = bet * winRate
+win(uint256) := TMP_81(uint256)
+TMP_82(bool) = winRate == 9999
+CONDITION TMP_82
+EXPRESSION:winValue = calcPayout(stops[0],stops[1],stops[2])	NodeType.EXPRESSION
+(stops,winRate,entropy) = calcRoll(addr,blocknum,seed)	NodeType.EXPRESSION
+wheel = stops[0] << 16 | stops[1] << 8 | stops[2]	NodeType.VARIABLE
+wheel = stops[0] << 16 | stops[1] << 8 | stops[2]	NodeType.EXPRESSION
+win = bet * winRate	NodeType.VARIABLE
+win = bet * winRate	NodeType.EXPRESSION
+winRate == 9999	NodeType.IF" -> "BlockID: 40
+Call context: check,checkRoll
+True
+TMP_83(uint256) = jackpotPool / 2
+win(uint256) := TMP_83(uint256)
+jackpotPool(uint256) = jackpotPool - win
+EXPRESSION:win = jackpotPool / 2	NodeType.EXPRESSION
+jackpotPool -= win	NodeType.EXPRESSION" [key="successor_2"];
+"BlockID: 38
+Call context: check,checkRoll,doRoll,calcRoll
+None
+TMP_161(None) := pay(uint256)
+winValue(uint256) := TMP_111(uint256)
+TMP_160(None) := winValue(uint256)
+TMP_160(None) := entropy(uint256)
+TMP_160(None) := stops(uint256[3])
+stops(uint256[3])= UNPACK TUPLE_0 index: 0 
+winRate(uint256)= UNPACK TUPLE_0 index: 1 
+entropy(uint256)= UNPACK TUPLE_0 index: 2 
+REF_37(uint256) -> stops[0]
+TMP_77(uint256) = REF_37 << 16
+REF_38(uint256) -> stops[1]
+TMP_78(uint256) = REF_38 << 8
+TMP_79(uint256) = TMP_77 | TMP_78
+REF_39(uint256) -> stops[2]
+TMP_80(uint256) = TMP_79 | REF_39
+wheel(uint256) := TMP_80(uint256)
+TMP_81(uint256) = bet * winRate
+win(uint256) := TMP_81(uint256)
+TMP_82(bool) = winRate == 9999
+CONDITION TMP_82
+EXPRESSION:winValue = calcPayout(stops[0],stops[1],stops[2])	NodeType.EXPRESSION
+(stops,winRate,entropy) = calcRoll(addr,blocknum,seed)	NodeType.EXPRESSION
+wheel = stops[0] << 16 | stops[1] << 8 | stops[2]	NodeType.VARIABLE
+wheel = stops[0] << 16 | stops[1] << 8 | stops[2]	NodeType.EXPRESSION
+win = bet * winRate	NodeType.VARIABLE
+win = bet * winRate	NodeType.EXPRESSION
+winRate == 9999	NodeType.IF" -> "BlockID: 41
+Call context: check,checkRoll
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+"BlockID: 36
+Call context: check,checkRoll,doRoll,calcRoll
+True
+REF_64(uint256[]) -> PAYTABLE[i]
+REF_65(uint256) -> REF_64[1]
+pay(uint256) := REF_65(uint256)
+EXPRESSION:pay = PAYTABLE[i][1]	NodeType.EXPRESSION" -> "BlockID: 37
+Call context: check,checkRoll,doRoll,calcRoll
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 37
+Call context: check,checkRoll,doRoll,calcRoll
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 39
+Call context: check,checkRoll,doRoll,calcRoll
+None
+TMP_119(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:i ++	NodeType.EXPRESSION" [key=0];
+"BlockID: 39
+Call context: check,checkRoll,doRoll,calcRoll
+None
+TMP_119(uint256) := i(uint256)
+i(uint256) = i + 1
+EXPRESSION:i ++	NodeType.EXPRESSION" -> "BlockID: 33
+Call context: check,checkRoll,doRoll,calcRoll
+None
+BEGIN_LOOP
+REF_59 -> LENGTH PAYTABLE
+TMP_116(bool) = i < REF_59
+CONDITION TMP_116
+EXPRESSION:None	NodeType.STARTLOOP
+i < PAYTABLE.length	NodeType.IFLOOP" [key=0];
+}

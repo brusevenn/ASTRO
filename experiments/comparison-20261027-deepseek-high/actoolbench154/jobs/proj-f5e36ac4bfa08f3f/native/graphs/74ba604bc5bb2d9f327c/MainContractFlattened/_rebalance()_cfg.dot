@@ -1,0 +1,633 @@
+digraph {
+"BlockID: 2990
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 2991
+Call context: 
+None
+NEW VARIABLE buyLev
+NEW VARIABLE sellLev
+TUPLE_10(uint256,uint256) = INTERNAL_CALL, leveragedPool._settle(leveragedData.leverageInfo)(leverageCoin)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(buyLev,sellLev) = _settle(leverageCoin)	NodeType.EXPRESSION";
+"BlockID: 2992
+Call context: 
+None
+buyLev(uint256)= UNPACK TUPLE_10 index: 0 
+sellLev(uint256)= UNPACK TUPLE_10 index: 1 
+NEW VARIABLE buyHe
+NEW VARIABLE sellHe
+TUPLE_11(uint256,uint256) = INTERNAL_CALL, leveragedPool._settle(leveragedData.leverageInfo)(hedgeCoin)
+EXPRESSION:(buyLev,sellLev) = _settle(leverageCoin)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(buyHe,sellHe) = _settle(hedgeCoin)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2993
+Call context: 
+None
+buyHe(uint256)= UNPACK TUPLE_11 index: 0 
+sellHe(uint256)= UNPACK TUPLE_11 index: 1 
+rebalancePrices(uint256[2]) =  ['currentPrice(uint256[2])']
+TMP_908(bool) = buyLev > 0
+CONDITION TMP_908
+EXPRESSION:(buyHe,sellHe) = _settle(hedgeCoin)	NodeType.EXPRESSION
+rebalancePrices = currentPrice	NodeType.EXPRESSION
+buyLev > 0	NodeType.IF" [shape=box];
+"BlockID: 2994
+Call context: 
+True
+REF_284(IStakePool) -> leverageCoin.stakePool
+HIGH_LEVEL_CALL, dest:REF_284(IStakePool), function:borrowAndInterest, arguments:['buyLev']  
+EXPRESSION:leverageCoin.stakePool.borrowAndInterest(buyLev)	NodeType.EXPRESSION";
+"BlockID: 2996
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2997
+Call context: 
+None
+TMP_910(bool) = buyHe > 0
+CONDITION TMP_910
+EXPRESSION:buyHe > 0	NodeType.IF";
+"BlockID: 2998
+Call context: 
+True
+REF_286(IStakePool) -> hedgeCoin.stakePool
+HIGH_LEVEL_CALL, dest:REF_286(IStakePool), function:borrowAndInterest, arguments:['buyHe']  
+EXPRESSION:hedgeCoin.stakePool.borrowAndInterest(buyHe)	NodeType.EXPRESSION";
+"BlockID: 3000
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3001
+Call context: 
+None
+TMP_912(bool) = buyLev > 0
+TMP_913(bool) = buyHe > 0
+TMP_914(bool) = TMP_912 && TMP_913
+CONDITION TMP_914
+EXPRESSION:buyLev > 0 && buyHe > 0	NodeType.IF";
+"BlockID: 3002
+Call context: 
+True
+REF_288(address) -> leverageCoin.token
+REF_289(address) -> hedgeCoin.token
+TUPLE_12(uint256,uint256) = INTERNAL_CALL, leveragedPool.swapRebalance(address,address,uint256,uint256,uint256[2],uint256)(REF_288,REF_289,buyLev,buyHe,currentPrice,0)
+EXPRESSION:swapRebalance(leverageCoin.token,hedgeCoin.token,buyLev,buyHe,currentPrice,0)	NodeType.EXPRESSION";
+"BlockID: 3004
+Call context: 
+False
+TMP_915(bool) = buyLev > 0
+CONDITION TMP_915
+EXPRESSION:buyLev > 0	NodeType.IF";
+"BlockID: 3005
+Call context: 
+True
+REF_290(address) -> leverageCoin.token
+REF_291(address) -> hedgeCoin.token
+TMP_916(uint256) = 2 << 128
+TUPLE_13(uint256,uint256) = INTERNAL_CALL, leveragedPool.swapRebalance(address,address,uint256,uint256,uint256[2],uint256)(REF_290,REF_291,buyLev,sellHe,currentPrice,TMP_916)
+EXPRESSION:swapRebalance(leverageCoin.token,hedgeCoin.token,buyLev,sellHe,currentPrice,2 << 128)	NodeType.EXPRESSION";
+"BlockID: 3007
+Call context: 
+False
+TMP_917(bool) = buyHe > 0
+CONDITION TMP_917
+EXPRESSION:buyHe > 0	NodeType.IF";
+"BlockID: 3008
+Call context: 
+True
+REF_292(address) -> hedgeCoin.token
+REF_293(address) -> leverageCoin.token
+TMP_918(uint256) = 2 << 128
+TMP_919(uint256) = TMP_918 + 1
+TUPLE_14(uint256,uint256) = INTERNAL_CALL, leveragedPool.swapRebalance(address,address,uint256,uint256,uint256[2],uint256)(REF_292,REF_293,buyHe,sellLev,currentPrice,TMP_919)
+EXPRESSION:swapRebalance(hedgeCoin.token,leverageCoin.token,buyHe,sellLev,currentPrice,(2 << 128) + 1)	NodeType.EXPRESSION";
+"BlockID: 3010
+Call context: 
+False
+TMP_920(bool) = sellLev > 0
+TMP_921(bool) = sellHe > 0
+TMP_922(bool) = TMP_920 || TMP_921
+CONDITION TMP_922
+EXPRESSION:sellLev > 0 || sellHe > 0	NodeType.IF";
+"BlockID: 3011
+Call context: 
+True
+REF_294(address) -> leverageCoin.token
+REF_295(address) -> hedgeCoin.token
+TMP_923(uint256) = 1 << 128
+TUPLE_15(uint256,uint256) = INTERNAL_CALL, leveragedPool.swapRebalance(address,address,uint256,uint256,uint256[2],uint256)(REF_294,REF_295,sellLev,sellHe,currentPrice,TMP_923)
+EXPRESSION:(sellLev,sellHe) = swapRebalance(leverageCoin.token,hedgeCoin.token,sellLev,sellHe,currentPrice,1 << 128)	NodeType.EXPRESSION";
+"BlockID: 3013
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3015
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3017
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3019
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3020
+Call context: 
+None
+TMP_924(bool) = buyLev == 0
+CONDITION TMP_924
+EXPRESSION:buyLev == 0	NodeType.IF";
+"BlockID: 3021
+Call context: 
+True
+INTERNAL_CALL, leveragedPool._repayAndInterest(leveragedData.leverageInfo,uint256)(leverageCoin,sellLev)
+EXPRESSION:_repayAndInterest(leverageCoin,sellLev)	NodeType.EXPRESSION";
+"BlockID: 3023
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3024
+Call context: 
+None
+TMP_926(bool) = buyHe == 0
+CONDITION TMP_926
+EXPRESSION:buyHe == 0	NodeType.IF";
+"BlockID: 3025
+Call context: 
+True
+INTERNAL_CALL, leveragedPool._repayAndInterest(leveragedData.leverageInfo,uint256)(hedgeCoin,sellHe)
+EXPRESSION:_repayAndInterest(hedgeCoin,sellHe)	NodeType.EXPRESSION";
+"BlockID: 3027
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3028
+Call context: 
+None
+INTERNAL_CALL, leveragedPool.calLeverageInfo(leveragedData.leverageInfo)(leverageCoin)
+EXPRESSION:calLeverageInfo(leverageCoin)	NodeType.EXPRESSION";
+"BlockID: 3029
+Call context: 
+None
+INTERNAL_CALL, leveragedPool.calLeverageInfo(leveragedData.leverageInfo)(hedgeCoin)
+EXPRESSION:calLeverageInfo(leverageCoin)	NodeType.EXPRESSION
+calLeverageInfo(hedgeCoin)	NodeType.EXPRESSION";
+"BlockID: 3012
+Call context: 
+None
+sellLev(uint256)= UNPACK TUPLE_15 index: 1 
+sellHe(uint256)= UNPACK TUPLE_15 index: 1 
+EXPRESSION:(sellLev,sellHe) = swapRebalance(leverageCoin.token,hedgeCoin.token,sellLev,sellHe,currentPrice,1 << 128)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 2990
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 2991
+Call context: 
+None
+NEW VARIABLE buyLev
+NEW VARIABLE sellLev
+TUPLE_10(uint256,uint256) = INTERNAL_CALL, leveragedPool._settle(leveragedData.leverageInfo)(leverageCoin)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(buyLev,sellLev) = _settle(leverageCoin)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2991
+Call context: 
+None
+NEW VARIABLE buyLev
+NEW VARIABLE sellLev
+TUPLE_10(uint256,uint256) = INTERNAL_CALL, leveragedPool._settle(leveragedData.leverageInfo)(leverageCoin)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(buyLev,sellLev) = _settle(leverageCoin)	NodeType.EXPRESSION" -> "BlockID: 2992
+Call context: 
+None
+buyLev(uint256)= UNPACK TUPLE_10 index: 0 
+sellLev(uint256)= UNPACK TUPLE_10 index: 1 
+NEW VARIABLE buyHe
+NEW VARIABLE sellHe
+TUPLE_11(uint256,uint256) = INTERNAL_CALL, leveragedPool._settle(leveragedData.leverageInfo)(hedgeCoin)
+EXPRESSION:(buyLev,sellLev) = _settle(leverageCoin)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(buyHe,sellHe) = _settle(hedgeCoin)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2992
+Call context: 
+None
+buyLev(uint256)= UNPACK TUPLE_10 index: 0 
+sellLev(uint256)= UNPACK TUPLE_10 index: 1 
+NEW VARIABLE buyHe
+NEW VARIABLE sellHe
+TUPLE_11(uint256,uint256) = INTERNAL_CALL, leveragedPool._settle(leveragedData.leverageInfo)(hedgeCoin)
+EXPRESSION:(buyLev,sellLev) = _settle(leverageCoin)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(buyHe,sellHe) = _settle(hedgeCoin)	NodeType.EXPRESSION" -> "BlockID: 2993
+Call context: 
+None
+buyHe(uint256)= UNPACK TUPLE_11 index: 0 
+sellHe(uint256)= UNPACK TUPLE_11 index: 1 
+rebalancePrices(uint256[2]) =  ['currentPrice(uint256[2])']
+TMP_908(bool) = buyLev > 0
+CONDITION TMP_908
+EXPRESSION:(buyHe,sellHe) = _settle(hedgeCoin)	NodeType.EXPRESSION
+rebalancePrices = currentPrice	NodeType.EXPRESSION
+buyLev > 0	NodeType.IF" [key=0];
+"BlockID: 2993
+Call context: 
+None
+buyHe(uint256)= UNPACK TUPLE_11 index: 0 
+sellHe(uint256)= UNPACK TUPLE_11 index: 1 
+rebalancePrices(uint256[2]) =  ['currentPrice(uint256[2])']
+TMP_908(bool) = buyLev > 0
+CONDITION TMP_908
+EXPRESSION:(buyHe,sellHe) = _settle(hedgeCoin)	NodeType.EXPRESSION
+rebalancePrices = currentPrice	NodeType.EXPRESSION
+buyLev > 0	NodeType.IF" -> "BlockID: 2994
+Call context: 
+True
+REF_284(IStakePool) -> leverageCoin.stakePool
+HIGH_LEVEL_CALL, dest:REF_284(IStakePool), function:borrowAndInterest, arguments:['buyLev']  
+EXPRESSION:leverageCoin.stakePool.borrowAndInterest(buyLev)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2993
+Call context: 
+None
+buyHe(uint256)= UNPACK TUPLE_11 index: 0 
+sellHe(uint256)= UNPACK TUPLE_11 index: 1 
+rebalancePrices(uint256[2]) =  ['currentPrice(uint256[2])']
+TMP_908(bool) = buyLev > 0
+CONDITION TMP_908
+EXPRESSION:(buyHe,sellHe) = _settle(hedgeCoin)	NodeType.EXPRESSION
+rebalancePrices = currentPrice	NodeType.EXPRESSION
+buyLev > 0	NodeType.IF" -> "BlockID: 2996
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2994
+Call context: 
+True
+REF_284(IStakePool) -> leverageCoin.stakePool
+HIGH_LEVEL_CALL, dest:REF_284(IStakePool), function:borrowAndInterest, arguments:['buyLev']  
+EXPRESSION:leverageCoin.stakePool.borrowAndInterest(buyLev)	NodeType.EXPRESSION" -> "BlockID: 2996
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2996
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 2997
+Call context: 
+None
+TMP_910(bool) = buyHe > 0
+CONDITION TMP_910
+EXPRESSION:buyHe > 0	NodeType.IF" [key=0];
+"BlockID: 2997
+Call context: 
+None
+TMP_910(bool) = buyHe > 0
+CONDITION TMP_910
+EXPRESSION:buyHe > 0	NodeType.IF" -> "BlockID: 2998
+Call context: 
+True
+REF_286(IStakePool) -> hedgeCoin.stakePool
+HIGH_LEVEL_CALL, dest:REF_286(IStakePool), function:borrowAndInterest, arguments:['buyHe']  
+EXPRESSION:hedgeCoin.stakePool.borrowAndInterest(buyHe)	NodeType.EXPRESSION" [key=0];
+"BlockID: 2997
+Call context: 
+None
+TMP_910(bool) = buyHe > 0
+CONDITION TMP_910
+EXPRESSION:buyHe > 0	NodeType.IF" -> "BlockID: 3000
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 2998
+Call context: 
+True
+REF_286(IStakePool) -> hedgeCoin.stakePool
+HIGH_LEVEL_CALL, dest:REF_286(IStakePool), function:borrowAndInterest, arguments:['buyHe']  
+EXPRESSION:hedgeCoin.stakePool.borrowAndInterest(buyHe)	NodeType.EXPRESSION" -> "BlockID: 3000
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3000
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3001
+Call context: 
+None
+TMP_912(bool) = buyLev > 0
+TMP_913(bool) = buyHe > 0
+TMP_914(bool) = TMP_912 && TMP_913
+CONDITION TMP_914
+EXPRESSION:buyLev > 0 && buyHe > 0	NodeType.IF" [key=0];
+"BlockID: 3001
+Call context: 
+None
+TMP_912(bool) = buyLev > 0
+TMP_913(bool) = buyHe > 0
+TMP_914(bool) = TMP_912 && TMP_913
+CONDITION TMP_914
+EXPRESSION:buyLev > 0 && buyHe > 0	NodeType.IF" -> "BlockID: 3002
+Call context: 
+True
+REF_288(address) -> leverageCoin.token
+REF_289(address) -> hedgeCoin.token
+TUPLE_12(uint256,uint256) = INTERNAL_CALL, leveragedPool.swapRebalance(address,address,uint256,uint256,uint256[2],uint256)(REF_288,REF_289,buyLev,buyHe,currentPrice,0)
+EXPRESSION:swapRebalance(leverageCoin.token,hedgeCoin.token,buyLev,buyHe,currentPrice,0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3001
+Call context: 
+None
+TMP_912(bool) = buyLev > 0
+TMP_913(bool) = buyHe > 0
+TMP_914(bool) = TMP_912 && TMP_913
+CONDITION TMP_914
+EXPRESSION:buyLev > 0 && buyHe > 0	NodeType.IF" -> "BlockID: 3004
+Call context: 
+False
+TMP_915(bool) = buyLev > 0
+CONDITION TMP_915
+EXPRESSION:buyLev > 0	NodeType.IF" [key=0];
+"BlockID: 3002
+Call context: 
+True
+REF_288(address) -> leverageCoin.token
+REF_289(address) -> hedgeCoin.token
+TUPLE_12(uint256,uint256) = INTERNAL_CALL, leveragedPool.swapRebalance(address,address,uint256,uint256,uint256[2],uint256)(REF_288,REF_289,buyLev,buyHe,currentPrice,0)
+EXPRESSION:swapRebalance(leverageCoin.token,hedgeCoin.token,buyLev,buyHe,currentPrice,0)	NodeType.EXPRESSION" -> "BlockID: 3019
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3004
+Call context: 
+False
+TMP_915(bool) = buyLev > 0
+CONDITION TMP_915
+EXPRESSION:buyLev > 0	NodeType.IF" -> "BlockID: 3005
+Call context: 
+True
+REF_290(address) -> leverageCoin.token
+REF_291(address) -> hedgeCoin.token
+TMP_916(uint256) = 2 << 128
+TUPLE_13(uint256,uint256) = INTERNAL_CALL, leveragedPool.swapRebalance(address,address,uint256,uint256,uint256[2],uint256)(REF_290,REF_291,buyLev,sellHe,currentPrice,TMP_916)
+EXPRESSION:swapRebalance(leverageCoin.token,hedgeCoin.token,buyLev,sellHe,currentPrice,2 << 128)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3004
+Call context: 
+False
+TMP_915(bool) = buyLev > 0
+CONDITION TMP_915
+EXPRESSION:buyLev > 0	NodeType.IF" -> "BlockID: 3007
+Call context: 
+False
+TMP_917(bool) = buyHe > 0
+CONDITION TMP_917
+EXPRESSION:buyHe > 0	NodeType.IF" [key=0];
+"BlockID: 3005
+Call context: 
+True
+REF_290(address) -> leverageCoin.token
+REF_291(address) -> hedgeCoin.token
+TMP_916(uint256) = 2 << 128
+TUPLE_13(uint256,uint256) = INTERNAL_CALL, leveragedPool.swapRebalance(address,address,uint256,uint256,uint256[2],uint256)(REF_290,REF_291,buyLev,sellHe,currentPrice,TMP_916)
+EXPRESSION:swapRebalance(leverageCoin.token,hedgeCoin.token,buyLev,sellHe,currentPrice,2 << 128)	NodeType.EXPRESSION" -> "BlockID: 3017
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3007
+Call context: 
+False
+TMP_917(bool) = buyHe > 0
+CONDITION TMP_917
+EXPRESSION:buyHe > 0	NodeType.IF" -> "BlockID: 3008
+Call context: 
+True
+REF_292(address) -> hedgeCoin.token
+REF_293(address) -> leverageCoin.token
+TMP_918(uint256) = 2 << 128
+TMP_919(uint256) = TMP_918 + 1
+TUPLE_14(uint256,uint256) = INTERNAL_CALL, leveragedPool.swapRebalance(address,address,uint256,uint256,uint256[2],uint256)(REF_292,REF_293,buyHe,sellLev,currentPrice,TMP_919)
+EXPRESSION:swapRebalance(hedgeCoin.token,leverageCoin.token,buyHe,sellLev,currentPrice,(2 << 128) + 1)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3007
+Call context: 
+False
+TMP_917(bool) = buyHe > 0
+CONDITION TMP_917
+EXPRESSION:buyHe > 0	NodeType.IF" -> "BlockID: 3010
+Call context: 
+False
+TMP_920(bool) = sellLev > 0
+TMP_921(bool) = sellHe > 0
+TMP_922(bool) = TMP_920 || TMP_921
+CONDITION TMP_922
+EXPRESSION:sellLev > 0 || sellHe > 0	NodeType.IF" [key=0];
+"BlockID: 3008
+Call context: 
+True
+REF_292(address) -> hedgeCoin.token
+REF_293(address) -> leverageCoin.token
+TMP_918(uint256) = 2 << 128
+TMP_919(uint256) = TMP_918 + 1
+TUPLE_14(uint256,uint256) = INTERNAL_CALL, leveragedPool.swapRebalance(address,address,uint256,uint256,uint256[2],uint256)(REF_292,REF_293,buyHe,sellLev,currentPrice,TMP_919)
+EXPRESSION:swapRebalance(hedgeCoin.token,leverageCoin.token,buyHe,sellLev,currentPrice,(2 << 128) + 1)	NodeType.EXPRESSION" -> "BlockID: 3015
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3010
+Call context: 
+False
+TMP_920(bool) = sellLev > 0
+TMP_921(bool) = sellHe > 0
+TMP_922(bool) = TMP_920 || TMP_921
+CONDITION TMP_922
+EXPRESSION:sellLev > 0 || sellHe > 0	NodeType.IF" -> "BlockID: 3011
+Call context: 
+True
+REF_294(address) -> leverageCoin.token
+REF_295(address) -> hedgeCoin.token
+TMP_923(uint256) = 1 << 128
+TUPLE_15(uint256,uint256) = INTERNAL_CALL, leveragedPool.swapRebalance(address,address,uint256,uint256,uint256[2],uint256)(REF_294,REF_295,sellLev,sellHe,currentPrice,TMP_923)
+EXPRESSION:(sellLev,sellHe) = swapRebalance(leverageCoin.token,hedgeCoin.token,sellLev,sellHe,currentPrice,1 << 128)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3010
+Call context: 
+False
+TMP_920(bool) = sellLev > 0
+TMP_921(bool) = sellHe > 0
+TMP_922(bool) = TMP_920 || TMP_921
+CONDITION TMP_922
+EXPRESSION:sellLev > 0 || sellHe > 0	NodeType.IF" -> "BlockID: 3013
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3011
+Call context: 
+True
+REF_294(address) -> leverageCoin.token
+REF_295(address) -> hedgeCoin.token
+TMP_923(uint256) = 1 << 128
+TUPLE_15(uint256,uint256) = INTERNAL_CALL, leveragedPool.swapRebalance(address,address,uint256,uint256,uint256[2],uint256)(REF_294,REF_295,sellLev,sellHe,currentPrice,TMP_923)
+EXPRESSION:(sellLev,sellHe) = swapRebalance(leverageCoin.token,hedgeCoin.token,sellLev,sellHe,currentPrice,1 << 128)	NodeType.EXPRESSION" -> "BlockID: 3012
+Call context: 
+None
+sellLev(uint256)= UNPACK TUPLE_15 index: 1 
+sellHe(uint256)= UNPACK TUPLE_15 index: 1 
+EXPRESSION:(sellLev,sellHe) = swapRebalance(leverageCoin.token,hedgeCoin.token,sellLev,sellHe,currentPrice,1 << 128)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3013
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3015
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3015
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3017
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3017
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3019
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3019
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3020
+Call context: 
+None
+TMP_924(bool) = buyLev == 0
+CONDITION TMP_924
+EXPRESSION:buyLev == 0	NodeType.IF" [key=0];
+"BlockID: 3020
+Call context: 
+None
+TMP_924(bool) = buyLev == 0
+CONDITION TMP_924
+EXPRESSION:buyLev == 0	NodeType.IF" -> "BlockID: 3021
+Call context: 
+True
+INTERNAL_CALL, leveragedPool._repayAndInterest(leveragedData.leverageInfo,uint256)(leverageCoin,sellLev)
+EXPRESSION:_repayAndInterest(leverageCoin,sellLev)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3020
+Call context: 
+None
+TMP_924(bool) = buyLev == 0
+CONDITION TMP_924
+EXPRESSION:buyLev == 0	NodeType.IF" -> "BlockID: 3023
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3021
+Call context: 
+True
+INTERNAL_CALL, leveragedPool._repayAndInterest(leveragedData.leverageInfo,uint256)(leverageCoin,sellLev)
+EXPRESSION:_repayAndInterest(leverageCoin,sellLev)	NodeType.EXPRESSION" -> "BlockID: 3023
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3023
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3024
+Call context: 
+None
+TMP_926(bool) = buyHe == 0
+CONDITION TMP_926
+EXPRESSION:buyHe == 0	NodeType.IF" [key=0];
+"BlockID: 3024
+Call context: 
+None
+TMP_926(bool) = buyHe == 0
+CONDITION TMP_926
+EXPRESSION:buyHe == 0	NodeType.IF" -> "BlockID: 3025
+Call context: 
+True
+INTERNAL_CALL, leveragedPool._repayAndInterest(leveragedData.leverageInfo,uint256)(hedgeCoin,sellHe)
+EXPRESSION:_repayAndInterest(hedgeCoin,sellHe)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3024
+Call context: 
+None
+TMP_926(bool) = buyHe == 0
+CONDITION TMP_926
+EXPRESSION:buyHe == 0	NodeType.IF" -> "BlockID: 3027
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3025
+Call context: 
+True
+INTERNAL_CALL, leveragedPool._repayAndInterest(leveragedData.leverageInfo,uint256)(hedgeCoin,sellHe)
+EXPRESSION:_repayAndInterest(hedgeCoin,sellHe)	NodeType.EXPRESSION" -> "BlockID: 3027
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3027
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3028
+Call context: 
+None
+INTERNAL_CALL, leveragedPool.calLeverageInfo(leveragedData.leverageInfo)(leverageCoin)
+EXPRESSION:calLeverageInfo(leverageCoin)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3028
+Call context: 
+None
+INTERNAL_CALL, leveragedPool.calLeverageInfo(leveragedData.leverageInfo)(leverageCoin)
+EXPRESSION:calLeverageInfo(leverageCoin)	NodeType.EXPRESSION" -> "BlockID: 3029
+Call context: 
+None
+INTERNAL_CALL, leveragedPool.calLeverageInfo(leveragedData.leverageInfo)(hedgeCoin)
+EXPRESSION:calLeverageInfo(leverageCoin)	NodeType.EXPRESSION
+calLeverageInfo(hedgeCoin)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3012
+Call context: 
+None
+sellLev(uint256)= UNPACK TUPLE_15 index: 1 
+sellHe(uint256)= UNPACK TUPLE_15 index: 1 
+EXPRESSION:(sellLev,sellHe) = swapRebalance(leverageCoin.token,hedgeCoin.token,sellLev,sellHe,currentPrice,1 << 128)	NodeType.EXPRESSION" -> "BlockID: 3013
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

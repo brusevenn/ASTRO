@@ -1,0 +1,855 @@
+digraph {
+"BlockID: 1775
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1776
+Call context: 
+None
+TMP_1018(uint256) = INTERNAL_CALL, RToken.getBlockNumber()()
+EXPRESSION:";
+"BlockID: 1777
+Call context: 
+None
+currentBlockNumber(uint256) := TMP_1018(uint256)
+accrualBlockNumberPrior(uint256) := accrualBlockNumber(uint256)
+TMP_1019(bool) = accrualBlockNumberPrior == currentBlockNumber
+CONDITION TMP_1019
+EXPRESSION:currentBlockNumber = getBlockNumber()	NodeType.VARIABLE
+currentBlockNumber = getBlockNumber()	NodeType.EXPRESSION
+accrualBlockNumberPrior = accrualBlockNumber	NodeType.VARIABLE
+accrualBlockNumberPrior = accrualBlockNumber	NodeType.EXPRESSION
+accrualBlockNumberPrior == currentBlockNumber	NodeType.IF" [shape=box];
+"BlockID: 1778
+Call context: 
+True
+REF_680(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1020 = CONVERT REF_680 to uint256
+RETURN TMP_1020
+EXPRESSION:uint256(Error.NO_ERROR)	NodeType.RETURN";
+"BlockID: 1779
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1780
+Call context: 
+None
+TMP_1021(uint256) = INTERNAL_CALL, RToken.getCashPrior()()
+EXPRESSION:";
+"BlockID: 1781
+Call context: 
+None
+cashPrior(uint256) := TMP_1021(uint256)
+borrowsPrior(uint256) := totalBorrows(uint256)
+reservesPrior(uint256) := totalReserves(uint256)
+borrowIndexPrior(uint256) := borrowIndex(uint256)
+TMP_1022(uint256) = HIGH_LEVEL_CALL, dest:interestRateModel(InterestRateModel), function:getBorrowRate, arguments:['cashPrior', 'borrowsPrior', 'reservesPrior']  
+EXPRESSION:cashPrior = getCashPrior()	NodeType.VARIABLE
+cashPrior = getCashPrior()	NodeType.EXPRESSION
+borrowsPrior = totalBorrows	NodeType.VARIABLE
+borrowsPrior = totalBorrows	NodeType.EXPRESSION
+reservesPrior = totalReserves	NodeType.VARIABLE
+reservesPrior = totalReserves	NodeType.EXPRESSION
+borrowIndexPrior = borrowIndex	NodeType.VARIABLE
+borrowIndexPrior = borrowIndex	NodeType.EXPRESSION" [shape=box];
+"BlockID: 1783
+Call context: 
+True
+NEW VARIABLE mathErr
+NEW VARIABLE blockDelta
+TUPLE_123(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.subUInt(uint256,uint256)(currentBlockNumber,accrualBlockNumberPrior)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(mathErr,blockDelta) = subUInt(currentBlockNumber,accrualBlockNumberPrior)	NodeType.EXPRESSION";
+"BlockID: 1785
+Call context: 
+True
+NEW VARIABLE simpleInterestFactor
+NEW VARIABLE interestAccumulated
+NEW VARIABLE totalBorrowsNew
+NEW VARIABLE totalReservesNew
+NEW VARIABLE borrowIndexNew
+TMP_1027(ExponentialNoError.Exp) = new Exp(borrowRateMantissa)
+TUPLE_124(CarefulMath.MathError,ExponentialNoError.Exp) = INTERNAL_CALL, Exponential.mulScalar(ExponentialNoError.Exp,uint256)(TMP_1027,blockDelta)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(mathErr,simpleInterestFactor) = mulScalar(Exp(borrowRateMantissa),blockDelta)	NodeType.EXPRESSION";
+"BlockID: 1786
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_124 index: 0 
+simpleInterestFactor(ExponentialNoError.Exp)= UNPACK TUPLE_124 index: 1 
+REF_683(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1028(bool) = mathErr != REF_683
+CONDITION TMP_1028
+EXPRESSION:(mathErr,simpleInterestFactor) = mulScalar(Exp(borrowRateMantissa),blockDelta)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 1787
+Call context: 
+True
+REF_684(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_685(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_SIMPLE_INTEREST_FACTOR_CALCULATION_FAILED
+TMP_1029 = CONVERT mathErr to uint256
+TMP_1030(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_684,REF_685,TMP_1029)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_SIMPLE_INTEREST_FACTOR_CALCULATION_FAILED,uint256(mathErr))	NodeType.EXPRESSION";
+"BlockID: 1789
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1790
+Call context: 
+None
+TUPLE_125(CarefulMath.MathError,uint256) = INTERNAL_CALL, Exponential.mulScalarTruncate(ExponentialNoError.Exp,uint256)(simpleInterestFactor,borrowsPrior)
+EXPRESSION:(mathErr,interestAccumulated) = mulScalarTruncate(simpleInterestFactor,borrowsPrior)	NodeType.EXPRESSION";
+"BlockID: 1791
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_125 index: 0 
+interestAccumulated(uint256)= UNPACK TUPLE_125 index: 1 
+REF_686(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1031(bool) = mathErr != REF_686
+CONDITION TMP_1031
+EXPRESSION:(mathErr,interestAccumulated) = mulScalarTruncate(simpleInterestFactor,borrowsPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 1792
+Call context: 
+True
+REF_687(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_688(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_ACCUMULATED_INTEREST_CALCULATION_FAILED
+TMP_1032 = CONVERT mathErr to uint256
+TMP_1033(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_687,REF_688,TMP_1032)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_ACCUMULATED_INTEREST_CALCULATION_FAILED,uint256(mathErr))	NodeType.EXPRESSION";
+"BlockID: 1794
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1795
+Call context: 
+None
+TUPLE_126(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.addUInt(uint256,uint256)(interestAccumulated,borrowsPrior)
+EXPRESSION:(mathErr,totalBorrowsNew) = addUInt(interestAccumulated,borrowsPrior)	NodeType.EXPRESSION";
+"BlockID: 1796
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_126 index: 0 
+totalBorrowsNew(uint256)= UNPACK TUPLE_126 index: 1 
+REF_689(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1034(bool) = mathErr != REF_689
+CONDITION TMP_1034
+EXPRESSION:(mathErr,totalBorrowsNew) = addUInt(interestAccumulated,borrowsPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 1797
+Call context: 
+True
+REF_690(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_691(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_NEW_TOTAL_BORROWS_CALCULATION_FAILED
+TMP_1035 = CONVERT mathErr to uint256
+TMP_1036(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_690,REF_691,TMP_1035)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_NEW_TOTAL_BORROWS_CALCULATION_FAILED,uint256(mathErr))	NodeType.EXPRESSION";
+"BlockID: 1799
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1800
+Call context: 
+None
+TMP_1037(ExponentialNoError.Exp) = new Exp(reserveFactorMantissa)
+TUPLE_127(CarefulMath.MathError,uint256) = INTERNAL_CALL, Exponential.mulScalarTruncateAddUInt(ExponentialNoError.Exp,uint256,uint256)(TMP_1037,interestAccumulated,reservesPrior)
+EXPRESSION:(mathErr,totalReservesNew) = mulScalarTruncateAddUInt(Exp(reserveFactorMantissa),interestAccumulated,reservesPrior)	NodeType.EXPRESSION";
+"BlockID: 1801
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_127 index: 0 
+totalReservesNew(uint256)= UNPACK TUPLE_127 index: 1 
+REF_692(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1038(bool) = mathErr != REF_692
+CONDITION TMP_1038
+EXPRESSION:(mathErr,totalReservesNew) = mulScalarTruncateAddUInt(Exp(reserveFactorMantissa),interestAccumulated,reservesPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 1802
+Call context: 
+True
+REF_693(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_694(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_NEW_TOTAL_RESERVES_CALCULATION_FAILED
+TMP_1039 = CONVERT mathErr to uint256
+TMP_1040(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_693,REF_694,TMP_1039)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_NEW_TOTAL_RESERVES_CALCULATION_FAILED,uint256(mathErr))	NodeType.EXPRESSION";
+"BlockID: 1804
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1805
+Call context: 
+None
+TUPLE_128(CarefulMath.MathError,uint256) = INTERNAL_CALL, Exponential.mulScalarTruncateAddUInt(ExponentialNoError.Exp,uint256,uint256)(simpleInterestFactor,borrowIndexPrior,borrowIndexPrior)
+EXPRESSION:(mathErr,borrowIndexNew) = mulScalarTruncateAddUInt(simpleInterestFactor,borrowIndexPrior,borrowIndexPrior)	NodeType.EXPRESSION";
+"BlockID: 1806
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_128 index: 0 
+borrowIndexNew(uint256)= UNPACK TUPLE_128 index: 1 
+REF_695(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1041(bool) = mathErr != REF_695
+CONDITION TMP_1041
+EXPRESSION:(mathErr,borrowIndexNew) = mulScalarTruncateAddUInt(simpleInterestFactor,borrowIndexPrior,borrowIndexPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 1807
+Call context: 
+True
+REF_696(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_697(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_NEW_BORROW_INDEX_CALCULATION_FAILED
+TMP_1042 = CONVERT mathErr to uint256
+TMP_1043(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_696,REF_697,TMP_1042)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_NEW_BORROW_INDEX_CALCULATION_FAILED,uint256(mathErr))	NodeType.EXPRESSION";
+"BlockID: 1809
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1810
+Call context: 
+None
+accrualBlockNumber(uint256) := currentBlockNumber(uint256)
+borrowIndex(uint256) := borrowIndexNew(uint256)
+totalBorrows(uint256) := totalBorrowsNew(uint256)
+totalReserves(uint256) := totalReservesNew(uint256)
+REF_698(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1045 = CONVERT REF_698 to uint256
+RETURN TMP_1045
+EXPRESSION:accrualBlockNumber = currentBlockNumber	NodeType.EXPRESSION
+borrowIndex = borrowIndexNew	NodeType.EXPRESSION
+totalBorrows = totalBorrowsNew	NodeType.EXPRESSION
+totalReserves = totalReservesNew	NodeType.EXPRESSION
+uint256(Error.NO_ERROR)	NodeType.RETURN";
+"BlockID: 1808
+Call context: 
+None
+RETURN TMP_1043
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_NEW_BORROW_INDEX_CALCULATION_FAILED,uint256(mathErr))	NodeType.RETURN" [shape=box];
+"BlockID: 1803
+Call context: 
+None
+RETURN TMP_1040
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_NEW_TOTAL_RESERVES_CALCULATION_FAILED,uint256(mathErr))	NodeType.RETURN" [shape=box];
+"BlockID: 1798
+Call context: 
+None
+RETURN TMP_1036
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_NEW_TOTAL_BORROWS_CALCULATION_FAILED,uint256(mathErr))	NodeType.RETURN" [shape=box];
+"BlockID: 1793
+Call context: 
+None
+RETURN TMP_1033
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_ACCUMULATED_INTEREST_CALCULATION_FAILED,uint256(mathErr))	NodeType.RETURN" [shape=box];
+"BlockID: 1788
+Call context: 
+None
+RETURN TMP_1030
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_SIMPLE_INTEREST_FACTOR_CALCULATION_FAILED,uint256(mathErr))	NodeType.RETURN" [shape=box];
+"BlockID: 1811
+Call context: 
+None
+borrowRateMantissa(uint256) := TMP_1022(uint256)
+TMP_1023(bool) = borrowRateMantissa <= borrowRateMaxMantissa
+CONDITION TMP_1023
+EXPRESSION:TMP_1023(bool) = borrowRateMantissa <= borrowRateMaxMantissa	NodeType.IF";
+"BlockID: 1812
+Call context: 
+True
+TMP_1024(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 1813
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1814
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_123 index: 0 
+blockDelta(uint256)= UNPACK TUPLE_123 index: 1 
+REF_682(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1025(bool) = mathErr == REF_682
+CONDITION TMP_1025
+EXPRESSION:TMP_1025(bool) = mathErr == REF_682	NodeType.IF";
+"BlockID: 1815
+Call context: 
+True
+TMP_1026(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 1816
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 1775
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1776
+Call context: 
+None
+TMP_1018(uint256) = INTERNAL_CALL, RToken.getBlockNumber()()
+EXPRESSION:" [key=0];
+"BlockID: 1776
+Call context: 
+None
+TMP_1018(uint256) = INTERNAL_CALL, RToken.getBlockNumber()()
+EXPRESSION:" -> "BlockID: 1777
+Call context: 
+None
+currentBlockNumber(uint256) := TMP_1018(uint256)
+accrualBlockNumberPrior(uint256) := accrualBlockNumber(uint256)
+TMP_1019(bool) = accrualBlockNumberPrior == currentBlockNumber
+CONDITION TMP_1019
+EXPRESSION:currentBlockNumber = getBlockNumber()	NodeType.VARIABLE
+currentBlockNumber = getBlockNumber()	NodeType.EXPRESSION
+accrualBlockNumberPrior = accrualBlockNumber	NodeType.VARIABLE
+accrualBlockNumberPrior = accrualBlockNumber	NodeType.EXPRESSION
+accrualBlockNumberPrior == currentBlockNumber	NodeType.IF" [key=0];
+"BlockID: 1777
+Call context: 
+None
+currentBlockNumber(uint256) := TMP_1018(uint256)
+accrualBlockNumberPrior(uint256) := accrualBlockNumber(uint256)
+TMP_1019(bool) = accrualBlockNumberPrior == currentBlockNumber
+CONDITION TMP_1019
+EXPRESSION:currentBlockNumber = getBlockNumber()	NodeType.VARIABLE
+currentBlockNumber = getBlockNumber()	NodeType.EXPRESSION
+accrualBlockNumberPrior = accrualBlockNumber	NodeType.VARIABLE
+accrualBlockNumberPrior = accrualBlockNumber	NodeType.EXPRESSION
+accrualBlockNumberPrior == currentBlockNumber	NodeType.IF" -> "BlockID: 1778
+Call context: 
+True
+REF_680(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1020 = CONVERT REF_680 to uint256
+RETURN TMP_1020
+EXPRESSION:uint256(Error.NO_ERROR)	NodeType.RETURN" [key=0];
+"BlockID: 1777
+Call context: 
+None
+currentBlockNumber(uint256) := TMP_1018(uint256)
+accrualBlockNumberPrior(uint256) := accrualBlockNumber(uint256)
+TMP_1019(bool) = accrualBlockNumberPrior == currentBlockNumber
+CONDITION TMP_1019
+EXPRESSION:currentBlockNumber = getBlockNumber()	NodeType.VARIABLE
+currentBlockNumber = getBlockNumber()	NodeType.EXPRESSION
+accrualBlockNumberPrior = accrualBlockNumber	NodeType.VARIABLE
+accrualBlockNumberPrior = accrualBlockNumber	NodeType.EXPRESSION
+accrualBlockNumberPrior == currentBlockNumber	NodeType.IF" -> "BlockID: 1779
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1779
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1780
+Call context: 
+None
+TMP_1021(uint256) = INTERNAL_CALL, RToken.getCashPrior()()
+EXPRESSION:" [key=0];
+"BlockID: 1780
+Call context: 
+None
+TMP_1021(uint256) = INTERNAL_CALL, RToken.getCashPrior()()
+EXPRESSION:" -> "BlockID: 1781
+Call context: 
+None
+cashPrior(uint256) := TMP_1021(uint256)
+borrowsPrior(uint256) := totalBorrows(uint256)
+reservesPrior(uint256) := totalReserves(uint256)
+borrowIndexPrior(uint256) := borrowIndex(uint256)
+TMP_1022(uint256) = HIGH_LEVEL_CALL, dest:interestRateModel(InterestRateModel), function:getBorrowRate, arguments:['cashPrior', 'borrowsPrior', 'reservesPrior']  
+EXPRESSION:cashPrior = getCashPrior()	NodeType.VARIABLE
+cashPrior = getCashPrior()	NodeType.EXPRESSION
+borrowsPrior = totalBorrows	NodeType.VARIABLE
+borrowsPrior = totalBorrows	NodeType.EXPRESSION
+reservesPrior = totalReserves	NodeType.VARIABLE
+reservesPrior = totalReserves	NodeType.EXPRESSION
+borrowIndexPrior = borrowIndex	NodeType.VARIABLE
+borrowIndexPrior = borrowIndex	NodeType.EXPRESSION" [key=0];
+"BlockID: 1781
+Call context: 
+None
+cashPrior(uint256) := TMP_1021(uint256)
+borrowsPrior(uint256) := totalBorrows(uint256)
+reservesPrior(uint256) := totalReserves(uint256)
+borrowIndexPrior(uint256) := borrowIndex(uint256)
+TMP_1022(uint256) = HIGH_LEVEL_CALL, dest:interestRateModel(InterestRateModel), function:getBorrowRate, arguments:['cashPrior', 'borrowsPrior', 'reservesPrior']  
+EXPRESSION:cashPrior = getCashPrior()	NodeType.VARIABLE
+cashPrior = getCashPrior()	NodeType.EXPRESSION
+borrowsPrior = totalBorrows	NodeType.VARIABLE
+borrowsPrior = totalBorrows	NodeType.EXPRESSION
+reservesPrior = totalReserves	NodeType.VARIABLE
+reservesPrior = totalReserves	NodeType.EXPRESSION
+borrowIndexPrior = borrowIndex	NodeType.VARIABLE
+borrowIndexPrior = borrowIndex	NodeType.EXPRESSION" -> "BlockID: 1811
+Call context: 
+None
+borrowRateMantissa(uint256) := TMP_1022(uint256)
+TMP_1023(bool) = borrowRateMantissa <= borrowRateMaxMantissa
+CONDITION TMP_1023
+EXPRESSION:TMP_1023(bool) = borrowRateMantissa <= borrowRateMaxMantissa	NodeType.IF" [key=0];
+"BlockID: 1783
+Call context: 
+True
+NEW VARIABLE mathErr
+NEW VARIABLE blockDelta
+TUPLE_123(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.subUInt(uint256,uint256)(currentBlockNumber,accrualBlockNumberPrior)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(mathErr,blockDelta) = subUInt(currentBlockNumber,accrualBlockNumberPrior)	NodeType.EXPRESSION" -> "BlockID: 1814
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_123 index: 0 
+blockDelta(uint256)= UNPACK TUPLE_123 index: 1 
+REF_682(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1025(bool) = mathErr == REF_682
+CONDITION TMP_1025
+EXPRESSION:TMP_1025(bool) = mathErr == REF_682	NodeType.IF" [key=0];
+"BlockID: 1785
+Call context: 
+True
+NEW VARIABLE simpleInterestFactor
+NEW VARIABLE interestAccumulated
+NEW VARIABLE totalBorrowsNew
+NEW VARIABLE totalReservesNew
+NEW VARIABLE borrowIndexNew
+TMP_1027(ExponentialNoError.Exp) = new Exp(borrowRateMantissa)
+TUPLE_124(CarefulMath.MathError,ExponentialNoError.Exp) = INTERNAL_CALL, Exponential.mulScalar(ExponentialNoError.Exp,uint256)(TMP_1027,blockDelta)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(mathErr,simpleInterestFactor) = mulScalar(Exp(borrowRateMantissa),blockDelta)	NodeType.EXPRESSION" -> "BlockID: 1786
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_124 index: 0 
+simpleInterestFactor(ExponentialNoError.Exp)= UNPACK TUPLE_124 index: 1 
+REF_683(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1028(bool) = mathErr != REF_683
+CONDITION TMP_1028
+EXPRESSION:(mathErr,simpleInterestFactor) = mulScalar(Exp(borrowRateMantissa),blockDelta)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key=0];
+"BlockID: 1786
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_124 index: 0 
+simpleInterestFactor(ExponentialNoError.Exp)= UNPACK TUPLE_124 index: 1 
+REF_683(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1028(bool) = mathErr != REF_683
+CONDITION TMP_1028
+EXPRESSION:(mathErr,simpleInterestFactor) = mulScalar(Exp(borrowRateMantissa),blockDelta)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 1787
+Call context: 
+True
+REF_684(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_685(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_SIMPLE_INTEREST_FACTOR_CALCULATION_FAILED
+TMP_1029 = CONVERT mathErr to uint256
+TMP_1030(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_684,REF_685,TMP_1029)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_SIMPLE_INTEREST_FACTOR_CALCULATION_FAILED,uint256(mathErr))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1786
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_124 index: 0 
+simpleInterestFactor(ExponentialNoError.Exp)= UNPACK TUPLE_124 index: 1 
+REF_683(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1028(bool) = mathErr != REF_683
+CONDITION TMP_1028
+EXPRESSION:(mathErr,simpleInterestFactor) = mulScalar(Exp(borrowRateMantissa),blockDelta)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 1789
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1787
+Call context: 
+True
+REF_684(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_685(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_SIMPLE_INTEREST_FACTOR_CALCULATION_FAILED
+TMP_1029 = CONVERT mathErr to uint256
+TMP_1030(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_684,REF_685,TMP_1029)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_SIMPLE_INTEREST_FACTOR_CALCULATION_FAILED,uint256(mathErr))	NodeType.EXPRESSION" -> "BlockID: 1788
+Call context: 
+None
+RETURN TMP_1030
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_SIMPLE_INTEREST_FACTOR_CALCULATION_FAILED,uint256(mathErr))	NodeType.RETURN" [key=0];
+"BlockID: 1789
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1790
+Call context: 
+None
+TUPLE_125(CarefulMath.MathError,uint256) = INTERNAL_CALL, Exponential.mulScalarTruncate(ExponentialNoError.Exp,uint256)(simpleInterestFactor,borrowsPrior)
+EXPRESSION:(mathErr,interestAccumulated) = mulScalarTruncate(simpleInterestFactor,borrowsPrior)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1790
+Call context: 
+None
+TUPLE_125(CarefulMath.MathError,uint256) = INTERNAL_CALL, Exponential.mulScalarTruncate(ExponentialNoError.Exp,uint256)(simpleInterestFactor,borrowsPrior)
+EXPRESSION:(mathErr,interestAccumulated) = mulScalarTruncate(simpleInterestFactor,borrowsPrior)	NodeType.EXPRESSION" -> "BlockID: 1791
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_125 index: 0 
+interestAccumulated(uint256)= UNPACK TUPLE_125 index: 1 
+REF_686(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1031(bool) = mathErr != REF_686
+CONDITION TMP_1031
+EXPRESSION:(mathErr,interestAccumulated) = mulScalarTruncate(simpleInterestFactor,borrowsPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key=0];
+"BlockID: 1791
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_125 index: 0 
+interestAccumulated(uint256)= UNPACK TUPLE_125 index: 1 
+REF_686(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1031(bool) = mathErr != REF_686
+CONDITION TMP_1031
+EXPRESSION:(mathErr,interestAccumulated) = mulScalarTruncate(simpleInterestFactor,borrowsPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 1792
+Call context: 
+True
+REF_687(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_688(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_ACCUMULATED_INTEREST_CALCULATION_FAILED
+TMP_1032 = CONVERT mathErr to uint256
+TMP_1033(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_687,REF_688,TMP_1032)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_ACCUMULATED_INTEREST_CALCULATION_FAILED,uint256(mathErr))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1791
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_125 index: 0 
+interestAccumulated(uint256)= UNPACK TUPLE_125 index: 1 
+REF_686(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1031(bool) = mathErr != REF_686
+CONDITION TMP_1031
+EXPRESSION:(mathErr,interestAccumulated) = mulScalarTruncate(simpleInterestFactor,borrowsPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 1794
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1792
+Call context: 
+True
+REF_687(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_688(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_ACCUMULATED_INTEREST_CALCULATION_FAILED
+TMP_1032 = CONVERT mathErr to uint256
+TMP_1033(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_687,REF_688,TMP_1032)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_ACCUMULATED_INTEREST_CALCULATION_FAILED,uint256(mathErr))	NodeType.EXPRESSION" -> "BlockID: 1793
+Call context: 
+None
+RETURN TMP_1033
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_ACCUMULATED_INTEREST_CALCULATION_FAILED,uint256(mathErr))	NodeType.RETURN" [key=0];
+"BlockID: 1794
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1795
+Call context: 
+None
+TUPLE_126(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.addUInt(uint256,uint256)(interestAccumulated,borrowsPrior)
+EXPRESSION:(mathErr,totalBorrowsNew) = addUInt(interestAccumulated,borrowsPrior)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1795
+Call context: 
+None
+TUPLE_126(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.addUInt(uint256,uint256)(interestAccumulated,borrowsPrior)
+EXPRESSION:(mathErr,totalBorrowsNew) = addUInt(interestAccumulated,borrowsPrior)	NodeType.EXPRESSION" -> "BlockID: 1796
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_126 index: 0 
+totalBorrowsNew(uint256)= UNPACK TUPLE_126 index: 1 
+REF_689(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1034(bool) = mathErr != REF_689
+CONDITION TMP_1034
+EXPRESSION:(mathErr,totalBorrowsNew) = addUInt(interestAccumulated,borrowsPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key=0];
+"BlockID: 1796
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_126 index: 0 
+totalBorrowsNew(uint256)= UNPACK TUPLE_126 index: 1 
+REF_689(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1034(bool) = mathErr != REF_689
+CONDITION TMP_1034
+EXPRESSION:(mathErr,totalBorrowsNew) = addUInt(interestAccumulated,borrowsPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 1797
+Call context: 
+True
+REF_690(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_691(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_NEW_TOTAL_BORROWS_CALCULATION_FAILED
+TMP_1035 = CONVERT mathErr to uint256
+TMP_1036(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_690,REF_691,TMP_1035)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_NEW_TOTAL_BORROWS_CALCULATION_FAILED,uint256(mathErr))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1796
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_126 index: 0 
+totalBorrowsNew(uint256)= UNPACK TUPLE_126 index: 1 
+REF_689(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1034(bool) = mathErr != REF_689
+CONDITION TMP_1034
+EXPRESSION:(mathErr,totalBorrowsNew) = addUInt(interestAccumulated,borrowsPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 1799
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1797
+Call context: 
+True
+REF_690(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_691(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_NEW_TOTAL_BORROWS_CALCULATION_FAILED
+TMP_1035 = CONVERT mathErr to uint256
+TMP_1036(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_690,REF_691,TMP_1035)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_NEW_TOTAL_BORROWS_CALCULATION_FAILED,uint256(mathErr))	NodeType.EXPRESSION" -> "BlockID: 1798
+Call context: 
+None
+RETURN TMP_1036
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_NEW_TOTAL_BORROWS_CALCULATION_FAILED,uint256(mathErr))	NodeType.RETURN" [key=0];
+"BlockID: 1799
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1800
+Call context: 
+None
+TMP_1037(ExponentialNoError.Exp) = new Exp(reserveFactorMantissa)
+TUPLE_127(CarefulMath.MathError,uint256) = INTERNAL_CALL, Exponential.mulScalarTruncateAddUInt(ExponentialNoError.Exp,uint256,uint256)(TMP_1037,interestAccumulated,reservesPrior)
+EXPRESSION:(mathErr,totalReservesNew) = mulScalarTruncateAddUInt(Exp(reserveFactorMantissa),interestAccumulated,reservesPrior)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1800
+Call context: 
+None
+TMP_1037(ExponentialNoError.Exp) = new Exp(reserveFactorMantissa)
+TUPLE_127(CarefulMath.MathError,uint256) = INTERNAL_CALL, Exponential.mulScalarTruncateAddUInt(ExponentialNoError.Exp,uint256,uint256)(TMP_1037,interestAccumulated,reservesPrior)
+EXPRESSION:(mathErr,totalReservesNew) = mulScalarTruncateAddUInt(Exp(reserveFactorMantissa),interestAccumulated,reservesPrior)	NodeType.EXPRESSION" -> "BlockID: 1801
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_127 index: 0 
+totalReservesNew(uint256)= UNPACK TUPLE_127 index: 1 
+REF_692(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1038(bool) = mathErr != REF_692
+CONDITION TMP_1038
+EXPRESSION:(mathErr,totalReservesNew) = mulScalarTruncateAddUInt(Exp(reserveFactorMantissa),interestAccumulated,reservesPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key=0];
+"BlockID: 1801
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_127 index: 0 
+totalReservesNew(uint256)= UNPACK TUPLE_127 index: 1 
+REF_692(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1038(bool) = mathErr != REF_692
+CONDITION TMP_1038
+EXPRESSION:(mathErr,totalReservesNew) = mulScalarTruncateAddUInt(Exp(reserveFactorMantissa),interestAccumulated,reservesPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 1802
+Call context: 
+True
+REF_693(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_694(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_NEW_TOTAL_RESERVES_CALCULATION_FAILED
+TMP_1039 = CONVERT mathErr to uint256
+TMP_1040(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_693,REF_694,TMP_1039)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_NEW_TOTAL_RESERVES_CALCULATION_FAILED,uint256(mathErr))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1801
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_127 index: 0 
+totalReservesNew(uint256)= UNPACK TUPLE_127 index: 1 
+REF_692(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1038(bool) = mathErr != REF_692
+CONDITION TMP_1038
+EXPRESSION:(mathErr,totalReservesNew) = mulScalarTruncateAddUInt(Exp(reserveFactorMantissa),interestAccumulated,reservesPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 1804
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1802
+Call context: 
+True
+REF_693(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_694(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_NEW_TOTAL_RESERVES_CALCULATION_FAILED
+TMP_1039 = CONVERT mathErr to uint256
+TMP_1040(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_693,REF_694,TMP_1039)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_NEW_TOTAL_RESERVES_CALCULATION_FAILED,uint256(mathErr))	NodeType.EXPRESSION" -> "BlockID: 1803
+Call context: 
+None
+RETURN TMP_1040
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_NEW_TOTAL_RESERVES_CALCULATION_FAILED,uint256(mathErr))	NodeType.RETURN" [key=0];
+"BlockID: 1804
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1805
+Call context: 
+None
+TUPLE_128(CarefulMath.MathError,uint256) = INTERNAL_CALL, Exponential.mulScalarTruncateAddUInt(ExponentialNoError.Exp,uint256,uint256)(simpleInterestFactor,borrowIndexPrior,borrowIndexPrior)
+EXPRESSION:(mathErr,borrowIndexNew) = mulScalarTruncateAddUInt(simpleInterestFactor,borrowIndexPrior,borrowIndexPrior)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1805
+Call context: 
+None
+TUPLE_128(CarefulMath.MathError,uint256) = INTERNAL_CALL, Exponential.mulScalarTruncateAddUInt(ExponentialNoError.Exp,uint256,uint256)(simpleInterestFactor,borrowIndexPrior,borrowIndexPrior)
+EXPRESSION:(mathErr,borrowIndexNew) = mulScalarTruncateAddUInt(simpleInterestFactor,borrowIndexPrior,borrowIndexPrior)	NodeType.EXPRESSION" -> "BlockID: 1806
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_128 index: 0 
+borrowIndexNew(uint256)= UNPACK TUPLE_128 index: 1 
+REF_695(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1041(bool) = mathErr != REF_695
+CONDITION TMP_1041
+EXPRESSION:(mathErr,borrowIndexNew) = mulScalarTruncateAddUInt(simpleInterestFactor,borrowIndexPrior,borrowIndexPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key=0];
+"BlockID: 1806
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_128 index: 0 
+borrowIndexNew(uint256)= UNPACK TUPLE_128 index: 1 
+REF_695(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1041(bool) = mathErr != REF_695
+CONDITION TMP_1041
+EXPRESSION:(mathErr,borrowIndexNew) = mulScalarTruncateAddUInt(simpleInterestFactor,borrowIndexPrior,borrowIndexPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 1807
+Call context: 
+True
+REF_696(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_697(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_NEW_BORROW_INDEX_CALCULATION_FAILED
+TMP_1042 = CONVERT mathErr to uint256
+TMP_1043(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_696,REF_697,TMP_1042)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_NEW_BORROW_INDEX_CALCULATION_FAILED,uint256(mathErr))	NodeType.EXPRESSION" [key=0];
+"BlockID: 1806
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_128 index: 0 
+borrowIndexNew(uint256)= UNPACK TUPLE_128 index: 1 
+REF_695(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1041(bool) = mathErr != REF_695
+CONDITION TMP_1041
+EXPRESSION:(mathErr,borrowIndexNew) = mulScalarTruncateAddUInt(simpleInterestFactor,borrowIndexPrior,borrowIndexPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 1809
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1807
+Call context: 
+True
+REF_696(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_697(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_NEW_BORROW_INDEX_CALCULATION_FAILED
+TMP_1042 = CONVERT mathErr to uint256
+TMP_1043(uint256) = INTERNAL_CALL, TokenErrorReporter.failOpaque(TokenErrorReporter.Error,TokenErrorReporter.FailureInfo,uint256)(REF_696,REF_697,TMP_1042)
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_NEW_BORROW_INDEX_CALCULATION_FAILED,uint256(mathErr))	NodeType.EXPRESSION" -> "BlockID: 1808
+Call context: 
+None
+RETURN TMP_1043
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_NEW_BORROW_INDEX_CALCULATION_FAILED,uint256(mathErr))	NodeType.RETURN" [key=0];
+"BlockID: 1809
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1810
+Call context: 
+None
+accrualBlockNumber(uint256) := currentBlockNumber(uint256)
+borrowIndex(uint256) := borrowIndexNew(uint256)
+totalBorrows(uint256) := totalBorrowsNew(uint256)
+totalReserves(uint256) := totalReservesNew(uint256)
+REF_698(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_1045 = CONVERT REF_698 to uint256
+RETURN TMP_1045
+EXPRESSION:accrualBlockNumber = currentBlockNumber	NodeType.EXPRESSION
+borrowIndex = borrowIndexNew	NodeType.EXPRESSION
+totalBorrows = totalBorrowsNew	NodeType.EXPRESSION
+totalReserves = totalReservesNew	NodeType.EXPRESSION
+uint256(Error.NO_ERROR)	NodeType.RETURN" [key=0];
+"BlockID: 1811
+Call context: 
+None
+borrowRateMantissa(uint256) := TMP_1022(uint256)
+TMP_1023(bool) = borrowRateMantissa <= borrowRateMaxMantissa
+CONDITION TMP_1023
+EXPRESSION:TMP_1023(bool) = borrowRateMantissa <= borrowRateMaxMantissa	NodeType.IF" -> "BlockID: 1812
+Call context: 
+True
+TMP_1024(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1811
+Call context: 
+None
+borrowRateMantissa(uint256) := TMP_1022(uint256)
+TMP_1023(bool) = borrowRateMantissa <= borrowRateMaxMantissa
+CONDITION TMP_1023
+EXPRESSION:TMP_1023(bool) = borrowRateMantissa <= borrowRateMaxMantissa	NodeType.IF" -> "BlockID: 1813
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1813
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1783
+Call context: 
+True
+NEW VARIABLE mathErr
+NEW VARIABLE blockDelta
+TUPLE_123(CarefulMath.MathError,uint256) = INTERNAL_CALL, CarefulMath.subUInt(uint256,uint256)(currentBlockNumber,accrualBlockNumberPrior)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(mathErr,blockDelta) = subUInt(currentBlockNumber,accrualBlockNumberPrior)	NodeType.EXPRESSION" [key=0];
+"BlockID: 1814
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_123 index: 0 
+blockDelta(uint256)= UNPACK TUPLE_123 index: 1 
+REF_682(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1025(bool) = mathErr == REF_682
+CONDITION TMP_1025
+EXPRESSION:TMP_1025(bool) = mathErr == REF_682	NodeType.IF" -> "BlockID: 1815
+Call context: 
+True
+TMP_1026(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 1814
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_123 index: 0 
+blockDelta(uint256)= UNPACK TUPLE_123 index: 1 
+REF_682(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1025(bool) = mathErr == REF_682
+CONDITION TMP_1025
+EXPRESSION:TMP_1025(bool) = mathErr == REF_682	NodeType.IF" -> "BlockID: 1816
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 1816
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 1785
+Call context: 
+True
+NEW VARIABLE simpleInterestFactor
+NEW VARIABLE interestAccumulated
+NEW VARIABLE totalBorrowsNew
+NEW VARIABLE totalReservesNew
+NEW VARIABLE borrowIndexNew
+TMP_1027(ExponentialNoError.Exp) = new Exp(borrowRateMantissa)
+TUPLE_124(CarefulMath.MathError,ExponentialNoError.Exp) = INTERNAL_CALL, Exponential.mulScalar(ExponentialNoError.Exp,uint256)(TMP_1027,blockDelta)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(mathErr,simpleInterestFactor) = mulScalar(Exp(borrowRateMantissa),blockDelta)	NodeType.EXPRESSION" [key=0];
+}

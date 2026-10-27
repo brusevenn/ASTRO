@@ -1,0 +1,882 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+TMP_204 = ! paused 
+CONDITION TMP_204
+EXPRESSION:TMP_204 = ! paused 	NodeType.IF";
+"BlockID: 10
+Call context: 
+True
+TMP_197 = CONVERT 0 to address
+TMP_198(bool) = dstReceiver == TMP_197
+CONDITION TMP_198
+EXPRESSION:(dstReceiver == address(0))	NodeType.IF";
+"BlockID: 11
+Call context: 
+True
+dstReceiver(address) := msg.sender(address)
+EXPRESSION:dstReceiver = msg.sender	NodeType.EXPRESSION";
+"BlockID: 12
+Call context: 
+False
+dstReceiver(address) := dstReceiver(address)
+EXPRESSION:dstReceiver = dstReceiver	NodeType.EXPRESSION";
+"BlockID: 13
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 14
+Call context: 
+None
+TMP_132 = CONVERT token to address
+TMP_133 = CONVERT ZERO_ADDRESS to address
+TMP_134(bool) = TMP_132 == TMP_133
+TMP_135 = CONVERT token to address
+TMP_136 = CONVERT BNB_ADDRESS to address
+TMP_137(bool) = TMP_135 == TMP_136
+TMP_138(bool) = TMP_134 || TMP_137
+TMP_249(None) := TMP_138(bool)
+CONDITION TMP_118
+EXPRESSION:isBNB(token)	NodeType.IF";
+"BlockID: 17
+Call context: 
+None
+initialSrcBalance(uint256) := TMP_181(uint256)
+TMP_132 = CONVERT token to address
+TMP_133 = CONVERT ZERO_ADDRESS to address
+TMP_134(bool) = TMP_132 == TMP_133
+TMP_135 = CONVERT token to address
+TMP_136 = CONVERT BNB_ADDRESS to address
+TMP_137(bool) = TMP_135 == TMP_136
+TMP_138(bool) = TMP_134 || TMP_137
+TMP_249(None) := TMP_138(bool)
+CONDITION TMP_118
+EXPRESSION:initialSrcBalance = srcToken.universalBalanceOf(msg.sender)	NodeType.VARIABLE
+isBNB(token)	NodeType.IF" [shape=box];
+"BlockID: 21
+Call context: 
+None
+initialDstBalance(uint256) := TMP_182(uint256)
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_4(bool,bytes) = LOW_LEVEL_CALL, dest:swapXImpl, function:call, arguments:['data'] value:msg.value 
+EXPRESSION:initialDstBalance = dstToken.universalBalanceOf(dstReceiver)	NodeType.VARIABLE
+initialDstBalance = dstToken.universalBalanceOf(dstReceiver)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = swapXImpl.call{value: msg.value}(data)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 23
+Call context: 
+None
+success(bool)= UNPACK TUPLE_4 index: 0 
+returndata(bytes)= UNPACK TUPLE_4 index: 1 
+TMP_183 = ! success 
+CONDITION TMP_183
+EXPRESSION:(success,returndata) = swapXImpl.call{value: msg.value}(data)	NodeType.EXPRESSION
+! success	NodeType.IF" [shape=box];
+"BlockID: 24
+Call context: 
+True
+REF_50 -> LENGTH returndata
+TMP_184(bool) = REF_50 > 0
+CONDITION TMP_184
+EXPRESSION:returndata.length > 0	NodeType.IF";
+"BlockID: 25
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 28
+Call context: 
+None
+TMP_132 = CONVERT token to address
+TMP_133 = CONVERT ZERO_ADDRESS to address
+TMP_134(bool) = TMP_132 == TMP_133
+TMP_135 = CONVERT token to address
+TMP_136 = CONVERT BNB_ADDRESS to address
+TMP_137(bool) = TMP_135 == TMP_136
+TMP_138(bool) = TMP_134 || TMP_137
+TMP_249(None) := TMP_138(bool)
+CONDITION TMP_118
+EXPRESSION:isBNB(token)	NodeType.IF";
+"BlockID: 31
+Call context: 
+None
+TMP_190(uint256) = a - b
+spentAmount(uint256) := TMP_190(uint256)
+TMP_132 = CONVERT token to address
+TMP_133 = CONVERT ZERO_ADDRESS to address
+TMP_134(bool) = TMP_132 == TMP_133
+TMP_135 = CONVERT token to address
+TMP_136 = CONVERT BNB_ADDRESS to address
+TMP_137(bool) = TMP_135 == TMP_136
+TMP_138(bool) = TMP_134 || TMP_137
+TMP_249(None) := TMP_138(bool)
+CONDITION TMP_118
+EXPRESSION:spentAmount = initialSrcBalance.sub(srcToken.universalBalanceOf(msg.sender))	NodeType.VARIABLE
+spentAmount = initialSrcBalance.sub(srcToken.universalBalanceOf(msg.sender))	NodeType.EXPRESSION
+isBNB(token)	NodeType.IF" [shape=box];
+"BlockID: 35
+Call context: 
+None
+TMP_192(uint256) = a - b
+returnAmount(uint256) := TMP_192(uint256)
+TMP_193(bool) = returnAmount >= minReturnAmount
+CONDITION TMP_193
+EXPRESSION:returnAmount = dstToken.universalBalanceOf(dstReceiver).sub(initialDstBalance)	NodeType.EXPRESSION
+TMP_193(bool) = returnAmount >= minReturnAmount	NodeType.IF" [shape=box];
+"BlockID: 26
+Call context: 
+True
+INLINE ASM
+NEW VARIABLE returndata_size_swap_asm_0
+TMP_185(uint256) = SOLIDITY_CALL mload(uint256)(returndata)
+returndata_size_swap_asm_0(uint256) := TMP_185(uint256)
+TMP_186(uint256) = 32 + returndata
+TMP_187(None) = SOLIDITY_CALL revert(uint256,uint256)(TMP_186,returndata_size_swap_asm_0)
+EXPRESSION:None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+returndata_size_swap_asm_0 = mload(uint256)(returndata)	NodeType.EXPRESSION
+revert()()	ExtraNodeType.REVERT";
+"BlockID: 27
+Call context: 
+False
+TMP_188(None) = SOLIDITY_CALL revert(string)(swap failed)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 4
+Call context: 
+None
+TMP_177(bool) = minReturnAmount > 0
+CONDITION TMP_177
+EXPRESSION:TMP_177(bool) = minReturnAmount > 0	NodeType.IF";
+"BlockID: 5
+Call context: 
+True
+TMP_178(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 7
+Call context: 
+None
+REF_46 -> LENGTH data
+TMP_179(bool) = REF_46 > 0
+CONDITION TMP_179
+EXPRESSION:TMP_179(bool) = REF_46 > 0	NodeType.IF";
+"BlockID: 8
+Call context: 
+True
+TMP_180(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 37
+Call context: 
+True
+TMP_194(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 38
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2
+Call context: swap
+True
+TMP_205(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 3
+Call context: swap
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 15
+Call context: swap
+True
+TMP_119(uint256) = SOLIDITY_CALL balance(address)(who)
+TMP_247(None) := TMP_119(uint256)
+EXPRESSION:";
+"BlockID: 16
+Call context: swap
+False
+TMP_120(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:balanceOf, arguments:['who']  
+EXPRESSION:token.balanceOf(who)	NodeType.EXPRESSION";
+"BlockID: 18
+Call context: swap
+None
+TMP_247(None) := TMP_120(uint256)
+EXPRESSION:" [shape=box];
+"BlockID: 19
+Call context: swap
+True
+TMP_119(uint256) = SOLIDITY_CALL balance(address)(who)
+TMP_247(None) := TMP_119(uint256)
+EXPRESSION:";
+"BlockID: 20
+Call context: swap
+False
+TMP_120(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:balanceOf, arguments:['who']  
+EXPRESSION:token.balanceOf(who)	NodeType.EXPRESSION";
+"BlockID: 22
+Call context: swap
+None
+TMP_247(None) := TMP_120(uint256)
+EXPRESSION:" [shape=box];
+"BlockID: 29
+Call context: swap
+True
+TMP_119(uint256) = SOLIDITY_CALL balance(address)(who)
+TMP_247(None) := TMP_119(uint256)
+EXPRESSION:";
+"BlockID: 30
+Call context: swap
+False
+TMP_120(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:balanceOf, arguments:['who']  
+EXPRESSION:token.balanceOf(who)	NodeType.EXPRESSION";
+"BlockID: 32
+Call context: swap
+None
+TMP_247(None) := TMP_120(uint256)
+EXPRESSION:" [shape=box];
+"BlockID: 33
+Call context: swap
+True
+TMP_119(uint256) = SOLIDITY_CALL balance(address)(who)
+TMP_247(None) := TMP_119(uint256)
+EXPRESSION:";
+"BlockID: 34
+Call context: swap
+False
+TMP_120(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:balanceOf, arguments:['who']  
+EXPRESSION:token.balanceOf(who)	NodeType.EXPRESSION";
+"BlockID: 36
+Call context: swap
+None
+TMP_247(None) := TMP_120(uint256)
+EXPRESSION:" [shape=box];
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+TMP_204 = ! paused 
+CONDITION TMP_204
+EXPRESSION:TMP_204 = ! paused 	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_204 = ! paused 
+CONDITION TMP_204
+EXPRESSION:TMP_204 = ! paused 	NodeType.IF" -> "BlockID: 2
+Call context: swap
+True
+TMP_205(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+TMP_204 = ! paused 
+CONDITION TMP_204
+EXPRESSION:TMP_204 = ! paused 	NodeType.IF" -> "BlockID: 3
+Call context: swap
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 10
+Call context: 
+True
+TMP_197 = CONVERT 0 to address
+TMP_198(bool) = dstReceiver == TMP_197
+CONDITION TMP_198
+EXPRESSION:(dstReceiver == address(0))	NodeType.IF" -> "BlockID: 11
+Call context: 
+True
+dstReceiver(address) := msg.sender(address)
+EXPRESSION:dstReceiver = msg.sender	NodeType.EXPRESSION" [key=0];
+"BlockID: 10
+Call context: 
+True
+TMP_197 = CONVERT 0 to address
+TMP_198(bool) = dstReceiver == TMP_197
+CONDITION TMP_198
+EXPRESSION:(dstReceiver == address(0))	NodeType.IF" -> "BlockID: 12
+Call context: 
+False
+dstReceiver(address) := dstReceiver(address)
+EXPRESSION:dstReceiver = dstReceiver	NodeType.EXPRESSION" [key=0];
+"BlockID: 11
+Call context: 
+True
+dstReceiver(address) := msg.sender(address)
+EXPRESSION:dstReceiver = msg.sender	NodeType.EXPRESSION" -> "BlockID: 13
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 12
+Call context: 
+False
+dstReceiver(address) := dstReceiver(address)
+EXPRESSION:dstReceiver = dstReceiver	NodeType.EXPRESSION" -> "BlockID: 13
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 13
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 14
+Call context: 
+None
+TMP_132 = CONVERT token to address
+TMP_133 = CONVERT ZERO_ADDRESS to address
+TMP_134(bool) = TMP_132 == TMP_133
+TMP_135 = CONVERT token to address
+TMP_136 = CONVERT BNB_ADDRESS to address
+TMP_137(bool) = TMP_135 == TMP_136
+TMP_138(bool) = TMP_134 || TMP_137
+TMP_249(None) := TMP_138(bool)
+CONDITION TMP_118
+EXPRESSION:isBNB(token)	NodeType.IF" [key=0];
+"BlockID: 14
+Call context: 
+None
+TMP_132 = CONVERT token to address
+TMP_133 = CONVERT ZERO_ADDRESS to address
+TMP_134(bool) = TMP_132 == TMP_133
+TMP_135 = CONVERT token to address
+TMP_136 = CONVERT BNB_ADDRESS to address
+TMP_137(bool) = TMP_135 == TMP_136
+TMP_138(bool) = TMP_134 || TMP_137
+TMP_249(None) := TMP_138(bool)
+CONDITION TMP_118
+EXPRESSION:isBNB(token)	NodeType.IF" -> "BlockID: 15
+Call context: swap
+True
+TMP_119(uint256) = SOLIDITY_CALL balance(address)(who)
+TMP_247(None) := TMP_119(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 14
+Call context: 
+None
+TMP_132 = CONVERT token to address
+TMP_133 = CONVERT ZERO_ADDRESS to address
+TMP_134(bool) = TMP_132 == TMP_133
+TMP_135 = CONVERT token to address
+TMP_136 = CONVERT BNB_ADDRESS to address
+TMP_137(bool) = TMP_135 == TMP_136
+TMP_138(bool) = TMP_134 || TMP_137
+TMP_249(None) := TMP_138(bool)
+CONDITION TMP_118
+EXPRESSION:isBNB(token)	NodeType.IF" -> "BlockID: 16
+Call context: swap
+False
+TMP_120(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:balanceOf, arguments:['who']  
+EXPRESSION:token.balanceOf(who)	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 17
+Call context: 
+None
+initialSrcBalance(uint256) := TMP_181(uint256)
+TMP_132 = CONVERT token to address
+TMP_133 = CONVERT ZERO_ADDRESS to address
+TMP_134(bool) = TMP_132 == TMP_133
+TMP_135 = CONVERT token to address
+TMP_136 = CONVERT BNB_ADDRESS to address
+TMP_137(bool) = TMP_135 == TMP_136
+TMP_138(bool) = TMP_134 || TMP_137
+TMP_249(None) := TMP_138(bool)
+CONDITION TMP_118
+EXPRESSION:initialSrcBalance = srcToken.universalBalanceOf(msg.sender)	NodeType.VARIABLE
+isBNB(token)	NodeType.IF" -> "BlockID: 19
+Call context: swap
+True
+TMP_119(uint256) = SOLIDITY_CALL balance(address)(who)
+TMP_247(None) := TMP_119(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 17
+Call context: 
+None
+initialSrcBalance(uint256) := TMP_181(uint256)
+TMP_132 = CONVERT token to address
+TMP_133 = CONVERT ZERO_ADDRESS to address
+TMP_134(bool) = TMP_132 == TMP_133
+TMP_135 = CONVERT token to address
+TMP_136 = CONVERT BNB_ADDRESS to address
+TMP_137(bool) = TMP_135 == TMP_136
+TMP_138(bool) = TMP_134 || TMP_137
+TMP_249(None) := TMP_138(bool)
+CONDITION TMP_118
+EXPRESSION:initialSrcBalance = srcToken.universalBalanceOf(msg.sender)	NodeType.VARIABLE
+isBNB(token)	NodeType.IF" -> "BlockID: 20
+Call context: swap
+False
+TMP_120(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:balanceOf, arguments:['who']  
+EXPRESSION:token.balanceOf(who)	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 21
+Call context: 
+None
+initialDstBalance(uint256) := TMP_182(uint256)
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_4(bool,bytes) = LOW_LEVEL_CALL, dest:swapXImpl, function:call, arguments:['data'] value:msg.value 
+EXPRESSION:initialDstBalance = dstToken.universalBalanceOf(dstReceiver)	NodeType.VARIABLE
+initialDstBalance = dstToken.universalBalanceOf(dstReceiver)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = swapXImpl.call{value: msg.value}(data)	NodeType.EXPRESSION" -> "BlockID: 23
+Call context: 
+None
+success(bool)= UNPACK TUPLE_4 index: 0 
+returndata(bytes)= UNPACK TUPLE_4 index: 1 
+TMP_183 = ! success 
+CONDITION TMP_183
+EXPRESSION:(success,returndata) = swapXImpl.call{value: msg.value}(data)	NodeType.EXPRESSION
+! success	NodeType.IF" [key=0];
+"BlockID: 23
+Call context: 
+None
+success(bool)= UNPACK TUPLE_4 index: 0 
+returndata(bytes)= UNPACK TUPLE_4 index: 1 
+TMP_183 = ! success 
+CONDITION TMP_183
+EXPRESSION:(success,returndata) = swapXImpl.call{value: msg.value}(data)	NodeType.EXPRESSION
+! success	NodeType.IF" -> "BlockID: 24
+Call context: 
+True
+REF_50 -> LENGTH returndata
+TMP_184(bool) = REF_50 > 0
+CONDITION TMP_184
+EXPRESSION:returndata.length > 0	NodeType.IF" [key=0];
+"BlockID: 23
+Call context: 
+None
+success(bool)= UNPACK TUPLE_4 index: 0 
+returndata(bytes)= UNPACK TUPLE_4 index: 1 
+TMP_183 = ! success 
+CONDITION TMP_183
+EXPRESSION:(success,returndata) = swapXImpl.call{value: msg.value}(data)	NodeType.EXPRESSION
+! success	NodeType.IF" -> "BlockID: 25
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 24
+Call context: 
+True
+REF_50 -> LENGTH returndata
+TMP_184(bool) = REF_50 > 0
+CONDITION TMP_184
+EXPRESSION:returndata.length > 0	NodeType.IF" -> "BlockID: 26
+Call context: 
+True
+INLINE ASM
+NEW VARIABLE returndata_size_swap_asm_0
+TMP_185(uint256) = SOLIDITY_CALL mload(uint256)(returndata)
+returndata_size_swap_asm_0(uint256) := TMP_185(uint256)
+TMP_186(uint256) = 32 + returndata
+TMP_187(None) = SOLIDITY_CALL revert(uint256,uint256)(TMP_186,returndata_size_swap_asm_0)
+EXPRESSION:None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+returndata_size_swap_asm_0 = mload(uint256)(returndata)	NodeType.EXPRESSION
+revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 24
+Call context: 
+True
+REF_50 -> LENGTH returndata
+TMP_184(bool) = REF_50 > 0
+CONDITION TMP_184
+EXPRESSION:returndata.length > 0	NodeType.IF" -> "BlockID: 27
+Call context: 
+False
+TMP_188(None) = SOLIDITY_CALL revert(string)(swap failed)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 25
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 28
+Call context: 
+None
+TMP_132 = CONVERT token to address
+TMP_133 = CONVERT ZERO_ADDRESS to address
+TMP_134(bool) = TMP_132 == TMP_133
+TMP_135 = CONVERT token to address
+TMP_136 = CONVERT BNB_ADDRESS to address
+TMP_137(bool) = TMP_135 == TMP_136
+TMP_138(bool) = TMP_134 || TMP_137
+TMP_249(None) := TMP_138(bool)
+CONDITION TMP_118
+EXPRESSION:isBNB(token)	NodeType.IF" [key=0];
+"BlockID: 28
+Call context: 
+None
+TMP_132 = CONVERT token to address
+TMP_133 = CONVERT ZERO_ADDRESS to address
+TMP_134(bool) = TMP_132 == TMP_133
+TMP_135 = CONVERT token to address
+TMP_136 = CONVERT BNB_ADDRESS to address
+TMP_137(bool) = TMP_135 == TMP_136
+TMP_138(bool) = TMP_134 || TMP_137
+TMP_249(None) := TMP_138(bool)
+CONDITION TMP_118
+EXPRESSION:isBNB(token)	NodeType.IF" -> "BlockID: 29
+Call context: swap
+True
+TMP_119(uint256) = SOLIDITY_CALL balance(address)(who)
+TMP_247(None) := TMP_119(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 28
+Call context: 
+None
+TMP_132 = CONVERT token to address
+TMP_133 = CONVERT ZERO_ADDRESS to address
+TMP_134(bool) = TMP_132 == TMP_133
+TMP_135 = CONVERT token to address
+TMP_136 = CONVERT BNB_ADDRESS to address
+TMP_137(bool) = TMP_135 == TMP_136
+TMP_138(bool) = TMP_134 || TMP_137
+TMP_249(None) := TMP_138(bool)
+CONDITION TMP_118
+EXPRESSION:isBNB(token)	NodeType.IF" -> "BlockID: 30
+Call context: swap
+False
+TMP_120(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:balanceOf, arguments:['who']  
+EXPRESSION:token.balanceOf(who)	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 31
+Call context: 
+None
+TMP_190(uint256) = a - b
+spentAmount(uint256) := TMP_190(uint256)
+TMP_132 = CONVERT token to address
+TMP_133 = CONVERT ZERO_ADDRESS to address
+TMP_134(bool) = TMP_132 == TMP_133
+TMP_135 = CONVERT token to address
+TMP_136 = CONVERT BNB_ADDRESS to address
+TMP_137(bool) = TMP_135 == TMP_136
+TMP_138(bool) = TMP_134 || TMP_137
+TMP_249(None) := TMP_138(bool)
+CONDITION TMP_118
+EXPRESSION:spentAmount = initialSrcBalance.sub(srcToken.universalBalanceOf(msg.sender))	NodeType.VARIABLE
+spentAmount = initialSrcBalance.sub(srcToken.universalBalanceOf(msg.sender))	NodeType.EXPRESSION
+isBNB(token)	NodeType.IF" -> "BlockID: 33
+Call context: swap
+True
+TMP_119(uint256) = SOLIDITY_CALL balance(address)(who)
+TMP_247(None) := TMP_119(uint256)
+EXPRESSION:" [key="successor_1"];
+"BlockID: 31
+Call context: 
+None
+TMP_190(uint256) = a - b
+spentAmount(uint256) := TMP_190(uint256)
+TMP_132 = CONVERT token to address
+TMP_133 = CONVERT ZERO_ADDRESS to address
+TMP_134(bool) = TMP_132 == TMP_133
+TMP_135 = CONVERT token to address
+TMP_136 = CONVERT BNB_ADDRESS to address
+TMP_137(bool) = TMP_135 == TMP_136
+TMP_138(bool) = TMP_134 || TMP_137
+TMP_249(None) := TMP_138(bool)
+CONDITION TMP_118
+EXPRESSION:spentAmount = initialSrcBalance.sub(srcToken.universalBalanceOf(msg.sender))	NodeType.VARIABLE
+spentAmount = initialSrcBalance.sub(srcToken.universalBalanceOf(msg.sender))	NodeType.EXPRESSION
+isBNB(token)	NodeType.IF" -> "BlockID: 34
+Call context: swap
+False
+TMP_120(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:balanceOf, arguments:['who']  
+EXPRESSION:token.balanceOf(who)	NodeType.EXPRESSION" [key="successor_1"];
+"BlockID: 35
+Call context: 
+None
+TMP_192(uint256) = a - b
+returnAmount(uint256) := TMP_192(uint256)
+TMP_193(bool) = returnAmount >= minReturnAmount
+CONDITION TMP_193
+EXPRESSION:returnAmount = dstToken.universalBalanceOf(dstReceiver).sub(initialDstBalance)	NodeType.EXPRESSION
+TMP_193(bool) = returnAmount >= minReturnAmount	NodeType.IF" -> "BlockID: 37
+Call context: 
+True
+TMP_194(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 35
+Call context: 
+None
+TMP_192(uint256) = a - b
+returnAmount(uint256) := TMP_192(uint256)
+TMP_193(bool) = returnAmount >= minReturnAmount
+CONDITION TMP_193
+EXPRESSION:returnAmount = dstToken.universalBalanceOf(dstReceiver).sub(initialDstBalance)	NodeType.EXPRESSION
+TMP_193(bool) = returnAmount >= minReturnAmount	NodeType.IF" -> "BlockID: 38
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 4
+Call context: 
+None
+TMP_177(bool) = minReturnAmount > 0
+CONDITION TMP_177
+EXPRESSION:TMP_177(bool) = minReturnAmount > 0	NodeType.IF" -> "BlockID: 5
+Call context: 
+True
+TMP_178(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 4
+Call context: 
+None
+TMP_177(bool) = minReturnAmount > 0
+CONDITION TMP_177
+EXPRESSION:TMP_177(bool) = minReturnAmount > 0	NodeType.IF" -> "BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 7
+Call context: 
+None
+REF_46 -> LENGTH data
+TMP_179(bool) = REF_46 > 0
+CONDITION TMP_179
+EXPRESSION:TMP_179(bool) = REF_46 > 0	NodeType.IF" [key=0];
+"BlockID: 7
+Call context: 
+None
+REF_46 -> LENGTH data
+TMP_179(bool) = REF_46 > 0
+CONDITION TMP_179
+EXPRESSION:TMP_179(bool) = REF_46 > 0	NodeType.IF" -> "BlockID: 8
+Call context: 
+True
+TMP_180(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 7
+Call context: 
+None
+REF_46 -> LENGTH data
+TMP_179(bool) = REF_46 > 0
+CONDITION TMP_179
+EXPRESSION:TMP_179(bool) = REF_46 > 0	NodeType.IF" -> "BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 10
+Call context: 
+True
+TMP_197 = CONVERT 0 to address
+TMP_198(bool) = dstReceiver == TMP_197
+CONDITION TMP_198
+EXPRESSION:(dstReceiver == address(0))	NodeType.IF" [key=0];
+"BlockID: 3
+Call context: swap
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: 
+None
+TMP_177(bool) = minReturnAmount > 0
+CONDITION TMP_177
+EXPRESSION:TMP_177(bool) = minReturnAmount > 0	NodeType.IF" [key="Exit: whenNotPaused", ref="SwapXProxy.whenNotPaused"];
+"BlockID: 15
+Call context: swap
+True
+TMP_119(uint256) = SOLIDITY_CALL balance(address)(who)
+TMP_247(None) := TMP_119(uint256)
+EXPRESSION:" -> "BlockID: 17
+Call context: 
+None
+initialSrcBalance(uint256) := TMP_181(uint256)
+TMP_132 = CONVERT token to address
+TMP_133 = CONVERT ZERO_ADDRESS to address
+TMP_134(bool) = TMP_132 == TMP_133
+TMP_135 = CONVERT token to address
+TMP_136 = CONVERT BNB_ADDRESS to address
+TMP_137(bool) = TMP_135 == TMP_136
+TMP_138(bool) = TMP_134 || TMP_137
+TMP_249(None) := TMP_138(bool)
+CONDITION TMP_118
+EXPRESSION:initialSrcBalance = srcToken.universalBalanceOf(msg.sender)	NodeType.VARIABLE
+isBNB(token)	NodeType.IF" [key="successor_5", ref="UniversalERC20.universalBalanceOf"];
+"BlockID: 16
+Call context: swap
+False
+TMP_120(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:balanceOf, arguments:['who']  
+EXPRESSION:token.balanceOf(who)	NodeType.EXPRESSION" -> "BlockID: 18
+Call context: swap
+None
+TMP_247(None) := TMP_120(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 18
+Call context: swap
+None
+TMP_247(None) := TMP_120(uint256)
+EXPRESSION:" -> "BlockID: 17
+Call context: 
+None
+initialSrcBalance(uint256) := TMP_181(uint256)
+TMP_132 = CONVERT token to address
+TMP_133 = CONVERT ZERO_ADDRESS to address
+TMP_134(bool) = TMP_132 == TMP_133
+TMP_135 = CONVERT token to address
+TMP_136 = CONVERT BNB_ADDRESS to address
+TMP_137(bool) = TMP_135 == TMP_136
+TMP_138(bool) = TMP_134 || TMP_137
+TMP_249(None) := TMP_138(bool)
+CONDITION TMP_118
+EXPRESSION:initialSrcBalance = srcToken.universalBalanceOf(msg.sender)	NodeType.VARIABLE
+isBNB(token)	NodeType.IF" [key="successor_5", ref="UniversalERC20.universalBalanceOf"];
+"BlockID: 19
+Call context: swap
+True
+TMP_119(uint256) = SOLIDITY_CALL balance(address)(who)
+TMP_247(None) := TMP_119(uint256)
+EXPRESSION:" -> "BlockID: 21
+Call context: 
+None
+initialDstBalance(uint256) := TMP_182(uint256)
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_4(bool,bytes) = LOW_LEVEL_CALL, dest:swapXImpl, function:call, arguments:['data'] value:msg.value 
+EXPRESSION:initialDstBalance = dstToken.universalBalanceOf(dstReceiver)	NodeType.VARIABLE
+initialDstBalance = dstToken.universalBalanceOf(dstReceiver)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = swapXImpl.call{value: msg.value}(data)	NodeType.EXPRESSION" [key="successor_5", ref="UniversalERC20.universalBalanceOf"];
+"BlockID: 20
+Call context: swap
+False
+TMP_120(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:balanceOf, arguments:['who']  
+EXPRESSION:token.balanceOf(who)	NodeType.EXPRESSION" -> "BlockID: 22
+Call context: swap
+None
+TMP_247(None) := TMP_120(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 22
+Call context: swap
+None
+TMP_247(None) := TMP_120(uint256)
+EXPRESSION:" -> "BlockID: 21
+Call context: 
+None
+initialDstBalance(uint256) := TMP_182(uint256)
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_4(bool,bytes) = LOW_LEVEL_CALL, dest:swapXImpl, function:call, arguments:['data'] value:msg.value 
+EXPRESSION:initialDstBalance = dstToken.universalBalanceOf(dstReceiver)	NodeType.VARIABLE
+initialDstBalance = dstToken.universalBalanceOf(dstReceiver)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = swapXImpl.call{value: msg.value}(data)	NodeType.EXPRESSION" [key="successor_5", ref="UniversalERC20.universalBalanceOf"];
+"BlockID: 29
+Call context: swap
+True
+TMP_119(uint256) = SOLIDITY_CALL balance(address)(who)
+TMP_247(None) := TMP_119(uint256)
+EXPRESSION:" -> "BlockID: 31
+Call context: 
+None
+TMP_190(uint256) = a - b
+spentAmount(uint256) := TMP_190(uint256)
+TMP_132 = CONVERT token to address
+TMP_133 = CONVERT ZERO_ADDRESS to address
+TMP_134(bool) = TMP_132 == TMP_133
+TMP_135 = CONVERT token to address
+TMP_136 = CONVERT BNB_ADDRESS to address
+TMP_137(bool) = TMP_135 == TMP_136
+TMP_138(bool) = TMP_134 || TMP_137
+TMP_249(None) := TMP_138(bool)
+CONDITION TMP_118
+EXPRESSION:spentAmount = initialSrcBalance.sub(srcToken.universalBalanceOf(msg.sender))	NodeType.VARIABLE
+spentAmount = initialSrcBalance.sub(srcToken.universalBalanceOf(msg.sender))	NodeType.EXPRESSION
+isBNB(token)	NodeType.IF" [key="successor_5", ref="UniversalERC20.universalBalanceOf"];
+"BlockID: 30
+Call context: swap
+False
+TMP_120(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:balanceOf, arguments:['who']  
+EXPRESSION:token.balanceOf(who)	NodeType.EXPRESSION" -> "BlockID: 32
+Call context: swap
+None
+TMP_247(None) := TMP_120(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 32
+Call context: swap
+None
+TMP_247(None) := TMP_120(uint256)
+EXPRESSION:" -> "BlockID: 31
+Call context: 
+None
+TMP_190(uint256) = a - b
+spentAmount(uint256) := TMP_190(uint256)
+TMP_132 = CONVERT token to address
+TMP_133 = CONVERT ZERO_ADDRESS to address
+TMP_134(bool) = TMP_132 == TMP_133
+TMP_135 = CONVERT token to address
+TMP_136 = CONVERT BNB_ADDRESS to address
+TMP_137(bool) = TMP_135 == TMP_136
+TMP_138(bool) = TMP_134 || TMP_137
+TMP_249(None) := TMP_138(bool)
+CONDITION TMP_118
+EXPRESSION:spentAmount = initialSrcBalance.sub(srcToken.universalBalanceOf(msg.sender))	NodeType.VARIABLE
+spentAmount = initialSrcBalance.sub(srcToken.universalBalanceOf(msg.sender))	NodeType.EXPRESSION
+isBNB(token)	NodeType.IF" [key="successor_5", ref="UniversalERC20.universalBalanceOf"];
+"BlockID: 33
+Call context: swap
+True
+TMP_119(uint256) = SOLIDITY_CALL balance(address)(who)
+TMP_247(None) := TMP_119(uint256)
+EXPRESSION:" -> "BlockID: 35
+Call context: 
+None
+TMP_192(uint256) = a - b
+returnAmount(uint256) := TMP_192(uint256)
+TMP_193(bool) = returnAmount >= minReturnAmount
+CONDITION TMP_193
+EXPRESSION:returnAmount = dstToken.universalBalanceOf(dstReceiver).sub(initialDstBalance)	NodeType.EXPRESSION
+TMP_193(bool) = returnAmount >= minReturnAmount	NodeType.IF" [key="successor_5", ref="UniversalERC20.universalBalanceOf"];
+"BlockID: 34
+Call context: swap
+False
+TMP_120(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:balanceOf, arguments:['who']  
+EXPRESSION:token.balanceOf(who)	NodeType.EXPRESSION" -> "BlockID: 36
+Call context: swap
+None
+TMP_247(None) := TMP_120(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 36
+Call context: swap
+None
+TMP_247(None) := TMP_120(uint256)
+EXPRESSION:" -> "BlockID: 35
+Call context: 
+None
+TMP_192(uint256) = a - b
+returnAmount(uint256) := TMP_192(uint256)
+TMP_193(bool) = returnAmount >= minReturnAmount
+CONDITION TMP_193
+EXPRESSION:returnAmount = dstToken.universalBalanceOf(dstReceiver).sub(initialDstBalance)	NodeType.EXPRESSION
+TMP_193(bool) = returnAmount >= minReturnAmount	NodeType.IF" [key="successor_5", ref="UniversalERC20.universalBalanceOf"];
+}

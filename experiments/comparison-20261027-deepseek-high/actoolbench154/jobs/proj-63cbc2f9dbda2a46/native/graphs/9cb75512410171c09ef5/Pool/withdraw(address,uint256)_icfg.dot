@@ -1,0 +1,401 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+REF_276(uint256) -> getUnlockTime[_tokenId]
+unlockTime(uint256) := REF_276(uint256)
+TMP_1218(bool) = unlockTime > block.timestamp
+CONDITION TMP_1218
+EXPRESSION:unlockTime = getUnlockTime[_tokenId]	NodeType.VARIABLE
+unlockTime = getUnlockTime[_tokenId]	NodeType.EXPRESSION
+unlockTime > block.timestamp	NodeType.IF";
+"BlockID: 2
+Call context: 
+True
+TMP_1219(None) = SOLIDITY_CALL revert WithdrawalsLockedError(uint256,uint256)(_tokenId,unlockTime)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 3
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 4
+Call context: 
+None
+caller(address) := msg.sender(address)
+REF_277(address) -> _ownerOf[_tokenId]
+owner(address) := REF_277(address)
+TMP_1220(bool) = caller == owner
+REF_278(mapping(address => bool)) -> isApprovedForAll[owner]
+REF_279(bool) -> REF_278[caller]
+TMP_1221(bool) = TMP_1220 || REF_279
+REF_280(address) -> getApproved[_tokenId]
+TMP_1222(bool) = caller == REF_280
+TMP_1223(bool) = TMP_1221 || TMP_1222
+TMP_1224 = ! TMP_1223 
+CONDITION TMP_1224
+EXPRESSION:caller = msg.sender	NodeType.VARIABLE
+caller = msg.sender	NodeType.EXPRESSION
+owner = _ownerOf[_tokenId]	NodeType.VARIABLE
+owner = _ownerOf[_tokenId]	NodeType.EXPRESSION
+! (caller == owner || isApprovedForAll[owner][caller] || caller == getApproved[_tokenId])	NodeType.IF";
+"BlockID: 5
+Call context: 
+True
+TMP_1225(None) = SOLIDITY_CALL revert NotApprovedOrOwnerError()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 7
+Call context: 
+None
+REF_290(uint256) -> getShares[_tokenId]
+TMP_1244 = CONVERT this to address
+TMP_1245(uint256) = HIGH_LEVEL_CALL, dest:_asset(ERC20), function:balanceOf, arguments:['TMP_1244']  
+EXPRESSION:(_totalWithdrawn + _asset.balanceOf(address(this))) / getTotalShares	NodeType.EXPRESSION";
+"BlockID: 11
+Call context: 
+None
+RETURN available
+EXPRESSION:_asset.safeTransfer(_to,available)	NodeType.EXPRESSION
+available	NodeType.RETURN";
+"BlockID: 8
+Call context: withdraw,_getAvailable
+None
+TMP_1246(uint256) = _totalWithdrawn (c)+ TMP_1245
+TMP_1247(uint256) = TMP_1246 (c)/ getTotalShares
+TMP_1955(None) := TMP_1247(uint256)
+TMP_1242(uint256) = REF_290 (c)* TMP_1241
+REF_291(uint256) -> getWithdrawn[_tokenId]
+TMP_1243(uint256) = TMP_1242 (c)- REF_291
+TMP_1954(None) := TMP_1243(uint256)
+available(uint256) := TMP_1226(uint256)
+REF_281(uint256) -> getWithdrawn[_tokenId]
+REF_281(-> getWithdrawn) = REF_281 (c)+ available
+_totalWithdrawn(uint256) = _totalWithdrawn (c)+ available
+NEW VARIABLE success
+INLINE ASM
+NEW VARIABLE freeMemoryPointer_safeTransfer_asm_0
+TMP_578(uint256) = SOLIDITY_CALL mload(uint256)(64)
+freeMemoryPointer_safeTransfer_asm_0(uint256) := TMP_578(uint256)
+TMP_579(None) = SOLIDITY_CALL mstore(uint256,uint256)(freeMemoryPointer_safeTransfer_asm_0,76450787359836037641860180984291677749980919077056822294353438043884394381312)
+TMP_580(uint256) = freeMemoryPointer_safeTransfer_asm_0 + 4
+TMP_581(address) = to & 1461501637330902918203684832716283019655932542975
+TMP_582(None) = SOLIDITY_CALL mstore(uint256,uint256)(TMP_580,TMP_581)
+TMP_583(uint256) = freeMemoryPointer_safeTransfer_asm_0 + 36
+TMP_584(None) = SOLIDITY_CALL mstore(uint256,uint256)(TMP_583,amount)
+TMP_585(uint256) = SOLIDITY_CALL mload(uint256)(0)
+TMP_586(bool) = TMP_585 == 1
+TMP_587(uint256) = SOLIDITY_CALL returndatasize()()
+TMP_588(bool) = TMP_587 > 31
+TMP_589(bool) = TMP_586 & TMP_588
+TMP_590(uint256) = SOLIDITY_CALL returndatasize()()
+TMP_591 = ! TMP_590 
+TMP_592(bool) = TMP_589 | TMP_591
+TMP_593(uint256) = SOLIDITY_CALL gas()()
+TMP_594(uint256) = SOLIDITY_CALL call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(TMP_593,token,0,freeMemoryPointer_safeTransfer_asm_0,68,0,32)
+TMP_595(bool) = TMP_592 & TMP_594
+success(bool) := TMP_595(bool)
+CONDITION success
+EXPRESSION:available = _getAvailable(_tokenId)	NodeType.VARIABLE
+available = _getAvailable(_tokenId)	NodeType.EXPRESSION
+getWithdrawn[_tokenId] += available	NodeType.EXPRESSION
+_totalWithdrawn += available	NodeType.EXPRESSION
+success(bool) := TMP_595(bool)	NodeType.IF" [shape=box];
+"BlockID: 9
+Call context: withdraw
+True
+TMP_596(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 10
+Call context: withdraw
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+REF_276(uint256) -> getUnlockTime[_tokenId]
+unlockTime(uint256) := REF_276(uint256)
+TMP_1218(bool) = unlockTime > block.timestamp
+CONDITION TMP_1218
+EXPRESSION:unlockTime = getUnlockTime[_tokenId]	NodeType.VARIABLE
+unlockTime = getUnlockTime[_tokenId]	NodeType.EXPRESSION
+unlockTime > block.timestamp	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+REF_276(uint256) -> getUnlockTime[_tokenId]
+unlockTime(uint256) := REF_276(uint256)
+TMP_1218(bool) = unlockTime > block.timestamp
+CONDITION TMP_1218
+EXPRESSION:unlockTime = getUnlockTime[_tokenId]	NodeType.VARIABLE
+unlockTime = getUnlockTime[_tokenId]	NodeType.EXPRESSION
+unlockTime > block.timestamp	NodeType.IF" -> "BlockID: 2
+Call context: 
+True
+TMP_1219(None) = SOLIDITY_CALL revert WithdrawalsLockedError(uint256,uint256)(_tokenId,unlockTime)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 1
+Call context: 
+None
+REF_276(uint256) -> getUnlockTime[_tokenId]
+unlockTime(uint256) := REF_276(uint256)
+TMP_1218(bool) = unlockTime > block.timestamp
+CONDITION TMP_1218
+EXPRESSION:unlockTime = getUnlockTime[_tokenId]	NodeType.VARIABLE
+unlockTime = getUnlockTime[_tokenId]	NodeType.EXPRESSION
+unlockTime > block.timestamp	NodeType.IF" -> "BlockID: 3
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: 
+None
+caller(address) := msg.sender(address)
+REF_277(address) -> _ownerOf[_tokenId]
+owner(address) := REF_277(address)
+TMP_1220(bool) = caller == owner
+REF_278(mapping(address => bool)) -> isApprovedForAll[owner]
+REF_279(bool) -> REF_278[caller]
+TMP_1221(bool) = TMP_1220 || REF_279
+REF_280(address) -> getApproved[_tokenId]
+TMP_1222(bool) = caller == REF_280
+TMP_1223(bool) = TMP_1221 || TMP_1222
+TMP_1224 = ! TMP_1223 
+CONDITION TMP_1224
+EXPRESSION:caller = msg.sender	NodeType.VARIABLE
+caller = msg.sender	NodeType.EXPRESSION
+owner = _ownerOf[_tokenId]	NodeType.VARIABLE
+owner = _ownerOf[_tokenId]	NodeType.EXPRESSION
+! (caller == owner || isApprovedForAll[owner][caller] || caller == getApproved[_tokenId])	NodeType.IF" [key=0];
+"BlockID: 4
+Call context: 
+None
+caller(address) := msg.sender(address)
+REF_277(address) -> _ownerOf[_tokenId]
+owner(address) := REF_277(address)
+TMP_1220(bool) = caller == owner
+REF_278(mapping(address => bool)) -> isApprovedForAll[owner]
+REF_279(bool) -> REF_278[caller]
+TMP_1221(bool) = TMP_1220 || REF_279
+REF_280(address) -> getApproved[_tokenId]
+TMP_1222(bool) = caller == REF_280
+TMP_1223(bool) = TMP_1221 || TMP_1222
+TMP_1224 = ! TMP_1223 
+CONDITION TMP_1224
+EXPRESSION:caller = msg.sender	NodeType.VARIABLE
+caller = msg.sender	NodeType.EXPRESSION
+owner = _ownerOf[_tokenId]	NodeType.VARIABLE
+owner = _ownerOf[_tokenId]	NodeType.EXPRESSION
+! (caller == owner || isApprovedForAll[owner][caller] || caller == getApproved[_tokenId])	NodeType.IF" -> "BlockID: 5
+Call context: 
+True
+TMP_1225(None) = SOLIDITY_CALL revert NotApprovedOrOwnerError()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 4
+Call context: 
+None
+caller(address) := msg.sender(address)
+REF_277(address) -> _ownerOf[_tokenId]
+owner(address) := REF_277(address)
+TMP_1220(bool) = caller == owner
+REF_278(mapping(address => bool)) -> isApprovedForAll[owner]
+REF_279(bool) -> REF_278[caller]
+TMP_1221(bool) = TMP_1220 || REF_279
+REF_280(address) -> getApproved[_tokenId]
+TMP_1222(bool) = caller == REF_280
+TMP_1223(bool) = TMP_1221 || TMP_1222
+TMP_1224 = ! TMP_1223 
+CONDITION TMP_1224
+EXPRESSION:caller = msg.sender	NodeType.VARIABLE
+caller = msg.sender	NodeType.EXPRESSION
+owner = _ownerOf[_tokenId]	NodeType.VARIABLE
+owner = _ownerOf[_tokenId]	NodeType.EXPRESSION
+! (caller == owner || isApprovedForAll[owner][caller] || caller == getApproved[_tokenId])	NodeType.IF" -> "BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 7
+Call context: 
+None
+REF_290(uint256) -> getShares[_tokenId]
+TMP_1244 = CONVERT this to address
+TMP_1245(uint256) = HIGH_LEVEL_CALL, dest:_asset(ERC20), function:balanceOf, arguments:['TMP_1244']  
+EXPRESSION:(_totalWithdrawn + _asset.balanceOf(address(this))) / getTotalShares	NodeType.EXPRESSION" [key=0];
+"BlockID: 7
+Call context: 
+None
+REF_290(uint256) -> getShares[_tokenId]
+TMP_1244 = CONVERT this to address
+TMP_1245(uint256) = HIGH_LEVEL_CALL, dest:_asset(ERC20), function:balanceOf, arguments:['TMP_1244']  
+EXPRESSION:(_totalWithdrawn + _asset.balanceOf(address(this))) / getTotalShares	NodeType.EXPRESSION" -> "BlockID: 8
+Call context: withdraw,_getAvailable
+None
+TMP_1246(uint256) = _totalWithdrawn (c)+ TMP_1245
+TMP_1247(uint256) = TMP_1246 (c)/ getTotalShares
+TMP_1955(None) := TMP_1247(uint256)
+TMP_1242(uint256) = REF_290 (c)* TMP_1241
+REF_291(uint256) -> getWithdrawn[_tokenId]
+TMP_1243(uint256) = TMP_1242 (c)- REF_291
+TMP_1954(None) := TMP_1243(uint256)
+available(uint256) := TMP_1226(uint256)
+REF_281(uint256) -> getWithdrawn[_tokenId]
+REF_281(-> getWithdrawn) = REF_281 (c)+ available
+_totalWithdrawn(uint256) = _totalWithdrawn (c)+ available
+NEW VARIABLE success
+INLINE ASM
+NEW VARIABLE freeMemoryPointer_safeTransfer_asm_0
+TMP_578(uint256) = SOLIDITY_CALL mload(uint256)(64)
+freeMemoryPointer_safeTransfer_asm_0(uint256) := TMP_578(uint256)
+TMP_579(None) = SOLIDITY_CALL mstore(uint256,uint256)(freeMemoryPointer_safeTransfer_asm_0,76450787359836037641860180984291677749980919077056822294353438043884394381312)
+TMP_580(uint256) = freeMemoryPointer_safeTransfer_asm_0 + 4
+TMP_581(address) = to & 1461501637330902918203684832716283019655932542975
+TMP_582(None) = SOLIDITY_CALL mstore(uint256,uint256)(TMP_580,TMP_581)
+TMP_583(uint256) = freeMemoryPointer_safeTransfer_asm_0 + 36
+TMP_584(None) = SOLIDITY_CALL mstore(uint256,uint256)(TMP_583,amount)
+TMP_585(uint256) = SOLIDITY_CALL mload(uint256)(0)
+TMP_586(bool) = TMP_585 == 1
+TMP_587(uint256) = SOLIDITY_CALL returndatasize()()
+TMP_588(bool) = TMP_587 > 31
+TMP_589(bool) = TMP_586 & TMP_588
+TMP_590(uint256) = SOLIDITY_CALL returndatasize()()
+TMP_591 = ! TMP_590 
+TMP_592(bool) = TMP_589 | TMP_591
+TMP_593(uint256) = SOLIDITY_CALL gas()()
+TMP_594(uint256) = SOLIDITY_CALL call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(TMP_593,token,0,freeMemoryPointer_safeTransfer_asm_0,68,0,32)
+TMP_595(bool) = TMP_592 & TMP_594
+success(bool) := TMP_595(bool)
+CONDITION success
+EXPRESSION:available = _getAvailable(_tokenId)	NodeType.VARIABLE
+available = _getAvailable(_tokenId)	NodeType.EXPRESSION
+getWithdrawn[_tokenId] += available	NodeType.EXPRESSION
+_totalWithdrawn += available	NodeType.EXPRESSION
+success(bool) := TMP_595(bool)	NodeType.IF" [key="successor_5"];
+"BlockID: 8
+Call context: withdraw,_getAvailable
+None
+TMP_1246(uint256) = _totalWithdrawn (c)+ TMP_1245
+TMP_1247(uint256) = TMP_1246 (c)/ getTotalShares
+TMP_1955(None) := TMP_1247(uint256)
+TMP_1242(uint256) = REF_290 (c)* TMP_1241
+REF_291(uint256) -> getWithdrawn[_tokenId]
+TMP_1243(uint256) = TMP_1242 (c)- REF_291
+TMP_1954(None) := TMP_1243(uint256)
+available(uint256) := TMP_1226(uint256)
+REF_281(uint256) -> getWithdrawn[_tokenId]
+REF_281(-> getWithdrawn) = REF_281 (c)+ available
+_totalWithdrawn(uint256) = _totalWithdrawn (c)+ available
+NEW VARIABLE success
+INLINE ASM
+NEW VARIABLE freeMemoryPointer_safeTransfer_asm_0
+TMP_578(uint256) = SOLIDITY_CALL mload(uint256)(64)
+freeMemoryPointer_safeTransfer_asm_0(uint256) := TMP_578(uint256)
+TMP_579(None) = SOLIDITY_CALL mstore(uint256,uint256)(freeMemoryPointer_safeTransfer_asm_0,76450787359836037641860180984291677749980919077056822294353438043884394381312)
+TMP_580(uint256) = freeMemoryPointer_safeTransfer_asm_0 + 4
+TMP_581(address) = to & 1461501637330902918203684832716283019655932542975
+TMP_582(None) = SOLIDITY_CALL mstore(uint256,uint256)(TMP_580,TMP_581)
+TMP_583(uint256) = freeMemoryPointer_safeTransfer_asm_0 + 36
+TMP_584(None) = SOLIDITY_CALL mstore(uint256,uint256)(TMP_583,amount)
+TMP_585(uint256) = SOLIDITY_CALL mload(uint256)(0)
+TMP_586(bool) = TMP_585 == 1
+TMP_587(uint256) = SOLIDITY_CALL returndatasize()()
+TMP_588(bool) = TMP_587 > 31
+TMP_589(bool) = TMP_586 & TMP_588
+TMP_590(uint256) = SOLIDITY_CALL returndatasize()()
+TMP_591 = ! TMP_590 
+TMP_592(bool) = TMP_589 | TMP_591
+TMP_593(uint256) = SOLIDITY_CALL gas()()
+TMP_594(uint256) = SOLIDITY_CALL call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(TMP_593,token,0,freeMemoryPointer_safeTransfer_asm_0,68,0,32)
+TMP_595(bool) = TMP_592 & TMP_594
+success(bool) := TMP_595(bool)
+CONDITION success
+EXPRESSION:available = _getAvailable(_tokenId)	NodeType.VARIABLE
+available = _getAvailable(_tokenId)	NodeType.EXPRESSION
+getWithdrawn[_tokenId] += available	NodeType.EXPRESSION
+_totalWithdrawn += available	NodeType.EXPRESSION
+success(bool) := TMP_595(bool)	NodeType.IF" -> "BlockID: 9
+Call context: withdraw
+True
+TMP_596(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_1"];
+"BlockID: 8
+Call context: withdraw,_getAvailable
+None
+TMP_1246(uint256) = _totalWithdrawn (c)+ TMP_1245
+TMP_1247(uint256) = TMP_1246 (c)/ getTotalShares
+TMP_1955(None) := TMP_1247(uint256)
+TMP_1242(uint256) = REF_290 (c)* TMP_1241
+REF_291(uint256) -> getWithdrawn[_tokenId]
+TMP_1243(uint256) = TMP_1242 (c)- REF_291
+TMP_1954(None) := TMP_1243(uint256)
+available(uint256) := TMP_1226(uint256)
+REF_281(uint256) -> getWithdrawn[_tokenId]
+REF_281(-> getWithdrawn) = REF_281 (c)+ available
+_totalWithdrawn(uint256) = _totalWithdrawn (c)+ available
+NEW VARIABLE success
+INLINE ASM
+NEW VARIABLE freeMemoryPointer_safeTransfer_asm_0
+TMP_578(uint256) = SOLIDITY_CALL mload(uint256)(64)
+freeMemoryPointer_safeTransfer_asm_0(uint256) := TMP_578(uint256)
+TMP_579(None) = SOLIDITY_CALL mstore(uint256,uint256)(freeMemoryPointer_safeTransfer_asm_0,76450787359836037641860180984291677749980919077056822294353438043884394381312)
+TMP_580(uint256) = freeMemoryPointer_safeTransfer_asm_0 + 4
+TMP_581(address) = to & 1461501637330902918203684832716283019655932542975
+TMP_582(None) = SOLIDITY_CALL mstore(uint256,uint256)(TMP_580,TMP_581)
+TMP_583(uint256) = freeMemoryPointer_safeTransfer_asm_0 + 36
+TMP_584(None) = SOLIDITY_CALL mstore(uint256,uint256)(TMP_583,amount)
+TMP_585(uint256) = SOLIDITY_CALL mload(uint256)(0)
+TMP_586(bool) = TMP_585 == 1
+TMP_587(uint256) = SOLIDITY_CALL returndatasize()()
+TMP_588(bool) = TMP_587 > 31
+TMP_589(bool) = TMP_586 & TMP_588
+TMP_590(uint256) = SOLIDITY_CALL returndatasize()()
+TMP_591 = ! TMP_590 
+TMP_592(bool) = TMP_589 | TMP_591
+TMP_593(uint256) = SOLIDITY_CALL gas()()
+TMP_594(uint256) = SOLIDITY_CALL call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(TMP_593,token,0,freeMemoryPointer_safeTransfer_asm_0,68,0,32)
+TMP_595(bool) = TMP_592 & TMP_594
+success(bool) := TMP_595(bool)
+CONDITION success
+EXPRESSION:available = _getAvailable(_tokenId)	NodeType.VARIABLE
+available = _getAvailable(_tokenId)	NodeType.EXPRESSION
+getWithdrawn[_tokenId] += available	NodeType.EXPRESSION
+_totalWithdrawn += available	NodeType.EXPRESSION
+success(bool) := TMP_595(bool)	NodeType.IF" -> "BlockID: 10
+Call context: withdraw
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_1"];
+"BlockID: 10
+Call context: withdraw
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 11
+Call context: 
+None
+RETURN available
+EXPRESSION:_asset.safeTransfer(_to,available)	NodeType.EXPRESSION
+available	NodeType.RETURN" [key="Exit: safeTransfer", ref="SafeTransferLib.safeTransfer"];
+}

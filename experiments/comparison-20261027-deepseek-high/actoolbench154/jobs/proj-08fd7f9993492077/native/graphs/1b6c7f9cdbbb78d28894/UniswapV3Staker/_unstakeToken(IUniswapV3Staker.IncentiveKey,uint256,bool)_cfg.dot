@@ -1,0 +1,801 @@
+digraph {
+"BlockID: 5043
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 5044
+Call context: 
+None
+REF_1306(IUniswapV3Staker.Deposit) -> deposits[tokenId]
+deposit(IUniswapV3Staker.Deposit) := REF_1306(IUniswapV3Staker.Deposit)
+NEW VARIABLE endTime
+NEW VARIABLE stakedDuration
+REF_1308(uint96) -> key.startTime
+REF_1309(uint40) -> deposit.stakedTimestamp
+TUPLE_7(uint96,uint256) = LIBRARY_CALL, dest:IncentiveTime, function:IncentiveTime.getEndAndDuration(uint96,uint40,uint256), arguments:['REF_1308', 'REF_1309', 'block.timestamp'] 
+EXPRESSION:deposit = deposits[tokenId]	NodeType.VARIABLE
+deposit = deposits[tokenId]	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(endTime,stakedDuration) = IncentiveTime.getEndAndDuration(key.startTime,deposit.stakedTimestamp,block.timestamp)	NodeType.EXPRESSION";
+"BlockID: 5045
+Call context: 
+None
+endTime(uint96)= UNPACK TUPLE_7 index: 0 
+stakedDuration(uint256)= UNPACK TUPLE_7 index: 1 
+REF_1310(address) -> deposit.owner
+owner(address) := REF_1310(address)
+TMP_4464(bool) = block.timestamp < endTime
+TMP_4465(bool) = isNotRestake || TMP_4464
+TMP_4466(bool) = owner != msg.sender
+TMP_4467(bool) = TMP_4465 && TMP_4466
+CONDITION TMP_4467
+EXPRESSION:(endTime,stakedDuration) = IncentiveTime.getEndAndDuration(key.startTime,deposit.stakedTimestamp,block.timestamp)	NodeType.EXPRESSION
+owner = deposit.owner	NodeType.VARIABLE
+owner = deposit.owner	NodeType.EXPRESSION
+(isNotRestake || block.timestamp < endTime) && owner != msg.sender	NodeType.IF" [shape=box];
+"BlockID: 5046
+Call context: 
+True
+TMP_4468(None) = SOLIDITY_CALL revert NotCalledByOwner()()
+EXPRESSION:revert NotCalledByOwner()()	NodeType.EXPRESSION";
+"BlockID: 5047
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 5048
+Call context: 
+None
+REF_1311(IUniswapV3Pool) -> key.pool
+REF_1312(address) -> bribeDepots[REF_1311]
+bribeAddress(address) := REF_1312(address)
+TMP_4469 = CONVERT 0 to address
+TMP_4470(bool) = bribeAddress != TMP_4469
+CONDITION TMP_4470
+EXPRESSION:bribeAddress = bribeDepots[key.pool]	NodeType.VARIABLE
+bribeAddress = bribeDepots[key.pool]	NodeType.EXPRESSION
+bribeAddress != address(0)	NodeType.IF";
+"BlockID: 5049
+Call context: 
+True
+TMP_4472(uint128) := 340282366920938463463374607431768211455(uint128)
+TMP_4474(uint128) := 340282366920938463463374607431768211455(uint128)
+TMP_4475(INonfungiblePositionManager.CollectParams) = new CollectParams(tokenId,bribeAddress,TMP_4472,TMP_4474)
+TUPLE_8(uint256,uint256) = HIGH_LEVEL_CALL, dest:nonfungiblePositionManager(INonfungiblePositionManager), function:collect, arguments:['TMP_4475']  
+EXPRESSION:nonfungiblePositionManager.collect(INonfungiblePositionManager.CollectParams(tokenId,bribeAddress,type()(uint128).max,type()(uint128).max))	NodeType.EXPRESSION";
+"BlockID: 5051
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 5052
+Call context: 
+None
+TMP_4476(bytes32) = LIBRARY_CALL, dest:IncentiveId, function:IncentiveId.compute(IUniswapV3Staker.IncentiveKey), arguments:['key'] 
+EXPRESSION:";
+"BlockID: 5053
+Call context: 
+None
+incentiveId(bytes32) := TMP_4476(bytes32)
+NEW VARIABLE secondsInsideX128
+NEW VARIABLE liquidity
+NEW VARIABLE boostAmount
+NEW VARIABLE boostTotalSupply
+REF_1316(IUniswapV3Pool) -> key.pool
+REF_1317(UniswapV3Gauge) -> gauges[REF_1316]
+gauge(UniswapV3Gauge) := REF_1317(UniswapV3Gauge)
+TMP_4477 = CONVERT gauge to address
+TMP_4478(bool) = HIGH_LEVEL_CALL, dest:hermesGaugeBoost(bHermesBoost), function:isUserGauge, arguments:['owner', 'TMP_4477']  
+EXPRESSION:incentiveId = IncentiveId.compute(key)	NodeType.VARIABLE
+incentiveId = IncentiveId.compute(key)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+gauge = gauges[key.pool]	NodeType.VARIABLE
+gauge = gauges[key.pool]	NodeType.EXPRESSION
+hermesGaugeBoost.isUserGauge(owner,address(gauge)) && _userAttachements[owner][key.pool] == tokenId	NodeType.EXPRESSION" [shape=box];
+"BlockID: 5054
+Call context: 
+None
+REF_1319(mapping(IUniswapV3Pool => uint256)) -> _userAttachements[owner]
+REF_1320(IUniswapV3Pool) -> key.pool
+REF_1321(uint256) -> REF_1319[REF_1320]
+TMP_4479(bool) = REF_1321 == tokenId
+TMP_4480(bool) = TMP_4478 && TMP_4479
+CONDITION TMP_4480
+EXPRESSION:hermesGaugeBoost.isUserGauge(owner,address(gauge)) && _userAttachements[owner][key.pool] == tokenId	NodeType.IF" [shape=box];
+"BlockID: 5055
+Call context: 
+True
+TMP_4481 = CONVERT gauge to address
+TUPLE_9(uint128,uint128) = HIGH_LEVEL_CALL, dest:hermesGaugeBoost(bHermesBoost), function:getUserGaugeBoost, arguments:['owner', 'TMP_4481']  
+EXPRESSION:(boostAmount,boostTotalSupply) = hermesGaugeBoost.getUserGaugeBoost(owner,address(gauge))	NodeType.EXPRESSION";
+"BlockID: 5057
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 5058
+Call context: 
+None
+NEW VARIABLE secondsPerLiquidityInsideInitialX128
+TUPLE_10(uint160,uint128) = INTERNAL_CALL, UniswapV3Staker.stakes(uint256,bytes32)(tokenId,incentiveId)
+EXPRESSION:None	NodeType.VARIABLE
+(secondsPerLiquidityInsideInitialX128,liquidity) = stakes(tokenId,incentiveId)	NodeType.EXPRESSION";
+"BlockID: 5059
+Call context: 
+None
+secondsPerLiquidityInsideInitialX128(uint160)= UNPACK TUPLE_10 index: 0 
+liquidity(uint128)= UNPACK TUPLE_10 index: 1 
+TMP_4483(bool) = liquidity == 0
+CONDITION TMP_4483
+EXPRESSION:(secondsPerLiquidityInsideInitialX128,liquidity) = stakes(tokenId,incentiveId)	NodeType.EXPRESSION
+liquidity == 0	NodeType.IF" [shape=box];
+"BlockID: 5060
+Call context: 
+True
+TMP_4484(None) = SOLIDITY_CALL revert TokenNotStaked()()
+EXPRESSION:revert TokenNotStaked()()	NodeType.EXPRESSION";
+"BlockID: 5061
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 5062
+Call context: 
+None
+NEW VARIABLE secondsPerLiquidityInsideX128
+REF_1327(IUniswapV3Pool) -> key.pool
+REF_1329(int24) -> deposit.tickLower
+REF_1330(int24) -> deposit.tickUpper
+TUPLE_11(int56,uint160,uint32) = HIGH_LEVEL_CALL, dest:REF_1327(IUniswapV3Pool), function:snapshotCumulativesInside, arguments:['REF_1329', 'REF_1330']  
+EXPRESSION:None	NodeType.VARIABLE
+(secondsPerLiquidityInsideX128) = key.pool.snapshotCumulativesInside(deposit.tickLower,deposit.tickUpper)	NodeType.EXPRESSION";
+"BlockID: 5063
+Call context: 
+None
+secondsPerLiquidityInsideX128(uint160)= UNPACK TUPLE_11 index: 1 
+TMP_4485 = CONVERT boostAmount to uint128
+TMP_4486 = CONVERT boostTotalSupply to uint128
+TMP_4487(uint160) = LIBRARY_CALL, dest:RewardMath, function:RewardMath.computeBoostedSecondsInsideX128(uint256,uint128,uint128,uint128,uint160,uint160), arguments:['stakedDuration', 'liquidity', 'TMP_4485', 'TMP_4486', 'secondsPerLiquidityInsideInitialX128', 'secondsPerLiquidityInsideX128'] 
+EXPRESSION:(secondsPerLiquidityInsideX128) = key.pool.snapshotCumulativesInside(deposit.tickLower,deposit.tickUpper)	NodeType.EXPRESSION
+secondsInsideX128 = RewardMath.computeBoostedSecondsInsideX128(stakedDuration,liquidity,uint128(boostAmount),uint128(boostTotalSupply),secondsPerLiquidityInsideInitialX128,secondsPerLiquidityInsideX128)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 5064
+Call context: 
+None
+secondsInsideX128(uint160) := TMP_4487(uint160)
+REF_1332(uint40) -> deposit.stakedTimestamp
+REF_1332(uint40) (->deposit) := 0(uint256)
+REF_1333(IUniswapV3Staker.Incentive) -> incentives[incentiveId]
+incentive(IUniswapV3Staker.Incentive) := REF_1333(IUniswapV3Staker.Incentive)
+REF_1334(uint96) -> incentive.numberOfStakes
+TMP_4488(uint96) := REF_1334(uint96)
+REF_1334(-> incentive) = REF_1334 (c)- 1
+REF_1336(uint256) -> incentive.totalRewardUnclaimed
+REF_1337(uint160) -> incentive.totalSecondsClaimedX128
+REF_1338(uint96) -> key.startTime
+TMP_4489(uint256) = LIBRARY_CALL, dest:RewardMath, function:RewardMath.computeBoostedRewardAmount(uint256,uint160,uint256,uint256,uint160,uint256), arguments:['REF_1336', 'REF_1337', 'REF_1338', 'endTime', 'secondsInsideX128', 'block.timestamp'] 
+EXPRESSION:secondsInsideX128 = RewardMath.computeBoostedSecondsInsideX128(stakedDuration,liquidity,uint128(boostAmount),uint128(boostTotalSupply),secondsPerLiquidityInsideInitialX128,secondsPerLiquidityInsideX128)	NodeType.EXPRESSION
+deposit.stakedTimestamp = 0	NodeType.EXPRESSION
+incentive = incentives[incentiveId]	NodeType.VARIABLE
+incentive = incentives[incentiveId]	NodeType.EXPRESSION
+incentive.numberOfStakes --	NodeType.EXPRESSION" [shape=box];
+"BlockID: 5065
+Call context: 
+None
+reward(uint256) := TMP_4489(uint256)
+REF_1339(uint160) -> incentive.totalSecondsClaimedX128
+REF_1339(-> incentive) = REF_1339 + secondsInsideX128
+REF_1340(uint256) -> incentive.totalRewardUnclaimed
+REF_1340(-> incentive) = REF_1340 - reward
+REF_1341(uint256) -> rewards[owner]
+REF_1341(-> rewards) = REF_1341 + reward
+REF_1342(uint256) -> tokenIdRewards[tokenId]
+REF_1342(-> tokenIdRewards) = REF_1342 + reward
+REF_1343(mapping(bytes32 => IUniswapV3Staker.Stake)) -> _stakes[tokenId]
+REF_1344(IUniswapV3Staker.Stake) -> REF_1343[incentiveId]
+stake(IUniswapV3Staker.Stake) := REF_1344(IUniswapV3Staker.Stake)
+REF_1345(uint160) -> stake.secondsPerLiquidityInsideInitialX128
+REF_1345(uint160) (->stake) := 0(uint256)
+REF_1346(uint96) -> stake.liquidityNoOverflow
+REF_1346(uint96) (->stake) := 0(uint256)
+TMP_4491(uint96) := 79228162514264337593543950335(uint96)
+TMP_4492(bool) = liquidity >= TMP_4491
+CONDITION TMP_4492
+EXPRESSION:reward = RewardMath.computeBoostedRewardAmount(incentive.totalRewardUnclaimed,incentive.totalSecondsClaimedX128,key.startTime,endTime,secondsInsideX128,block.timestamp)	NodeType.VARIABLE
+reward = RewardMath.computeBoostedRewardAmount(incentive.totalRewardUnclaimed,incentive.totalSecondsClaimedX128,key.startTime,endTime,secondsInsideX128,block.timestamp)	NodeType.EXPRESSION
+incentive.totalSecondsClaimedX128 += secondsInsideX128	NodeType.EXPRESSION
+incentive.totalRewardUnclaimed -= reward	NodeType.EXPRESSION
+rewards[owner] += reward	NodeType.EXPRESSION
+tokenIdRewards[tokenId] += reward	NodeType.EXPRESSION
+stake = _stakes[tokenId][incentiveId]	NodeType.VARIABLE
+stake = _stakes[tokenId][incentiveId]	NodeType.EXPRESSION
+stake.secondsPerLiquidityInsideInitialX128 = 0	NodeType.EXPRESSION
+stake.liquidityNoOverflow = 0	NodeType.EXPRESSION
+liquidity >= type()(uint96).max	NodeType.IF" [shape=box];
+"BlockID: 5066
+Call context: 
+True
+REF_1347(uint128) -> stake.liquidityIfOverflow
+REF_1347(uint128) (->stake) := 0(uint256)
+EXPRESSION:stake.liquidityIfOverflow = 0	NodeType.EXPRESSION";
+"BlockID: 5067
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 5068
+Call context: 
+None
+REF_1348(IUniswapV3Staker.IncentiveKey) -> stakedIncentiveKey[tokenId]
+stakedIncentiveKey = delete REF_1348 
+EXPRESSION:delete stakedIncentiveKey[tokenId]	NodeType.EXPRESSION";
+"BlockID: 5056
+Call context: 
+None
+boostAmount(uint128)= UNPACK TUPLE_9 index: 0 
+boostTotalSupply(uint128)= UNPACK TUPLE_9 index: 1 
+HIGH_LEVEL_CALL, dest:gauge(UniswapV3Gauge), function:detachUser, arguments:['owner']  
+EXPRESSION:(boostAmount,boostTotalSupply) = hermesGaugeBoost.getUserGaugeBoost(owner,address(gauge))	NodeType.EXPRESSION
+gauge.detachUser(owner)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 5069
+Call context: 
+None
+REF_1324(mapping(IUniswapV3Pool => uint256)) -> _userAttachements[owner]
+REF_1325(IUniswapV3Pool) -> key.pool
+REF_1326(uint256) -> REF_1324[REF_1325]
+REF_1326(uint256) (->_userAttachements) := 0(uint256)
+EXPRESSION:gauge.detachUser(owner)	NodeType.EXPRESSION
+_userAttachements[owner][key.pool] = 0	NodeType.EXPRESSION";
+"BlockID: 5043
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 5044
+Call context: 
+None
+REF_1306(IUniswapV3Staker.Deposit) -> deposits[tokenId]
+deposit(IUniswapV3Staker.Deposit) := REF_1306(IUniswapV3Staker.Deposit)
+NEW VARIABLE endTime
+NEW VARIABLE stakedDuration
+REF_1308(uint96) -> key.startTime
+REF_1309(uint40) -> deposit.stakedTimestamp
+TUPLE_7(uint96,uint256) = LIBRARY_CALL, dest:IncentiveTime, function:IncentiveTime.getEndAndDuration(uint96,uint40,uint256), arguments:['REF_1308', 'REF_1309', 'block.timestamp'] 
+EXPRESSION:deposit = deposits[tokenId]	NodeType.VARIABLE
+deposit = deposits[tokenId]	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(endTime,stakedDuration) = IncentiveTime.getEndAndDuration(key.startTime,deposit.stakedTimestamp,block.timestamp)	NodeType.EXPRESSION" [key=0];
+"BlockID: 5044
+Call context: 
+None
+REF_1306(IUniswapV3Staker.Deposit) -> deposits[tokenId]
+deposit(IUniswapV3Staker.Deposit) := REF_1306(IUniswapV3Staker.Deposit)
+NEW VARIABLE endTime
+NEW VARIABLE stakedDuration
+REF_1308(uint96) -> key.startTime
+REF_1309(uint40) -> deposit.stakedTimestamp
+TUPLE_7(uint96,uint256) = LIBRARY_CALL, dest:IncentiveTime, function:IncentiveTime.getEndAndDuration(uint96,uint40,uint256), arguments:['REF_1308', 'REF_1309', 'block.timestamp'] 
+EXPRESSION:deposit = deposits[tokenId]	NodeType.VARIABLE
+deposit = deposits[tokenId]	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(endTime,stakedDuration) = IncentiveTime.getEndAndDuration(key.startTime,deposit.stakedTimestamp,block.timestamp)	NodeType.EXPRESSION" -> "BlockID: 5045
+Call context: 
+None
+endTime(uint96)= UNPACK TUPLE_7 index: 0 
+stakedDuration(uint256)= UNPACK TUPLE_7 index: 1 
+REF_1310(address) -> deposit.owner
+owner(address) := REF_1310(address)
+TMP_4464(bool) = block.timestamp < endTime
+TMP_4465(bool) = isNotRestake || TMP_4464
+TMP_4466(bool) = owner != msg.sender
+TMP_4467(bool) = TMP_4465 && TMP_4466
+CONDITION TMP_4467
+EXPRESSION:(endTime,stakedDuration) = IncentiveTime.getEndAndDuration(key.startTime,deposit.stakedTimestamp,block.timestamp)	NodeType.EXPRESSION
+owner = deposit.owner	NodeType.VARIABLE
+owner = deposit.owner	NodeType.EXPRESSION
+(isNotRestake || block.timestamp < endTime) && owner != msg.sender	NodeType.IF" [key=0];
+"BlockID: 5045
+Call context: 
+None
+endTime(uint96)= UNPACK TUPLE_7 index: 0 
+stakedDuration(uint256)= UNPACK TUPLE_7 index: 1 
+REF_1310(address) -> deposit.owner
+owner(address) := REF_1310(address)
+TMP_4464(bool) = block.timestamp < endTime
+TMP_4465(bool) = isNotRestake || TMP_4464
+TMP_4466(bool) = owner != msg.sender
+TMP_4467(bool) = TMP_4465 && TMP_4466
+CONDITION TMP_4467
+EXPRESSION:(endTime,stakedDuration) = IncentiveTime.getEndAndDuration(key.startTime,deposit.stakedTimestamp,block.timestamp)	NodeType.EXPRESSION
+owner = deposit.owner	NodeType.VARIABLE
+owner = deposit.owner	NodeType.EXPRESSION
+(isNotRestake || block.timestamp < endTime) && owner != msg.sender	NodeType.IF" -> "BlockID: 5046
+Call context: 
+True
+TMP_4468(None) = SOLIDITY_CALL revert NotCalledByOwner()()
+EXPRESSION:revert NotCalledByOwner()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 5045
+Call context: 
+None
+endTime(uint96)= UNPACK TUPLE_7 index: 0 
+stakedDuration(uint256)= UNPACK TUPLE_7 index: 1 
+REF_1310(address) -> deposit.owner
+owner(address) := REF_1310(address)
+TMP_4464(bool) = block.timestamp < endTime
+TMP_4465(bool) = isNotRestake || TMP_4464
+TMP_4466(bool) = owner != msg.sender
+TMP_4467(bool) = TMP_4465 && TMP_4466
+CONDITION TMP_4467
+EXPRESSION:(endTime,stakedDuration) = IncentiveTime.getEndAndDuration(key.startTime,deposit.stakedTimestamp,block.timestamp)	NodeType.EXPRESSION
+owner = deposit.owner	NodeType.VARIABLE
+owner = deposit.owner	NodeType.EXPRESSION
+(isNotRestake || block.timestamp < endTime) && owner != msg.sender	NodeType.IF" -> "BlockID: 5047
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 5047
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 5048
+Call context: 
+None
+REF_1311(IUniswapV3Pool) -> key.pool
+REF_1312(address) -> bribeDepots[REF_1311]
+bribeAddress(address) := REF_1312(address)
+TMP_4469 = CONVERT 0 to address
+TMP_4470(bool) = bribeAddress != TMP_4469
+CONDITION TMP_4470
+EXPRESSION:bribeAddress = bribeDepots[key.pool]	NodeType.VARIABLE
+bribeAddress = bribeDepots[key.pool]	NodeType.EXPRESSION
+bribeAddress != address(0)	NodeType.IF" [key=0];
+"BlockID: 5048
+Call context: 
+None
+REF_1311(IUniswapV3Pool) -> key.pool
+REF_1312(address) -> bribeDepots[REF_1311]
+bribeAddress(address) := REF_1312(address)
+TMP_4469 = CONVERT 0 to address
+TMP_4470(bool) = bribeAddress != TMP_4469
+CONDITION TMP_4470
+EXPRESSION:bribeAddress = bribeDepots[key.pool]	NodeType.VARIABLE
+bribeAddress = bribeDepots[key.pool]	NodeType.EXPRESSION
+bribeAddress != address(0)	NodeType.IF" -> "BlockID: 5049
+Call context: 
+True
+TMP_4472(uint128) := 340282366920938463463374607431768211455(uint128)
+TMP_4474(uint128) := 340282366920938463463374607431768211455(uint128)
+TMP_4475(INonfungiblePositionManager.CollectParams) = new CollectParams(tokenId,bribeAddress,TMP_4472,TMP_4474)
+TUPLE_8(uint256,uint256) = HIGH_LEVEL_CALL, dest:nonfungiblePositionManager(INonfungiblePositionManager), function:collect, arguments:['TMP_4475']  
+EXPRESSION:nonfungiblePositionManager.collect(INonfungiblePositionManager.CollectParams(tokenId,bribeAddress,type()(uint128).max,type()(uint128).max))	NodeType.EXPRESSION" [key=0];
+"BlockID: 5048
+Call context: 
+None
+REF_1311(IUniswapV3Pool) -> key.pool
+REF_1312(address) -> bribeDepots[REF_1311]
+bribeAddress(address) := REF_1312(address)
+TMP_4469 = CONVERT 0 to address
+TMP_4470(bool) = bribeAddress != TMP_4469
+CONDITION TMP_4470
+EXPRESSION:bribeAddress = bribeDepots[key.pool]	NodeType.VARIABLE
+bribeAddress = bribeDepots[key.pool]	NodeType.EXPRESSION
+bribeAddress != address(0)	NodeType.IF" -> "BlockID: 5051
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 5049
+Call context: 
+True
+TMP_4472(uint128) := 340282366920938463463374607431768211455(uint128)
+TMP_4474(uint128) := 340282366920938463463374607431768211455(uint128)
+TMP_4475(INonfungiblePositionManager.CollectParams) = new CollectParams(tokenId,bribeAddress,TMP_4472,TMP_4474)
+TUPLE_8(uint256,uint256) = HIGH_LEVEL_CALL, dest:nonfungiblePositionManager(INonfungiblePositionManager), function:collect, arguments:['TMP_4475']  
+EXPRESSION:nonfungiblePositionManager.collect(INonfungiblePositionManager.CollectParams(tokenId,bribeAddress,type()(uint128).max,type()(uint128).max))	NodeType.EXPRESSION" -> "BlockID: 5051
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 5051
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 5052
+Call context: 
+None
+TMP_4476(bytes32) = LIBRARY_CALL, dest:IncentiveId, function:IncentiveId.compute(IUniswapV3Staker.IncentiveKey), arguments:['key'] 
+EXPRESSION:" [key=0];
+"BlockID: 5052
+Call context: 
+None
+TMP_4476(bytes32) = LIBRARY_CALL, dest:IncentiveId, function:IncentiveId.compute(IUniswapV3Staker.IncentiveKey), arguments:['key'] 
+EXPRESSION:" -> "BlockID: 5053
+Call context: 
+None
+incentiveId(bytes32) := TMP_4476(bytes32)
+NEW VARIABLE secondsInsideX128
+NEW VARIABLE liquidity
+NEW VARIABLE boostAmount
+NEW VARIABLE boostTotalSupply
+REF_1316(IUniswapV3Pool) -> key.pool
+REF_1317(UniswapV3Gauge) -> gauges[REF_1316]
+gauge(UniswapV3Gauge) := REF_1317(UniswapV3Gauge)
+TMP_4477 = CONVERT gauge to address
+TMP_4478(bool) = HIGH_LEVEL_CALL, dest:hermesGaugeBoost(bHermesBoost), function:isUserGauge, arguments:['owner', 'TMP_4477']  
+EXPRESSION:incentiveId = IncentiveId.compute(key)	NodeType.VARIABLE
+incentiveId = IncentiveId.compute(key)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+gauge = gauges[key.pool]	NodeType.VARIABLE
+gauge = gauges[key.pool]	NodeType.EXPRESSION
+hermesGaugeBoost.isUserGauge(owner,address(gauge)) && _userAttachements[owner][key.pool] == tokenId	NodeType.EXPRESSION" [key=0];
+"BlockID: 5053
+Call context: 
+None
+incentiveId(bytes32) := TMP_4476(bytes32)
+NEW VARIABLE secondsInsideX128
+NEW VARIABLE liquidity
+NEW VARIABLE boostAmount
+NEW VARIABLE boostTotalSupply
+REF_1316(IUniswapV3Pool) -> key.pool
+REF_1317(UniswapV3Gauge) -> gauges[REF_1316]
+gauge(UniswapV3Gauge) := REF_1317(UniswapV3Gauge)
+TMP_4477 = CONVERT gauge to address
+TMP_4478(bool) = HIGH_LEVEL_CALL, dest:hermesGaugeBoost(bHermesBoost), function:isUserGauge, arguments:['owner', 'TMP_4477']  
+EXPRESSION:incentiveId = IncentiveId.compute(key)	NodeType.VARIABLE
+incentiveId = IncentiveId.compute(key)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+gauge = gauges[key.pool]	NodeType.VARIABLE
+gauge = gauges[key.pool]	NodeType.EXPRESSION
+hermesGaugeBoost.isUserGauge(owner,address(gauge)) && _userAttachements[owner][key.pool] == tokenId	NodeType.EXPRESSION" -> "BlockID: 5054
+Call context: 
+None
+REF_1319(mapping(IUniswapV3Pool => uint256)) -> _userAttachements[owner]
+REF_1320(IUniswapV3Pool) -> key.pool
+REF_1321(uint256) -> REF_1319[REF_1320]
+TMP_4479(bool) = REF_1321 == tokenId
+TMP_4480(bool) = TMP_4478 && TMP_4479
+CONDITION TMP_4480
+EXPRESSION:hermesGaugeBoost.isUserGauge(owner,address(gauge)) && _userAttachements[owner][key.pool] == tokenId	NodeType.IF" [key=0];
+"BlockID: 5054
+Call context: 
+None
+REF_1319(mapping(IUniswapV3Pool => uint256)) -> _userAttachements[owner]
+REF_1320(IUniswapV3Pool) -> key.pool
+REF_1321(uint256) -> REF_1319[REF_1320]
+TMP_4479(bool) = REF_1321 == tokenId
+TMP_4480(bool) = TMP_4478 && TMP_4479
+CONDITION TMP_4480
+EXPRESSION:hermesGaugeBoost.isUserGauge(owner,address(gauge)) && _userAttachements[owner][key.pool] == tokenId	NodeType.IF" -> "BlockID: 5055
+Call context: 
+True
+TMP_4481 = CONVERT gauge to address
+TUPLE_9(uint128,uint128) = HIGH_LEVEL_CALL, dest:hermesGaugeBoost(bHermesBoost), function:getUserGaugeBoost, arguments:['owner', 'TMP_4481']  
+EXPRESSION:(boostAmount,boostTotalSupply) = hermesGaugeBoost.getUserGaugeBoost(owner,address(gauge))	NodeType.EXPRESSION" [key=0];
+"BlockID: 5054
+Call context: 
+None
+REF_1319(mapping(IUniswapV3Pool => uint256)) -> _userAttachements[owner]
+REF_1320(IUniswapV3Pool) -> key.pool
+REF_1321(uint256) -> REF_1319[REF_1320]
+TMP_4479(bool) = REF_1321 == tokenId
+TMP_4480(bool) = TMP_4478 && TMP_4479
+CONDITION TMP_4480
+EXPRESSION:hermesGaugeBoost.isUserGauge(owner,address(gauge)) && _userAttachements[owner][key.pool] == tokenId	NodeType.IF" -> "BlockID: 5057
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 5055
+Call context: 
+True
+TMP_4481 = CONVERT gauge to address
+TUPLE_9(uint128,uint128) = HIGH_LEVEL_CALL, dest:hermesGaugeBoost(bHermesBoost), function:getUserGaugeBoost, arguments:['owner', 'TMP_4481']  
+EXPRESSION:(boostAmount,boostTotalSupply) = hermesGaugeBoost.getUserGaugeBoost(owner,address(gauge))	NodeType.EXPRESSION" -> "BlockID: 5056
+Call context: 
+None
+boostAmount(uint128)= UNPACK TUPLE_9 index: 0 
+boostTotalSupply(uint128)= UNPACK TUPLE_9 index: 1 
+HIGH_LEVEL_CALL, dest:gauge(UniswapV3Gauge), function:detachUser, arguments:['owner']  
+EXPRESSION:(boostAmount,boostTotalSupply) = hermesGaugeBoost.getUserGaugeBoost(owner,address(gauge))	NodeType.EXPRESSION
+gauge.detachUser(owner)	NodeType.EXPRESSION" [key=0];
+"BlockID: 5057
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 5058
+Call context: 
+None
+NEW VARIABLE secondsPerLiquidityInsideInitialX128
+TUPLE_10(uint160,uint128) = INTERNAL_CALL, UniswapV3Staker.stakes(uint256,bytes32)(tokenId,incentiveId)
+EXPRESSION:None	NodeType.VARIABLE
+(secondsPerLiquidityInsideInitialX128,liquidity) = stakes(tokenId,incentiveId)	NodeType.EXPRESSION" [key=0];
+"BlockID: 5058
+Call context: 
+None
+NEW VARIABLE secondsPerLiquidityInsideInitialX128
+TUPLE_10(uint160,uint128) = INTERNAL_CALL, UniswapV3Staker.stakes(uint256,bytes32)(tokenId,incentiveId)
+EXPRESSION:None	NodeType.VARIABLE
+(secondsPerLiquidityInsideInitialX128,liquidity) = stakes(tokenId,incentiveId)	NodeType.EXPRESSION" -> "BlockID: 5059
+Call context: 
+None
+secondsPerLiquidityInsideInitialX128(uint160)= UNPACK TUPLE_10 index: 0 
+liquidity(uint128)= UNPACK TUPLE_10 index: 1 
+TMP_4483(bool) = liquidity == 0
+CONDITION TMP_4483
+EXPRESSION:(secondsPerLiquidityInsideInitialX128,liquidity) = stakes(tokenId,incentiveId)	NodeType.EXPRESSION
+liquidity == 0	NodeType.IF" [key=0];
+"BlockID: 5059
+Call context: 
+None
+secondsPerLiquidityInsideInitialX128(uint160)= UNPACK TUPLE_10 index: 0 
+liquidity(uint128)= UNPACK TUPLE_10 index: 1 
+TMP_4483(bool) = liquidity == 0
+CONDITION TMP_4483
+EXPRESSION:(secondsPerLiquidityInsideInitialX128,liquidity) = stakes(tokenId,incentiveId)	NodeType.EXPRESSION
+liquidity == 0	NodeType.IF" -> "BlockID: 5060
+Call context: 
+True
+TMP_4484(None) = SOLIDITY_CALL revert TokenNotStaked()()
+EXPRESSION:revert TokenNotStaked()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 5059
+Call context: 
+None
+secondsPerLiquidityInsideInitialX128(uint160)= UNPACK TUPLE_10 index: 0 
+liquidity(uint128)= UNPACK TUPLE_10 index: 1 
+TMP_4483(bool) = liquidity == 0
+CONDITION TMP_4483
+EXPRESSION:(secondsPerLiquidityInsideInitialX128,liquidity) = stakes(tokenId,incentiveId)	NodeType.EXPRESSION
+liquidity == 0	NodeType.IF" -> "BlockID: 5061
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 5061
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 5062
+Call context: 
+None
+NEW VARIABLE secondsPerLiquidityInsideX128
+REF_1327(IUniswapV3Pool) -> key.pool
+REF_1329(int24) -> deposit.tickLower
+REF_1330(int24) -> deposit.tickUpper
+TUPLE_11(int56,uint160,uint32) = HIGH_LEVEL_CALL, dest:REF_1327(IUniswapV3Pool), function:snapshotCumulativesInside, arguments:['REF_1329', 'REF_1330']  
+EXPRESSION:None	NodeType.VARIABLE
+(secondsPerLiquidityInsideX128) = key.pool.snapshotCumulativesInside(deposit.tickLower,deposit.tickUpper)	NodeType.EXPRESSION" [key=0];
+"BlockID: 5062
+Call context: 
+None
+NEW VARIABLE secondsPerLiquidityInsideX128
+REF_1327(IUniswapV3Pool) -> key.pool
+REF_1329(int24) -> deposit.tickLower
+REF_1330(int24) -> deposit.tickUpper
+TUPLE_11(int56,uint160,uint32) = HIGH_LEVEL_CALL, dest:REF_1327(IUniswapV3Pool), function:snapshotCumulativesInside, arguments:['REF_1329', 'REF_1330']  
+EXPRESSION:None	NodeType.VARIABLE
+(secondsPerLiquidityInsideX128) = key.pool.snapshotCumulativesInside(deposit.tickLower,deposit.tickUpper)	NodeType.EXPRESSION" -> "BlockID: 5063
+Call context: 
+None
+secondsPerLiquidityInsideX128(uint160)= UNPACK TUPLE_11 index: 1 
+TMP_4485 = CONVERT boostAmount to uint128
+TMP_4486 = CONVERT boostTotalSupply to uint128
+TMP_4487(uint160) = LIBRARY_CALL, dest:RewardMath, function:RewardMath.computeBoostedSecondsInsideX128(uint256,uint128,uint128,uint128,uint160,uint160), arguments:['stakedDuration', 'liquidity', 'TMP_4485', 'TMP_4486', 'secondsPerLiquidityInsideInitialX128', 'secondsPerLiquidityInsideX128'] 
+EXPRESSION:(secondsPerLiquidityInsideX128) = key.pool.snapshotCumulativesInside(deposit.tickLower,deposit.tickUpper)	NodeType.EXPRESSION
+secondsInsideX128 = RewardMath.computeBoostedSecondsInsideX128(stakedDuration,liquidity,uint128(boostAmount),uint128(boostTotalSupply),secondsPerLiquidityInsideInitialX128,secondsPerLiquidityInsideX128)	NodeType.EXPRESSION" [key=0];
+"BlockID: 5063
+Call context: 
+None
+secondsPerLiquidityInsideX128(uint160)= UNPACK TUPLE_11 index: 1 
+TMP_4485 = CONVERT boostAmount to uint128
+TMP_4486 = CONVERT boostTotalSupply to uint128
+TMP_4487(uint160) = LIBRARY_CALL, dest:RewardMath, function:RewardMath.computeBoostedSecondsInsideX128(uint256,uint128,uint128,uint128,uint160,uint160), arguments:['stakedDuration', 'liquidity', 'TMP_4485', 'TMP_4486', 'secondsPerLiquidityInsideInitialX128', 'secondsPerLiquidityInsideX128'] 
+EXPRESSION:(secondsPerLiquidityInsideX128) = key.pool.snapshotCumulativesInside(deposit.tickLower,deposit.tickUpper)	NodeType.EXPRESSION
+secondsInsideX128 = RewardMath.computeBoostedSecondsInsideX128(stakedDuration,liquidity,uint128(boostAmount),uint128(boostTotalSupply),secondsPerLiquidityInsideInitialX128,secondsPerLiquidityInsideX128)	NodeType.EXPRESSION" -> "BlockID: 5064
+Call context: 
+None
+secondsInsideX128(uint160) := TMP_4487(uint160)
+REF_1332(uint40) -> deposit.stakedTimestamp
+REF_1332(uint40) (->deposit) := 0(uint256)
+REF_1333(IUniswapV3Staker.Incentive) -> incentives[incentiveId]
+incentive(IUniswapV3Staker.Incentive) := REF_1333(IUniswapV3Staker.Incentive)
+REF_1334(uint96) -> incentive.numberOfStakes
+TMP_4488(uint96) := REF_1334(uint96)
+REF_1334(-> incentive) = REF_1334 (c)- 1
+REF_1336(uint256) -> incentive.totalRewardUnclaimed
+REF_1337(uint160) -> incentive.totalSecondsClaimedX128
+REF_1338(uint96) -> key.startTime
+TMP_4489(uint256) = LIBRARY_CALL, dest:RewardMath, function:RewardMath.computeBoostedRewardAmount(uint256,uint160,uint256,uint256,uint160,uint256), arguments:['REF_1336', 'REF_1337', 'REF_1338', 'endTime', 'secondsInsideX128', 'block.timestamp'] 
+EXPRESSION:secondsInsideX128 = RewardMath.computeBoostedSecondsInsideX128(stakedDuration,liquidity,uint128(boostAmount),uint128(boostTotalSupply),secondsPerLiquidityInsideInitialX128,secondsPerLiquidityInsideX128)	NodeType.EXPRESSION
+deposit.stakedTimestamp = 0	NodeType.EXPRESSION
+incentive = incentives[incentiveId]	NodeType.VARIABLE
+incentive = incentives[incentiveId]	NodeType.EXPRESSION
+incentive.numberOfStakes --	NodeType.EXPRESSION" [key=0];
+"BlockID: 5064
+Call context: 
+None
+secondsInsideX128(uint160) := TMP_4487(uint160)
+REF_1332(uint40) -> deposit.stakedTimestamp
+REF_1332(uint40) (->deposit) := 0(uint256)
+REF_1333(IUniswapV3Staker.Incentive) -> incentives[incentiveId]
+incentive(IUniswapV3Staker.Incentive) := REF_1333(IUniswapV3Staker.Incentive)
+REF_1334(uint96) -> incentive.numberOfStakes
+TMP_4488(uint96) := REF_1334(uint96)
+REF_1334(-> incentive) = REF_1334 (c)- 1
+REF_1336(uint256) -> incentive.totalRewardUnclaimed
+REF_1337(uint160) -> incentive.totalSecondsClaimedX128
+REF_1338(uint96) -> key.startTime
+TMP_4489(uint256) = LIBRARY_CALL, dest:RewardMath, function:RewardMath.computeBoostedRewardAmount(uint256,uint160,uint256,uint256,uint160,uint256), arguments:['REF_1336', 'REF_1337', 'REF_1338', 'endTime', 'secondsInsideX128', 'block.timestamp'] 
+EXPRESSION:secondsInsideX128 = RewardMath.computeBoostedSecondsInsideX128(stakedDuration,liquidity,uint128(boostAmount),uint128(boostTotalSupply),secondsPerLiquidityInsideInitialX128,secondsPerLiquidityInsideX128)	NodeType.EXPRESSION
+deposit.stakedTimestamp = 0	NodeType.EXPRESSION
+incentive = incentives[incentiveId]	NodeType.VARIABLE
+incentive = incentives[incentiveId]	NodeType.EXPRESSION
+incentive.numberOfStakes --	NodeType.EXPRESSION" -> "BlockID: 5065
+Call context: 
+None
+reward(uint256) := TMP_4489(uint256)
+REF_1339(uint160) -> incentive.totalSecondsClaimedX128
+REF_1339(-> incentive) = REF_1339 + secondsInsideX128
+REF_1340(uint256) -> incentive.totalRewardUnclaimed
+REF_1340(-> incentive) = REF_1340 - reward
+REF_1341(uint256) -> rewards[owner]
+REF_1341(-> rewards) = REF_1341 + reward
+REF_1342(uint256) -> tokenIdRewards[tokenId]
+REF_1342(-> tokenIdRewards) = REF_1342 + reward
+REF_1343(mapping(bytes32 => IUniswapV3Staker.Stake)) -> _stakes[tokenId]
+REF_1344(IUniswapV3Staker.Stake) -> REF_1343[incentiveId]
+stake(IUniswapV3Staker.Stake) := REF_1344(IUniswapV3Staker.Stake)
+REF_1345(uint160) -> stake.secondsPerLiquidityInsideInitialX128
+REF_1345(uint160) (->stake) := 0(uint256)
+REF_1346(uint96) -> stake.liquidityNoOverflow
+REF_1346(uint96) (->stake) := 0(uint256)
+TMP_4491(uint96) := 79228162514264337593543950335(uint96)
+TMP_4492(bool) = liquidity >= TMP_4491
+CONDITION TMP_4492
+EXPRESSION:reward = RewardMath.computeBoostedRewardAmount(incentive.totalRewardUnclaimed,incentive.totalSecondsClaimedX128,key.startTime,endTime,secondsInsideX128,block.timestamp)	NodeType.VARIABLE
+reward = RewardMath.computeBoostedRewardAmount(incentive.totalRewardUnclaimed,incentive.totalSecondsClaimedX128,key.startTime,endTime,secondsInsideX128,block.timestamp)	NodeType.EXPRESSION
+incentive.totalSecondsClaimedX128 += secondsInsideX128	NodeType.EXPRESSION
+incentive.totalRewardUnclaimed -= reward	NodeType.EXPRESSION
+rewards[owner] += reward	NodeType.EXPRESSION
+tokenIdRewards[tokenId] += reward	NodeType.EXPRESSION
+stake = _stakes[tokenId][incentiveId]	NodeType.VARIABLE
+stake = _stakes[tokenId][incentiveId]	NodeType.EXPRESSION
+stake.secondsPerLiquidityInsideInitialX128 = 0	NodeType.EXPRESSION
+stake.liquidityNoOverflow = 0	NodeType.EXPRESSION
+liquidity >= type()(uint96).max	NodeType.IF" [key=0];
+"BlockID: 5065
+Call context: 
+None
+reward(uint256) := TMP_4489(uint256)
+REF_1339(uint160) -> incentive.totalSecondsClaimedX128
+REF_1339(-> incentive) = REF_1339 + secondsInsideX128
+REF_1340(uint256) -> incentive.totalRewardUnclaimed
+REF_1340(-> incentive) = REF_1340 - reward
+REF_1341(uint256) -> rewards[owner]
+REF_1341(-> rewards) = REF_1341 + reward
+REF_1342(uint256) -> tokenIdRewards[tokenId]
+REF_1342(-> tokenIdRewards) = REF_1342 + reward
+REF_1343(mapping(bytes32 => IUniswapV3Staker.Stake)) -> _stakes[tokenId]
+REF_1344(IUniswapV3Staker.Stake) -> REF_1343[incentiveId]
+stake(IUniswapV3Staker.Stake) := REF_1344(IUniswapV3Staker.Stake)
+REF_1345(uint160) -> stake.secondsPerLiquidityInsideInitialX128
+REF_1345(uint160) (->stake) := 0(uint256)
+REF_1346(uint96) -> stake.liquidityNoOverflow
+REF_1346(uint96) (->stake) := 0(uint256)
+TMP_4491(uint96) := 79228162514264337593543950335(uint96)
+TMP_4492(bool) = liquidity >= TMP_4491
+CONDITION TMP_4492
+EXPRESSION:reward = RewardMath.computeBoostedRewardAmount(incentive.totalRewardUnclaimed,incentive.totalSecondsClaimedX128,key.startTime,endTime,secondsInsideX128,block.timestamp)	NodeType.VARIABLE
+reward = RewardMath.computeBoostedRewardAmount(incentive.totalRewardUnclaimed,incentive.totalSecondsClaimedX128,key.startTime,endTime,secondsInsideX128,block.timestamp)	NodeType.EXPRESSION
+incentive.totalSecondsClaimedX128 += secondsInsideX128	NodeType.EXPRESSION
+incentive.totalRewardUnclaimed -= reward	NodeType.EXPRESSION
+rewards[owner] += reward	NodeType.EXPRESSION
+tokenIdRewards[tokenId] += reward	NodeType.EXPRESSION
+stake = _stakes[tokenId][incentiveId]	NodeType.VARIABLE
+stake = _stakes[tokenId][incentiveId]	NodeType.EXPRESSION
+stake.secondsPerLiquidityInsideInitialX128 = 0	NodeType.EXPRESSION
+stake.liquidityNoOverflow = 0	NodeType.EXPRESSION
+liquidity >= type()(uint96).max	NodeType.IF" -> "BlockID: 5066
+Call context: 
+True
+REF_1347(uint128) -> stake.liquidityIfOverflow
+REF_1347(uint128) (->stake) := 0(uint256)
+EXPRESSION:stake.liquidityIfOverflow = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 5065
+Call context: 
+None
+reward(uint256) := TMP_4489(uint256)
+REF_1339(uint160) -> incentive.totalSecondsClaimedX128
+REF_1339(-> incentive) = REF_1339 + secondsInsideX128
+REF_1340(uint256) -> incentive.totalRewardUnclaimed
+REF_1340(-> incentive) = REF_1340 - reward
+REF_1341(uint256) -> rewards[owner]
+REF_1341(-> rewards) = REF_1341 + reward
+REF_1342(uint256) -> tokenIdRewards[tokenId]
+REF_1342(-> tokenIdRewards) = REF_1342 + reward
+REF_1343(mapping(bytes32 => IUniswapV3Staker.Stake)) -> _stakes[tokenId]
+REF_1344(IUniswapV3Staker.Stake) -> REF_1343[incentiveId]
+stake(IUniswapV3Staker.Stake) := REF_1344(IUniswapV3Staker.Stake)
+REF_1345(uint160) -> stake.secondsPerLiquidityInsideInitialX128
+REF_1345(uint160) (->stake) := 0(uint256)
+REF_1346(uint96) -> stake.liquidityNoOverflow
+REF_1346(uint96) (->stake) := 0(uint256)
+TMP_4491(uint96) := 79228162514264337593543950335(uint96)
+TMP_4492(bool) = liquidity >= TMP_4491
+CONDITION TMP_4492
+EXPRESSION:reward = RewardMath.computeBoostedRewardAmount(incentive.totalRewardUnclaimed,incentive.totalSecondsClaimedX128,key.startTime,endTime,secondsInsideX128,block.timestamp)	NodeType.VARIABLE
+reward = RewardMath.computeBoostedRewardAmount(incentive.totalRewardUnclaimed,incentive.totalSecondsClaimedX128,key.startTime,endTime,secondsInsideX128,block.timestamp)	NodeType.EXPRESSION
+incentive.totalSecondsClaimedX128 += secondsInsideX128	NodeType.EXPRESSION
+incentive.totalRewardUnclaimed -= reward	NodeType.EXPRESSION
+rewards[owner] += reward	NodeType.EXPRESSION
+tokenIdRewards[tokenId] += reward	NodeType.EXPRESSION
+stake = _stakes[tokenId][incentiveId]	NodeType.VARIABLE
+stake = _stakes[tokenId][incentiveId]	NodeType.EXPRESSION
+stake.secondsPerLiquidityInsideInitialX128 = 0	NodeType.EXPRESSION
+stake.liquidityNoOverflow = 0	NodeType.EXPRESSION
+liquidity >= type()(uint96).max	NodeType.IF" -> "BlockID: 5067
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 5066
+Call context: 
+True
+REF_1347(uint128) -> stake.liquidityIfOverflow
+REF_1347(uint128) (->stake) := 0(uint256)
+EXPRESSION:stake.liquidityIfOverflow = 0	NodeType.EXPRESSION" -> "BlockID: 5067
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 5067
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 5068
+Call context: 
+None
+REF_1348(IUniswapV3Staker.IncentiveKey) -> stakedIncentiveKey[tokenId]
+stakedIncentiveKey = delete REF_1348 
+EXPRESSION:delete stakedIncentiveKey[tokenId]	NodeType.EXPRESSION" [key=0];
+"BlockID: 5056
+Call context: 
+None
+boostAmount(uint128)= UNPACK TUPLE_9 index: 0 
+boostTotalSupply(uint128)= UNPACK TUPLE_9 index: 1 
+HIGH_LEVEL_CALL, dest:gauge(UniswapV3Gauge), function:detachUser, arguments:['owner']  
+EXPRESSION:(boostAmount,boostTotalSupply) = hermesGaugeBoost.getUserGaugeBoost(owner,address(gauge))	NodeType.EXPRESSION
+gauge.detachUser(owner)	NodeType.EXPRESSION" -> "BlockID: 5069
+Call context: 
+None
+REF_1324(mapping(IUniswapV3Pool => uint256)) -> _userAttachements[owner]
+REF_1325(IUniswapV3Pool) -> key.pool
+REF_1326(uint256) -> REF_1324[REF_1325]
+REF_1326(uint256) (->_userAttachements) := 0(uint256)
+EXPRESSION:gauge.detachUser(owner)	NodeType.EXPRESSION
+_userAttachements[owner][key.pool] = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 5069
+Call context: 
+None
+REF_1324(mapping(IUniswapV3Pool => uint256)) -> _userAttachements[owner]
+REF_1325(IUniswapV3Pool) -> key.pool
+REF_1326(uint256) -> REF_1324[REF_1325]
+REF_1326(uint256) (->_userAttachements) := 0(uint256)
+EXPRESSION:gauge.detachUser(owner)	NodeType.EXPRESSION
+_userAttachements[owner][key.pool] = 0	NodeType.EXPRESSION" -> "BlockID: 5057
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

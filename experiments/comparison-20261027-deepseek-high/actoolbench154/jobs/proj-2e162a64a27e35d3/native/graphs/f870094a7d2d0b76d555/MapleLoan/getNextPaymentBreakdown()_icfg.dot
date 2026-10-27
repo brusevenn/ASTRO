@@ -1,0 +1,742 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+TMP_442(uint256) = interestRate_ (c)* interval_
+TMP_443 = CONVERT 31536000 to uint256
+TMP_444(uint256) = TMP_442 (c)/ TMP_443
+TMP_723(None) := TMP_444(uint256)
+periodicRate(uint256) := TMP_414(uint256)
+TMP_415(uint256) = SCALED_ONE (c)+ periodicRate
+TMP_458 = CONVERT 1 to uint256
+TMP_459(uint256) = exponent_ & TMP_458
+TMP_460 = CONVERT 0 to uint256
+TMP_461(bool) = TMP_459 != TMP_460
+CONDITION TMP_461
+EXPRESSION:periodicRate = _getPeriodicInterestRate(interestRate_,paymentInterval_)	NodeType.VARIABLE
+exponent_ & uint256(1) != uint256(0)	NodeType.IF";
+"BlockID: 14
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+None
+principalAmount_(uint256)= UNPACK TUPLE_13 index: 0 
+interestAmount_(uint256)= UNPACK TUPLE_13 index: 1 
+TMP_440 = CONVERT 1 to uint256
+TMP_441(bool) = paymentsRemaining_ == TMP_440
+CONDITION TMP_441
+EXPRESSION:(principalAmount_,interestAmount_) = _getInstallment(principal_,endingPrincipal_,interestRate_,paymentInterval_,paymentsRemaining_)	NodeType.EXPRESSION
+paymentsRemaining_ == uint256(1)	NodeType.IF" [shape=box];
+"BlockID: 16
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+True
+principalAmount_(uint256) := principal_(uint256)
+EXPRESSION:principalAmount_ = principal_	NodeType.EXPRESSION";
+"BlockID: 17
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+False
+principalAmount_(uint256) := principalAmount_(uint256)
+EXPRESSION:principalAmount_ = principalAmount_	NodeType.EXPRESSION";
+"BlockID: 20
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 22
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+None
+TMP_434(bool) = currentTime_ > nextPaymentDueDate_
+CONDITION TMP_434
+EXPRESSION:currentTime_ > nextPaymentDueDate_	NodeType.IF";
+"BlockID: 23
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+True
+TMP_435(uint256) = interestRate_ (c)+ lateInterestPremium_
+TMP_436(uint256) = currentTime_ (c)- nextPaymentDueDate_
+TMP_442(uint256) = interestRate_ (c)* interval_
+TMP_443 = CONVERT 31536000 to uint256
+TMP_444(uint256) = TMP_442 (c)/ TMP_443
+TMP_723(None) := TMP_444(uint256)
+TMP_432(uint256) = principal_ (c)* TMP_431
+TMP_433(uint256) = TMP_432 (c)/ SCALED_ONE
+TMP_721(None) := TMP_433(uint256)
+interestAmount_(uint256) = interestAmount_ (c)+ TMP_437
+TMP_438(uint256) = lateFeeRate_ (c)* principal_
+TMP_439(uint256) = TMP_438 (c)/ SCALED_ONE
+interestAmount_(uint256) = interestAmount_ (c)+ TMP_439
+EXPRESSION:interestAmount_ += _getInterest(principal_,interestRate_ + lateInterestPremium_,currentTime_ - nextPaymentDueDate_)	NodeType.EXPRESSION
+interestAmount_ += (lateFeeRate_ * principal_) / SCALED_ONE	NodeType.EXPRESSION";
+"BlockID: 24
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 12
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown
+True
+TMP_418(uint256) = principal_ (c)- endingPrincipal_
+TMP_419(uint256) = TMP_418 (c)/ totalPayments_
+TMP_420 = CONVERT 0 to uint256
+TMP_720(None) := TMP_419(uint256)
+TMP_720(None) := TMP_420(uint256)
+TMP_720(None) := principalAmount_(uint256)
+TMP_720(None) := interestAmount_(uint256)
+EXPRESSION:";
+"BlockID: 13
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 15
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown
+None
+TMP_421(uint256) = principal_ (c)* raisedRate
+TMP_422(uint256) = TMP_421 (c)/ SCALED_ONE
+TMP_423(uint256) = TMP_422 (c)- endingPrincipal_
+TMP_424(uint256) = TMP_423 (c)* periodicRate
+TMP_425(uint256) = raisedRate (c)- SCALED_ONE
+TMP_426(uint256) = TMP_424 (c)/ TMP_425
+total(uint256) := TMP_426(uint256)
+TMP_442(uint256) = interestRate_ (c)* interval_
+TMP_443 = CONVERT 31536000 to uint256
+TMP_444(uint256) = TMP_442 (c)/ TMP_443
+TMP_723(None) := TMP_444(uint256)
+TMP_432(uint256) = principal_ (c)* TMP_431
+TMP_433(uint256) = TMP_432 (c)/ SCALED_ONE
+TMP_721(None) := TMP_433(uint256)
+interestAmount_(uint256) := TMP_427(uint256)
+TMP_428(bool) = total >= interestAmount_
+CONDITION TMP_428
+EXPRESSION:total = ((((principal_ * raisedRate) / SCALED_ONE) - endingPrincipal_) * periodicRate) / (raisedRate - SCALED_ONE)	NodeType.VARIABLE
+total = ((((principal_ * raisedRate) / SCALED_ONE) - endingPrincipal_) * periodicRate) / (raisedRate - SCALED_ONE)	NodeType.EXPRESSION
+interestAmount_ = _getInterest(principal_,interestRate_,paymentInterval_)	NodeType.EXPRESSION
+total >= interestAmount_	NodeType.IF";
+"BlockID: 18
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown
+True
+TMP_429(uint256) = total (c)- interestAmount_
+principalAmount_(uint256) := TMP_429(uint256)
+EXPRESSION:principalAmount_ = total - interestAmount_	NodeType.EXPRESSION";
+"BlockID: 19
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown
+False
+TMP_430 = CONVERT 0 to uint256
+principalAmount_(uint256) := TMP_430(uint256)
+EXPRESSION:principalAmount_ = uint256(0)	NodeType.EXPRESSION";
+"BlockID: 21
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 2
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+True
+result_(uint256) := base_(uint256)
+EXPRESSION:result_ = base_	NodeType.EXPRESSION";
+"BlockID: 3
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+False
+result_(uint256) := one_(uint256)
+EXPRESSION:result_ = one_	NodeType.EXPRESSION";
+"BlockID: 4
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 5
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+None
+BEGIN_LOOP
+TMP_447 = CONVERT 1 to uint256
+exponent_(uint256) = exponent_ >> TMP_447
+TMP_448 = CONVERT 0 to uint256
+TMP_449(bool) = exponent_ != TMP_448
+CONDITION TMP_449
+EXPRESSION:None	NodeType.STARTLOOP
+(exponent_ >>= uint256(1)) != uint256(0)	NodeType.IFLOOP";
+"BlockID: 6
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+True
+TMP_450(uint256) = base_ (c)* base_
+TMP_451(uint256) = TMP_450 (c)/ one_
+base_(uint256) := TMP_451(uint256)
+TMP_452 = CONVERT 1 to uint256
+TMP_453(uint256) = exponent_ & TMP_452
+TMP_454 = CONVERT 0 to uint256
+TMP_455(bool) = TMP_453 == TMP_454
+CONDITION TMP_455
+EXPRESSION:base_ = (base_ * base_) / one_	NodeType.EXPRESSION
+exponent_ & uint256(1) == uint256(0)	NodeType.IF";
+"BlockID: 7
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 8
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+True
+CONTINUE
+EXPRESSION:None	NodeType.CONTINUE";
+"BlockID: 9
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 11
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+None
+TMP_456(uint256) = result_ (c)* base_
+TMP_457(uint256) = TMP_456 (c)/ one_
+result_(uint256) := TMP_457(uint256)
+EXPRESSION:result_ = (result_ * base_) / one_	NodeType.EXPRESSION";
+"BlockID: 10
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown
+None
+TMP_725(None) := result_(uint256)
+raisedRate(uint256) := TMP_416(uint256)
+TMP_417(bool) = raisedRate <= SCALED_ONE
+CONDITION TMP_417
+EXPRESSION:raisedRate = _scaledExponent(SCALED_ONE + periodicRate,totalPayments_,SCALED_ONE)	NodeType.VARIABLE
+raisedRate = _scaledExponent(SCALED_ONE + periodicRate,totalPayments_,SCALED_ONE)	NodeType.EXPRESSION
+raisedRate <= SCALED_ONE	NodeType.IF";
+"BlockID: 25
+Call context: getNextPaymentBreakdown
+None
+TMP_722(None) := interestAmount_(uint256)
+TMP_722(None) := principalAmount_(uint256)
+principal_(uint256)= UNPACK TUPLE_12 index: 0 
+interest_(uint256)= UNPACK TUPLE_12 index: 1 
+TMP_717(None) := interest_(uint256)
+TMP_717(None) := principal_(uint256)
+principal_(uint256)= UNPACK TUPLE_19 index: 0 
+interest_(uint256)= UNPACK TUPLE_19 index: 1 
+EXPRESSION:(principal_,interest_) = _getPaymentBreakdown(block.timestamp,_nextPaymentDueDate,_paymentInterval,_principal,_endingPrincipal,_paymentsRemaining,_interestRate,_lateFeeRate,_lateInterestPremium)	NodeType.EXPRESSION
+(principal_,interest_) = _getNextPaymentBreakdown()	NodeType.EXPRESSION";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+TMP_442(uint256) = interestRate_ (c)* interval_
+TMP_443 = CONVERT 31536000 to uint256
+TMP_444(uint256) = TMP_442 (c)/ TMP_443
+TMP_723(None) := TMP_444(uint256)
+periodicRate(uint256) := TMP_414(uint256)
+TMP_415(uint256) = SCALED_ONE (c)+ periodicRate
+TMP_458 = CONVERT 1 to uint256
+TMP_459(uint256) = exponent_ & TMP_458
+TMP_460 = CONVERT 0 to uint256
+TMP_461(bool) = TMP_459 != TMP_460
+CONDITION TMP_461
+EXPRESSION:periodicRate = _getPeriodicInterestRate(interestRate_,paymentInterval_)	NodeType.VARIABLE
+exponent_ & uint256(1) != uint256(0)	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_442(uint256) = interestRate_ (c)* interval_
+TMP_443 = CONVERT 31536000 to uint256
+TMP_444(uint256) = TMP_442 (c)/ TMP_443
+TMP_723(None) := TMP_444(uint256)
+periodicRate(uint256) := TMP_414(uint256)
+TMP_415(uint256) = SCALED_ONE (c)+ periodicRate
+TMP_458 = CONVERT 1 to uint256
+TMP_459(uint256) = exponent_ & TMP_458
+TMP_460 = CONVERT 0 to uint256
+TMP_461(bool) = TMP_459 != TMP_460
+CONDITION TMP_461
+EXPRESSION:periodicRate = _getPeriodicInterestRate(interestRate_,paymentInterval_)	NodeType.VARIABLE
+exponent_ & uint256(1) != uint256(0)	NodeType.IF" -> "BlockID: 2
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+True
+result_(uint256) := base_(uint256)
+EXPRESSION:result_ = base_	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+TMP_442(uint256) = interestRate_ (c)* interval_
+TMP_443 = CONVERT 31536000 to uint256
+TMP_444(uint256) = TMP_442 (c)/ TMP_443
+TMP_723(None) := TMP_444(uint256)
+periodicRate(uint256) := TMP_414(uint256)
+TMP_415(uint256) = SCALED_ONE (c)+ periodicRate
+TMP_458 = CONVERT 1 to uint256
+TMP_459(uint256) = exponent_ & TMP_458
+TMP_460 = CONVERT 0 to uint256
+TMP_461(bool) = TMP_459 != TMP_460
+CONDITION TMP_461
+EXPRESSION:periodicRate = _getPeriodicInterestRate(interestRate_,paymentInterval_)	NodeType.VARIABLE
+exponent_ & uint256(1) != uint256(0)	NodeType.IF" -> "BlockID: 3
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+False
+result_(uint256) := one_(uint256)
+EXPRESSION:result_ = one_	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 14
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+None
+principalAmount_(uint256)= UNPACK TUPLE_13 index: 0 
+interestAmount_(uint256)= UNPACK TUPLE_13 index: 1 
+TMP_440 = CONVERT 1 to uint256
+TMP_441(bool) = paymentsRemaining_ == TMP_440
+CONDITION TMP_441
+EXPRESSION:(principalAmount_,interestAmount_) = _getInstallment(principal_,endingPrincipal_,interestRate_,paymentInterval_,paymentsRemaining_)	NodeType.EXPRESSION
+paymentsRemaining_ == uint256(1)	NodeType.IF" -> "BlockID: 16
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+True
+principalAmount_(uint256) := principal_(uint256)
+EXPRESSION:principalAmount_ = principal_	NodeType.EXPRESSION" [key=0];
+"BlockID: 14
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+None
+principalAmount_(uint256)= UNPACK TUPLE_13 index: 0 
+interestAmount_(uint256)= UNPACK TUPLE_13 index: 1 
+TMP_440 = CONVERT 1 to uint256
+TMP_441(bool) = paymentsRemaining_ == TMP_440
+CONDITION TMP_441
+EXPRESSION:(principalAmount_,interestAmount_) = _getInstallment(principal_,endingPrincipal_,interestRate_,paymentInterval_,paymentsRemaining_)	NodeType.EXPRESSION
+paymentsRemaining_ == uint256(1)	NodeType.IF" -> "BlockID: 17
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+False
+principalAmount_(uint256) := principalAmount_(uint256)
+EXPRESSION:principalAmount_ = principalAmount_	NodeType.EXPRESSION" [key=0];
+"BlockID: 16
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+True
+principalAmount_(uint256) := principal_(uint256)
+EXPRESSION:principalAmount_ = principal_	NodeType.EXPRESSION" -> "BlockID: 20
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 17
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+False
+principalAmount_(uint256) := principalAmount_(uint256)
+EXPRESSION:principalAmount_ = principalAmount_	NodeType.EXPRESSION" -> "BlockID: 20
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 20
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 22
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+None
+TMP_434(bool) = currentTime_ > nextPaymentDueDate_
+CONDITION TMP_434
+EXPRESSION:currentTime_ > nextPaymentDueDate_	NodeType.IF" [key=0];
+"BlockID: 22
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+None
+TMP_434(bool) = currentTime_ > nextPaymentDueDate_
+CONDITION TMP_434
+EXPRESSION:currentTime_ > nextPaymentDueDate_	NodeType.IF" -> "BlockID: 23
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+True
+TMP_435(uint256) = interestRate_ (c)+ lateInterestPremium_
+TMP_436(uint256) = currentTime_ (c)- nextPaymentDueDate_
+TMP_442(uint256) = interestRate_ (c)* interval_
+TMP_443 = CONVERT 31536000 to uint256
+TMP_444(uint256) = TMP_442 (c)/ TMP_443
+TMP_723(None) := TMP_444(uint256)
+TMP_432(uint256) = principal_ (c)* TMP_431
+TMP_433(uint256) = TMP_432 (c)/ SCALED_ONE
+TMP_721(None) := TMP_433(uint256)
+interestAmount_(uint256) = interestAmount_ (c)+ TMP_437
+TMP_438(uint256) = lateFeeRate_ (c)* principal_
+TMP_439(uint256) = TMP_438 (c)/ SCALED_ONE
+interestAmount_(uint256) = interestAmount_ (c)+ TMP_439
+EXPRESSION:interestAmount_ += _getInterest(principal_,interestRate_ + lateInterestPremium_,currentTime_ - nextPaymentDueDate_)	NodeType.EXPRESSION
+interestAmount_ += (lateFeeRate_ * principal_) / SCALED_ONE	NodeType.EXPRESSION" [key=0];
+"BlockID: 22
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+None
+TMP_434(bool) = currentTime_ > nextPaymentDueDate_
+CONDITION TMP_434
+EXPRESSION:currentTime_ > nextPaymentDueDate_	NodeType.IF" -> "BlockID: 24
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 23
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+True
+TMP_435(uint256) = interestRate_ (c)+ lateInterestPremium_
+TMP_436(uint256) = currentTime_ (c)- nextPaymentDueDate_
+TMP_442(uint256) = interestRate_ (c)* interval_
+TMP_443 = CONVERT 31536000 to uint256
+TMP_444(uint256) = TMP_442 (c)/ TMP_443
+TMP_723(None) := TMP_444(uint256)
+TMP_432(uint256) = principal_ (c)* TMP_431
+TMP_433(uint256) = TMP_432 (c)/ SCALED_ONE
+TMP_721(None) := TMP_433(uint256)
+interestAmount_(uint256) = interestAmount_ (c)+ TMP_437
+TMP_438(uint256) = lateFeeRate_ (c)* principal_
+TMP_439(uint256) = TMP_438 (c)/ SCALED_ONE
+interestAmount_(uint256) = interestAmount_ (c)+ TMP_439
+EXPRESSION:interestAmount_ += _getInterest(principal_,interestRate_ + lateInterestPremium_,currentTime_ - nextPaymentDueDate_)	NodeType.EXPRESSION
+interestAmount_ += (lateFeeRate_ * principal_) / SCALED_ONE	NodeType.EXPRESSION" -> "BlockID: 24
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_3"];
+"BlockID: 24
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 25
+Call context: getNextPaymentBreakdown
+None
+TMP_722(None) := interestAmount_(uint256)
+TMP_722(None) := principalAmount_(uint256)
+principal_(uint256)= UNPACK TUPLE_12 index: 0 
+interest_(uint256)= UNPACK TUPLE_12 index: 1 
+TMP_717(None) := interest_(uint256)
+TMP_717(None) := principal_(uint256)
+principal_(uint256)= UNPACK TUPLE_19 index: 0 
+interest_(uint256)= UNPACK TUPLE_19 index: 1 
+EXPRESSION:(principal_,interest_) = _getPaymentBreakdown(block.timestamp,_nextPaymentDueDate,_paymentInterval,_principal,_endingPrincipal,_paymentsRemaining,_interestRate,_lateFeeRate,_lateInterestPremium)	NodeType.EXPRESSION
+(principal_,interest_) = _getNextPaymentBreakdown()	NodeType.EXPRESSION" [key=N, ref=N];
+"BlockID: 12
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown
+True
+TMP_418(uint256) = principal_ (c)- endingPrincipal_
+TMP_419(uint256) = TMP_418 (c)/ totalPayments_
+TMP_420 = CONVERT 0 to uint256
+TMP_720(None) := TMP_419(uint256)
+TMP_720(None) := TMP_420(uint256)
+TMP_720(None) := principalAmount_(uint256)
+TMP_720(None) := interestAmount_(uint256)
+EXPRESSION:" -> "BlockID: 14
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+None
+principalAmount_(uint256)= UNPACK TUPLE_13 index: 0 
+interestAmount_(uint256)= UNPACK TUPLE_13 index: 1 
+TMP_440 = CONVERT 1 to uint256
+TMP_441(bool) = paymentsRemaining_ == TMP_440
+CONDITION TMP_441
+EXPRESSION:(principalAmount_,interestAmount_) = _getInstallment(principal_,endingPrincipal_,interestRate_,paymentInterval_,paymentsRemaining_)	NodeType.EXPRESSION
+paymentsRemaining_ == uint256(1)	NodeType.IF" [key="successor_5", ref="MapleLoan._getInstallment"];
+"BlockID: 13
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 15
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown
+None
+TMP_421(uint256) = principal_ (c)* raisedRate
+TMP_422(uint256) = TMP_421 (c)/ SCALED_ONE
+TMP_423(uint256) = TMP_422 (c)- endingPrincipal_
+TMP_424(uint256) = TMP_423 (c)* periodicRate
+TMP_425(uint256) = raisedRate (c)- SCALED_ONE
+TMP_426(uint256) = TMP_424 (c)/ TMP_425
+total(uint256) := TMP_426(uint256)
+TMP_442(uint256) = interestRate_ (c)* interval_
+TMP_443 = CONVERT 31536000 to uint256
+TMP_444(uint256) = TMP_442 (c)/ TMP_443
+TMP_723(None) := TMP_444(uint256)
+TMP_432(uint256) = principal_ (c)* TMP_431
+TMP_433(uint256) = TMP_432 (c)/ SCALED_ONE
+TMP_721(None) := TMP_433(uint256)
+interestAmount_(uint256) := TMP_427(uint256)
+TMP_428(bool) = total >= interestAmount_
+CONDITION TMP_428
+EXPRESSION:total = ((((principal_ * raisedRate) / SCALED_ONE) - endingPrincipal_) * periodicRate) / (raisedRate - SCALED_ONE)	NodeType.VARIABLE
+total = ((((principal_ * raisedRate) / SCALED_ONE) - endingPrincipal_) * periodicRate) / (raisedRate - SCALED_ONE)	NodeType.EXPRESSION
+interestAmount_ = _getInterest(principal_,interestRate_,paymentInterval_)	NodeType.EXPRESSION
+total >= interestAmount_	NodeType.IF" [key=0];
+"BlockID: 15
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown
+None
+TMP_421(uint256) = principal_ (c)* raisedRate
+TMP_422(uint256) = TMP_421 (c)/ SCALED_ONE
+TMP_423(uint256) = TMP_422 (c)- endingPrincipal_
+TMP_424(uint256) = TMP_423 (c)* periodicRate
+TMP_425(uint256) = raisedRate (c)- SCALED_ONE
+TMP_426(uint256) = TMP_424 (c)/ TMP_425
+total(uint256) := TMP_426(uint256)
+TMP_442(uint256) = interestRate_ (c)* interval_
+TMP_443 = CONVERT 31536000 to uint256
+TMP_444(uint256) = TMP_442 (c)/ TMP_443
+TMP_723(None) := TMP_444(uint256)
+TMP_432(uint256) = principal_ (c)* TMP_431
+TMP_433(uint256) = TMP_432 (c)/ SCALED_ONE
+TMP_721(None) := TMP_433(uint256)
+interestAmount_(uint256) := TMP_427(uint256)
+TMP_428(bool) = total >= interestAmount_
+CONDITION TMP_428
+EXPRESSION:total = ((((principal_ * raisedRate) / SCALED_ONE) - endingPrincipal_) * periodicRate) / (raisedRate - SCALED_ONE)	NodeType.VARIABLE
+total = ((((principal_ * raisedRate) / SCALED_ONE) - endingPrincipal_) * periodicRate) / (raisedRate - SCALED_ONE)	NodeType.EXPRESSION
+interestAmount_ = _getInterest(principal_,interestRate_,paymentInterval_)	NodeType.EXPRESSION
+total >= interestAmount_	NodeType.IF" -> "BlockID: 18
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown
+True
+TMP_429(uint256) = total (c)- interestAmount_
+principalAmount_(uint256) := TMP_429(uint256)
+EXPRESSION:principalAmount_ = total - interestAmount_	NodeType.EXPRESSION" [key="successor_3"];
+"BlockID: 15
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown
+None
+TMP_421(uint256) = principal_ (c)* raisedRate
+TMP_422(uint256) = TMP_421 (c)/ SCALED_ONE
+TMP_423(uint256) = TMP_422 (c)- endingPrincipal_
+TMP_424(uint256) = TMP_423 (c)* periodicRate
+TMP_425(uint256) = raisedRate (c)- SCALED_ONE
+TMP_426(uint256) = TMP_424 (c)/ TMP_425
+total(uint256) := TMP_426(uint256)
+TMP_442(uint256) = interestRate_ (c)* interval_
+TMP_443 = CONVERT 31536000 to uint256
+TMP_444(uint256) = TMP_442 (c)/ TMP_443
+TMP_723(None) := TMP_444(uint256)
+TMP_432(uint256) = principal_ (c)* TMP_431
+TMP_433(uint256) = TMP_432 (c)/ SCALED_ONE
+TMP_721(None) := TMP_433(uint256)
+interestAmount_(uint256) := TMP_427(uint256)
+TMP_428(bool) = total >= interestAmount_
+CONDITION TMP_428
+EXPRESSION:total = ((((principal_ * raisedRate) / SCALED_ONE) - endingPrincipal_) * periodicRate) / (raisedRate - SCALED_ONE)	NodeType.VARIABLE
+total = ((((principal_ * raisedRate) / SCALED_ONE) - endingPrincipal_) * periodicRate) / (raisedRate - SCALED_ONE)	NodeType.EXPRESSION
+interestAmount_ = _getInterest(principal_,interestRate_,paymentInterval_)	NodeType.EXPRESSION
+total >= interestAmount_	NodeType.IF" -> "BlockID: 19
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown
+False
+TMP_430 = CONVERT 0 to uint256
+principalAmount_(uint256) := TMP_430(uint256)
+EXPRESSION:principalAmount_ = uint256(0)	NodeType.EXPRESSION" [key="successor_3"];
+"BlockID: 18
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown
+True
+TMP_429(uint256) = total (c)- interestAmount_
+principalAmount_(uint256) := TMP_429(uint256)
+EXPRESSION:principalAmount_ = total - interestAmount_	NodeType.EXPRESSION" -> "BlockID: 21
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 19
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown
+False
+TMP_430 = CONVERT 0 to uint256
+principalAmount_(uint256) := TMP_430(uint256)
+EXPRESSION:principalAmount_ = uint256(0)	NodeType.EXPRESSION" -> "BlockID: 21
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 21
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 14
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown
+None
+principalAmount_(uint256)= UNPACK TUPLE_13 index: 0 
+interestAmount_(uint256)= UNPACK TUPLE_13 index: 1 
+TMP_440 = CONVERT 1 to uint256
+TMP_441(bool) = paymentsRemaining_ == TMP_440
+CONDITION TMP_441
+EXPRESSION:(principalAmount_,interestAmount_) = _getInstallment(principal_,endingPrincipal_,interestRate_,paymentInterval_,paymentsRemaining_)	NodeType.EXPRESSION
+paymentsRemaining_ == uint256(1)	NodeType.IF" [key="successor_5", ref="MapleLoan._getInstallment"];
+"BlockID: 2
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+True
+result_(uint256) := base_(uint256)
+EXPRESSION:result_ = base_	NodeType.EXPRESSION" -> "BlockID: 4
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+False
+result_(uint256) := one_(uint256)
+EXPRESSION:result_ = one_	NodeType.EXPRESSION" -> "BlockID: 4
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 4
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 5
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+None
+BEGIN_LOOP
+TMP_447 = CONVERT 1 to uint256
+exponent_(uint256) = exponent_ >> TMP_447
+TMP_448 = CONVERT 0 to uint256
+TMP_449(bool) = exponent_ != TMP_448
+CONDITION TMP_449
+EXPRESSION:None	NodeType.STARTLOOP
+(exponent_ >>= uint256(1)) != uint256(0)	NodeType.IFLOOP" [key=0];
+"BlockID: 5
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+None
+BEGIN_LOOP
+TMP_447 = CONVERT 1 to uint256
+exponent_(uint256) = exponent_ >> TMP_447
+TMP_448 = CONVERT 0 to uint256
+TMP_449(bool) = exponent_ != TMP_448
+CONDITION TMP_449
+EXPRESSION:None	NodeType.STARTLOOP
+(exponent_ >>= uint256(1)) != uint256(0)	NodeType.IFLOOP" -> "BlockID: 6
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+True
+TMP_450(uint256) = base_ (c)* base_
+TMP_451(uint256) = TMP_450 (c)/ one_
+base_(uint256) := TMP_451(uint256)
+TMP_452 = CONVERT 1 to uint256
+TMP_453(uint256) = exponent_ & TMP_452
+TMP_454 = CONVERT 0 to uint256
+TMP_455(bool) = TMP_453 == TMP_454
+CONDITION TMP_455
+EXPRESSION:base_ = (base_ * base_) / one_	NodeType.EXPRESSION
+exponent_ & uint256(1) == uint256(0)	NodeType.IF" [key=0];
+"BlockID: 5
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+None
+BEGIN_LOOP
+TMP_447 = CONVERT 1 to uint256
+exponent_(uint256) = exponent_ >> TMP_447
+TMP_448 = CONVERT 0 to uint256
+TMP_449(bool) = exponent_ != TMP_448
+CONDITION TMP_449
+EXPRESSION:None	NodeType.STARTLOOP
+(exponent_ >>= uint256(1)) != uint256(0)	NodeType.IFLOOP" -> "BlockID: 7
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 6
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+True
+TMP_450(uint256) = base_ (c)* base_
+TMP_451(uint256) = TMP_450 (c)/ one_
+base_(uint256) := TMP_451(uint256)
+TMP_452 = CONVERT 1 to uint256
+TMP_453(uint256) = exponent_ & TMP_452
+TMP_454 = CONVERT 0 to uint256
+TMP_455(bool) = TMP_453 == TMP_454
+CONDITION TMP_455
+EXPRESSION:base_ = (base_ * base_) / one_	NodeType.EXPRESSION
+exponent_ & uint256(1) == uint256(0)	NodeType.IF" -> "BlockID: 8
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+True
+CONTINUE
+EXPRESSION:None	NodeType.CONTINUE" [key=0];
+"BlockID: 6
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+True
+TMP_450(uint256) = base_ (c)* base_
+TMP_451(uint256) = TMP_450 (c)/ one_
+base_(uint256) := TMP_451(uint256)
+TMP_452 = CONVERT 1 to uint256
+TMP_453(uint256) = exponent_ & TMP_452
+TMP_454 = CONVERT 0 to uint256
+TMP_455(bool) = TMP_453 == TMP_454
+CONDITION TMP_455
+EXPRESSION:base_ = (base_ * base_) / one_	NodeType.EXPRESSION
+exponent_ & uint256(1) == uint256(0)	NodeType.IF" -> "BlockID: 9
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 7
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 10
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown
+None
+TMP_725(None) := result_(uint256)
+raisedRate(uint256) := TMP_416(uint256)
+TMP_417(bool) = raisedRate <= SCALED_ONE
+CONDITION TMP_417
+EXPRESSION:raisedRate = _scaledExponent(SCALED_ONE + periodicRate,totalPayments_,SCALED_ONE)	NodeType.VARIABLE
+raisedRate = _scaledExponent(SCALED_ONE + periodicRate,totalPayments_,SCALED_ONE)	NodeType.EXPRESSION
+raisedRate <= SCALED_ONE	NodeType.IF" [key=N, ref=N];
+"BlockID: 8
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+True
+CONTINUE
+EXPRESSION:None	NodeType.CONTINUE" -> "BlockID: 5
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+None
+BEGIN_LOOP
+TMP_447 = CONVERT 1 to uint256
+exponent_(uint256) = exponent_ >> TMP_447
+TMP_448 = CONVERT 0 to uint256
+TMP_449(bool) = exponent_ != TMP_448
+CONDITION TMP_449
+EXPRESSION:None	NodeType.STARTLOOP
+(exponent_ >>= uint256(1)) != uint256(0)	NodeType.IFLOOP" [key=0];
+"BlockID: 9
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 11
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+None
+TMP_456(uint256) = result_ (c)* base_
+TMP_457(uint256) = TMP_456 (c)/ one_
+result_(uint256) := TMP_457(uint256)
+EXPRESSION:result_ = (result_ * base_) / one_	NodeType.EXPRESSION" [key=0];
+"BlockID: 11
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+None
+TMP_456(uint256) = result_ (c)* base_
+TMP_457(uint256) = TMP_456 (c)/ one_
+result_(uint256) := TMP_457(uint256)
+EXPRESSION:result_ = (result_ * base_) / one_	NodeType.EXPRESSION" -> "BlockID: 5
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown,_getInstallment
+None
+BEGIN_LOOP
+TMP_447 = CONVERT 1 to uint256
+exponent_(uint256) = exponent_ >> TMP_447
+TMP_448 = CONVERT 0 to uint256
+TMP_449(bool) = exponent_ != TMP_448
+CONDITION TMP_449
+EXPRESSION:None	NodeType.STARTLOOP
+(exponent_ >>= uint256(1)) != uint256(0)	NodeType.IFLOOP" [key=0];
+"BlockID: 10
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown
+None
+TMP_725(None) := result_(uint256)
+raisedRate(uint256) := TMP_416(uint256)
+TMP_417(bool) = raisedRate <= SCALED_ONE
+CONDITION TMP_417
+EXPRESSION:raisedRate = _scaledExponent(SCALED_ONE + periodicRate,totalPayments_,SCALED_ONE)	NodeType.VARIABLE
+raisedRate = _scaledExponent(SCALED_ONE + periodicRate,totalPayments_,SCALED_ONE)	NodeType.EXPRESSION
+raisedRate <= SCALED_ONE	NodeType.IF" -> "BlockID: 12
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown
+True
+TMP_418(uint256) = principal_ (c)- endingPrincipal_
+TMP_419(uint256) = TMP_418 (c)/ totalPayments_
+TMP_420 = CONVERT 0 to uint256
+TMP_720(None) := TMP_419(uint256)
+TMP_720(None) := TMP_420(uint256)
+TMP_720(None) := principalAmount_(uint256)
+TMP_720(None) := interestAmount_(uint256)
+EXPRESSION:" [key="successor_2"];
+"BlockID: 10
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown
+None
+TMP_725(None) := result_(uint256)
+raisedRate(uint256) := TMP_416(uint256)
+TMP_417(bool) = raisedRate <= SCALED_ONE
+CONDITION TMP_417
+EXPRESSION:raisedRate = _scaledExponent(SCALED_ONE + periodicRate,totalPayments_,SCALED_ONE)	NodeType.VARIABLE
+raisedRate = _scaledExponent(SCALED_ONE + periodicRate,totalPayments_,SCALED_ONE)	NodeType.EXPRESSION
+raisedRate <= SCALED_ONE	NodeType.IF" -> "BlockID: 13
+Call context: getNextPaymentBreakdown,_getNextPaymentBreakdown,_getPaymentBreakdown
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+}

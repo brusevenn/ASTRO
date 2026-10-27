@@ -1,0 +1,798 @@
+digraph {
+"BlockID: 3546
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 3547
+Call context: 
+None
+TMP_2648(uint256) = INTERNAL_CALL, PublicVault.timeToEpochEnd()()
+EXPRESSION:timeToEpochEnd() > 0	NodeType.EXPRESSION";
+"BlockID: 3548
+Call context: 
+None
+TMP_2649(bool) = TMP_2648 > 0
+CONDITION TMP_2649
+EXPRESSION:timeToEpochEnd() > 0	NodeType.IF" [shape=box];
+"BlockID: 3549
+Call context: 
+True
+REF_1341(IPublicVault.InvalidStates) -> InvalidStates.EPOCH_NOT_OVER
+TMP_2650(None) = SOLIDITY_CALL revert InvalidState(IPublicVault.InvalidStates)(REF_1341)
+EXPRESSION:revert InvalidState(IPublicVault.InvalidStates)(InvalidStates.EPOCH_NOT_OVER)	NodeType.EXPRESSION";
+"BlockID: 3550
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3551
+Call context: 
+None
+TMP_2651(IPublicVault.VaultData) = INTERNAL_CALL, PublicVault._loadStorageSlot()()
+EXPRESSION:";
+"BlockID: 3552
+Call context: 
+None
+s(IPublicVault.VaultData) := TMP_2651(IPublicVault.VaultData)
+REF_1342(uint88) -> s.withdrawReserve
+TMP_2652(bool) = REF_1342 > 0
+CONDITION TMP_2652
+EXPRESSION:s = _loadStorageSlot()	NodeType.VARIABLE
+s = _loadStorageSlot()	NodeType.EXPRESSION
+s.withdrawReserve > 0	NodeType.IF" [shape=box];
+"BlockID: 3553
+Call context: 
+True
+REF_1343(IPublicVault.InvalidStates) -> InvalidStates.WITHDRAW_RESERVE_NOT_ZERO
+TMP_2653(None) = SOLIDITY_CALL revert InvalidState(IPublicVault.InvalidStates)(REF_1343)
+EXPRESSION:revert InvalidState(IPublicVault.InvalidStates)(InvalidStates.WITHDRAW_RESERVE_NOT_ZERO)	NodeType.EXPRESSION";
+"BlockID: 3554
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3555
+Call context: 
+None
+REF_1344(mapping(uint64 => IPublicVault.EpochData)) -> s.epochData
+REF_1345(uint64) -> s.currentEpoch
+REF_1346(IPublicVault.EpochData) -> REF_1344[REF_1345]
+REF_1347(address) -> REF_1346.withdrawProxy
+TMP_2654 = CONVERT REF_1347 to WithdrawProxy
+currentWithdrawProxy(WithdrawProxy) := TMP_2654(WithdrawProxy)
+REF_1348(uint64) -> s.currentEpoch
+TMP_2655(bool) = REF_1348 != 0
+CONDITION TMP_2655
+EXPRESSION:currentWithdrawProxy = WithdrawProxy(s.epochData[s.currentEpoch].withdrawProxy)	NodeType.VARIABLE
+currentWithdrawProxy = WithdrawProxy(s.epochData[s.currentEpoch].withdrawProxy)	NodeType.EXPRESSION
+s.currentEpoch != 0	NodeType.IF";
+"BlockID: 3556
+Call context: 
+True
+REF_1349(mapping(uint64 => IPublicVault.EpochData)) -> s.epochData
+REF_1350(uint64) -> s.currentEpoch
+TMP_2656(uint64) = REF_1350 (c)- 1
+REF_1351(IPublicVault.EpochData) -> REF_1349[TMP_2656]
+REF_1352(address) -> REF_1351.withdrawProxy
+TMP_2657 = CONVERT REF_1352 to WithdrawProxy
+previousWithdrawProxy(WithdrawProxy) := TMP_2657(WithdrawProxy)
+TMP_2658 = CONVERT previousWithdrawProxy to address
+TMP_2659 = CONVERT 0 to address
+TMP_2660(bool) = TMP_2658 != TMP_2659
+TMP_2661(uint256) = HIGH_LEVEL_CALL, dest:previousWithdrawProxy(WithdrawProxy), function:getFinalAuctionEnd, arguments:[]  
+EXPRESSION:previousWithdrawProxy = WithdrawProxy(s.epochData[s.currentEpoch - 1].withdrawProxy)	NodeType.VARIABLE
+previousWithdrawProxy = WithdrawProxy(s.epochData[s.currentEpoch - 1].withdrawProxy)	NodeType.EXPRESSION
+address(previousWithdrawProxy) != address(0) && previousWithdrawProxy.getFinalAuctionEnd() != 0	NodeType.EXPRESSION";
+"BlockID: 3557
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3558
+Call context: 
+None
+REF_1355(mapping(uint64 => IPublicVault.EpochData)) -> s.epochData
+REF_1356(uint64) -> s.currentEpoch
+REF_1357(IPublicVault.EpochData) -> REF_1355[REF_1356]
+REF_1358(uint64) -> REF_1357.liensOpenForEpoch
+TMP_2665(bool) = REF_1358 > 0
+CONDITION TMP_2665
+EXPRESSION:s.epochData[s.currentEpoch].liensOpenForEpoch > 0	NodeType.IF";
+"BlockID: 3559
+Call context: 
+True
+REF_1359(IPublicVault.InvalidStates) -> InvalidStates.LIENS_OPEN_FOR_EPOCH_NOT_ZERO
+TMP_2666(None) = SOLIDITY_CALL revert InvalidState(IPublicVault.InvalidStates)(REF_1359)
+EXPRESSION:revert InvalidState(IPublicVault.InvalidStates)(InvalidStates.LIENS_OPEN_FOR_EPOCH_NOT_ZERO)	NodeType.EXPRESSION";
+"BlockID: 3560
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3561
+Call context: 
+None
+REF_1360(uint88) -> s.liquidationWithdrawRatio
+REF_1360(uint88) (->s) := 0(uint256)
+TMP_2667 = CONVERT currentWithdrawProxy to address
+TMP_2668 = CONVERT 0 to address
+TMP_2669(bool) = TMP_2667 != TMP_2668
+CONDITION TMP_2669
+EXPRESSION:s.liquidationWithdrawRatio = 0	NodeType.EXPRESSION
+(address(currentWithdrawProxy) != address(0))	NodeType.IF";
+"BlockID: 3562
+Call context: 
+True
+TMP_2670(uint256) = HIGH_LEVEL_CALL, dest:currentWithdrawProxy(WithdrawProxy), function:totalSupply, arguments:[]  
+EXPRESSION:";
+"BlockID: 3564
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3565
+Call context: 
+None
+REF_1376(uint64) -> s.currentEpoch
+TMP_2688(uint64) := REF_1376(uint64)
+REF_1376(-> s) = REF_1376 + 1
+EXPRESSION:s.currentEpoch ++	NodeType.EXPRESSION";
+"BlockID: 3563
+Call context: 
+None
+proxySupply(uint256) := TMP_2670(uint256)
+REF_1362(uint88) -> s.liquidationWithdrawRatio
+TMP_2671(uint256) = INTERNAL_CALL, PublicVault.totalSupply()()
+EXPRESSION:proxySupply = currentWithdrawProxy.totalSupply()	NodeType.VARIABLE
+proxySupply = currentWithdrawProxy.totalSupply()	NodeType.EXPRESSION
+s.liquidationWithdrawRatio = proxySupply.mulDivDown(1e18,totalSupply()).safeCastTo88()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3566
+Call context: 
+None
+TMP_2672(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivDown(uint256,uint256,uint256), arguments:['proxySupply', '1000000000000000000', 'TMP_2671'] 
+EXPRESSION:s.liquidationWithdrawRatio = proxySupply.mulDivDown(1e18,totalSupply()).safeCastTo88()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3567
+Call context: 
+None
+TMP_2673(uint88) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo88(uint256), arguments:['TMP_2672'] 
+EXPRESSION:s.liquidationWithdrawRatio = proxySupply.mulDivDown(1e18,totalSupply()).safeCastTo88()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3568
+Call context: 
+None
+REF_1362(uint88) (->s) := TMP_2673(uint88)
+REF_1366(uint88) -> s.liquidationWithdrawRatio
+HIGH_LEVEL_CALL, dest:currentWithdrawProxy(WithdrawProxy), function:setWithdrawRatio, arguments:['REF_1366']  
+EXPRESSION:s.liquidationWithdrawRatio = proxySupply.mulDivDown(1e18,totalSupply()).safeCastTo88()	NodeType.EXPRESSION
+currentWithdrawProxy.setWithdrawRatio(s.liquidationWithdrawRatio)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3569
+Call context: 
+None
+TMP_2675(uint256) = HIGH_LEVEL_CALL, dest:currentWithdrawProxy(WithdrawProxy), function:getExpected, arguments:[]  
+EXPRESSION:currentWithdrawProxy.setWithdrawRatio(s.liquidationWithdrawRatio)	NodeType.EXPRESSION";
+"BlockID: 3570
+Call context: 
+None
+expected(uint256) := TMP_2675(uint256)
+TMP_2676(uint256) = INTERNAL_CALL, PublicVault.totalAssets()()
+EXPRESSION:expected = currentWithdrawProxy.getExpected()	NodeType.VARIABLE
+expected = currentWithdrawProxy.getExpected()	NodeType.EXPRESSION
+totalAssets() > expected	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3571
+Call context: 
+None
+TMP_2677(bool) = TMP_2676 > expected
+CONDITION TMP_2677
+EXPRESSION:totalAssets() > expected	NodeType.IF" [shape=box];
+"BlockID: 3572
+Call context: 
+True
+REF_1368(uint88) -> s.withdrawReserve
+TMP_2678(uint256) = INTERNAL_CALL, PublicVault.totalAssets()()
+EXPRESSION:s.withdrawReserve = (totalAssets() - expected).mulWadDown(s.liquidationWithdrawRatio).safeCastTo88()	NodeType.EXPRESSION";
+"BlockID: 3576
+Call context: 
+False
+REF_1372(uint88) -> s.withdrawReserve
+REF_1372(uint88) (->s) := 0(uint256)
+EXPRESSION:s.withdrawReserve = 0	NodeType.EXPRESSION";
+"BlockID: 3577
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3578
+Call context: 
+None
+REF_1373(uint88) -> s.yIntercept
+TMP_2682(uint256) = INTERNAL_CALL, PublicVault.totalAssets()()
+EXPRESSION:_setYIntercept(s,s.yIntercept - totalAssets().mulDivDown(s.liquidationWithdrawRatio,1e18))	NodeType.EXPRESSION";
+"BlockID: 3579
+Call context: 
+None
+REF_1375(uint88) -> s.liquidationWithdrawRatio
+TMP_2683(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivDown(uint256,uint256,uint256), arguments:['TMP_2682', 'REF_1375', '1000000000000000000'] 
+EXPRESSION:_setYIntercept(s,s.yIntercept - totalAssets().mulDivDown(s.liquidationWithdrawRatio,1e18))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3580
+Call context: 
+None
+TMP_2684(uint88) = REF_1373 (c)- TMP_2683
+INTERNAL_CALL, PublicVault._setYIntercept(IPublicVault.VaultData,uint256)(s,TMP_2684)
+EXPRESSION:_setYIntercept(s,s.yIntercept - totalAssets().mulDivDown(s.liquidationWithdrawRatio,1e18))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3581
+Call context: 
+None
+TMP_2686 = CONVERT this to address
+INTERNAL_CALL, ERC20Cloned._burn(address,uint256)(TMP_2686,proxySupply)
+EXPRESSION:_setYIntercept(s,s.yIntercept - totalAssets().mulDivDown(s.liquidationWithdrawRatio,1e18))	NodeType.EXPRESSION
+_burn(address(this),proxySupply)	NodeType.EXPRESSION";
+"BlockID: 3573
+Call context: 
+None
+TMP_2679(uint256) = TMP_2678 - expected
+REF_1370(uint88) -> s.liquidationWithdrawRatio
+TMP_2680(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulWadDown(uint256,uint256), arguments:['TMP_2679', 'REF_1370'] 
+EXPRESSION:s.withdrawReserve = (totalAssets() - expected).mulWadDown(s.liquidationWithdrawRatio).safeCastTo88()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3574
+Call context: 
+None
+TMP_2681(uint88) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo88(uint256), arguments:['TMP_2680'] 
+EXPRESSION:s.withdrawReserve = (totalAssets() - expected).mulWadDown(s.liquidationWithdrawRatio).safeCastTo88()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3575
+Call context: 
+None
+REF_1368(uint88) (->s) := TMP_2681(uint88)
+EXPRESSION:s.withdrawReserve = (totalAssets() - expected).mulWadDown(s.liquidationWithdrawRatio).safeCastTo88()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 3583
+Call context: 
+None
+TMP_2662(bool) = TMP_2661 != 0
+TMP_2663(bool) = TMP_2660 && TMP_2662
+CONDITION TMP_2663
+EXPRESSION:address(previousWithdrawProxy) != address(0) && previousWithdrawProxy.getFinalAuctionEnd() != 0	NodeType.IF" [shape=box];
+"BlockID: 3584
+Call context: 
+True
+HIGH_LEVEL_CALL, dest:previousWithdrawProxy(WithdrawProxy), function:claim, arguments:[]  
+EXPRESSION:previousWithdrawProxy.claim()	NodeType.EXPRESSION";
+"BlockID: 3586
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 3546
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 3547
+Call context: 
+None
+TMP_2648(uint256) = INTERNAL_CALL, PublicVault.timeToEpochEnd()()
+EXPRESSION:timeToEpochEnd() > 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 3547
+Call context: 
+None
+TMP_2648(uint256) = INTERNAL_CALL, PublicVault.timeToEpochEnd()()
+EXPRESSION:timeToEpochEnd() > 0	NodeType.EXPRESSION" -> "BlockID: 3548
+Call context: 
+None
+TMP_2649(bool) = TMP_2648 > 0
+CONDITION TMP_2649
+EXPRESSION:timeToEpochEnd() > 0	NodeType.IF" [key=0];
+"BlockID: 3548
+Call context: 
+None
+TMP_2649(bool) = TMP_2648 > 0
+CONDITION TMP_2649
+EXPRESSION:timeToEpochEnd() > 0	NodeType.IF" -> "BlockID: 3549
+Call context: 
+True
+REF_1341(IPublicVault.InvalidStates) -> InvalidStates.EPOCH_NOT_OVER
+TMP_2650(None) = SOLIDITY_CALL revert InvalidState(IPublicVault.InvalidStates)(REF_1341)
+EXPRESSION:revert InvalidState(IPublicVault.InvalidStates)(InvalidStates.EPOCH_NOT_OVER)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3548
+Call context: 
+None
+TMP_2649(bool) = TMP_2648 > 0
+CONDITION TMP_2649
+EXPRESSION:timeToEpochEnd() > 0	NodeType.IF" -> "BlockID: 3550
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3550
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3551
+Call context: 
+None
+TMP_2651(IPublicVault.VaultData) = INTERNAL_CALL, PublicVault._loadStorageSlot()()
+EXPRESSION:" [key=0];
+"BlockID: 3551
+Call context: 
+None
+TMP_2651(IPublicVault.VaultData) = INTERNAL_CALL, PublicVault._loadStorageSlot()()
+EXPRESSION:" -> "BlockID: 3552
+Call context: 
+None
+s(IPublicVault.VaultData) := TMP_2651(IPublicVault.VaultData)
+REF_1342(uint88) -> s.withdrawReserve
+TMP_2652(bool) = REF_1342 > 0
+CONDITION TMP_2652
+EXPRESSION:s = _loadStorageSlot()	NodeType.VARIABLE
+s = _loadStorageSlot()	NodeType.EXPRESSION
+s.withdrawReserve > 0	NodeType.IF" [key=0];
+"BlockID: 3552
+Call context: 
+None
+s(IPublicVault.VaultData) := TMP_2651(IPublicVault.VaultData)
+REF_1342(uint88) -> s.withdrawReserve
+TMP_2652(bool) = REF_1342 > 0
+CONDITION TMP_2652
+EXPRESSION:s = _loadStorageSlot()	NodeType.VARIABLE
+s = _loadStorageSlot()	NodeType.EXPRESSION
+s.withdrawReserve > 0	NodeType.IF" -> "BlockID: 3553
+Call context: 
+True
+REF_1343(IPublicVault.InvalidStates) -> InvalidStates.WITHDRAW_RESERVE_NOT_ZERO
+TMP_2653(None) = SOLIDITY_CALL revert InvalidState(IPublicVault.InvalidStates)(REF_1343)
+EXPRESSION:revert InvalidState(IPublicVault.InvalidStates)(InvalidStates.WITHDRAW_RESERVE_NOT_ZERO)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3552
+Call context: 
+None
+s(IPublicVault.VaultData) := TMP_2651(IPublicVault.VaultData)
+REF_1342(uint88) -> s.withdrawReserve
+TMP_2652(bool) = REF_1342 > 0
+CONDITION TMP_2652
+EXPRESSION:s = _loadStorageSlot()	NodeType.VARIABLE
+s = _loadStorageSlot()	NodeType.EXPRESSION
+s.withdrawReserve > 0	NodeType.IF" -> "BlockID: 3554
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3554
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3555
+Call context: 
+None
+REF_1344(mapping(uint64 => IPublicVault.EpochData)) -> s.epochData
+REF_1345(uint64) -> s.currentEpoch
+REF_1346(IPublicVault.EpochData) -> REF_1344[REF_1345]
+REF_1347(address) -> REF_1346.withdrawProxy
+TMP_2654 = CONVERT REF_1347 to WithdrawProxy
+currentWithdrawProxy(WithdrawProxy) := TMP_2654(WithdrawProxy)
+REF_1348(uint64) -> s.currentEpoch
+TMP_2655(bool) = REF_1348 != 0
+CONDITION TMP_2655
+EXPRESSION:currentWithdrawProxy = WithdrawProxy(s.epochData[s.currentEpoch].withdrawProxy)	NodeType.VARIABLE
+currentWithdrawProxy = WithdrawProxy(s.epochData[s.currentEpoch].withdrawProxy)	NodeType.EXPRESSION
+s.currentEpoch != 0	NodeType.IF" [key=0];
+"BlockID: 3555
+Call context: 
+None
+REF_1344(mapping(uint64 => IPublicVault.EpochData)) -> s.epochData
+REF_1345(uint64) -> s.currentEpoch
+REF_1346(IPublicVault.EpochData) -> REF_1344[REF_1345]
+REF_1347(address) -> REF_1346.withdrawProxy
+TMP_2654 = CONVERT REF_1347 to WithdrawProxy
+currentWithdrawProxy(WithdrawProxy) := TMP_2654(WithdrawProxy)
+REF_1348(uint64) -> s.currentEpoch
+TMP_2655(bool) = REF_1348 != 0
+CONDITION TMP_2655
+EXPRESSION:currentWithdrawProxy = WithdrawProxy(s.epochData[s.currentEpoch].withdrawProxy)	NodeType.VARIABLE
+currentWithdrawProxy = WithdrawProxy(s.epochData[s.currentEpoch].withdrawProxy)	NodeType.EXPRESSION
+s.currentEpoch != 0	NodeType.IF" -> "BlockID: 3556
+Call context: 
+True
+REF_1349(mapping(uint64 => IPublicVault.EpochData)) -> s.epochData
+REF_1350(uint64) -> s.currentEpoch
+TMP_2656(uint64) = REF_1350 (c)- 1
+REF_1351(IPublicVault.EpochData) -> REF_1349[TMP_2656]
+REF_1352(address) -> REF_1351.withdrawProxy
+TMP_2657 = CONVERT REF_1352 to WithdrawProxy
+previousWithdrawProxy(WithdrawProxy) := TMP_2657(WithdrawProxy)
+TMP_2658 = CONVERT previousWithdrawProxy to address
+TMP_2659 = CONVERT 0 to address
+TMP_2660(bool) = TMP_2658 != TMP_2659
+TMP_2661(uint256) = HIGH_LEVEL_CALL, dest:previousWithdrawProxy(WithdrawProxy), function:getFinalAuctionEnd, arguments:[]  
+EXPRESSION:previousWithdrawProxy = WithdrawProxy(s.epochData[s.currentEpoch - 1].withdrawProxy)	NodeType.VARIABLE
+previousWithdrawProxy = WithdrawProxy(s.epochData[s.currentEpoch - 1].withdrawProxy)	NodeType.EXPRESSION
+address(previousWithdrawProxy) != address(0) && previousWithdrawProxy.getFinalAuctionEnd() != 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 3555
+Call context: 
+None
+REF_1344(mapping(uint64 => IPublicVault.EpochData)) -> s.epochData
+REF_1345(uint64) -> s.currentEpoch
+REF_1346(IPublicVault.EpochData) -> REF_1344[REF_1345]
+REF_1347(address) -> REF_1346.withdrawProxy
+TMP_2654 = CONVERT REF_1347 to WithdrawProxy
+currentWithdrawProxy(WithdrawProxy) := TMP_2654(WithdrawProxy)
+REF_1348(uint64) -> s.currentEpoch
+TMP_2655(bool) = REF_1348 != 0
+CONDITION TMP_2655
+EXPRESSION:currentWithdrawProxy = WithdrawProxy(s.epochData[s.currentEpoch].withdrawProxy)	NodeType.VARIABLE
+currentWithdrawProxy = WithdrawProxy(s.epochData[s.currentEpoch].withdrawProxy)	NodeType.EXPRESSION
+s.currentEpoch != 0	NodeType.IF" -> "BlockID: 3557
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3556
+Call context: 
+True
+REF_1349(mapping(uint64 => IPublicVault.EpochData)) -> s.epochData
+REF_1350(uint64) -> s.currentEpoch
+TMP_2656(uint64) = REF_1350 (c)- 1
+REF_1351(IPublicVault.EpochData) -> REF_1349[TMP_2656]
+REF_1352(address) -> REF_1351.withdrawProxy
+TMP_2657 = CONVERT REF_1352 to WithdrawProxy
+previousWithdrawProxy(WithdrawProxy) := TMP_2657(WithdrawProxy)
+TMP_2658 = CONVERT previousWithdrawProxy to address
+TMP_2659 = CONVERT 0 to address
+TMP_2660(bool) = TMP_2658 != TMP_2659
+TMP_2661(uint256) = HIGH_LEVEL_CALL, dest:previousWithdrawProxy(WithdrawProxy), function:getFinalAuctionEnd, arguments:[]  
+EXPRESSION:previousWithdrawProxy = WithdrawProxy(s.epochData[s.currentEpoch - 1].withdrawProxy)	NodeType.VARIABLE
+previousWithdrawProxy = WithdrawProxy(s.epochData[s.currentEpoch - 1].withdrawProxy)	NodeType.EXPRESSION
+address(previousWithdrawProxy) != address(0) && previousWithdrawProxy.getFinalAuctionEnd() != 0	NodeType.EXPRESSION" -> "BlockID: 3583
+Call context: 
+None
+TMP_2662(bool) = TMP_2661 != 0
+TMP_2663(bool) = TMP_2660 && TMP_2662
+CONDITION TMP_2663
+EXPRESSION:address(previousWithdrawProxy) != address(0) && previousWithdrawProxy.getFinalAuctionEnd() != 0	NodeType.IF" [key=0];
+"BlockID: 3557
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3558
+Call context: 
+None
+REF_1355(mapping(uint64 => IPublicVault.EpochData)) -> s.epochData
+REF_1356(uint64) -> s.currentEpoch
+REF_1357(IPublicVault.EpochData) -> REF_1355[REF_1356]
+REF_1358(uint64) -> REF_1357.liensOpenForEpoch
+TMP_2665(bool) = REF_1358 > 0
+CONDITION TMP_2665
+EXPRESSION:s.epochData[s.currentEpoch].liensOpenForEpoch > 0	NodeType.IF" [key=0];
+"BlockID: 3558
+Call context: 
+None
+REF_1355(mapping(uint64 => IPublicVault.EpochData)) -> s.epochData
+REF_1356(uint64) -> s.currentEpoch
+REF_1357(IPublicVault.EpochData) -> REF_1355[REF_1356]
+REF_1358(uint64) -> REF_1357.liensOpenForEpoch
+TMP_2665(bool) = REF_1358 > 0
+CONDITION TMP_2665
+EXPRESSION:s.epochData[s.currentEpoch].liensOpenForEpoch > 0	NodeType.IF" -> "BlockID: 3559
+Call context: 
+True
+REF_1359(IPublicVault.InvalidStates) -> InvalidStates.LIENS_OPEN_FOR_EPOCH_NOT_ZERO
+TMP_2666(None) = SOLIDITY_CALL revert InvalidState(IPublicVault.InvalidStates)(REF_1359)
+EXPRESSION:revert InvalidState(IPublicVault.InvalidStates)(InvalidStates.LIENS_OPEN_FOR_EPOCH_NOT_ZERO)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3558
+Call context: 
+None
+REF_1355(mapping(uint64 => IPublicVault.EpochData)) -> s.epochData
+REF_1356(uint64) -> s.currentEpoch
+REF_1357(IPublicVault.EpochData) -> REF_1355[REF_1356]
+REF_1358(uint64) -> REF_1357.liensOpenForEpoch
+TMP_2665(bool) = REF_1358 > 0
+CONDITION TMP_2665
+EXPRESSION:s.epochData[s.currentEpoch].liensOpenForEpoch > 0	NodeType.IF" -> "BlockID: 3560
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3560
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3561
+Call context: 
+None
+REF_1360(uint88) -> s.liquidationWithdrawRatio
+REF_1360(uint88) (->s) := 0(uint256)
+TMP_2667 = CONVERT currentWithdrawProxy to address
+TMP_2668 = CONVERT 0 to address
+TMP_2669(bool) = TMP_2667 != TMP_2668
+CONDITION TMP_2669
+EXPRESSION:s.liquidationWithdrawRatio = 0	NodeType.EXPRESSION
+(address(currentWithdrawProxy) != address(0))	NodeType.IF" [key=0];
+"BlockID: 3561
+Call context: 
+None
+REF_1360(uint88) -> s.liquidationWithdrawRatio
+REF_1360(uint88) (->s) := 0(uint256)
+TMP_2667 = CONVERT currentWithdrawProxy to address
+TMP_2668 = CONVERT 0 to address
+TMP_2669(bool) = TMP_2667 != TMP_2668
+CONDITION TMP_2669
+EXPRESSION:s.liquidationWithdrawRatio = 0	NodeType.EXPRESSION
+(address(currentWithdrawProxy) != address(0))	NodeType.IF" -> "BlockID: 3562
+Call context: 
+True
+TMP_2670(uint256) = HIGH_LEVEL_CALL, dest:currentWithdrawProxy(WithdrawProxy), function:totalSupply, arguments:[]  
+EXPRESSION:" [key=0];
+"BlockID: 3561
+Call context: 
+None
+REF_1360(uint88) -> s.liquidationWithdrawRatio
+REF_1360(uint88) (->s) := 0(uint256)
+TMP_2667 = CONVERT currentWithdrawProxy to address
+TMP_2668 = CONVERT 0 to address
+TMP_2669(bool) = TMP_2667 != TMP_2668
+CONDITION TMP_2669
+EXPRESSION:s.liquidationWithdrawRatio = 0	NodeType.EXPRESSION
+(address(currentWithdrawProxy) != address(0))	NodeType.IF" -> "BlockID: 3564
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3562
+Call context: 
+True
+TMP_2670(uint256) = HIGH_LEVEL_CALL, dest:currentWithdrawProxy(WithdrawProxy), function:totalSupply, arguments:[]  
+EXPRESSION:" -> "BlockID: 3563
+Call context: 
+None
+proxySupply(uint256) := TMP_2670(uint256)
+REF_1362(uint88) -> s.liquidationWithdrawRatio
+TMP_2671(uint256) = INTERNAL_CALL, PublicVault.totalSupply()()
+EXPRESSION:proxySupply = currentWithdrawProxy.totalSupply()	NodeType.VARIABLE
+proxySupply = currentWithdrawProxy.totalSupply()	NodeType.EXPRESSION
+s.liquidationWithdrawRatio = proxySupply.mulDivDown(1e18,totalSupply()).safeCastTo88()	NodeType.EXPRESSION" [key=0];
+"BlockID: 3564
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3565
+Call context: 
+None
+REF_1376(uint64) -> s.currentEpoch
+TMP_2688(uint64) := REF_1376(uint64)
+REF_1376(-> s) = REF_1376 + 1
+EXPRESSION:s.currentEpoch ++	NodeType.EXPRESSION" [key=0];
+"BlockID: 3563
+Call context: 
+None
+proxySupply(uint256) := TMP_2670(uint256)
+REF_1362(uint88) -> s.liquidationWithdrawRatio
+TMP_2671(uint256) = INTERNAL_CALL, PublicVault.totalSupply()()
+EXPRESSION:proxySupply = currentWithdrawProxy.totalSupply()	NodeType.VARIABLE
+proxySupply = currentWithdrawProxy.totalSupply()	NodeType.EXPRESSION
+s.liquidationWithdrawRatio = proxySupply.mulDivDown(1e18,totalSupply()).safeCastTo88()	NodeType.EXPRESSION" -> "BlockID: 3566
+Call context: 
+None
+TMP_2672(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivDown(uint256,uint256,uint256), arguments:['proxySupply', '1000000000000000000', 'TMP_2671'] 
+EXPRESSION:s.liquidationWithdrawRatio = proxySupply.mulDivDown(1e18,totalSupply()).safeCastTo88()	NodeType.EXPRESSION" [key=0];
+"BlockID: 3566
+Call context: 
+None
+TMP_2672(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivDown(uint256,uint256,uint256), arguments:['proxySupply', '1000000000000000000', 'TMP_2671'] 
+EXPRESSION:s.liquidationWithdrawRatio = proxySupply.mulDivDown(1e18,totalSupply()).safeCastTo88()	NodeType.EXPRESSION" -> "BlockID: 3567
+Call context: 
+None
+TMP_2673(uint88) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo88(uint256), arguments:['TMP_2672'] 
+EXPRESSION:s.liquidationWithdrawRatio = proxySupply.mulDivDown(1e18,totalSupply()).safeCastTo88()	NodeType.EXPRESSION" [key=0];
+"BlockID: 3567
+Call context: 
+None
+TMP_2673(uint88) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo88(uint256), arguments:['TMP_2672'] 
+EXPRESSION:s.liquidationWithdrawRatio = proxySupply.mulDivDown(1e18,totalSupply()).safeCastTo88()	NodeType.EXPRESSION" -> "BlockID: 3568
+Call context: 
+None
+REF_1362(uint88) (->s) := TMP_2673(uint88)
+REF_1366(uint88) -> s.liquidationWithdrawRatio
+HIGH_LEVEL_CALL, dest:currentWithdrawProxy(WithdrawProxy), function:setWithdrawRatio, arguments:['REF_1366']  
+EXPRESSION:s.liquidationWithdrawRatio = proxySupply.mulDivDown(1e18,totalSupply()).safeCastTo88()	NodeType.EXPRESSION
+currentWithdrawProxy.setWithdrawRatio(s.liquidationWithdrawRatio)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3568
+Call context: 
+None
+REF_1362(uint88) (->s) := TMP_2673(uint88)
+REF_1366(uint88) -> s.liquidationWithdrawRatio
+HIGH_LEVEL_CALL, dest:currentWithdrawProxy(WithdrawProxy), function:setWithdrawRatio, arguments:['REF_1366']  
+EXPRESSION:s.liquidationWithdrawRatio = proxySupply.mulDivDown(1e18,totalSupply()).safeCastTo88()	NodeType.EXPRESSION
+currentWithdrawProxy.setWithdrawRatio(s.liquidationWithdrawRatio)	NodeType.EXPRESSION" -> "BlockID: 3569
+Call context: 
+None
+TMP_2675(uint256) = HIGH_LEVEL_CALL, dest:currentWithdrawProxy(WithdrawProxy), function:getExpected, arguments:[]  
+EXPRESSION:currentWithdrawProxy.setWithdrawRatio(s.liquidationWithdrawRatio)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3569
+Call context: 
+None
+TMP_2675(uint256) = HIGH_LEVEL_CALL, dest:currentWithdrawProxy(WithdrawProxy), function:getExpected, arguments:[]  
+EXPRESSION:currentWithdrawProxy.setWithdrawRatio(s.liquidationWithdrawRatio)	NodeType.EXPRESSION" -> "BlockID: 3570
+Call context: 
+None
+expected(uint256) := TMP_2675(uint256)
+TMP_2676(uint256) = INTERNAL_CALL, PublicVault.totalAssets()()
+EXPRESSION:expected = currentWithdrawProxy.getExpected()	NodeType.VARIABLE
+expected = currentWithdrawProxy.getExpected()	NodeType.EXPRESSION
+totalAssets() > expected	NodeType.EXPRESSION" [key=0];
+"BlockID: 3570
+Call context: 
+None
+expected(uint256) := TMP_2675(uint256)
+TMP_2676(uint256) = INTERNAL_CALL, PublicVault.totalAssets()()
+EXPRESSION:expected = currentWithdrawProxy.getExpected()	NodeType.VARIABLE
+expected = currentWithdrawProxy.getExpected()	NodeType.EXPRESSION
+totalAssets() > expected	NodeType.EXPRESSION" -> "BlockID: 3571
+Call context: 
+None
+TMP_2677(bool) = TMP_2676 > expected
+CONDITION TMP_2677
+EXPRESSION:totalAssets() > expected	NodeType.IF" [key=0];
+"BlockID: 3571
+Call context: 
+None
+TMP_2677(bool) = TMP_2676 > expected
+CONDITION TMP_2677
+EXPRESSION:totalAssets() > expected	NodeType.IF" -> "BlockID: 3572
+Call context: 
+True
+REF_1368(uint88) -> s.withdrawReserve
+TMP_2678(uint256) = INTERNAL_CALL, PublicVault.totalAssets()()
+EXPRESSION:s.withdrawReserve = (totalAssets() - expected).mulWadDown(s.liquidationWithdrawRatio).safeCastTo88()	NodeType.EXPRESSION" [key=0];
+"BlockID: 3571
+Call context: 
+None
+TMP_2677(bool) = TMP_2676 > expected
+CONDITION TMP_2677
+EXPRESSION:totalAssets() > expected	NodeType.IF" -> "BlockID: 3576
+Call context: 
+False
+REF_1372(uint88) -> s.withdrawReserve
+REF_1372(uint88) (->s) := 0(uint256)
+EXPRESSION:s.withdrawReserve = 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 3572
+Call context: 
+True
+REF_1368(uint88) -> s.withdrawReserve
+TMP_2678(uint256) = INTERNAL_CALL, PublicVault.totalAssets()()
+EXPRESSION:s.withdrawReserve = (totalAssets() - expected).mulWadDown(s.liquidationWithdrawRatio).safeCastTo88()	NodeType.EXPRESSION" -> "BlockID: 3573
+Call context: 
+None
+TMP_2679(uint256) = TMP_2678 - expected
+REF_1370(uint88) -> s.liquidationWithdrawRatio
+TMP_2680(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulWadDown(uint256,uint256), arguments:['TMP_2679', 'REF_1370'] 
+EXPRESSION:s.withdrawReserve = (totalAssets() - expected).mulWadDown(s.liquidationWithdrawRatio).safeCastTo88()	NodeType.EXPRESSION" [key=0];
+"BlockID: 3576
+Call context: 
+False
+REF_1372(uint88) -> s.withdrawReserve
+REF_1372(uint88) (->s) := 0(uint256)
+EXPRESSION:s.withdrawReserve = 0	NodeType.EXPRESSION" -> "BlockID: 3577
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3577
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3578
+Call context: 
+None
+REF_1373(uint88) -> s.yIntercept
+TMP_2682(uint256) = INTERNAL_CALL, PublicVault.totalAssets()()
+EXPRESSION:_setYIntercept(s,s.yIntercept - totalAssets().mulDivDown(s.liquidationWithdrawRatio,1e18))	NodeType.EXPRESSION" [key=0];
+"BlockID: 3578
+Call context: 
+None
+REF_1373(uint88) -> s.yIntercept
+TMP_2682(uint256) = INTERNAL_CALL, PublicVault.totalAssets()()
+EXPRESSION:_setYIntercept(s,s.yIntercept - totalAssets().mulDivDown(s.liquidationWithdrawRatio,1e18))	NodeType.EXPRESSION" -> "BlockID: 3579
+Call context: 
+None
+REF_1375(uint88) -> s.liquidationWithdrawRatio
+TMP_2683(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivDown(uint256,uint256,uint256), arguments:['TMP_2682', 'REF_1375', '1000000000000000000'] 
+EXPRESSION:_setYIntercept(s,s.yIntercept - totalAssets().mulDivDown(s.liquidationWithdrawRatio,1e18))	NodeType.EXPRESSION" [key=0];
+"BlockID: 3579
+Call context: 
+None
+REF_1375(uint88) -> s.liquidationWithdrawRatio
+TMP_2683(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulDivDown(uint256,uint256,uint256), arguments:['TMP_2682', 'REF_1375', '1000000000000000000'] 
+EXPRESSION:_setYIntercept(s,s.yIntercept - totalAssets().mulDivDown(s.liquidationWithdrawRatio,1e18))	NodeType.EXPRESSION" -> "BlockID: 3580
+Call context: 
+None
+TMP_2684(uint88) = REF_1373 (c)- TMP_2683
+INTERNAL_CALL, PublicVault._setYIntercept(IPublicVault.VaultData,uint256)(s,TMP_2684)
+EXPRESSION:_setYIntercept(s,s.yIntercept - totalAssets().mulDivDown(s.liquidationWithdrawRatio,1e18))	NodeType.EXPRESSION" [key=0];
+"BlockID: 3580
+Call context: 
+None
+TMP_2684(uint88) = REF_1373 (c)- TMP_2683
+INTERNAL_CALL, PublicVault._setYIntercept(IPublicVault.VaultData,uint256)(s,TMP_2684)
+EXPRESSION:_setYIntercept(s,s.yIntercept - totalAssets().mulDivDown(s.liquidationWithdrawRatio,1e18))	NodeType.EXPRESSION" -> "BlockID: 3581
+Call context: 
+None
+TMP_2686 = CONVERT this to address
+INTERNAL_CALL, ERC20Cloned._burn(address,uint256)(TMP_2686,proxySupply)
+EXPRESSION:_setYIntercept(s,s.yIntercept - totalAssets().mulDivDown(s.liquidationWithdrawRatio,1e18))	NodeType.EXPRESSION
+_burn(address(this),proxySupply)	NodeType.EXPRESSION" [key=0];
+"BlockID: 3581
+Call context: 
+None
+TMP_2686 = CONVERT this to address
+INTERNAL_CALL, ERC20Cloned._burn(address,uint256)(TMP_2686,proxySupply)
+EXPRESSION:_setYIntercept(s,s.yIntercept - totalAssets().mulDivDown(s.liquidationWithdrawRatio,1e18))	NodeType.EXPRESSION
+_burn(address(this),proxySupply)	NodeType.EXPRESSION" -> "BlockID: 3564
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3573
+Call context: 
+None
+TMP_2679(uint256) = TMP_2678 - expected
+REF_1370(uint88) -> s.liquidationWithdrawRatio
+TMP_2680(uint256) = LIBRARY_CALL, dest:FixedPointMathLib, function:FixedPointMathLib.mulWadDown(uint256,uint256), arguments:['TMP_2679', 'REF_1370'] 
+EXPRESSION:s.withdrawReserve = (totalAssets() - expected).mulWadDown(s.liquidationWithdrawRatio).safeCastTo88()	NodeType.EXPRESSION" -> "BlockID: 3574
+Call context: 
+None
+TMP_2681(uint88) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo88(uint256), arguments:['TMP_2680'] 
+EXPRESSION:s.withdrawReserve = (totalAssets() - expected).mulWadDown(s.liquidationWithdrawRatio).safeCastTo88()	NodeType.EXPRESSION" [key=0];
+"BlockID: 3574
+Call context: 
+None
+TMP_2681(uint88) = LIBRARY_CALL, dest:SafeCastLib, function:SafeCastLib.safeCastTo88(uint256), arguments:['TMP_2680'] 
+EXPRESSION:s.withdrawReserve = (totalAssets() - expected).mulWadDown(s.liquidationWithdrawRatio).safeCastTo88()	NodeType.EXPRESSION" -> "BlockID: 3575
+Call context: 
+None
+REF_1368(uint88) (->s) := TMP_2681(uint88)
+EXPRESSION:s.withdrawReserve = (totalAssets() - expected).mulWadDown(s.liquidationWithdrawRatio).safeCastTo88()	NodeType.EXPRESSION" [key=0];
+"BlockID: 3575
+Call context: 
+None
+REF_1368(uint88) (->s) := TMP_2681(uint88)
+EXPRESSION:s.withdrawReserve = (totalAssets() - expected).mulWadDown(s.liquidationWithdrawRatio).safeCastTo88()	NodeType.EXPRESSION" -> "BlockID: 3577
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3583
+Call context: 
+None
+TMP_2662(bool) = TMP_2661 != 0
+TMP_2663(bool) = TMP_2660 && TMP_2662
+CONDITION TMP_2663
+EXPRESSION:address(previousWithdrawProxy) != address(0) && previousWithdrawProxy.getFinalAuctionEnd() != 0	NodeType.IF" -> "BlockID: 3584
+Call context: 
+True
+HIGH_LEVEL_CALL, dest:previousWithdrawProxy(WithdrawProxy), function:claim, arguments:[]  
+EXPRESSION:previousWithdrawProxy.claim()	NodeType.EXPRESSION" [key=0];
+"BlockID: 3583
+Call context: 
+None
+TMP_2662(bool) = TMP_2661 != 0
+TMP_2663(bool) = TMP_2660 && TMP_2662
+CONDITION TMP_2663
+EXPRESSION:address(previousWithdrawProxy) != address(0) && previousWithdrawProxy.getFinalAuctionEnd() != 0	NodeType.IF" -> "BlockID: 3586
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3584
+Call context: 
+True
+HIGH_LEVEL_CALL, dest:previousWithdrawProxy(WithdrawProxy), function:claim, arguments:[]  
+EXPRESSION:previousWithdrawProxy.claim()	NodeType.EXPRESSION" -> "BlockID: 3586
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3586
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 3557
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

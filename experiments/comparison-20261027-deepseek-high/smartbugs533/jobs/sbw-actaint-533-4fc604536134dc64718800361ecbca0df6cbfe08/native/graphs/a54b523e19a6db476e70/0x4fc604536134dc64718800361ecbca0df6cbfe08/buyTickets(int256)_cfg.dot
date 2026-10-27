@@ -1,0 +1,510 @@
+digraph {
+"BlockID: 565
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 566
+Call context: 
+None
+MODIFIER_CALL, Pool.requireOpen()()
+EXPRESSION:requireOpen()	NodeType.EXPRESSION";
+"BlockID: 568
+Call context: 
+True
+TMP_309(int256) = LIBRARY_CALL, dest:FixidityLib, function:FixidityLib.newFixed(int256), arguments:['_countNonFixed'] 
+EXPRESSION:";
+"BlockID: 569
+Call context: 
+None
+count(int256) := TMP_309(int256)
+TMP_310(int256) = LIBRARY_CALL, dest:FixidityLib, function:FixidityLib.multiply(int256,int256), arguments:['ticketPrice', 'count'] 
+EXPRESSION:count = FixidityLib.newFixed(_countNonFixed)	NodeType.VARIABLE
+count = FixidityLib.newFixed(_countNonFixed)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 570
+Call context: 
+None
+totalDeposit(int256) := TMP_310(int256)
+TMP_311(int256) = LIBRARY_CALL, dest:FixidityLib, function:FixidityLib.fromFixed(int256), arguments:['totalDeposit'] 
+EXPRESSION:totalDeposit = FixidityLib.multiply(ticketPrice,count)	NodeType.VARIABLE
+totalDeposit = FixidityLib.multiply(ticketPrice,count)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 571
+Call context: 
+None
+TMP_312 = CONVERT TMP_311 to uint256
+totalDepositNonFixed(uint256) := TMP_312(uint256)
+TMP_313 = CONVERT this to address
+TMP_314(bool) = HIGH_LEVEL_CALL, dest:token(IERC20), function:transferFrom, arguments:['msg.sender', 'TMP_313', 'totalDepositNonFixed']  
+EXPRESSION:totalDepositNonFixed = uint256(FixidityLib.fromFixed(totalDeposit))	NodeType.VARIABLE
+totalDepositNonFixed = uint256(FixidityLib.fromFixed(totalDeposit))	NodeType.EXPRESSION
+require(bool,string)(token.transferFrom(msg.sender,address(this),totalDepositNonFixed),token transfer failed)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 573
+Call context: 
+True
+TMP_316(bool) = INTERNAL_CALL, Pool._hasEntry(address)(msg.sender)
+EXPRESSION:_hasEntry(msg.sender)	NodeType.EXPRESSION";
+"BlockID: 574
+Call context: 
+None
+CONDITION TMP_316
+EXPRESSION:_hasEntry(msg.sender)	NodeType.IF" [shape=box];
+"BlockID: 575
+Call context: 
+True
+REF_129(Pool.Entry) -> entries[msg.sender]
+REF_130(int256) -> REF_129.amount
+REF_132(Pool.Entry) -> entries[msg.sender]
+REF_133(int256) -> REF_132.amount
+TMP_317(int256) = LIBRARY_CALL, dest:FixidityLib, function:FixidityLib.add(int256,int256), arguments:['REF_133', 'totalDeposit'] 
+EXPRESSION:entries[msg.sender].amount = FixidityLib.add(entries[msg.sender].amount,totalDeposit)	NodeType.EXPRESSION";
+"BlockID: 577
+Call context: 
+False
+REF_139(Pool.Entry) -> entries[msg.sender]
+TMP_320 = CONVERT _countNonFixed to uint256
+TMP_321(Pool.Entry) = new Entry(msg.sender,totalDeposit,TMP_320,0)
+REF_139(Pool.Entry) (->entries) := TMP_321(Pool.Entry)
+TMP_322(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['entryCount', '1'] 
+EXPRESSION:entries[msg.sender] = Entry(msg.sender,totalDeposit,uint256(_countNonFixed),0)	NodeType.EXPRESSION
+entryCount = entryCount.add(1)	NodeType.EXPRESSION";
+"BlockID: 578
+Call context: 
+None
+entryCount(uint256) := TMP_322(uint256)
+EXPRESSION:entryCount = entryCount.add(1)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 579
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 580
+Call context: 
+None
+REF_142(Pool.Entry) -> entries[msg.sender]
+REF_143(int256) -> REF_142.amount
+TMP_323(int256) = LIBRARY_CALL, dest:FixidityLib, function:FixidityLib.fromFixed(int256), arguments:['REF_143'] 
+EXPRESSION:";
+"BlockID: 581
+Call context: 
+None
+amountNonFixed(int256) := TMP_323(int256)
+TMP_324 = CONVERT amountNonFixed to uint256
+TMP_325 = CONVERT msg.sender to uint256
+TMP_326 = CONVERT TMP_325 to bytes32
+LIBRARY_CALL, dest:SortitionSumTreeFactory, function:SortitionSumTreeFactory.set(SortitionSumTreeFactory.SortitionSumTrees,bytes32,uint256,bytes32), arguments:['sortitionSumTrees', 'SUM_TREE_KEY', 'TMP_324', 'TMP_326'] 
+EXPRESSION:amountNonFixed = FixidityLib.fromFixed(entries[msg.sender].amount)	NodeType.VARIABLE
+amountNonFixed = FixidityLib.fromFixed(entries[msg.sender].amount)	NodeType.EXPRESSION
+sortitionSumTrees.set(SUM_TREE_KEY,uint256(amountNonFixed),bytes32(uint256(msg.sender)))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 582
+Call context: 
+None
+TMP_328(int256) = LIBRARY_CALL, dest:FixidityLib, function:FixidityLib.add(int256,int256), arguments:['totalAmount', 'totalDeposit'] 
+EXPRESSION:sortitionSumTrees.set(SUM_TREE_KEY,uint256(amountNonFixed),bytes32(uint256(msg.sender)))	NodeType.EXPRESSION
+totalAmount = FixidityLib.add(totalAmount,totalDeposit)	NodeType.EXPRESSION";
+"BlockID: 583
+Call context: 
+None
+totalAmount(int256) := TMP_328(int256)
+TMP_329(int256) = LIBRARY_CALL, dest:FixidityLib, function:FixidityLib.maxFixedDiv(), arguments:[] 
+EXPRESSION:totalAmount = FixidityLib.add(totalAmount,totalDeposit)	NodeType.EXPRESSION
+require(bool,string)(totalAmount <= maxPoolSizeFixedPoint24(FixidityLib.maxFixedDiv()),pool size exceeds maximum)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 584
+Call context: 
+None
+TMP_330(int256) = INTERNAL_CALL, Pool.maxPoolSizeFixedPoint24(int256)(TMP_329)
+EXPRESSION:require(bool,string)(totalAmount <= maxPoolSizeFixedPoint24(FixidityLib.maxFixedDiv()),pool size exceeds maximum)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 576
+Call context: 
+None
+REF_130(int256) (->entries) := TMP_317(int256)
+REF_134(Pool.Entry) -> entries[msg.sender]
+REF_135(uint256) -> REF_134.ticketCount
+REF_136(Pool.Entry) -> entries[msg.sender]
+REF_137(uint256) -> REF_136.ticketCount
+TMP_318 = CONVERT _countNonFixed to uint256
+TMP_319(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['REF_137', 'TMP_318'] 
+EXPRESSION:entries[msg.sender].amount = FixidityLib.add(entries[msg.sender].amount,totalDeposit)	NodeType.EXPRESSION
+entries[msg.sender].ticketCount = entries[msg.sender].ticketCount.add(uint256(_countNonFixed))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 588
+Call context: 
+None
+REF_135(uint256) (->entries) := TMP_319(uint256)
+EXPRESSION:entries[msg.sender].ticketCount = entries[msg.sender].ticketCount.add(uint256(_countNonFixed))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 589
+Call context: 
+None
+TMP_307(bool) = _countNonFixed > 0
+CONDITION TMP_307
+EXPRESSION:TMP_307(bool) = _countNonFixed > 0	NodeType.IF";
+"BlockID: 590
+Call context: 
+True
+TMP_308(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 591
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 592
+Call context: 
+None
+CONDITION TMP_314
+EXPRESSION:qiantao require	NodeType.IF";
+"BlockID: 593
+Call context: 
+True
+TMP_315(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 594
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 595
+Call context: 
+None
+TMP_331(bool) = totalAmount <= TMP_330
+CONDITION TMP_331
+EXPRESSION:TMP_331(bool) = totalAmount <= TMP_330	NodeType.IF";
+"BlockID: 596
+Call context: 
+True
+TMP_332(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION";
+"BlockID: 597
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 565
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 566
+Call context: 
+None
+MODIFIER_CALL, Pool.requireOpen()()
+EXPRESSION:requireOpen()	NodeType.EXPRESSION" [key=0];
+"BlockID: 566
+Call context: 
+None
+MODIFIER_CALL, Pool.requireOpen()()
+EXPRESSION:requireOpen()	NodeType.EXPRESSION" -> "BlockID: 589
+Call context: 
+None
+TMP_307(bool) = _countNonFixed > 0
+CONDITION TMP_307
+EXPRESSION:TMP_307(bool) = _countNonFixed > 0	NodeType.IF" [key=0];
+"BlockID: 568
+Call context: 
+True
+TMP_309(int256) = LIBRARY_CALL, dest:FixidityLib, function:FixidityLib.newFixed(int256), arguments:['_countNonFixed'] 
+EXPRESSION:" -> "BlockID: 569
+Call context: 
+None
+count(int256) := TMP_309(int256)
+TMP_310(int256) = LIBRARY_CALL, dest:FixidityLib, function:FixidityLib.multiply(int256,int256), arguments:['ticketPrice', 'count'] 
+EXPRESSION:count = FixidityLib.newFixed(_countNonFixed)	NodeType.VARIABLE
+count = FixidityLib.newFixed(_countNonFixed)	NodeType.EXPRESSION" [key=0];
+"BlockID: 569
+Call context: 
+None
+count(int256) := TMP_309(int256)
+TMP_310(int256) = LIBRARY_CALL, dest:FixidityLib, function:FixidityLib.multiply(int256,int256), arguments:['ticketPrice', 'count'] 
+EXPRESSION:count = FixidityLib.newFixed(_countNonFixed)	NodeType.VARIABLE
+count = FixidityLib.newFixed(_countNonFixed)	NodeType.EXPRESSION" -> "BlockID: 570
+Call context: 
+None
+totalDeposit(int256) := TMP_310(int256)
+TMP_311(int256) = LIBRARY_CALL, dest:FixidityLib, function:FixidityLib.fromFixed(int256), arguments:['totalDeposit'] 
+EXPRESSION:totalDeposit = FixidityLib.multiply(ticketPrice,count)	NodeType.VARIABLE
+totalDeposit = FixidityLib.multiply(ticketPrice,count)	NodeType.EXPRESSION" [key=0];
+"BlockID: 570
+Call context: 
+None
+totalDeposit(int256) := TMP_310(int256)
+TMP_311(int256) = LIBRARY_CALL, dest:FixidityLib, function:FixidityLib.fromFixed(int256), arguments:['totalDeposit'] 
+EXPRESSION:totalDeposit = FixidityLib.multiply(ticketPrice,count)	NodeType.VARIABLE
+totalDeposit = FixidityLib.multiply(ticketPrice,count)	NodeType.EXPRESSION" -> "BlockID: 571
+Call context: 
+None
+TMP_312 = CONVERT TMP_311 to uint256
+totalDepositNonFixed(uint256) := TMP_312(uint256)
+TMP_313 = CONVERT this to address
+TMP_314(bool) = HIGH_LEVEL_CALL, dest:token(IERC20), function:transferFrom, arguments:['msg.sender', 'TMP_313', 'totalDepositNonFixed']  
+EXPRESSION:totalDepositNonFixed = uint256(FixidityLib.fromFixed(totalDeposit))	NodeType.VARIABLE
+totalDepositNonFixed = uint256(FixidityLib.fromFixed(totalDeposit))	NodeType.EXPRESSION
+require(bool,string)(token.transferFrom(msg.sender,address(this),totalDepositNonFixed),token transfer failed)	NodeType.EXPRESSION" [key=0];
+"BlockID: 571
+Call context: 
+None
+TMP_312 = CONVERT TMP_311 to uint256
+totalDepositNonFixed(uint256) := TMP_312(uint256)
+TMP_313 = CONVERT this to address
+TMP_314(bool) = HIGH_LEVEL_CALL, dest:token(IERC20), function:transferFrom, arguments:['msg.sender', 'TMP_313', 'totalDepositNonFixed']  
+EXPRESSION:totalDepositNonFixed = uint256(FixidityLib.fromFixed(totalDeposit))	NodeType.VARIABLE
+totalDepositNonFixed = uint256(FixidityLib.fromFixed(totalDeposit))	NodeType.EXPRESSION
+require(bool,string)(token.transferFrom(msg.sender,address(this),totalDepositNonFixed),token transfer failed)	NodeType.EXPRESSION" -> "BlockID: 592
+Call context: 
+None
+CONDITION TMP_314
+EXPRESSION:qiantao require	NodeType.IF" [key=0];
+"BlockID: 573
+Call context: 
+True
+TMP_316(bool) = INTERNAL_CALL, Pool._hasEntry(address)(msg.sender)
+EXPRESSION:_hasEntry(msg.sender)	NodeType.EXPRESSION" -> "BlockID: 574
+Call context: 
+None
+CONDITION TMP_316
+EXPRESSION:_hasEntry(msg.sender)	NodeType.IF" [key=0];
+"BlockID: 574
+Call context: 
+None
+CONDITION TMP_316
+EXPRESSION:_hasEntry(msg.sender)	NodeType.IF" -> "BlockID: 575
+Call context: 
+True
+REF_129(Pool.Entry) -> entries[msg.sender]
+REF_130(int256) -> REF_129.amount
+REF_132(Pool.Entry) -> entries[msg.sender]
+REF_133(int256) -> REF_132.amount
+TMP_317(int256) = LIBRARY_CALL, dest:FixidityLib, function:FixidityLib.add(int256,int256), arguments:['REF_133', 'totalDeposit'] 
+EXPRESSION:entries[msg.sender].amount = FixidityLib.add(entries[msg.sender].amount,totalDeposit)	NodeType.EXPRESSION" [key=0];
+"BlockID: 574
+Call context: 
+None
+CONDITION TMP_316
+EXPRESSION:_hasEntry(msg.sender)	NodeType.IF" -> "BlockID: 577
+Call context: 
+False
+REF_139(Pool.Entry) -> entries[msg.sender]
+TMP_320 = CONVERT _countNonFixed to uint256
+TMP_321(Pool.Entry) = new Entry(msg.sender,totalDeposit,TMP_320,0)
+REF_139(Pool.Entry) (->entries) := TMP_321(Pool.Entry)
+TMP_322(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['entryCount', '1'] 
+EXPRESSION:entries[msg.sender] = Entry(msg.sender,totalDeposit,uint256(_countNonFixed),0)	NodeType.EXPRESSION
+entryCount = entryCount.add(1)	NodeType.EXPRESSION" [key=0];
+"BlockID: 575
+Call context: 
+True
+REF_129(Pool.Entry) -> entries[msg.sender]
+REF_130(int256) -> REF_129.amount
+REF_132(Pool.Entry) -> entries[msg.sender]
+REF_133(int256) -> REF_132.amount
+TMP_317(int256) = LIBRARY_CALL, dest:FixidityLib, function:FixidityLib.add(int256,int256), arguments:['REF_133', 'totalDeposit'] 
+EXPRESSION:entries[msg.sender].amount = FixidityLib.add(entries[msg.sender].amount,totalDeposit)	NodeType.EXPRESSION" -> "BlockID: 576
+Call context: 
+None
+REF_130(int256) (->entries) := TMP_317(int256)
+REF_134(Pool.Entry) -> entries[msg.sender]
+REF_135(uint256) -> REF_134.ticketCount
+REF_136(Pool.Entry) -> entries[msg.sender]
+REF_137(uint256) -> REF_136.ticketCount
+TMP_318 = CONVERT _countNonFixed to uint256
+TMP_319(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['REF_137', 'TMP_318'] 
+EXPRESSION:entries[msg.sender].amount = FixidityLib.add(entries[msg.sender].amount,totalDeposit)	NodeType.EXPRESSION
+entries[msg.sender].ticketCount = entries[msg.sender].ticketCount.add(uint256(_countNonFixed))	NodeType.EXPRESSION" [key=0];
+"BlockID: 577
+Call context: 
+False
+REF_139(Pool.Entry) -> entries[msg.sender]
+TMP_320 = CONVERT _countNonFixed to uint256
+TMP_321(Pool.Entry) = new Entry(msg.sender,totalDeposit,TMP_320,0)
+REF_139(Pool.Entry) (->entries) := TMP_321(Pool.Entry)
+TMP_322(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['entryCount', '1'] 
+EXPRESSION:entries[msg.sender] = Entry(msg.sender,totalDeposit,uint256(_countNonFixed),0)	NodeType.EXPRESSION
+entryCount = entryCount.add(1)	NodeType.EXPRESSION" -> "BlockID: 578
+Call context: 
+None
+entryCount(uint256) := TMP_322(uint256)
+EXPRESSION:entryCount = entryCount.add(1)	NodeType.EXPRESSION" [key=0];
+"BlockID: 578
+Call context: 
+None
+entryCount(uint256) := TMP_322(uint256)
+EXPRESSION:entryCount = entryCount.add(1)	NodeType.EXPRESSION" -> "BlockID: 579
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 579
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 580
+Call context: 
+None
+REF_142(Pool.Entry) -> entries[msg.sender]
+REF_143(int256) -> REF_142.amount
+TMP_323(int256) = LIBRARY_CALL, dest:FixidityLib, function:FixidityLib.fromFixed(int256), arguments:['REF_143'] 
+EXPRESSION:" [key=0];
+"BlockID: 580
+Call context: 
+None
+REF_142(Pool.Entry) -> entries[msg.sender]
+REF_143(int256) -> REF_142.amount
+TMP_323(int256) = LIBRARY_CALL, dest:FixidityLib, function:FixidityLib.fromFixed(int256), arguments:['REF_143'] 
+EXPRESSION:" -> "BlockID: 581
+Call context: 
+None
+amountNonFixed(int256) := TMP_323(int256)
+TMP_324 = CONVERT amountNonFixed to uint256
+TMP_325 = CONVERT msg.sender to uint256
+TMP_326 = CONVERT TMP_325 to bytes32
+LIBRARY_CALL, dest:SortitionSumTreeFactory, function:SortitionSumTreeFactory.set(SortitionSumTreeFactory.SortitionSumTrees,bytes32,uint256,bytes32), arguments:['sortitionSumTrees', 'SUM_TREE_KEY', 'TMP_324', 'TMP_326'] 
+EXPRESSION:amountNonFixed = FixidityLib.fromFixed(entries[msg.sender].amount)	NodeType.VARIABLE
+amountNonFixed = FixidityLib.fromFixed(entries[msg.sender].amount)	NodeType.EXPRESSION
+sortitionSumTrees.set(SUM_TREE_KEY,uint256(amountNonFixed),bytes32(uint256(msg.sender)))	NodeType.EXPRESSION" [key=0];
+"BlockID: 581
+Call context: 
+None
+amountNonFixed(int256) := TMP_323(int256)
+TMP_324 = CONVERT amountNonFixed to uint256
+TMP_325 = CONVERT msg.sender to uint256
+TMP_326 = CONVERT TMP_325 to bytes32
+LIBRARY_CALL, dest:SortitionSumTreeFactory, function:SortitionSumTreeFactory.set(SortitionSumTreeFactory.SortitionSumTrees,bytes32,uint256,bytes32), arguments:['sortitionSumTrees', 'SUM_TREE_KEY', 'TMP_324', 'TMP_326'] 
+EXPRESSION:amountNonFixed = FixidityLib.fromFixed(entries[msg.sender].amount)	NodeType.VARIABLE
+amountNonFixed = FixidityLib.fromFixed(entries[msg.sender].amount)	NodeType.EXPRESSION
+sortitionSumTrees.set(SUM_TREE_KEY,uint256(amountNonFixed),bytes32(uint256(msg.sender)))	NodeType.EXPRESSION" -> "BlockID: 582
+Call context: 
+None
+TMP_328(int256) = LIBRARY_CALL, dest:FixidityLib, function:FixidityLib.add(int256,int256), arguments:['totalAmount', 'totalDeposit'] 
+EXPRESSION:sortitionSumTrees.set(SUM_TREE_KEY,uint256(amountNonFixed),bytes32(uint256(msg.sender)))	NodeType.EXPRESSION
+totalAmount = FixidityLib.add(totalAmount,totalDeposit)	NodeType.EXPRESSION" [key=0];
+"BlockID: 582
+Call context: 
+None
+TMP_328(int256) = LIBRARY_CALL, dest:FixidityLib, function:FixidityLib.add(int256,int256), arguments:['totalAmount', 'totalDeposit'] 
+EXPRESSION:sortitionSumTrees.set(SUM_TREE_KEY,uint256(amountNonFixed),bytes32(uint256(msg.sender)))	NodeType.EXPRESSION
+totalAmount = FixidityLib.add(totalAmount,totalDeposit)	NodeType.EXPRESSION" -> "BlockID: 583
+Call context: 
+None
+totalAmount(int256) := TMP_328(int256)
+TMP_329(int256) = LIBRARY_CALL, dest:FixidityLib, function:FixidityLib.maxFixedDiv(), arguments:[] 
+EXPRESSION:totalAmount = FixidityLib.add(totalAmount,totalDeposit)	NodeType.EXPRESSION
+require(bool,string)(totalAmount <= maxPoolSizeFixedPoint24(FixidityLib.maxFixedDiv()),pool size exceeds maximum)	NodeType.EXPRESSION" [key=0];
+"BlockID: 583
+Call context: 
+None
+totalAmount(int256) := TMP_328(int256)
+TMP_329(int256) = LIBRARY_CALL, dest:FixidityLib, function:FixidityLib.maxFixedDiv(), arguments:[] 
+EXPRESSION:totalAmount = FixidityLib.add(totalAmount,totalDeposit)	NodeType.EXPRESSION
+require(bool,string)(totalAmount <= maxPoolSizeFixedPoint24(FixidityLib.maxFixedDiv()),pool size exceeds maximum)	NodeType.EXPRESSION" -> "BlockID: 584
+Call context: 
+None
+TMP_330(int256) = INTERNAL_CALL, Pool.maxPoolSizeFixedPoint24(int256)(TMP_329)
+EXPRESSION:require(bool,string)(totalAmount <= maxPoolSizeFixedPoint24(FixidityLib.maxFixedDiv()),pool size exceeds maximum)	NodeType.EXPRESSION" [key=0];
+"BlockID: 584
+Call context: 
+None
+TMP_330(int256) = INTERNAL_CALL, Pool.maxPoolSizeFixedPoint24(int256)(TMP_329)
+EXPRESSION:require(bool,string)(totalAmount <= maxPoolSizeFixedPoint24(FixidityLib.maxFixedDiv()),pool size exceeds maximum)	NodeType.EXPRESSION" -> "BlockID: 595
+Call context: 
+None
+TMP_331(bool) = totalAmount <= TMP_330
+CONDITION TMP_331
+EXPRESSION:TMP_331(bool) = totalAmount <= TMP_330	NodeType.IF" [key=0];
+"BlockID: 576
+Call context: 
+None
+REF_130(int256) (->entries) := TMP_317(int256)
+REF_134(Pool.Entry) -> entries[msg.sender]
+REF_135(uint256) -> REF_134.ticketCount
+REF_136(Pool.Entry) -> entries[msg.sender]
+REF_137(uint256) -> REF_136.ticketCount
+TMP_318 = CONVERT _countNonFixed to uint256
+TMP_319(uint256) = LIBRARY_CALL, dest:SafeMath, function:SafeMath.add(uint256,uint256), arguments:['REF_137', 'TMP_318'] 
+EXPRESSION:entries[msg.sender].amount = FixidityLib.add(entries[msg.sender].amount,totalDeposit)	NodeType.EXPRESSION
+entries[msg.sender].ticketCount = entries[msg.sender].ticketCount.add(uint256(_countNonFixed))	NodeType.EXPRESSION" -> "BlockID: 588
+Call context: 
+None
+REF_135(uint256) (->entries) := TMP_319(uint256)
+EXPRESSION:entries[msg.sender].ticketCount = entries[msg.sender].ticketCount.add(uint256(_countNonFixed))	NodeType.EXPRESSION" [key=0];
+"BlockID: 588
+Call context: 
+None
+REF_135(uint256) (->entries) := TMP_319(uint256)
+EXPRESSION:entries[msg.sender].ticketCount = entries[msg.sender].ticketCount.add(uint256(_countNonFixed))	NodeType.EXPRESSION" -> "BlockID: 579
+Call context: 
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 589
+Call context: 
+None
+TMP_307(bool) = _countNonFixed > 0
+CONDITION TMP_307
+EXPRESSION:TMP_307(bool) = _countNonFixed > 0	NodeType.IF" -> "BlockID: 590
+Call context: 
+True
+TMP_308(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 589
+Call context: 
+None
+TMP_307(bool) = _countNonFixed > 0
+CONDITION TMP_307
+EXPRESSION:TMP_307(bool) = _countNonFixed > 0	NodeType.IF" -> "BlockID: 591
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 591
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 568
+Call context: 
+True
+TMP_309(int256) = LIBRARY_CALL, dest:FixidityLib, function:FixidityLib.newFixed(int256), arguments:['_countNonFixed'] 
+EXPRESSION:" [key=0];
+"BlockID: 592
+Call context: 
+None
+CONDITION TMP_314
+EXPRESSION:qiantao require	NodeType.IF" -> "BlockID: 593
+Call context: 
+True
+TMP_315(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 592
+Call context: 
+None
+CONDITION TMP_314
+EXPRESSION:qiantao require	NodeType.IF" -> "BlockID: 594
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 594
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 573
+Call context: 
+True
+TMP_316(bool) = INTERNAL_CALL, Pool._hasEntry(address)(msg.sender)
+EXPRESSION:_hasEntry(msg.sender)	NodeType.EXPRESSION" [key=0];
+"BlockID: 595
+Call context: 
+None
+TMP_331(bool) = totalAmount <= TMP_330
+CONDITION TMP_331
+EXPRESSION:TMP_331(bool) = totalAmount <= TMP_330	NodeType.IF" -> "BlockID: 596
+Call context: 
+True
+TMP_332(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	NodeType.EXPRESSION" [key=0];
+"BlockID: 595
+Call context: 
+None
+TMP_331(bool) = totalAmount <= TMP_330
+CONDITION TMP_331
+EXPRESSION:TMP_331(bool) = totalAmount <= TMP_330	NodeType.IF" -> "BlockID: 597
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

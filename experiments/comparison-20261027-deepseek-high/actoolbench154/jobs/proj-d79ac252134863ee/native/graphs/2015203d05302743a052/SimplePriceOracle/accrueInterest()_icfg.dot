@@ -1,0 +1,2522 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+TMP_1467(None) := block.number(uint256)
+currentBlockNumber(uint256) := TMP_313(uint256)
+accrualBlockNumberPrior(uint256) := accrualBlockNumber(uint256)
+TMP_314(bool) = accrualBlockNumberPrior == currentBlockNumber
+CONDITION TMP_314
+EXPRESSION:currentBlockNumber = getBlockNumber()	NodeType.VARIABLE
+currentBlockNumber = getBlockNumber()	NodeType.EXPRESSION
+accrualBlockNumberPrior = accrualBlockNumber	NodeType.VARIABLE
+accrualBlockNumberPrior = accrualBlockNumber	NodeType.EXPRESSION
+accrualBlockNumberPrior == currentBlockNumber	NodeType.IF";
+"BlockID: 2
+Call context: 
+True
+REF_173(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_315 = CONVERT REF_173 to uint256
+RETURN TMP_315
+EXPRESSION:uint256(Error.NO_ERROR)	NodeType.RETURN";
+"BlockID: 3
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 4
+Call context: 
+None
+TMP_782 = CONVERT underlying to EIP20Interface
+token(EIP20Interface) := TMP_782(EIP20Interface)
+TMP_783 = CONVERT this to address
+TMP_784(uint256) = HIGH_LEVEL_CALL, dest:token(EIP20Interface), function:balanceOf, arguments:['TMP_783']  
+EXPRESSION:token = EIP20Interface(underlying)	NodeType.VARIABLE
+token = EIP20Interface(underlying)	NodeType.EXPRESSION
+token.balanceOf(address(this))	NodeType.EXPRESSION";
+"BlockID: 6
+Call context: 
+None
+cashPrior(uint256) := TMP_316(uint256)
+borrowsPrior(uint256) := totalBorrows(uint256)
+reservesPrior(uint256) := totalReserves(uint256)
+borrowIndexPrior(uint256) := borrowIndex(uint256)
+TMP_317(uint256) = HIGH_LEVEL_CALL, dest:interestRateModel(InterestRateModel), function:getBorrowRate, arguments:['cashPrior', 'borrowsPrior', 'reservesPrior']  
+EXPRESSION:cashPrior = getCashPrior()	NodeType.VARIABLE
+cashPrior = getCashPrior()	NodeType.EXPRESSION
+borrowsPrior = totalBorrows	NodeType.VARIABLE
+borrowsPrior = totalBorrows	NodeType.EXPRESSION
+reservesPrior = totalReserves	NodeType.VARIABLE
+reservesPrior = totalReserves	NodeType.EXPRESSION
+borrowIndexPrior = borrowIndex	NodeType.VARIABLE
+borrowIndexPrior = borrowIndex	NodeType.EXPRESSION" [shape=box];
+"BlockID: 10
+Call context: 
+True
+NEW VARIABLE mathErr
+NEW VARIABLE blockDelta
+TMP_764(bool) = b <= a
+CONDITION TMP_764
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+b <= a	NodeType.IF";
+"BlockID: 16
+Call context: 
+True
+NEW VARIABLE simpleInterestFactor
+NEW VARIABLE interestAccumulated
+NEW VARIABLE totalBorrowsNew
+NEW VARIABLE totalReservesNew
+NEW VARIABLE borrowIndexNew
+TMP_322(ExponentialNoError.Exp) = new Exp(borrowRateMantissa)
+NEW VARIABLE err0
+NEW VARIABLE scaledMantissa
+REF_477(uint256) -> a.mantissa
+TMP_758(bool) = a == 0
+CONDITION TMP_758
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF";
+"BlockID: 25
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_36 index: 0 
+simpleInterestFactor(ExponentialNoError.Exp)= UNPACK TUPLE_36 index: 1 
+REF_176(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_323(bool) = mathErr != REF_176
+CONDITION TMP_323
+EXPRESSION:(mathErr,simpleInterestFactor) = mulScalar(Exp(borrowRateMantissa),blockDelta)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 27
+Call context: 
+True
+REF_177(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_178(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_SIMPLE_INTEREST_FACTOR_CALCULATION_FAILED
+TMP_324 = CONVERT mathErr to uint256
+TMP_649 = CONVERT err to uint256
+TMP_1505(None) := TMP_649(uint256)
+RETURN TMP_325
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_SIMPLE_INTEREST_FACTOR_CALCULATION_FAILED,uint256(mathErr))	NodeType.RETURN";
+"BlockID: 28
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 29
+Call context: 
+None
+NEW VARIABLE err
+NEW VARIABLE product
+NEW VARIABLE err0
+NEW VARIABLE scaledMantissa
+REF_477(uint256) -> a.mantissa
+TMP_758(bool) = a == 0
+CONDITION TMP_758
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF";
+"BlockID: 42
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_37 index: 0 
+interestAccumulated(uint256)= UNPACK TUPLE_37 index: 1 
+REF_179(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_326(bool) = mathErr != REF_179
+CONDITION TMP_326
+EXPRESSION:(mathErr,interestAccumulated) = mulScalarTruncate(simpleInterestFactor,borrowsPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 44
+Call context: 
+True
+REF_180(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_181(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_ACCUMULATED_INTEREST_CALCULATION_FAILED
+TMP_327 = CONVERT mathErr to uint256
+TMP_649 = CONVERT err to uint256
+TMP_1505(None) := TMP_649(uint256)
+RETURN TMP_328
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_ACCUMULATED_INTEREST_CALCULATION_FAILED,uint256(mathErr))	NodeType.RETURN";
+"BlockID: 45
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 46
+Call context: 
+None
+TMP_766(uint256) = a + b
+c(uint256) := TMP_766(uint256)
+TMP_767(bool) = c >= a
+CONDITION TMP_767
+EXPRESSION:c = a + b	NodeType.VARIABLE
+c = a + b	NodeType.EXPRESSION
+c >= a	NodeType.IF";
+"BlockID: 49
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_38 index: 0 
+totalBorrowsNew(uint256)= UNPACK TUPLE_38 index: 1 
+REF_182(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_329(bool) = mathErr != REF_182
+CONDITION TMP_329
+EXPRESSION:(mathErr,totalBorrowsNew) = addUInt(interestAccumulated,borrowsPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 50
+Call context: 
+True
+REF_183(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_184(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_NEW_TOTAL_BORROWS_CALCULATION_FAILED
+TMP_330 = CONVERT mathErr to uint256
+TMP_649 = CONVERT err to uint256
+TMP_1505(None) := TMP_649(uint256)
+RETURN TMP_331
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_NEW_TOTAL_BORROWS_CALCULATION_FAILED,uint256(mathErr))	NodeType.RETURN";
+"BlockID: 51
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 52
+Call context: 
+None
+TMP_332(ExponentialNoError.Exp) = new Exp(reserveFactorMantissa)
+NEW VARIABLE err
+NEW VARIABLE product
+NEW VARIABLE err0
+NEW VARIABLE scaledMantissa
+REF_477(uint256) -> a.mantissa
+TMP_758(bool) = a == 0
+CONDITION TMP_758
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF";
+"BlockID: 65
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_39 index: 0 
+totalReservesNew(uint256)= UNPACK TUPLE_39 index: 1 
+REF_185(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_333(bool) = mathErr != REF_185
+CONDITION TMP_333
+EXPRESSION:(mathErr,totalReservesNew) = mulScalarTruncateAddUInt(Exp(reserveFactorMantissa),interestAccumulated,reservesPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 67
+Call context: 
+True
+REF_186(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_187(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_NEW_TOTAL_RESERVES_CALCULATION_FAILED
+TMP_334 = CONVERT mathErr to uint256
+TMP_649 = CONVERT err to uint256
+TMP_1505(None) := TMP_649(uint256)
+RETURN TMP_335
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_NEW_TOTAL_RESERVES_CALCULATION_FAILED,uint256(mathErr))	NodeType.RETURN";
+"BlockID: 68
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 71
+Call context: 
+None
+NEW VARIABLE err
+NEW VARIABLE product
+NEW VARIABLE err0
+NEW VARIABLE scaledMantissa
+REF_477(uint256) -> a.mantissa
+TMP_758(bool) = a == 0
+CONDITION TMP_758
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF";
+"BlockID: 85
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_40 index: 0 
+borrowIndexNew(uint256)= UNPACK TUPLE_40 index: 1 
+REF_188(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_336(bool) = mathErr != REF_188
+CONDITION TMP_336
+EXPRESSION:(mathErr,borrowIndexNew) = mulScalarTruncateAddUInt(simpleInterestFactor,borrowIndexPrior,borrowIndexPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 87
+Call context: 
+True
+REF_189(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_190(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_NEW_BORROW_INDEX_CALCULATION_FAILED
+TMP_337 = CONVERT mathErr to uint256
+TMP_649 = CONVERT err to uint256
+TMP_1505(None) := TMP_649(uint256)
+RETURN TMP_338
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_NEW_BORROW_INDEX_CALCULATION_FAILED,uint256(mathErr))	NodeType.RETURN";
+"BlockID: 88
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 91
+Call context: 
+None
+accrualBlockNumber(uint256) := currentBlockNumber(uint256)
+borrowIndex(uint256) := borrowIndexNew(uint256)
+totalBorrows(uint256) := totalBorrowsNew(uint256)
+totalReserves(uint256) := totalReservesNew(uint256)
+REF_191(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_340 = CONVERT REF_191 to uint256
+RETURN TMP_340
+EXPRESSION:accrualBlockNumber = currentBlockNumber	NodeType.EXPRESSION
+borrowIndex = borrowIndexNew	NodeType.EXPRESSION
+totalBorrows = totalBorrowsNew	NodeType.EXPRESSION
+totalReserves = totalReservesNew	NodeType.EXPRESSION
+uint256(Error.NO_ERROR)	NodeType.RETURN";
+"BlockID: 7
+Call context: 
+None
+borrowRateMantissa(uint256) := TMP_317(uint256)
+TMP_318(bool) = borrowRateMantissa <= borrowRateMaxMantissa
+CONDITION TMP_318
+EXPRESSION:TMP_318(bool) = borrowRateMantissa <= borrowRateMaxMantissa	NodeType.IF";
+"BlockID: 8
+Call context: 
+True
+TMP_319(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 13
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_35 index: 0 
+blockDelta(uint256)= UNPACK TUPLE_35 index: 1 
+REF_175(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_320(bool) = mathErr == REF_175
+CONDITION TMP_320
+EXPRESSION:TMP_320(bool) = mathErr == REF_175	NodeType.IF";
+"BlockID: 14
+Call context: 
+True
+TMP_321(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 15
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 5
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+TMP_1568(None) := TMP_784(uint256)
+EXPRESSION:" [shape=box];
+"BlockID: 11
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+True
+REF_536(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_765(uint256) = a - b
+TMP_1555(None) := REF_536(CarefulMath.MathError)
+TMP_1555(None) := TMP_765(uint256)
+EXPRESSION:";
+"BlockID: 12
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+False
+REF_537(CarefulMath.MathError) -> MathError.INTEGER_UNDERFLOW
+TMP_1555(None) := REF_537(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 19
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_69 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_69 index: 1 
+REF_478(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_657(bool) = err0 != REF_478
+CONDITION TMP_657
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 21
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+True
+TMP_658(ExponentialNoError.Exp) = new Exp(0)
+TMP_1509(None) := err0(CarefulMath.MathError)
+TMP_1509(None) := TMP_658(ExponentialNoError.Exp)
+TMP_1509(None) := TMP_659(ExponentialNoError.Exp)
+EXPRESSION:";
+"BlockID: 22
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 26
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+REF_479(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_659(ExponentialNoError.Exp) = new Exp(scaledMantissa)
+TMP_1509(None) := REF_479(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 17
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalar
+True
+REF_531(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1553(None) := REF_531(CarefulMath.MathError)
+TMP_1553(None) := c(uint256)
+EXPRESSION:";
+"BlockID: 18
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalar
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 20
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalar
+None
+TMP_759(uint256) = a * b
+c(uint256) := TMP_759(uint256)
+TMP_760(uint256) = c / a
+TMP_761(bool) = TMP_760 != b
+CONDITION TMP_761
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF";
+"BlockID: 23
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalar
+True
+REF_532(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1553(None) := REF_532(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 24
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalar
+False
+REF_533(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1553(None) := REF_533(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 38
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_70 index: 0 
+product(ExponentialNoError.Exp)= UNPACK TUPLE_70 index: 1 
+REF_480(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_660(bool) = err != REF_480
+CONDITION TMP_660
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 40
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+True
+TMP_1510(None) := err(CarefulMath.MathError)
+TMP_1510(None) := TMP_661(uint256)
+EXPRESSION:";
+"BlockID: 41
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 43
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+REF_481(CarefulMath.MathError) -> MathError.NO_ERROR
+REF_499(uint256) -> exp.mantissa
+TMP_681(uint256) = REF_499 / expScale
+TMP_1519(None) := TMP_681(uint256)
+TMP_1510(None) := REF_481(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 32
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_69 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_69 index: 1 
+REF_478(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_657(bool) = err0 != REF_478
+CONDITION TMP_657
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 34
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate
+True
+TMP_658(ExponentialNoError.Exp) = new Exp(0)
+TMP_1509(None) := err0(CarefulMath.MathError)
+TMP_1509(None) := TMP_658(ExponentialNoError.Exp)
+TMP_1509(None) := TMP_659(ExponentialNoError.Exp)
+EXPRESSION:";
+"BlockID: 35
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 39
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate
+None
+REF_479(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_659(ExponentialNoError.Exp) = new Exp(scaledMantissa)
+TMP_1509(None) := REF_479(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 30
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate,mulScalar
+True
+REF_531(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1553(None) := REF_531(CarefulMath.MathError)
+TMP_1553(None) := c(uint256)
+EXPRESSION:";
+"BlockID: 31
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate,mulScalar
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 33
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate,mulScalar
+None
+TMP_759(uint256) = a * b
+c(uint256) := TMP_759(uint256)
+TMP_760(uint256) = c / a
+TMP_761(bool) = TMP_760 != b
+CONDITION TMP_761
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF";
+"BlockID: 36
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate,mulScalar
+True
+REF_532(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1553(None) := REF_532(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 37
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate,mulScalar
+False
+REF_533(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1553(None) := REF_533(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 47
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+True
+REF_538(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1556(None) := REF_538(CarefulMath.MathError)
+TMP_1556(None) := c(uint256)
+EXPRESSION:";
+"BlockID: 48
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+False
+REF_539(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1556(None) := REF_539(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 61
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_71 index: 0 
+product(ExponentialNoError.Exp)= UNPACK TUPLE_71 index: 1 
+REF_482(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_662(bool) = err != REF_482
+CONDITION TMP_662
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 63
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+True
+TMP_1511(None) := err(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 64
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 66
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+REF_499(uint256) -> exp.mantissa
+TMP_681(uint256) = REF_499 / expScale
+TMP_1519(None) := TMP_681(uint256)
+TMP_766(uint256) = a + b
+c(uint256) := TMP_766(uint256)
+TMP_767(bool) = c >= a
+CONDITION TMP_767
+EXPRESSION:c = a + b	NodeType.VARIABLE
+c = a + b	NodeType.EXPRESSION
+c >= a	NodeType.IF";
+"BlockID: 72
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+TMP_1511(None) := TUPLE_72([<slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x75ebeccd5370>, <slither.core.solidity_types.elementary_type.ElementaryType object at 0x75ebeccd5280>])
+EXPRESSION:" [shape=box];
+"BlockID: 55
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_69 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_69 index: 1 
+REF_478(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_657(bool) = err0 != REF_478
+CONDITION TMP_657
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 57
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+True
+TMP_658(ExponentialNoError.Exp) = new Exp(0)
+TMP_1509(None) := err0(CarefulMath.MathError)
+TMP_1509(None) := TMP_658(ExponentialNoError.Exp)
+TMP_1509(None) := TMP_659(ExponentialNoError.Exp)
+EXPRESSION:";
+"BlockID: 58
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 62
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+None
+REF_479(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_659(ExponentialNoError.Exp) = new Exp(scaledMantissa)
+TMP_1509(None) := REF_479(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 53
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+True
+REF_531(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1553(None) := REF_531(CarefulMath.MathError)
+TMP_1553(None) := c(uint256)
+EXPRESSION:";
+"BlockID: 54
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 56
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+None
+TMP_759(uint256) = a * b
+c(uint256) := TMP_759(uint256)
+TMP_760(uint256) = c / a
+TMP_761(bool) = TMP_760 != b
+CONDITION TMP_761
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF";
+"BlockID: 59
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+True
+REF_532(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1553(None) := REF_532(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 60
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+False
+REF_533(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1553(None) := REF_533(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 69
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+True
+REF_538(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1556(None) := REF_538(CarefulMath.MathError)
+TMP_1556(None) := c(uint256)
+EXPRESSION:";
+"BlockID: 70
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+False
+REF_539(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1556(None) := REF_539(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 81
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_71 index: 0 
+product(ExponentialNoError.Exp)= UNPACK TUPLE_71 index: 1 
+REF_482(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_662(bool) = err != REF_482
+CONDITION TMP_662
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 83
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+True
+TMP_1511(None) := err(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 84
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 86
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+REF_499(uint256) -> exp.mantissa
+TMP_681(uint256) = REF_499 / expScale
+TMP_1519(None) := TMP_681(uint256)
+TMP_766(uint256) = a + b
+c(uint256) := TMP_766(uint256)
+TMP_767(bool) = c >= a
+CONDITION TMP_767
+EXPRESSION:c = a + b	NodeType.VARIABLE
+c = a + b	NodeType.EXPRESSION
+c >= a	NodeType.IF";
+"BlockID: 92
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+TMP_1511(None) := TUPLE_72([<slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x75ebeccd5370>, <slither.core.solidity_types.elementary_type.ElementaryType object at 0x75ebeccd5280>])
+EXPRESSION:" [shape=box];
+"BlockID: 75
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_69 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_69 index: 1 
+REF_478(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_657(bool) = err0 != REF_478
+CONDITION TMP_657
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 77
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+True
+TMP_658(ExponentialNoError.Exp) = new Exp(0)
+TMP_1509(None) := err0(CarefulMath.MathError)
+TMP_1509(None) := TMP_658(ExponentialNoError.Exp)
+TMP_1509(None) := TMP_659(ExponentialNoError.Exp)
+EXPRESSION:";
+"BlockID: 78
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 82
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+None
+REF_479(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_659(ExponentialNoError.Exp) = new Exp(scaledMantissa)
+TMP_1509(None) := REF_479(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 73
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+True
+REF_531(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1553(None) := REF_531(CarefulMath.MathError)
+TMP_1553(None) := c(uint256)
+EXPRESSION:";
+"BlockID: 74
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 76
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+None
+TMP_759(uint256) = a * b
+c(uint256) := TMP_759(uint256)
+TMP_760(uint256) = c / a
+TMP_761(bool) = TMP_760 != b
+CONDITION TMP_761
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF";
+"BlockID: 79
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+True
+REF_532(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1553(None) := REF_532(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 80
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+False
+REF_533(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1553(None) := REF_533(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 89
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+True
+REF_538(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1556(None) := REF_538(CarefulMath.MathError)
+TMP_1556(None) := c(uint256)
+EXPRESSION:";
+"BlockID: 90
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+False
+REF_539(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1556(None) := REF_539(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+TMP_1467(None) := block.number(uint256)
+currentBlockNumber(uint256) := TMP_313(uint256)
+accrualBlockNumberPrior(uint256) := accrualBlockNumber(uint256)
+TMP_314(bool) = accrualBlockNumberPrior == currentBlockNumber
+CONDITION TMP_314
+EXPRESSION:currentBlockNumber = getBlockNumber()	NodeType.VARIABLE
+currentBlockNumber = getBlockNumber()	NodeType.EXPRESSION
+accrualBlockNumberPrior = accrualBlockNumber	NodeType.VARIABLE
+accrualBlockNumberPrior = accrualBlockNumber	NodeType.EXPRESSION
+accrualBlockNumberPrior == currentBlockNumber	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_1467(None) := block.number(uint256)
+currentBlockNumber(uint256) := TMP_313(uint256)
+accrualBlockNumberPrior(uint256) := accrualBlockNumber(uint256)
+TMP_314(bool) = accrualBlockNumberPrior == currentBlockNumber
+CONDITION TMP_314
+EXPRESSION:currentBlockNumber = getBlockNumber()	NodeType.VARIABLE
+currentBlockNumber = getBlockNumber()	NodeType.EXPRESSION
+accrualBlockNumberPrior = accrualBlockNumber	NodeType.VARIABLE
+accrualBlockNumberPrior = accrualBlockNumber	NodeType.EXPRESSION
+accrualBlockNumberPrior == currentBlockNumber	NodeType.IF" -> "BlockID: 2
+Call context: 
+True
+REF_173(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_315 = CONVERT REF_173 to uint256
+RETURN TMP_315
+EXPRESSION:uint256(Error.NO_ERROR)	NodeType.RETURN" [key="successor_3"];
+"BlockID: 1
+Call context: 
+None
+TMP_1467(None) := block.number(uint256)
+currentBlockNumber(uint256) := TMP_313(uint256)
+accrualBlockNumberPrior(uint256) := accrualBlockNumber(uint256)
+TMP_314(bool) = accrualBlockNumberPrior == currentBlockNumber
+CONDITION TMP_314
+EXPRESSION:currentBlockNumber = getBlockNumber()	NodeType.VARIABLE
+currentBlockNumber = getBlockNumber()	NodeType.EXPRESSION
+accrualBlockNumberPrior = accrualBlockNumber	NodeType.VARIABLE
+accrualBlockNumberPrior = accrualBlockNumber	NodeType.EXPRESSION
+accrualBlockNumberPrior == currentBlockNumber	NodeType.IF" -> "BlockID: 3
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_3"];
+"BlockID: 3
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: 
+None
+TMP_782 = CONVERT underlying to EIP20Interface
+token(EIP20Interface) := TMP_782(EIP20Interface)
+TMP_783 = CONVERT this to address
+TMP_784(uint256) = HIGH_LEVEL_CALL, dest:token(EIP20Interface), function:balanceOf, arguments:['TMP_783']  
+EXPRESSION:token = EIP20Interface(underlying)	NodeType.VARIABLE
+token = EIP20Interface(underlying)	NodeType.EXPRESSION
+token.balanceOf(address(this))	NodeType.EXPRESSION" [key=0];
+"BlockID: 4
+Call context: 
+None
+TMP_782 = CONVERT underlying to EIP20Interface
+token(EIP20Interface) := TMP_782(EIP20Interface)
+TMP_783 = CONVERT this to address
+TMP_784(uint256) = HIGH_LEVEL_CALL, dest:token(EIP20Interface), function:balanceOf, arguments:['TMP_783']  
+EXPRESSION:token = EIP20Interface(underlying)	NodeType.VARIABLE
+token = EIP20Interface(underlying)	NodeType.EXPRESSION
+token.balanceOf(address(this))	NodeType.EXPRESSION" -> "BlockID: 5
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+TMP_1568(None) := TMP_784(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 6
+Call context: 
+None
+cashPrior(uint256) := TMP_316(uint256)
+borrowsPrior(uint256) := totalBorrows(uint256)
+reservesPrior(uint256) := totalReserves(uint256)
+borrowIndexPrior(uint256) := borrowIndex(uint256)
+TMP_317(uint256) = HIGH_LEVEL_CALL, dest:interestRateModel(InterestRateModel), function:getBorrowRate, arguments:['cashPrior', 'borrowsPrior', 'reservesPrior']  
+EXPRESSION:cashPrior = getCashPrior()	NodeType.VARIABLE
+cashPrior = getCashPrior()	NodeType.EXPRESSION
+borrowsPrior = totalBorrows	NodeType.VARIABLE
+borrowsPrior = totalBorrows	NodeType.EXPRESSION
+reservesPrior = totalReserves	NodeType.VARIABLE
+reservesPrior = totalReserves	NodeType.EXPRESSION
+borrowIndexPrior = borrowIndex	NodeType.VARIABLE
+borrowIndexPrior = borrowIndex	NodeType.EXPRESSION" -> "BlockID: 7
+Call context: 
+None
+borrowRateMantissa(uint256) := TMP_317(uint256)
+TMP_318(bool) = borrowRateMantissa <= borrowRateMaxMantissa
+CONDITION TMP_318
+EXPRESSION:TMP_318(bool) = borrowRateMantissa <= borrowRateMaxMantissa	NodeType.IF" [key=0];
+"BlockID: 10
+Call context: 
+True
+NEW VARIABLE mathErr
+NEW VARIABLE blockDelta
+TMP_764(bool) = b <= a
+CONDITION TMP_764
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+b <= a	NodeType.IF" -> "BlockID: 11
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+True
+REF_536(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_765(uint256) = a - b
+TMP_1555(None) := REF_536(CarefulMath.MathError)
+TMP_1555(None) := TMP_765(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 10
+Call context: 
+True
+NEW VARIABLE mathErr
+NEW VARIABLE blockDelta
+TMP_764(bool) = b <= a
+CONDITION TMP_764
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+b <= a	NodeType.IF" -> "BlockID: 12
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+False
+REF_537(CarefulMath.MathError) -> MathError.INTEGER_UNDERFLOW
+TMP_1555(None) := REF_537(CarefulMath.MathError)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 16
+Call context: 
+True
+NEW VARIABLE simpleInterestFactor
+NEW VARIABLE interestAccumulated
+NEW VARIABLE totalBorrowsNew
+NEW VARIABLE totalReservesNew
+NEW VARIABLE borrowIndexNew
+TMP_322(ExponentialNoError.Exp) = new Exp(borrowRateMantissa)
+NEW VARIABLE err0
+NEW VARIABLE scaledMantissa
+REF_477(uint256) -> a.mantissa
+TMP_758(bool) = a == 0
+CONDITION TMP_758
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF" -> "BlockID: 17
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalar
+True
+REF_531(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1553(None) := REF_531(CarefulMath.MathError)
+TMP_1553(None) := c(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 16
+Call context: 
+True
+NEW VARIABLE simpleInterestFactor
+NEW VARIABLE interestAccumulated
+NEW VARIABLE totalBorrowsNew
+NEW VARIABLE totalReservesNew
+NEW VARIABLE borrowIndexNew
+TMP_322(ExponentialNoError.Exp) = new Exp(borrowRateMantissa)
+NEW VARIABLE err0
+NEW VARIABLE scaledMantissa
+REF_477(uint256) -> a.mantissa
+TMP_758(bool) = a == 0
+CONDITION TMP_758
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF" -> "BlockID: 18
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalar
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 25
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_36 index: 0 
+simpleInterestFactor(ExponentialNoError.Exp)= UNPACK TUPLE_36 index: 1 
+REF_176(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_323(bool) = mathErr != REF_176
+CONDITION TMP_323
+EXPRESSION:(mathErr,simpleInterestFactor) = mulScalar(Exp(borrowRateMantissa),blockDelta)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 27
+Call context: 
+True
+REF_177(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_178(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_SIMPLE_INTEREST_FACTOR_CALCULATION_FAILED
+TMP_324 = CONVERT mathErr to uint256
+TMP_649 = CONVERT err to uint256
+TMP_1505(None) := TMP_649(uint256)
+RETURN TMP_325
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_SIMPLE_INTEREST_FACTOR_CALCULATION_FAILED,uint256(mathErr))	NodeType.RETURN" [key=0];
+"BlockID: 25
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_36 index: 0 
+simpleInterestFactor(ExponentialNoError.Exp)= UNPACK TUPLE_36 index: 1 
+REF_176(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_323(bool) = mathErr != REF_176
+CONDITION TMP_323
+EXPRESSION:(mathErr,simpleInterestFactor) = mulScalar(Exp(borrowRateMantissa),blockDelta)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 28
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 28
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 29
+Call context: 
+None
+NEW VARIABLE err
+NEW VARIABLE product
+NEW VARIABLE err0
+NEW VARIABLE scaledMantissa
+REF_477(uint256) -> a.mantissa
+TMP_758(bool) = a == 0
+CONDITION TMP_758
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF" [key=0];
+"BlockID: 29
+Call context: 
+None
+NEW VARIABLE err
+NEW VARIABLE product
+NEW VARIABLE err0
+NEW VARIABLE scaledMantissa
+REF_477(uint256) -> a.mantissa
+TMP_758(bool) = a == 0
+CONDITION TMP_758
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF" -> "BlockID: 30
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate,mulScalar
+True
+REF_531(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1553(None) := REF_531(CarefulMath.MathError)
+TMP_1553(None) := c(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 29
+Call context: 
+None
+NEW VARIABLE err
+NEW VARIABLE product
+NEW VARIABLE err0
+NEW VARIABLE scaledMantissa
+REF_477(uint256) -> a.mantissa
+TMP_758(bool) = a == 0
+CONDITION TMP_758
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF" -> "BlockID: 31
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate,mulScalar
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 42
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_37 index: 0 
+interestAccumulated(uint256)= UNPACK TUPLE_37 index: 1 
+REF_179(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_326(bool) = mathErr != REF_179
+CONDITION TMP_326
+EXPRESSION:(mathErr,interestAccumulated) = mulScalarTruncate(simpleInterestFactor,borrowsPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 44
+Call context: 
+True
+REF_180(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_181(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_ACCUMULATED_INTEREST_CALCULATION_FAILED
+TMP_327 = CONVERT mathErr to uint256
+TMP_649 = CONVERT err to uint256
+TMP_1505(None) := TMP_649(uint256)
+RETURN TMP_328
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_ACCUMULATED_INTEREST_CALCULATION_FAILED,uint256(mathErr))	NodeType.RETURN" [key=0];
+"BlockID: 42
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_37 index: 0 
+interestAccumulated(uint256)= UNPACK TUPLE_37 index: 1 
+REF_179(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_326(bool) = mathErr != REF_179
+CONDITION TMP_326
+EXPRESSION:(mathErr,interestAccumulated) = mulScalarTruncate(simpleInterestFactor,borrowsPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 45
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 45
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 46
+Call context: 
+None
+TMP_766(uint256) = a + b
+c(uint256) := TMP_766(uint256)
+TMP_767(bool) = c >= a
+CONDITION TMP_767
+EXPRESSION:c = a + b	NodeType.VARIABLE
+c = a + b	NodeType.EXPRESSION
+c >= a	NodeType.IF" [key=0];
+"BlockID: 46
+Call context: 
+None
+TMP_766(uint256) = a + b
+c(uint256) := TMP_766(uint256)
+TMP_767(bool) = c >= a
+CONDITION TMP_767
+EXPRESSION:c = a + b	NodeType.VARIABLE
+c = a + b	NodeType.EXPRESSION
+c >= a	NodeType.IF" -> "BlockID: 47
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+True
+REF_538(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1556(None) := REF_538(CarefulMath.MathError)
+TMP_1556(None) := c(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 46
+Call context: 
+None
+TMP_766(uint256) = a + b
+c(uint256) := TMP_766(uint256)
+TMP_767(bool) = c >= a
+CONDITION TMP_767
+EXPRESSION:c = a + b	NodeType.VARIABLE
+c = a + b	NodeType.EXPRESSION
+c >= a	NodeType.IF" -> "BlockID: 48
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+False
+REF_539(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1556(None) := REF_539(CarefulMath.MathError)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 49
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_38 index: 0 
+totalBorrowsNew(uint256)= UNPACK TUPLE_38 index: 1 
+REF_182(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_329(bool) = mathErr != REF_182
+CONDITION TMP_329
+EXPRESSION:(mathErr,totalBorrowsNew) = addUInt(interestAccumulated,borrowsPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 50
+Call context: 
+True
+REF_183(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_184(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_NEW_TOTAL_BORROWS_CALCULATION_FAILED
+TMP_330 = CONVERT mathErr to uint256
+TMP_649 = CONVERT err to uint256
+TMP_1505(None) := TMP_649(uint256)
+RETURN TMP_331
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_NEW_TOTAL_BORROWS_CALCULATION_FAILED,uint256(mathErr))	NodeType.RETURN" [key=0];
+"BlockID: 49
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_38 index: 0 
+totalBorrowsNew(uint256)= UNPACK TUPLE_38 index: 1 
+REF_182(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_329(bool) = mathErr != REF_182
+CONDITION TMP_329
+EXPRESSION:(mathErr,totalBorrowsNew) = addUInt(interestAccumulated,borrowsPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 51
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 51
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 52
+Call context: 
+None
+TMP_332(ExponentialNoError.Exp) = new Exp(reserveFactorMantissa)
+NEW VARIABLE err
+NEW VARIABLE product
+NEW VARIABLE err0
+NEW VARIABLE scaledMantissa
+REF_477(uint256) -> a.mantissa
+TMP_758(bool) = a == 0
+CONDITION TMP_758
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF" [key=0];
+"BlockID: 52
+Call context: 
+None
+TMP_332(ExponentialNoError.Exp) = new Exp(reserveFactorMantissa)
+NEW VARIABLE err
+NEW VARIABLE product
+NEW VARIABLE err0
+NEW VARIABLE scaledMantissa
+REF_477(uint256) -> a.mantissa
+TMP_758(bool) = a == 0
+CONDITION TMP_758
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF" -> "BlockID: 53
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+True
+REF_531(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1553(None) := REF_531(CarefulMath.MathError)
+TMP_1553(None) := c(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 52
+Call context: 
+None
+TMP_332(ExponentialNoError.Exp) = new Exp(reserveFactorMantissa)
+NEW VARIABLE err
+NEW VARIABLE product
+NEW VARIABLE err0
+NEW VARIABLE scaledMantissa
+REF_477(uint256) -> a.mantissa
+TMP_758(bool) = a == 0
+CONDITION TMP_758
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF" -> "BlockID: 54
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 65
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_39 index: 0 
+totalReservesNew(uint256)= UNPACK TUPLE_39 index: 1 
+REF_185(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_333(bool) = mathErr != REF_185
+CONDITION TMP_333
+EXPRESSION:(mathErr,totalReservesNew) = mulScalarTruncateAddUInt(Exp(reserveFactorMantissa),interestAccumulated,reservesPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 67
+Call context: 
+True
+REF_186(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_187(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_NEW_TOTAL_RESERVES_CALCULATION_FAILED
+TMP_334 = CONVERT mathErr to uint256
+TMP_649 = CONVERT err to uint256
+TMP_1505(None) := TMP_649(uint256)
+RETURN TMP_335
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_NEW_TOTAL_RESERVES_CALCULATION_FAILED,uint256(mathErr))	NodeType.RETURN" [key=0];
+"BlockID: 65
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_39 index: 0 
+totalReservesNew(uint256)= UNPACK TUPLE_39 index: 1 
+REF_185(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_333(bool) = mathErr != REF_185
+CONDITION TMP_333
+EXPRESSION:(mathErr,totalReservesNew) = mulScalarTruncateAddUInt(Exp(reserveFactorMantissa),interestAccumulated,reservesPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 68
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 68
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 71
+Call context: 
+None
+NEW VARIABLE err
+NEW VARIABLE product
+NEW VARIABLE err0
+NEW VARIABLE scaledMantissa
+REF_477(uint256) -> a.mantissa
+TMP_758(bool) = a == 0
+CONDITION TMP_758
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF" [key=0];
+"BlockID: 71
+Call context: 
+None
+NEW VARIABLE err
+NEW VARIABLE product
+NEW VARIABLE err0
+NEW VARIABLE scaledMantissa
+REF_477(uint256) -> a.mantissa
+TMP_758(bool) = a == 0
+CONDITION TMP_758
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF" -> "BlockID: 73
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+True
+REF_531(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1553(None) := REF_531(CarefulMath.MathError)
+TMP_1553(None) := c(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 71
+Call context: 
+None
+NEW VARIABLE err
+NEW VARIABLE product
+NEW VARIABLE err0
+NEW VARIABLE scaledMantissa
+REF_477(uint256) -> a.mantissa
+TMP_758(bool) = a == 0
+CONDITION TMP_758
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF" -> "BlockID: 74
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 85
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_40 index: 0 
+borrowIndexNew(uint256)= UNPACK TUPLE_40 index: 1 
+REF_188(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_336(bool) = mathErr != REF_188
+CONDITION TMP_336
+EXPRESSION:(mathErr,borrowIndexNew) = mulScalarTruncateAddUInt(simpleInterestFactor,borrowIndexPrior,borrowIndexPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 87
+Call context: 
+True
+REF_189(TokenErrorReporter.Error) -> Error.MATH_ERROR
+REF_190(TokenErrorReporter.FailureInfo) -> FailureInfo.ACCRUE_INTEREST_NEW_BORROW_INDEX_CALCULATION_FAILED
+TMP_337 = CONVERT mathErr to uint256
+TMP_649 = CONVERT err to uint256
+TMP_1505(None) := TMP_649(uint256)
+RETURN TMP_338
+EXPRESSION:failOpaque(Error.MATH_ERROR,FailureInfo.ACCRUE_INTEREST_NEW_BORROW_INDEX_CALCULATION_FAILED,uint256(mathErr))	NodeType.RETURN" [key=0];
+"BlockID: 85
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_40 index: 0 
+borrowIndexNew(uint256)= UNPACK TUPLE_40 index: 1 
+REF_188(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_336(bool) = mathErr != REF_188
+CONDITION TMP_336
+EXPRESSION:(mathErr,borrowIndexNew) = mulScalarTruncateAddUInt(simpleInterestFactor,borrowIndexPrior,borrowIndexPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 88
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 88
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 91
+Call context: 
+None
+accrualBlockNumber(uint256) := currentBlockNumber(uint256)
+borrowIndex(uint256) := borrowIndexNew(uint256)
+totalBorrows(uint256) := totalBorrowsNew(uint256)
+totalReserves(uint256) := totalReservesNew(uint256)
+REF_191(TokenErrorReporter.Error) -> Error.NO_ERROR
+TMP_340 = CONVERT REF_191 to uint256
+RETURN TMP_340
+EXPRESSION:accrualBlockNumber = currentBlockNumber	NodeType.EXPRESSION
+borrowIndex = borrowIndexNew	NodeType.EXPRESSION
+totalBorrows = totalBorrowsNew	NodeType.EXPRESSION
+totalReserves = totalReservesNew	NodeType.EXPRESSION
+uint256(Error.NO_ERROR)	NodeType.RETURN" [key=0];
+"BlockID: 7
+Call context: 
+None
+borrowRateMantissa(uint256) := TMP_317(uint256)
+TMP_318(bool) = borrowRateMantissa <= borrowRateMaxMantissa
+CONDITION TMP_318
+EXPRESSION:TMP_318(bool) = borrowRateMantissa <= borrowRateMaxMantissa	NodeType.IF" -> "BlockID: 8
+Call context: 
+True
+TMP_319(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 7
+Call context: 
+None
+borrowRateMantissa(uint256) := TMP_317(uint256)
+TMP_318(bool) = borrowRateMantissa <= borrowRateMaxMantissa
+CONDITION TMP_318
+EXPRESSION:TMP_318(bool) = borrowRateMantissa <= borrowRateMaxMantissa	NodeType.IF" -> "BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 10
+Call context: 
+True
+NEW VARIABLE mathErr
+NEW VARIABLE blockDelta
+TMP_764(bool) = b <= a
+CONDITION TMP_764
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+b <= a	NodeType.IF" [key=0];
+"BlockID: 13
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_35 index: 0 
+blockDelta(uint256)= UNPACK TUPLE_35 index: 1 
+REF_175(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_320(bool) = mathErr == REF_175
+CONDITION TMP_320
+EXPRESSION:TMP_320(bool) = mathErr == REF_175	NodeType.IF" -> "BlockID: 14
+Call context: 
+True
+TMP_321(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 13
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_35 index: 0 
+blockDelta(uint256)= UNPACK TUPLE_35 index: 1 
+REF_175(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_320(bool) = mathErr == REF_175
+CONDITION TMP_320
+EXPRESSION:TMP_320(bool) = mathErr == REF_175	NodeType.IF" -> "BlockID: 15
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 15
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 16
+Call context: 
+True
+NEW VARIABLE simpleInterestFactor
+NEW VARIABLE interestAccumulated
+NEW VARIABLE totalBorrowsNew
+NEW VARIABLE totalReservesNew
+NEW VARIABLE borrowIndexNew
+TMP_322(ExponentialNoError.Exp) = new Exp(borrowRateMantissa)
+NEW VARIABLE err0
+NEW VARIABLE scaledMantissa
+REF_477(uint256) -> a.mantissa
+TMP_758(bool) = a == 0
+CONDITION TMP_758
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF" [key=0];
+"BlockID: 5
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+TMP_1568(None) := TMP_784(uint256)
+EXPRESSION:" -> "BlockID: 6
+Call context: 
+None
+cashPrior(uint256) := TMP_316(uint256)
+borrowsPrior(uint256) := totalBorrows(uint256)
+reservesPrior(uint256) := totalReserves(uint256)
+borrowIndexPrior(uint256) := borrowIndex(uint256)
+TMP_317(uint256) = HIGH_LEVEL_CALL, dest:interestRateModel(InterestRateModel), function:getBorrowRate, arguments:['cashPrior', 'borrowsPrior', 'reservesPrior']  
+EXPRESSION:cashPrior = getCashPrior()	NodeType.VARIABLE
+cashPrior = getCashPrior()	NodeType.EXPRESSION
+borrowsPrior = totalBorrows	NodeType.VARIABLE
+borrowsPrior = totalBorrows	NodeType.EXPRESSION
+reservesPrior = totalReserves	NodeType.VARIABLE
+reservesPrior = totalReserves	NodeType.EXPRESSION
+borrowIndexPrior = borrowIndex	NodeType.VARIABLE
+borrowIndexPrior = borrowIndex	NodeType.EXPRESSION" [key="Exit: getCashPrior", ref="RBep20.getCashPrior"];
+"BlockID: 11
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+True
+REF_536(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_765(uint256) = a - b
+TMP_1555(None) := REF_536(CarefulMath.MathError)
+TMP_1555(None) := TMP_765(uint256)
+EXPRESSION:" -> "BlockID: 13
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_35 index: 0 
+blockDelta(uint256)= UNPACK TUPLE_35 index: 1 
+REF_175(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_320(bool) = mathErr == REF_175
+CONDITION TMP_320
+EXPRESSION:TMP_320(bool) = mathErr == REF_175	NodeType.IF" [key="successor_5", ref="RBep20.subUInt"];
+"BlockID: 12
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+False
+REF_537(CarefulMath.MathError) -> MathError.INTEGER_UNDERFLOW
+TMP_1555(None) := REF_537(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 13
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_35 index: 0 
+blockDelta(uint256)= UNPACK TUPLE_35 index: 1 
+REF_175(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_320(bool) = mathErr == REF_175
+CONDITION TMP_320
+EXPRESSION:TMP_320(bool) = mathErr == REF_175	NodeType.IF" [key="successor_5", ref="RBep20.subUInt"];
+"BlockID: 19
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_69 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_69 index: 1 
+REF_478(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_657(bool) = err0 != REF_478
+CONDITION TMP_657
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 21
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+True
+TMP_658(ExponentialNoError.Exp) = new Exp(0)
+TMP_1509(None) := err0(CarefulMath.MathError)
+TMP_1509(None) := TMP_658(ExponentialNoError.Exp)
+TMP_1509(None) := TMP_659(ExponentialNoError.Exp)
+EXPRESSION:" [key=0];
+"BlockID: 19
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_69 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_69 index: 1 
+REF_478(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_657(bool) = err0 != REF_478
+CONDITION TMP_657
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 22
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 21
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+True
+TMP_658(ExponentialNoError.Exp) = new Exp(0)
+TMP_1509(None) := err0(CarefulMath.MathError)
+TMP_1509(None) := TMP_658(ExponentialNoError.Exp)
+TMP_1509(None) := TMP_659(ExponentialNoError.Exp)
+EXPRESSION:" -> "BlockID: 25
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_36 index: 0 
+simpleInterestFactor(ExponentialNoError.Exp)= UNPACK TUPLE_36 index: 1 
+REF_176(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_323(bool) = mathErr != REF_176
+CONDITION TMP_323
+EXPRESSION:(mathErr,simpleInterestFactor) = mulScalar(Exp(borrowRateMantissa),blockDelta)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulScalar"];
+"BlockID: 22
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 26
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+REF_479(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_659(ExponentialNoError.Exp) = new Exp(scaledMantissa)
+TMP_1509(None) := REF_479(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 26
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+REF_479(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_659(ExponentialNoError.Exp) = new Exp(scaledMantissa)
+TMP_1509(None) := REF_479(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 25
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_36 index: 0 
+simpleInterestFactor(ExponentialNoError.Exp)= UNPACK TUPLE_36 index: 1 
+REF_176(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_323(bool) = mathErr != REF_176
+CONDITION TMP_323
+EXPRESSION:(mathErr,simpleInterestFactor) = mulScalar(Exp(borrowRateMantissa),blockDelta)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulScalar"];
+"BlockID: 17
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalar
+True
+REF_531(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1553(None) := REF_531(CarefulMath.MathError)
+TMP_1553(None) := c(uint256)
+EXPRESSION:" -> "BlockID: 19
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_69 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_69 index: 1 
+REF_478(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_657(bool) = err0 != REF_478
+CONDITION TMP_657
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulUInt"];
+"BlockID: 18
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalar
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 20
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalar
+None
+TMP_759(uint256) = a * b
+c(uint256) := TMP_759(uint256)
+TMP_760(uint256) = c / a
+TMP_761(bool) = TMP_760 != b
+CONDITION TMP_761
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF" [key=0];
+"BlockID: 20
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalar
+None
+TMP_759(uint256) = a * b
+c(uint256) := TMP_759(uint256)
+TMP_760(uint256) = c / a
+TMP_761(bool) = TMP_760 != b
+CONDITION TMP_761
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF" -> "BlockID: 23
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalar
+True
+REF_532(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1553(None) := REF_532(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 20
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalar
+None
+TMP_759(uint256) = a * b
+c(uint256) := TMP_759(uint256)
+TMP_760(uint256) = c / a
+TMP_761(bool) = TMP_760 != b
+CONDITION TMP_761
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF" -> "BlockID: 24
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalar
+False
+REF_533(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1553(None) := REF_533(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 23
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalar
+True
+REF_532(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1553(None) := REF_532(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 19
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_69 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_69 index: 1 
+REF_478(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_657(bool) = err0 != REF_478
+CONDITION TMP_657
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulUInt"];
+"BlockID: 24
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalar
+False
+REF_533(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1553(None) := REF_533(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 19
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_69 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_69 index: 1 
+REF_478(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_657(bool) = err0 != REF_478
+CONDITION TMP_657
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulUInt"];
+"BlockID: 38
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_70 index: 0 
+product(ExponentialNoError.Exp)= UNPACK TUPLE_70 index: 1 
+REF_480(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_660(bool) = err != REF_480
+CONDITION TMP_660
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 40
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+True
+TMP_1510(None) := err(CarefulMath.MathError)
+TMP_1510(None) := TMP_661(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 38
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_70 index: 0 
+product(ExponentialNoError.Exp)= UNPACK TUPLE_70 index: 1 
+REF_480(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_660(bool) = err != REF_480
+CONDITION TMP_660
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 41
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 40
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+True
+TMP_1510(None) := err(CarefulMath.MathError)
+TMP_1510(None) := TMP_661(uint256)
+EXPRESSION:" -> "BlockID: 42
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_37 index: 0 
+interestAccumulated(uint256)= UNPACK TUPLE_37 index: 1 
+REF_179(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_326(bool) = mathErr != REF_179
+CONDITION TMP_326
+EXPRESSION:(mathErr,interestAccumulated) = mulScalarTruncate(simpleInterestFactor,borrowsPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulScalarTruncate"];
+"BlockID: 41
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 43
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+REF_481(CarefulMath.MathError) -> MathError.NO_ERROR
+REF_499(uint256) -> exp.mantissa
+TMP_681(uint256) = REF_499 / expScale
+TMP_1519(None) := TMP_681(uint256)
+TMP_1510(None) := REF_481(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 43
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+REF_481(CarefulMath.MathError) -> MathError.NO_ERROR
+REF_499(uint256) -> exp.mantissa
+TMP_681(uint256) = REF_499 / expScale
+TMP_1519(None) := TMP_681(uint256)
+TMP_1510(None) := REF_481(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 42
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_37 index: 0 
+interestAccumulated(uint256)= UNPACK TUPLE_37 index: 1 
+REF_179(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_326(bool) = mathErr != REF_179
+CONDITION TMP_326
+EXPRESSION:(mathErr,interestAccumulated) = mulScalarTruncate(simpleInterestFactor,borrowsPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulScalarTruncate"];
+"BlockID: 32
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_69 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_69 index: 1 
+REF_478(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_657(bool) = err0 != REF_478
+CONDITION TMP_657
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 34
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate
+True
+TMP_658(ExponentialNoError.Exp) = new Exp(0)
+TMP_1509(None) := err0(CarefulMath.MathError)
+TMP_1509(None) := TMP_658(ExponentialNoError.Exp)
+TMP_1509(None) := TMP_659(ExponentialNoError.Exp)
+EXPRESSION:" [key=0];
+"BlockID: 32
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_69 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_69 index: 1 
+REF_478(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_657(bool) = err0 != REF_478
+CONDITION TMP_657
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 35
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 34
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate
+True
+TMP_658(ExponentialNoError.Exp) = new Exp(0)
+TMP_1509(None) := err0(CarefulMath.MathError)
+TMP_1509(None) := TMP_658(ExponentialNoError.Exp)
+TMP_1509(None) := TMP_659(ExponentialNoError.Exp)
+EXPRESSION:" -> "BlockID: 38
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_70 index: 0 
+product(ExponentialNoError.Exp)= UNPACK TUPLE_70 index: 1 
+REF_480(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_660(bool) = err != REF_480
+CONDITION TMP_660
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulScalar"];
+"BlockID: 35
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 39
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate
+None
+REF_479(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_659(ExponentialNoError.Exp) = new Exp(scaledMantissa)
+TMP_1509(None) := REF_479(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 39
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate
+None
+REF_479(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_659(ExponentialNoError.Exp) = new Exp(scaledMantissa)
+TMP_1509(None) := REF_479(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 38
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_70 index: 0 
+product(ExponentialNoError.Exp)= UNPACK TUPLE_70 index: 1 
+REF_480(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_660(bool) = err != REF_480
+CONDITION TMP_660
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulScalar"];
+"BlockID: 30
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate,mulScalar
+True
+REF_531(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1553(None) := REF_531(CarefulMath.MathError)
+TMP_1553(None) := c(uint256)
+EXPRESSION:" -> "BlockID: 32
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_69 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_69 index: 1 
+REF_478(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_657(bool) = err0 != REF_478
+CONDITION TMP_657
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulUInt"];
+"BlockID: 31
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate,mulScalar
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 33
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate,mulScalar
+None
+TMP_759(uint256) = a * b
+c(uint256) := TMP_759(uint256)
+TMP_760(uint256) = c / a
+TMP_761(bool) = TMP_760 != b
+CONDITION TMP_761
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF" [key=0];
+"BlockID: 33
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate,mulScalar
+None
+TMP_759(uint256) = a * b
+c(uint256) := TMP_759(uint256)
+TMP_760(uint256) = c / a
+TMP_761(bool) = TMP_760 != b
+CONDITION TMP_761
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF" -> "BlockID: 36
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate,mulScalar
+True
+REF_532(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1553(None) := REF_532(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 33
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate,mulScalar
+None
+TMP_759(uint256) = a * b
+c(uint256) := TMP_759(uint256)
+TMP_760(uint256) = c / a
+TMP_761(bool) = TMP_760 != b
+CONDITION TMP_761
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF" -> "BlockID: 37
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate,mulScalar
+False
+REF_533(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1553(None) := REF_533(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 36
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate,mulScalar
+True
+REF_532(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1553(None) := REF_532(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 32
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_69 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_69 index: 1 
+REF_478(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_657(bool) = err0 != REF_478
+CONDITION TMP_657
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulUInt"];
+"BlockID: 37
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate,mulScalar
+False
+REF_533(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1553(None) := REF_533(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 32
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncate
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_69 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_69 index: 1 
+REF_478(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_657(bool) = err0 != REF_478
+CONDITION TMP_657
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulUInt"];
+"BlockID: 47
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+True
+REF_538(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1556(None) := REF_538(CarefulMath.MathError)
+TMP_1556(None) := c(uint256)
+EXPRESSION:" -> "BlockID: 49
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_38 index: 0 
+totalBorrowsNew(uint256)= UNPACK TUPLE_38 index: 1 
+REF_182(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_329(bool) = mathErr != REF_182
+CONDITION TMP_329
+EXPRESSION:(mathErr,totalBorrowsNew) = addUInt(interestAccumulated,borrowsPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.addUInt"];
+"BlockID: 48
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+False
+REF_539(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1556(None) := REF_539(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 49
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_38 index: 0 
+totalBorrowsNew(uint256)= UNPACK TUPLE_38 index: 1 
+REF_182(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_329(bool) = mathErr != REF_182
+CONDITION TMP_329
+EXPRESSION:(mathErr,totalBorrowsNew) = addUInt(interestAccumulated,borrowsPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.addUInt"];
+"BlockID: 61
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_71 index: 0 
+product(ExponentialNoError.Exp)= UNPACK TUPLE_71 index: 1 
+REF_482(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_662(bool) = err != REF_482
+CONDITION TMP_662
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 63
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+True
+TMP_1511(None) := err(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 61
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_71 index: 0 
+product(ExponentialNoError.Exp)= UNPACK TUPLE_71 index: 1 
+REF_482(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_662(bool) = err != REF_482
+CONDITION TMP_662
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 64
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 63
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+True
+TMP_1511(None) := err(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 65
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_39 index: 0 
+totalReservesNew(uint256)= UNPACK TUPLE_39 index: 1 
+REF_185(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_333(bool) = mathErr != REF_185
+CONDITION TMP_333
+EXPRESSION:(mathErr,totalReservesNew) = mulScalarTruncateAddUInt(Exp(reserveFactorMantissa),interestAccumulated,reservesPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulScalarTruncateAddUInt"];
+"BlockID: 64
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 66
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+REF_499(uint256) -> exp.mantissa
+TMP_681(uint256) = REF_499 / expScale
+TMP_1519(None) := TMP_681(uint256)
+TMP_766(uint256) = a + b
+c(uint256) := TMP_766(uint256)
+TMP_767(bool) = c >= a
+CONDITION TMP_767
+EXPRESSION:c = a + b	NodeType.VARIABLE
+c = a + b	NodeType.EXPRESSION
+c >= a	NodeType.IF" [key=0];
+"BlockID: 66
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+REF_499(uint256) -> exp.mantissa
+TMP_681(uint256) = REF_499 / expScale
+TMP_1519(None) := TMP_681(uint256)
+TMP_766(uint256) = a + b
+c(uint256) := TMP_766(uint256)
+TMP_767(bool) = c >= a
+CONDITION TMP_767
+EXPRESSION:c = a + b	NodeType.VARIABLE
+c = a + b	NodeType.EXPRESSION
+c >= a	NodeType.IF" -> "BlockID: 69
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+True
+REF_538(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1556(None) := REF_538(CarefulMath.MathError)
+TMP_1556(None) := c(uint256)
+EXPRESSION:" [key="successor_1"];
+"BlockID: 66
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+REF_499(uint256) -> exp.mantissa
+TMP_681(uint256) = REF_499 / expScale
+TMP_1519(None) := TMP_681(uint256)
+TMP_766(uint256) = a + b
+c(uint256) := TMP_766(uint256)
+TMP_767(bool) = c >= a
+CONDITION TMP_767
+EXPRESSION:c = a + b	NodeType.VARIABLE
+c = a + b	NodeType.EXPRESSION
+c >= a	NodeType.IF" -> "BlockID: 70
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+False
+REF_539(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1556(None) := REF_539(CarefulMath.MathError)
+EXPRESSION:" [key="successor_1"];
+"BlockID: 72
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+TMP_1511(None) := TUPLE_72([<slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x75ebeccd5370>, <slither.core.solidity_types.elementary_type.ElementaryType object at 0x75ebeccd5280>])
+EXPRESSION:" -> "BlockID: 65
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_39 index: 0 
+totalReservesNew(uint256)= UNPACK TUPLE_39 index: 1 
+REF_185(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_333(bool) = mathErr != REF_185
+CONDITION TMP_333
+EXPRESSION:(mathErr,totalReservesNew) = mulScalarTruncateAddUInt(Exp(reserveFactorMantissa),interestAccumulated,reservesPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulScalarTruncateAddUInt"];
+"BlockID: 55
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_69 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_69 index: 1 
+REF_478(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_657(bool) = err0 != REF_478
+CONDITION TMP_657
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 57
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+True
+TMP_658(ExponentialNoError.Exp) = new Exp(0)
+TMP_1509(None) := err0(CarefulMath.MathError)
+TMP_1509(None) := TMP_658(ExponentialNoError.Exp)
+TMP_1509(None) := TMP_659(ExponentialNoError.Exp)
+EXPRESSION:" [key=0];
+"BlockID: 55
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_69 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_69 index: 1 
+REF_478(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_657(bool) = err0 != REF_478
+CONDITION TMP_657
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 58
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 57
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+True
+TMP_658(ExponentialNoError.Exp) = new Exp(0)
+TMP_1509(None) := err0(CarefulMath.MathError)
+TMP_1509(None) := TMP_658(ExponentialNoError.Exp)
+TMP_1509(None) := TMP_659(ExponentialNoError.Exp)
+EXPRESSION:" -> "BlockID: 61
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_71 index: 0 
+product(ExponentialNoError.Exp)= UNPACK TUPLE_71 index: 1 
+REF_482(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_662(bool) = err != REF_482
+CONDITION TMP_662
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulScalar"];
+"BlockID: 58
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 62
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+None
+REF_479(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_659(ExponentialNoError.Exp) = new Exp(scaledMantissa)
+TMP_1509(None) := REF_479(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 62
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+None
+REF_479(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_659(ExponentialNoError.Exp) = new Exp(scaledMantissa)
+TMP_1509(None) := REF_479(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 61
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_71 index: 0 
+product(ExponentialNoError.Exp)= UNPACK TUPLE_71 index: 1 
+REF_482(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_662(bool) = err != REF_482
+CONDITION TMP_662
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulScalar"];
+"BlockID: 53
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+True
+REF_531(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1553(None) := REF_531(CarefulMath.MathError)
+TMP_1553(None) := c(uint256)
+EXPRESSION:" -> "BlockID: 55
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_69 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_69 index: 1 
+REF_478(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_657(bool) = err0 != REF_478
+CONDITION TMP_657
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulUInt"];
+"BlockID: 54
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 56
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+None
+TMP_759(uint256) = a * b
+c(uint256) := TMP_759(uint256)
+TMP_760(uint256) = c / a
+TMP_761(bool) = TMP_760 != b
+CONDITION TMP_761
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF" [key=0];
+"BlockID: 56
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+None
+TMP_759(uint256) = a * b
+c(uint256) := TMP_759(uint256)
+TMP_760(uint256) = c / a
+TMP_761(bool) = TMP_760 != b
+CONDITION TMP_761
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF" -> "BlockID: 59
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+True
+REF_532(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1553(None) := REF_532(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 56
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+None
+TMP_759(uint256) = a * b
+c(uint256) := TMP_759(uint256)
+TMP_760(uint256) = c / a
+TMP_761(bool) = TMP_760 != b
+CONDITION TMP_761
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF" -> "BlockID: 60
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+False
+REF_533(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1553(None) := REF_533(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 59
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+True
+REF_532(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1553(None) := REF_532(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 55
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_69 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_69 index: 1 
+REF_478(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_657(bool) = err0 != REF_478
+CONDITION TMP_657
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulUInt"];
+"BlockID: 60
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+False
+REF_533(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1553(None) := REF_533(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 55
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_69 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_69 index: 1 
+REF_478(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_657(bool) = err0 != REF_478
+CONDITION TMP_657
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulUInt"];
+"BlockID: 69
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+True
+REF_538(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1556(None) := REF_538(CarefulMath.MathError)
+TMP_1556(None) := c(uint256)
+EXPRESSION:" -> "BlockID: 72
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+TMP_1511(None) := TUPLE_72([<slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x75ebeccd5370>, <slither.core.solidity_types.elementary_type.ElementaryType object at 0x75ebeccd5280>])
+EXPRESSION:" [key="successor_5", ref="RBep20.addUInt"];
+"BlockID: 70
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+False
+REF_539(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1556(None) := REF_539(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 72
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+TMP_1511(None) := TUPLE_72([<slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x75ebeccd5370>, <slither.core.solidity_types.elementary_type.ElementaryType object at 0x75ebeccd5280>])
+EXPRESSION:" [key="successor_5", ref="RBep20.addUInt"];
+"BlockID: 81
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_71 index: 0 
+product(ExponentialNoError.Exp)= UNPACK TUPLE_71 index: 1 
+REF_482(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_662(bool) = err != REF_482
+CONDITION TMP_662
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 83
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+True
+TMP_1511(None) := err(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 81
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_71 index: 0 
+product(ExponentialNoError.Exp)= UNPACK TUPLE_71 index: 1 
+REF_482(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_662(bool) = err != REF_482
+CONDITION TMP_662
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 84
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 83
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+True
+TMP_1511(None) := err(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 85
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_40 index: 0 
+borrowIndexNew(uint256)= UNPACK TUPLE_40 index: 1 
+REF_188(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_336(bool) = mathErr != REF_188
+CONDITION TMP_336
+EXPRESSION:(mathErr,borrowIndexNew) = mulScalarTruncateAddUInt(simpleInterestFactor,borrowIndexPrior,borrowIndexPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulScalarTruncateAddUInt"];
+"BlockID: 84
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 86
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+REF_499(uint256) -> exp.mantissa
+TMP_681(uint256) = REF_499 / expScale
+TMP_1519(None) := TMP_681(uint256)
+TMP_766(uint256) = a + b
+c(uint256) := TMP_766(uint256)
+TMP_767(bool) = c >= a
+CONDITION TMP_767
+EXPRESSION:c = a + b	NodeType.VARIABLE
+c = a + b	NodeType.EXPRESSION
+c >= a	NodeType.IF" [key=0];
+"BlockID: 86
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+REF_499(uint256) -> exp.mantissa
+TMP_681(uint256) = REF_499 / expScale
+TMP_1519(None) := TMP_681(uint256)
+TMP_766(uint256) = a + b
+c(uint256) := TMP_766(uint256)
+TMP_767(bool) = c >= a
+CONDITION TMP_767
+EXPRESSION:c = a + b	NodeType.VARIABLE
+c = a + b	NodeType.EXPRESSION
+c >= a	NodeType.IF" -> "BlockID: 89
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+True
+REF_538(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1556(None) := REF_538(CarefulMath.MathError)
+TMP_1556(None) := c(uint256)
+EXPRESSION:" [key="successor_1"];
+"BlockID: 86
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+REF_499(uint256) -> exp.mantissa
+TMP_681(uint256) = REF_499 / expScale
+TMP_1519(None) := TMP_681(uint256)
+TMP_766(uint256) = a + b
+c(uint256) := TMP_766(uint256)
+TMP_767(bool) = c >= a
+CONDITION TMP_767
+EXPRESSION:c = a + b	NodeType.VARIABLE
+c = a + b	NodeType.EXPRESSION
+c >= a	NodeType.IF" -> "BlockID: 90
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+False
+REF_539(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1556(None) := REF_539(CarefulMath.MathError)
+EXPRESSION:" [key="successor_1"];
+"BlockID: 92
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+TMP_1511(None) := TUPLE_72([<slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x75ebeccd5370>, <slither.core.solidity_types.elementary_type.ElementaryType object at 0x75ebeccd5280>])
+EXPRESSION:" -> "BlockID: 85
+Call context: 
+None
+mathErr(CarefulMath.MathError)= UNPACK TUPLE_40 index: 0 
+borrowIndexNew(uint256)= UNPACK TUPLE_40 index: 1 
+REF_188(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_336(bool) = mathErr != REF_188
+CONDITION TMP_336
+EXPRESSION:(mathErr,borrowIndexNew) = mulScalarTruncateAddUInt(simpleInterestFactor,borrowIndexPrior,borrowIndexPrior)	NodeType.EXPRESSION
+mathErr != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulScalarTruncateAddUInt"];
+"BlockID: 75
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_69 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_69 index: 1 
+REF_478(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_657(bool) = err0 != REF_478
+CONDITION TMP_657
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 77
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+True
+TMP_658(ExponentialNoError.Exp) = new Exp(0)
+TMP_1509(None) := err0(CarefulMath.MathError)
+TMP_1509(None) := TMP_658(ExponentialNoError.Exp)
+TMP_1509(None) := TMP_659(ExponentialNoError.Exp)
+EXPRESSION:" [key=0];
+"BlockID: 75
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_69 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_69 index: 1 
+REF_478(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_657(bool) = err0 != REF_478
+CONDITION TMP_657
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 78
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 77
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+True
+TMP_658(ExponentialNoError.Exp) = new Exp(0)
+TMP_1509(None) := err0(CarefulMath.MathError)
+TMP_1509(None) := TMP_658(ExponentialNoError.Exp)
+TMP_1509(None) := TMP_659(ExponentialNoError.Exp)
+EXPRESSION:" -> "BlockID: 81
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_71 index: 0 
+product(ExponentialNoError.Exp)= UNPACK TUPLE_71 index: 1 
+REF_482(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_662(bool) = err != REF_482
+CONDITION TMP_662
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulScalar"];
+"BlockID: 78
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 82
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+None
+REF_479(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_659(ExponentialNoError.Exp) = new Exp(scaledMantissa)
+TMP_1509(None) := REF_479(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 82
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+None
+REF_479(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_659(ExponentialNoError.Exp) = new Exp(scaledMantissa)
+TMP_1509(None) := REF_479(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 81
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_71 index: 0 
+product(ExponentialNoError.Exp)= UNPACK TUPLE_71 index: 1 
+REF_482(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_662(bool) = err != REF_482
+CONDITION TMP_662
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulScalar"];
+"BlockID: 73
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+True
+REF_531(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1553(None) := REF_531(CarefulMath.MathError)
+TMP_1553(None) := c(uint256)
+EXPRESSION:" -> "BlockID: 75
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_69 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_69 index: 1 
+REF_478(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_657(bool) = err0 != REF_478
+CONDITION TMP_657
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulUInt"];
+"BlockID: 74
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 76
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+None
+TMP_759(uint256) = a * b
+c(uint256) := TMP_759(uint256)
+TMP_760(uint256) = c / a
+TMP_761(bool) = TMP_760 != b
+CONDITION TMP_761
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF" [key=0];
+"BlockID: 76
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+None
+TMP_759(uint256) = a * b
+c(uint256) := TMP_759(uint256)
+TMP_760(uint256) = c / a
+TMP_761(bool) = TMP_760 != b
+CONDITION TMP_761
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF" -> "BlockID: 79
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+True
+REF_532(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1553(None) := REF_532(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 76
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+None
+TMP_759(uint256) = a * b
+c(uint256) := TMP_759(uint256)
+TMP_760(uint256) = c / a
+TMP_761(bool) = TMP_760 != b
+CONDITION TMP_761
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF" -> "BlockID: 80
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+False
+REF_533(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1553(None) := REF_533(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 79
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+True
+REF_532(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1553(None) := REF_532(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 75
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_69 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_69 index: 1 
+REF_478(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_657(bool) = err0 != REF_478
+CONDITION TMP_657
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulUInt"];
+"BlockID: 80
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt,mulScalar
+False
+REF_533(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1553(None) := REF_533(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 75
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_69 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_69 index: 1 
+REF_478(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_657(bool) = err0 != REF_478
+CONDITION TMP_657
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="RBep20.mulUInt"];
+"BlockID: 89
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+True
+REF_538(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1556(None) := REF_538(CarefulMath.MathError)
+TMP_1556(None) := c(uint256)
+EXPRESSION:" -> "BlockID: 92
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+TMP_1511(None) := TUPLE_72([<slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x75ebeccd5370>, <slither.core.solidity_types.elementary_type.ElementaryType object at 0x75ebeccd5280>])
+EXPRESSION:" [key="successor_5", ref="RBep20.addUInt"];
+"BlockID: 90
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest,mulScalarTruncateAddUInt
+False
+REF_539(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1556(None) := REF_539(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 92
+Call context: balanceOfUnderlying,exchangeRateCurrent,accrueInterest
+None
+TMP_1511(None) := TUPLE_72([<slither.core.solidity_types.user_defined_type.UserDefinedType object at 0x75ebeccd5370>, <slither.core.solidity_types.elementary_type.ElementaryType object at 0x75ebeccd5280>])
+EXPRESSION:" [key="successor_5", ref="RBep20.addUInt"];
+}

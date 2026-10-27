@@ -1,0 +1,501 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+REF_133(mapping(address => bool)) -> isPortStrategy[msg.sender]
+REF_134(bool) -> REF_133[_token]
+TMP_577 = ! REF_134 
+CONDITION TMP_577
+EXPRESSION:! isPortStrategy[msg.sender][_token]	NodeType.IF";
+"BlockID: 4
+Call context: 
+None
+TMP_439 = CONVERT _token to ERC20
+TMP_440 = CONVERT this to address
+TMP_441(uint256) = HIGH_LEVEL_CALL, dest:TMP_439(ERC20), function:balanceOf, arguments:['TMP_440']  
+EXPRESSION:requiresPortStrategy(_token)	NodeType.EXPRESSION";
+"BlockID: 8
+Call context: 
+None
+TMP_455(bool) = _amount > TMP_454
+CONDITION TMP_455
+EXPRESSION:_amount > _excessReserves(_token)	NodeType.IF" [shape=box];
+"BlockID: 9
+Call context: 
+True
+TMP_456(None) = SOLIDITY_CALL revert InsufficientReserves()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 10
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 11
+Call context: 
+None
+REF_60(mapping(address => uint256)) -> lastManaged[msg.sender]
+REF_61(uint256) -> REF_60[_token]
+TMP_472(uint256) = block.timestamp (c)- REF_61
+TMP_473(bool) = TMP_472 >= 86400
+CONDITION TMP_473
+EXPRESSION:block.timestamp - lastManaged[msg.sender][_token] >= 86400	NodeType.IF";
+"BlockID: 2
+Call context: manage
+True
+TMP_578(None) = SOLIDITY_CALL revert UnrecognizedPortStrategy()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 3
+Call context: manage
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 5
+Call context: manage
+None
+currBalance(uint256) := TMP_441(uint256)
+REF_47(uint256) -> getStrategyTokenDebt[_token]
+TMP_451(uint256) = _currBalance (c)+ REF_47
+REF_48(uint256) -> getMinimumTokenReserveRatio[_token]
+TMP_452(uint256) = TMP_451 (c)* REF_48
+TMP_453(uint256) = TMP_452 (c)/ DIVISIONER
+TMP_663(None) := TMP_453(uint256)
+minReserves(uint256) := TMP_442(uint256)
+TMP_443(bool) = currBalance > minReserves
+CONDITION TMP_443
+EXPRESSION:currBalance = ERC20(_token).balanceOf(address(this))	NodeType.VARIABLE
+minReserves = _minimumReserves(currBalance,_token)	NodeType.VARIABLE
+minReserves = _minimumReserves(currBalance,_token)	NodeType.EXPRESSION
+currBalance > minReserves	NodeType.IF" [shape=box];
+"BlockID: 6
+Call context: manage
+True
+TMP_444(uint256) = currBalance (c)- minReserves
+TMP_661(None) := TMP_444(uint256)
+EXPRESSION:";
+"BlockID: 7
+Call context: manage
+False
+TMP_661(None) := 0(uint256)
+EXPRESSION:";
+"BlockID: 12
+Call context: manage
+True
+REF_62(mapping(address => uint256)) -> strategyDailyLimitRemaining[msg.sender]
+REF_63(uint256) -> REF_62[_token]
+REF_64(mapping(address => uint256)) -> strategyDailyLimitAmount[msg.sender]
+REF_65(uint256) -> REF_64[_token]
+REF_63(uint256) (->strategyDailyLimitRemaining) := REF_65(uint256)
+EXPRESSION:strategyDailyLimitRemaining[msg.sender][_token] = strategyDailyLimitAmount[msg.sender][_token]	NodeType.EXPRESSION";
+"BlockID: 13
+Call context: manage
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 14
+Call context: manage
+None
+REF_66(mapping(address => uint256)) -> strategyDailyLimitRemaining[msg.sender]
+REF_67(uint256) -> REF_66[_token]
+REF_67(-> strategyDailyLimitRemaining) = REF_67 (c)- _amount
+REF_68(mapping(address => uint256)) -> lastManaged[msg.sender]
+REF_69(uint256) -> REF_68[_token]
+REF_69(uint256) (->lastManaged) := block.timestamp(uint256)
+REF_49(uint256) -> getStrategyTokenDebt[_token]
+REF_49(-> getStrategyTokenDebt) = REF_49 (c)+ _amount
+REF_50(mapping(address => uint256)) -> getPortStrategyTokenDebt[msg.sender]
+REF_51(uint256) -> REF_50[_token]
+REF_51(-> getPortStrategyTokenDebt) = REF_51 (c)+ _amount
+INLINE ASM
+TMP_145(None) = SOLIDITY_CALL mstore(uint256,uint256)(20,to)
+TMP_146(None) = SOLIDITY_CALL mstore(uint256,uint256)(52,amount)
+TMP_147(None) = SOLIDITY_CALL mstore(uint256,uint256)(0,224668671643508016486903311432943665152)
+TMP_148(uint256) = SOLIDITY_CALL mload(uint256)(0)
+TMP_149(bool) = TMP_148 == 1
+TMP_150(uint256) = SOLIDITY_CALL returndatasize()()
+TMP_151 = ! TMP_150 
+TMP_152(bool) = TMP_149 | TMP_151
+TMP_153(uint256) = SOLIDITY_CALL gas()()
+TMP_154(uint256) = SOLIDITY_CALL call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(TMP_153,token,0,16,68,0,32)
+TMP_155(bool) = TMP_152 & TMP_154
+TMP_156 = ! TMP_155 
+CONDITION TMP_156
+EXPRESSION:strategyDailyLimitRemaining[msg.sender][_token] -= _amount	NodeType.EXPRESSION
+lastManaged[msg.sender][_token] = block.timestamp	NodeType.EXPRESSION
+_checkTimeLimit(_token,_amount)	NodeType.EXPRESSION
+getStrategyTokenDebt[_token] += _amount	NodeType.EXPRESSION
+getPortStrategyTokenDebt[msg.sender][_token] += _amount	NodeType.EXPRESSION
+None	NodeType.ASSEMBLY
+mstore(uint256,uint256)(0x14,to)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x34,amount)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x00,0xa9059cbb000000000000000000000000)	NodeType.EXPRESSION
+! mload(uint256)(0x00) == 1 | ! returndatasize()() & call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(gas()(),token,0,0x10,0x44,0x00,0x20)	NodeType.IF";
+"BlockID: 15
+Call context: manage
+True
+TMP_157(None) = SOLIDITY_CALL mstore(uint256,uint256)(0,2428038168)
+TMP_158(None) = SOLIDITY_CALL revert(uint256,uint256)(28,4)
+EXPRESSION:mstore(uint256,uint256)(0x00,0x90b8ec18)	NodeType.EXPRESSION
+revert()()	ExtraNodeType.REVERT";
+"BlockID: 16
+Call context: manage
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 17
+Call context: manage
+None
+TMP_159(None) = SOLIDITY_CALL mstore(uint256,uint256)(52,0)
+EXPRESSION:mstore(uint256,uint256)(0x34,0)	NodeType.EXPRESSION";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+REF_133(mapping(address => bool)) -> isPortStrategy[msg.sender]
+REF_134(bool) -> REF_133[_token]
+TMP_577 = ! REF_134 
+CONDITION TMP_577
+EXPRESSION:! isPortStrategy[msg.sender][_token]	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+REF_133(mapping(address => bool)) -> isPortStrategy[msg.sender]
+REF_134(bool) -> REF_133[_token]
+TMP_577 = ! REF_134 
+CONDITION TMP_577
+EXPRESSION:! isPortStrategy[msg.sender][_token]	NodeType.IF" -> "BlockID: 2
+Call context: manage
+True
+TMP_578(None) = SOLIDITY_CALL revert UnrecognizedPortStrategy()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+REF_133(mapping(address => bool)) -> isPortStrategy[msg.sender]
+REF_134(bool) -> REF_133[_token]
+TMP_577 = ! REF_134 
+CONDITION TMP_577
+EXPRESSION:! isPortStrategy[msg.sender][_token]	NodeType.IF" -> "BlockID: 3
+Call context: manage
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 4
+Call context: 
+None
+TMP_439 = CONVERT _token to ERC20
+TMP_440 = CONVERT this to address
+TMP_441(uint256) = HIGH_LEVEL_CALL, dest:TMP_439(ERC20), function:balanceOf, arguments:['TMP_440']  
+EXPRESSION:requiresPortStrategy(_token)	NodeType.EXPRESSION" -> "BlockID: 5
+Call context: manage
+None
+currBalance(uint256) := TMP_441(uint256)
+REF_47(uint256) -> getStrategyTokenDebt[_token]
+TMP_451(uint256) = _currBalance (c)+ REF_47
+REF_48(uint256) -> getMinimumTokenReserveRatio[_token]
+TMP_452(uint256) = TMP_451 (c)* REF_48
+TMP_453(uint256) = TMP_452 (c)/ DIVISIONER
+TMP_663(None) := TMP_453(uint256)
+minReserves(uint256) := TMP_442(uint256)
+TMP_443(bool) = currBalance > minReserves
+CONDITION TMP_443
+EXPRESSION:currBalance = ERC20(_token).balanceOf(address(this))	NodeType.VARIABLE
+minReserves = _minimumReserves(currBalance,_token)	NodeType.VARIABLE
+minReserves = _minimumReserves(currBalance,_token)	NodeType.EXPRESSION
+currBalance > minReserves	NodeType.IF" [key="successor_5"];
+"BlockID: 8
+Call context: 
+None
+TMP_455(bool) = _amount > TMP_454
+CONDITION TMP_455
+EXPRESSION:_amount > _excessReserves(_token)	NodeType.IF" -> "BlockID: 9
+Call context: 
+True
+TMP_456(None) = SOLIDITY_CALL revert InsufficientReserves()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 8
+Call context: 
+None
+TMP_455(bool) = _amount > TMP_454
+CONDITION TMP_455
+EXPRESSION:_amount > _excessReserves(_token)	NodeType.IF" -> "BlockID: 10
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 10
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 11
+Call context: 
+None
+REF_60(mapping(address => uint256)) -> lastManaged[msg.sender]
+REF_61(uint256) -> REF_60[_token]
+TMP_472(uint256) = block.timestamp (c)- REF_61
+TMP_473(bool) = TMP_472 >= 86400
+CONDITION TMP_473
+EXPRESSION:block.timestamp - lastManaged[msg.sender][_token] >= 86400	NodeType.IF" [key=0];
+"BlockID: 11
+Call context: 
+None
+REF_60(mapping(address => uint256)) -> lastManaged[msg.sender]
+REF_61(uint256) -> REF_60[_token]
+TMP_472(uint256) = block.timestamp (c)- REF_61
+TMP_473(bool) = TMP_472 >= 86400
+CONDITION TMP_473
+EXPRESSION:block.timestamp - lastManaged[msg.sender][_token] >= 86400	NodeType.IF" -> "BlockID: 12
+Call context: manage
+True
+REF_62(mapping(address => uint256)) -> strategyDailyLimitRemaining[msg.sender]
+REF_63(uint256) -> REF_62[_token]
+REF_64(mapping(address => uint256)) -> strategyDailyLimitAmount[msg.sender]
+REF_65(uint256) -> REF_64[_token]
+REF_63(uint256) (->strategyDailyLimitRemaining) := REF_65(uint256)
+EXPRESSION:strategyDailyLimitRemaining[msg.sender][_token] = strategyDailyLimitAmount[msg.sender][_token]	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 11
+Call context: 
+None
+REF_60(mapping(address => uint256)) -> lastManaged[msg.sender]
+REF_61(uint256) -> REF_60[_token]
+TMP_472(uint256) = block.timestamp (c)- REF_61
+TMP_473(bool) = TMP_472 >= 86400
+CONDITION TMP_473
+EXPRESSION:block.timestamp - lastManaged[msg.sender][_token] >= 86400	NodeType.IF" -> "BlockID: 13
+Call context: manage
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 3
+Call context: manage
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: 
+None
+TMP_439 = CONVERT _token to ERC20
+TMP_440 = CONVERT this to address
+TMP_441(uint256) = HIGH_LEVEL_CALL, dest:TMP_439(ERC20), function:balanceOf, arguments:['TMP_440']  
+EXPRESSION:requiresPortStrategy(_token)	NodeType.EXPRESSION" [key="Exit: requiresPortStrategy", ref="BranchPort.requiresPortStrategy"];
+"BlockID: 5
+Call context: manage
+None
+currBalance(uint256) := TMP_441(uint256)
+REF_47(uint256) -> getStrategyTokenDebt[_token]
+TMP_451(uint256) = _currBalance (c)+ REF_47
+REF_48(uint256) -> getMinimumTokenReserveRatio[_token]
+TMP_452(uint256) = TMP_451 (c)* REF_48
+TMP_453(uint256) = TMP_452 (c)/ DIVISIONER
+TMP_663(None) := TMP_453(uint256)
+minReserves(uint256) := TMP_442(uint256)
+TMP_443(bool) = currBalance > minReserves
+CONDITION TMP_443
+EXPRESSION:currBalance = ERC20(_token).balanceOf(address(this))	NodeType.VARIABLE
+minReserves = _minimumReserves(currBalance,_token)	NodeType.VARIABLE
+minReserves = _minimumReserves(currBalance,_token)	NodeType.EXPRESSION
+currBalance > minReserves	NodeType.IF" -> "BlockID: 6
+Call context: manage
+True
+TMP_444(uint256) = currBalance (c)- minReserves
+TMP_661(None) := TMP_444(uint256)
+EXPRESSION:" [key="successor_3"];
+"BlockID: 5
+Call context: manage
+None
+currBalance(uint256) := TMP_441(uint256)
+REF_47(uint256) -> getStrategyTokenDebt[_token]
+TMP_451(uint256) = _currBalance (c)+ REF_47
+REF_48(uint256) -> getMinimumTokenReserveRatio[_token]
+TMP_452(uint256) = TMP_451 (c)* REF_48
+TMP_453(uint256) = TMP_452 (c)/ DIVISIONER
+TMP_663(None) := TMP_453(uint256)
+minReserves(uint256) := TMP_442(uint256)
+TMP_443(bool) = currBalance > minReserves
+CONDITION TMP_443
+EXPRESSION:currBalance = ERC20(_token).balanceOf(address(this))	NodeType.VARIABLE
+minReserves = _minimumReserves(currBalance,_token)	NodeType.VARIABLE
+minReserves = _minimumReserves(currBalance,_token)	NodeType.EXPRESSION
+currBalance > minReserves	NodeType.IF" -> "BlockID: 7
+Call context: manage
+False
+TMP_661(None) := 0(uint256)
+EXPRESSION:" [key="successor_3"];
+"BlockID: 6
+Call context: manage
+True
+TMP_444(uint256) = currBalance (c)- minReserves
+TMP_661(None) := TMP_444(uint256)
+EXPRESSION:" -> "BlockID: 8
+Call context: 
+None
+TMP_455(bool) = _amount > TMP_454
+CONDITION TMP_455
+EXPRESSION:_amount > _excessReserves(_token)	NodeType.IF" [key="successor_5", ref="BranchPort._excessReserves"];
+"BlockID: 7
+Call context: manage
+False
+TMP_661(None) := 0(uint256)
+EXPRESSION:" -> "BlockID: 8
+Call context: 
+None
+TMP_455(bool) = _amount > TMP_454
+CONDITION TMP_455
+EXPRESSION:_amount > _excessReserves(_token)	NodeType.IF" [key="successor_5", ref="BranchPort._excessReserves"];
+"BlockID: 12
+Call context: manage
+True
+REF_62(mapping(address => uint256)) -> strategyDailyLimitRemaining[msg.sender]
+REF_63(uint256) -> REF_62[_token]
+REF_64(mapping(address => uint256)) -> strategyDailyLimitAmount[msg.sender]
+REF_65(uint256) -> REF_64[_token]
+REF_63(uint256) (->strategyDailyLimitRemaining) := REF_65(uint256)
+EXPRESSION:strategyDailyLimitRemaining[msg.sender][_token] = strategyDailyLimitAmount[msg.sender][_token]	NodeType.EXPRESSION" -> "BlockID: 13
+Call context: manage
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 13
+Call context: manage
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 14
+Call context: manage
+None
+REF_66(mapping(address => uint256)) -> strategyDailyLimitRemaining[msg.sender]
+REF_67(uint256) -> REF_66[_token]
+REF_67(-> strategyDailyLimitRemaining) = REF_67 (c)- _amount
+REF_68(mapping(address => uint256)) -> lastManaged[msg.sender]
+REF_69(uint256) -> REF_68[_token]
+REF_69(uint256) (->lastManaged) := block.timestamp(uint256)
+REF_49(uint256) -> getStrategyTokenDebt[_token]
+REF_49(-> getStrategyTokenDebt) = REF_49 (c)+ _amount
+REF_50(mapping(address => uint256)) -> getPortStrategyTokenDebt[msg.sender]
+REF_51(uint256) -> REF_50[_token]
+REF_51(-> getPortStrategyTokenDebt) = REF_51 (c)+ _amount
+INLINE ASM
+TMP_145(None) = SOLIDITY_CALL mstore(uint256,uint256)(20,to)
+TMP_146(None) = SOLIDITY_CALL mstore(uint256,uint256)(52,amount)
+TMP_147(None) = SOLIDITY_CALL mstore(uint256,uint256)(0,224668671643508016486903311432943665152)
+TMP_148(uint256) = SOLIDITY_CALL mload(uint256)(0)
+TMP_149(bool) = TMP_148 == 1
+TMP_150(uint256) = SOLIDITY_CALL returndatasize()()
+TMP_151 = ! TMP_150 
+TMP_152(bool) = TMP_149 | TMP_151
+TMP_153(uint256) = SOLIDITY_CALL gas()()
+TMP_154(uint256) = SOLIDITY_CALL call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(TMP_153,token,0,16,68,0,32)
+TMP_155(bool) = TMP_152 & TMP_154
+TMP_156 = ! TMP_155 
+CONDITION TMP_156
+EXPRESSION:strategyDailyLimitRemaining[msg.sender][_token] -= _amount	NodeType.EXPRESSION
+lastManaged[msg.sender][_token] = block.timestamp	NodeType.EXPRESSION
+_checkTimeLimit(_token,_amount)	NodeType.EXPRESSION
+getStrategyTokenDebt[_token] += _amount	NodeType.EXPRESSION
+getPortStrategyTokenDebt[msg.sender][_token] += _amount	NodeType.EXPRESSION
+None	NodeType.ASSEMBLY
+mstore(uint256,uint256)(0x14,to)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x34,amount)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x00,0xa9059cbb000000000000000000000000)	NodeType.EXPRESSION
+! mload(uint256)(0x00) == 1 | ! returndatasize()() & call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(gas()(),token,0,0x10,0x44,0x00,0x20)	NodeType.IF" [key=0];
+"BlockID: 14
+Call context: manage
+None
+REF_66(mapping(address => uint256)) -> strategyDailyLimitRemaining[msg.sender]
+REF_67(uint256) -> REF_66[_token]
+REF_67(-> strategyDailyLimitRemaining) = REF_67 (c)- _amount
+REF_68(mapping(address => uint256)) -> lastManaged[msg.sender]
+REF_69(uint256) -> REF_68[_token]
+REF_69(uint256) (->lastManaged) := block.timestamp(uint256)
+REF_49(uint256) -> getStrategyTokenDebt[_token]
+REF_49(-> getStrategyTokenDebt) = REF_49 (c)+ _amount
+REF_50(mapping(address => uint256)) -> getPortStrategyTokenDebt[msg.sender]
+REF_51(uint256) -> REF_50[_token]
+REF_51(-> getPortStrategyTokenDebt) = REF_51 (c)+ _amount
+INLINE ASM
+TMP_145(None) = SOLIDITY_CALL mstore(uint256,uint256)(20,to)
+TMP_146(None) = SOLIDITY_CALL mstore(uint256,uint256)(52,amount)
+TMP_147(None) = SOLIDITY_CALL mstore(uint256,uint256)(0,224668671643508016486903311432943665152)
+TMP_148(uint256) = SOLIDITY_CALL mload(uint256)(0)
+TMP_149(bool) = TMP_148 == 1
+TMP_150(uint256) = SOLIDITY_CALL returndatasize()()
+TMP_151 = ! TMP_150 
+TMP_152(bool) = TMP_149 | TMP_151
+TMP_153(uint256) = SOLIDITY_CALL gas()()
+TMP_154(uint256) = SOLIDITY_CALL call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(TMP_153,token,0,16,68,0,32)
+TMP_155(bool) = TMP_152 & TMP_154
+TMP_156 = ! TMP_155 
+CONDITION TMP_156
+EXPRESSION:strategyDailyLimitRemaining[msg.sender][_token] -= _amount	NodeType.EXPRESSION
+lastManaged[msg.sender][_token] = block.timestamp	NodeType.EXPRESSION
+_checkTimeLimit(_token,_amount)	NodeType.EXPRESSION
+getStrategyTokenDebt[_token] += _amount	NodeType.EXPRESSION
+getPortStrategyTokenDebt[msg.sender][_token] += _amount	NodeType.EXPRESSION
+None	NodeType.ASSEMBLY
+mstore(uint256,uint256)(0x14,to)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x34,amount)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x00,0xa9059cbb000000000000000000000000)	NodeType.EXPRESSION
+! mload(uint256)(0x00) == 1 | ! returndatasize()() & call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(gas()(),token,0,0x10,0x44,0x00,0x20)	NodeType.IF" -> "BlockID: 15
+Call context: manage
+True
+TMP_157(None) = SOLIDITY_CALL mstore(uint256,uint256)(0,2428038168)
+TMP_158(None) = SOLIDITY_CALL revert(uint256,uint256)(28,4)
+EXPRESSION:mstore(uint256,uint256)(0x00,0x90b8ec18)	NodeType.EXPRESSION
+revert()()	ExtraNodeType.REVERT" [key="successor_1"];
+"BlockID: 14
+Call context: manage
+None
+REF_66(mapping(address => uint256)) -> strategyDailyLimitRemaining[msg.sender]
+REF_67(uint256) -> REF_66[_token]
+REF_67(-> strategyDailyLimitRemaining) = REF_67 (c)- _amount
+REF_68(mapping(address => uint256)) -> lastManaged[msg.sender]
+REF_69(uint256) -> REF_68[_token]
+REF_69(uint256) (->lastManaged) := block.timestamp(uint256)
+REF_49(uint256) -> getStrategyTokenDebt[_token]
+REF_49(-> getStrategyTokenDebt) = REF_49 (c)+ _amount
+REF_50(mapping(address => uint256)) -> getPortStrategyTokenDebt[msg.sender]
+REF_51(uint256) -> REF_50[_token]
+REF_51(-> getPortStrategyTokenDebt) = REF_51 (c)+ _amount
+INLINE ASM
+TMP_145(None) = SOLIDITY_CALL mstore(uint256,uint256)(20,to)
+TMP_146(None) = SOLIDITY_CALL mstore(uint256,uint256)(52,amount)
+TMP_147(None) = SOLIDITY_CALL mstore(uint256,uint256)(0,224668671643508016486903311432943665152)
+TMP_148(uint256) = SOLIDITY_CALL mload(uint256)(0)
+TMP_149(bool) = TMP_148 == 1
+TMP_150(uint256) = SOLIDITY_CALL returndatasize()()
+TMP_151 = ! TMP_150 
+TMP_152(bool) = TMP_149 | TMP_151
+TMP_153(uint256) = SOLIDITY_CALL gas()()
+TMP_154(uint256) = SOLIDITY_CALL call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(TMP_153,token,0,16,68,0,32)
+TMP_155(bool) = TMP_152 & TMP_154
+TMP_156 = ! TMP_155 
+CONDITION TMP_156
+EXPRESSION:strategyDailyLimitRemaining[msg.sender][_token] -= _amount	NodeType.EXPRESSION
+lastManaged[msg.sender][_token] = block.timestamp	NodeType.EXPRESSION
+_checkTimeLimit(_token,_amount)	NodeType.EXPRESSION
+getStrategyTokenDebt[_token] += _amount	NodeType.EXPRESSION
+getPortStrategyTokenDebt[msg.sender][_token] += _amount	NodeType.EXPRESSION
+None	NodeType.ASSEMBLY
+mstore(uint256,uint256)(0x14,to)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x34,amount)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x00,0xa9059cbb000000000000000000000000)	NodeType.EXPRESSION
+! mload(uint256)(0x00) == 1 | ! returndatasize()() & call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(gas()(),token,0,0x10,0x44,0x00,0x20)	NodeType.IF" -> "BlockID: 16
+Call context: manage
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_1"];
+"BlockID: 16
+Call context: manage
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 17
+Call context: manage
+None
+TMP_159(None) = SOLIDITY_CALL mstore(uint256,uint256)(52,0)
+EXPRESSION:mstore(uint256,uint256)(0x34,0)	NodeType.EXPRESSION" [key=0];
+}

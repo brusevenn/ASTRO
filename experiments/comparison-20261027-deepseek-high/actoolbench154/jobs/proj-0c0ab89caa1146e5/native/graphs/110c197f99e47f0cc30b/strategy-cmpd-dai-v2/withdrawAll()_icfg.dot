@@ -1,0 +1,4599 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 4
+Call context: 
+True
+NEW VARIABLE cTokenBal
+NEW VARIABLE exchangeRate
+TMP_531 = CONVERT cdai to ICToken
+TMP_532 = CONVERT this to address
+TUPLE_46(uint256,uint256,uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_531(ICToken), function:getAccountSnapshot, arguments:['TMP_532']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(cTokenBal,exchangeRate) = ICToken(cdai).getAccountSnapshot(address(this))	NodeType.EXPRESSION";
+"BlockID: 27
+Call context: 
+None
+TMP_453 = CONVERT want to IERC20
+TMP_454 = CONVERT this to address
+TMP_455(uint256) = HIGH_LEVEL_CALL, dest:TMP_453(IERC20), function:balanceOf, arguments:['TMP_454']  
+EXPRESSION:_withdrawAll()	NodeType.EXPRESSION
+balance = IERC20(want).balanceOf(address(this))	NodeType.EXPRESSION";
+"BlockID: 30
+Call context: 
+None
+balance(uint256) := TMP_455(uint256)
+TMP_456 = CONVERT controller to IController
+TMP_457 = CONVERT want to address
+TMP_458(address) = HIGH_LEVEL_CALL, dest:TMP_456(IController), function:jars, arguments:['TMP_457']  
+EXPRESSION:balance = IERC20(want).balanceOf(address(this))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 37
+Call context: 
+True
+TMP_462 = CONVERT want to IERC20
+REF_44(bytes4) (->None) := 2835717307(uint256)
+TMP_84(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_44,to,value)
+TMP_106 = CONVERT token to address
+NEW VARIABLE size
+INLINE ASM
+REF_10 -> CODESIZE account
+size(uint256) := REF_10(uint256)
+TMP_11(bool) = size > 0
+TMP_896(None) := TMP_11(bool)
+CONDITION TMP_25
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+size = extcodesize(uint256)(account)	NodeType.EXPRESSION
+qiantao require	NodeType.IF";
+"BlockID: 1
+Call context: 
+None
+TMP_450(bool) = msg.sender == controller
+CONDITION TMP_450
+EXPRESSION:TMP_450(bool) = msg.sender == controller	NodeType.IF";
+"BlockID: 2
+Call context: 
+True
+TMP_451(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 3
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 32
+Call context: 
+None
+_jar(address) := TMP_458(address)
+TMP_459 = CONVERT 0 to address
+TMP_460(bool) = _jar != TMP_459
+CONDITION TMP_460
+EXPRESSION:TMP_460(bool) = _jar != TMP_459	NodeType.IF";
+"BlockID: 34
+Call context: 
+True
+TMP_461(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 35
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 5
+Call context: withdrawAll,_withdrawAll,balanceOfPool
+None
+cTokenBal(uint256)= UNPACK TUPLE_46 index: 1 
+exchangeRate(uint256)= UNPACK TUPLE_46 index: 3 
+NEW VARIABLE bal
+TMP_533(Exponential.Exp) = new Exp(exchangeRate)
+NEW VARIABLE err
+NEW VARIABLE product
+NEW VARIABLE err0
+NEW VARIABLE scaledMantissa
+REF_143(uint256) -> a.mantissa
+TMP_349(bool) = a == 0
+CONDITION TMP_349
+EXPRESSION:(cTokenBal,exchangeRate) = ICToken(cdai).getAccountSnapshot(address(this))	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF" [shape=box];
+"BlockID: 18
+Call context: withdrawAll,_withdrawAll,balanceOfPool
+None
+bal(uint256)= UNPACK TUPLE_47 index: 1 
+TMP_1059(None) := bal(uint256)
+supplied(uint256) := TMP_537(uint256)
+TMP_534 = CONVERT cdai to ICToken
+TMP_535 = CONVERT this to address
+TMP_536(uint256) = HIGH_LEVEL_CALL, dest:TMP_534(ICToken), function:borrowBalanceStored, arguments:['TMP_535']  
+EXPRESSION:(bal) = mulScalarTruncate(Exp(exchangeRate),cTokenBal)	NodeType.EXPRESSION
+supplied = getSuppliedView()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceStored(address(this))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 14
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_30 index: 0 
+product(Exponential.Exp)= UNPACK TUPLE_30 index: 1 
+REF_146(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_256(bool) = err != REF_146
+CONDITION TMP_256
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 16
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView
+True
+TMP_992(None) := err(CarefulMath.MathError)
+TMP_992(None) := TMP_257(uint256)
+EXPRESSION:";
+"BlockID: 17
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 19
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView
+None
+REF_147(CarefulMath.MathError) -> MathError.NO_ERROR
+REF_165(uint256) -> exp.mantissa
+TMP_277(uint256) = REF_165 / expScale
+TMP_1001(None) := TMP_277(uint256)
+TMP_992(None) := REF_147(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 8
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_29 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_29 index: 1 
+REF_144(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_253(bool) = err0 != REF_144
+CONDITION TMP_253
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [shape=box];
+"BlockID: 10
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate
+True
+TMP_254(Exponential.Exp) = new Exp(0)
+TMP_991(None) := err0(CarefulMath.MathError)
+TMP_991(None) := TMP_254(Exponential.Exp)
+TMP_991(None) := TMP_255(Exponential.Exp)
+EXPRESSION:";
+"BlockID: 11
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 15
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate
+None
+REF_145(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_255(Exponential.Exp) = new Exp(scaledMantissa)
+TMP_991(None) := REF_145(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 6
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+True
+REF_197(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1033(None) := REF_197(CarefulMath.MathError)
+TMP_1033(None) := c(uint256)
+EXPRESSION:";
+"BlockID: 7
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 9
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+None
+TMP_350(uint256) = a * b
+c(uint256) := TMP_350(uint256)
+TMP_351(uint256) = c / a
+TMP_352(bool) = TMP_351 != b
+CONDITION TMP_352
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF";
+"BlockID: 12
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+True
+REF_198(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1033(None) := REF_198(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 13
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+False
+REF_199(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1033(None) := REF_199(CarefulMath.MathError)
+EXPRESSION:";
+"BlockID: 20
+Call context: withdrawAll,_withdrawAll,balanceOfPool
+None
+TMP_1060(None) := TMP_536(uint256)
+borrowed(uint256) := TMP_538(uint256)
+TMP_539(uint256) = a - b
+TMP_1061(None) := TMP_539(uint256)
+TMP_375 = CONVERT want to IERC20
+TMP_376 = CONVERT this to address
+TMP_377(uint256) = HIGH_LEVEL_CALL, dest:TMP_375(IERC20), function:balanceOf, arguments:['TMP_376']  
+EXPRESSION:borrowed = getBorrowedView()	NodeType.VARIABLE
+borrowed = getBorrowedView()	NodeType.EXPRESSION
+supplied.sub(borrowed)	NodeType.EXPRESSION
+IERC20(want).balanceOf(address(this))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 22
+Call context: withdrawAll,_withdrawAll
+True
+TMP_681(uint256) = a - b
+EXPRESSION:";
+"BlockID: 23
+Call context: withdrawAll,_withdrawAll
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 25
+Call context: withdrawAll,_withdrawAll
+None
+TMP_1085(None) := _amount(uint256)
+EXPRESSION:";
+"BlockID: 24
+Call context: withdrawAll,_withdrawAll
+None
+_redeem(uint256) := TMP_681(uint256)
+TMP_682 = CONVERT cdai to ICToken
+TMP_683(uint256) = HIGH_LEVEL_CALL, dest:TMP_682(ICToken), function:getCash, arguments:[]  
+EXPRESSION:_redeem = _amount.sub(_want)	NodeType.VARIABLE
+_redeem = _amount.sub(_want)	NodeType.EXPRESSION
+require(bool,string)(ICToken(cdai).getCash() >= _redeem,!cash-liquidity)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 31
+Call context: withdrawAll,_withdrawAll
+True
+TMP_568 = CONVERT cdai to ICToken
+TMP_569 = CONVERT this to address
+TMP_570(uint256) = HIGH_LEVEL_CALL, dest:TMP_568(ICToken), function:borrowBalanceCurrent, arguments:['TMP_569']  
+EXPRESSION:ICToken(cdai).borrowBalanceCurrent(address(this))	NodeType.EXPRESSION";
+"BlockID: 43
+Call context: withdrawAll,_withdrawAll
+True
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION";
+"BlockID: 44
+Call context: withdrawAll,_withdrawAll
+False
+TMP_693(uint256) = a - b
+REF_310(bool) -> keepers[msg.sender]
+TMP_706 = CONVERT this to address
+TMP_707(bool) = msg.sender == TMP_706
+TMP_708(bool) = REF_310 || TMP_707
+TMP_709(bool) = msg.sender == strategist
+TMP_710(bool) = TMP_708 || TMP_709
+TMP_711(bool) = msg.sender == governance
+TMP_712(bool) = TMP_710 || TMP_711
+CONDITION TMP_712
+EXPRESSION:this.deleverageUntil(supplied.sub(borrowedToBeFree))	NodeType.EXPRESSION
+TMP_712(bool) = TMP_710 || TMP_711	NodeType.IF";
+"BlockID: 186
+Call context: withdrawAll,_withdrawAll
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 188
+Call context: withdrawAll,_withdrawAll
+None
+TMP_695 = CONVERT cdai to ICToken
+TMP_696(uint256) = HIGH_LEVEL_CALL, dest:TMP_695(ICToken), function:redeemUnderlying, arguments:['_redeem']  
+EXPRESSION:require(bool,string)(ICToken(cdai).redeemUnderlying(_redeem) == 0,!redeem)	NodeType.EXPRESSION";
+"BlockID: 26
+Call context: withdrawAll,_withdrawAll
+None
+TMP_684(bool) = TMP_683 >= _redeem
+CONDITION TMP_684
+EXPRESSION:TMP_684(bool) = TMP_683 >= _redeem	NodeType.IF";
+"BlockID: 28
+Call context: withdrawAll,_withdrawAll
+True
+TMP_685(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 29
+Call context: withdrawAll,_withdrawAll
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 189
+Call context: withdrawAll,_withdrawAll
+None
+TMP_697(bool) = TMP_696 == 0
+CONDITION TMP_697
+EXPRESSION:TMP_697(bool) = TMP_696 == 0	NodeType.IF";
+"BlockID: 190
+Call context: withdrawAll,_withdrawAll
+True
+TMP_698(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 191
+Call context: withdrawAll,_withdrawAll
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 21
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_1039(None) := TMP_377(uint256)
+_want(uint256) := TMP_679(uint256)
+TMP_680(bool) = _want < _amount
+CONDITION TMP_680
+EXPRESSION:_want = balanceOfWant()	NodeType.VARIABLE
+_want = balanceOfWant()	NodeType.EXPRESSION
+_want < _amount	NodeType.IF" [shape=box];
+"BlockID: 33
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_1071(None) := TMP_570(uint256)
+borrowed(uint256) := TMP_686(uint256)
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:borrowed = getBorrowed()	NodeType.VARIABLE
+ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 36
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_687(uint256)
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:supplied = getSupplied()	NodeType.VARIABLE
+ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 38
+Call context: withdrawAll,_withdrawAll,_withdrawSome,getCurrentLeverage
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_579(uint256)
+TMP_568 = CONVERT cdai to ICToken
+TMP_569 = CONVERT this to address
+TMP_570(uint256) = HIGH_LEVEL_CALL, dest:TMP_568(ICToken), function:borrowBalanceCurrent, arguments:['TMP_569']  
+EXPRESSION:supplied = getSupplied()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceCurrent(address(this))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 41
+Call context: withdrawAll,_withdrawAll,_withdrawSome,getCurrentLeverage
+None
+TMP_1071(None) := TMP_570(uint256)
+borrowed(uint256) := TMP_580(uint256)
+TMP_581(uint256) = a * b
+TMP_582(uint256) = a - b
+TMP_583(uint256) = a / b
+TMP_1073(None) := TMP_583(uint256)
+curLeverage(uint256) := TMP_688(uint256)
+TMP_689(uint256) = a * b
+TMP_690(uint256) = a / b
+borrowedToBeFree(uint256) := TMP_690(uint256)
+TMP_691(bool) = borrowedToBeFree > borrowed
+CONDITION TMP_691
+EXPRESSION:borrowed = getBorrowed()	NodeType.VARIABLE
+borrowed = getBorrowed()	NodeType.EXPRESSION
+supplied.mul(1e18).div(supplied.sub(borrowed))	NodeType.EXPRESSION
+supplied.mul(1e18).div(supplied.sub(borrowed))	NodeType.EXPRESSION
+supplied.mul(1e18).div(supplied.sub(borrowed))	NodeType.EXPRESSION
+curLeverage = getCurrentLeverage()	NodeType.VARIABLE
+curLeverage = getCurrentLeverage()	NodeType.EXPRESSION
+borrowedToBeFree = _redeem.mul(curLeverage).div(1e18)	NodeType.VARIABLE
+borrowedToBeFree = _redeem.mul(curLeverage).div(1e18)	NodeType.EXPRESSION
+borrowedToBeFree > borrowed	NodeType.IF" [shape=box];
+"BlockID: 46
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,getSuppliedUnleveraged
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_562(uint256)
+TMP_568 = CONVERT cdai to ICToken
+TMP_569 = CONVERT this to address
+TMP_570(uint256) = HIGH_LEVEL_CALL, dest:TMP_568(ICToken), function:borrowBalanceCurrent, arguments:['TMP_569']  
+EXPRESSION:supplied = getSupplied()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceCurrent(address(this))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 51
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,getSuppliedUnleveraged
+None
+TMP_1071(None) := TMP_570(uint256)
+borrowed(uint256) := TMP_563(uint256)
+TMP_564(uint256) = a - b
+TMP_1069(None) := TMP_564(uint256)
+unleveragedSupply(uint256) := TMP_628(uint256)
+REF_310(bool) -> keepers[msg.sender]
+TMP_706 = CONVERT this to address
+TMP_707(bool) = msg.sender == TMP_706
+TMP_708(bool) = REF_310 || TMP_707
+TMP_709(bool) = msg.sender == strategist
+TMP_710(bool) = TMP_708 || TMP_709
+TMP_711(bool) = msg.sender == governance
+TMP_712(bool) = TMP_710 || TMP_711
+CONDITION TMP_712
+EXPRESSION:borrowed = getBorrowed()	NodeType.VARIABLE
+borrowed = getBorrowed()	NodeType.EXPRESSION
+supplied.sub(borrowed)	NodeType.EXPRESSION
+unleveragedSupply = getSuppliedUnleveraged()	NodeType.VARIABLE
+unleveragedSupply = getSuppliedUnleveraged()	NodeType.EXPRESSION
+TMP_712(bool) = TMP_710 || TMP_711	NodeType.IF" [shape=box];
+"BlockID: 61
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION";
+"BlockID: 81
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+True
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION";
+"BlockID: 92
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+BEGIN_LOOP
+TMP_638(uint256) = a - b
+TMP_639(bool) = TMP_638 < _supplyAmount
+CONDITION TMP_639
+EXPRESSION:None	NodeType.STARTLOOP
+supplied.sub(_redeemAndRepay) < _supplyAmount	NodeType.EXPRESSION
+supplied.sub(_redeemAndRepay) < _supplyAmount	NodeType.IF";
+"BlockID: 94
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+True
+TMP_640(uint256) = a - b
+_redeemAndRepay(uint256) := TMP_640(uint256)
+EXPRESSION:_redeemAndRepay = supplied.sub(_supplyAmount)	NodeType.EXPRESSION
+_redeemAndRepay = supplied.sub(_supplyAmount)	NodeType.EXPRESSION";
+"BlockID: 95
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 97
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+TMP_641 = CONVERT cdai to ICToken
+TMP_642(uint256) = HIGH_LEVEL_CALL, dest:TMP_641(ICToken), function:redeemUnderlying, arguments:['_redeemAndRepay']  
+EXPRESSION:require(bool,string)(ICToken(cdai).redeemUnderlying(_redeemAndRepay) == 0,!redeem)	NodeType.EXPRESSION";
+"BlockID: 105
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+True
+TMP_645 = CONVERT dai to IERC20
+TMP_88(bool) = value == 0
+TMP_89 = CONVERT this to address
+TMP_90(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:allowance, arguments:['TMP_89', 'spender']  
+EXPRESSION:require(bool,string)((value == 0) || (token.allowance(address(this),spender) == 0),SafeERC20: approve from non-zero to non-zero allowance)	NodeType.EXPRESSION";
+"BlockID: 139
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+TMP_647 = CONVERT dai to IERC20
+TMP_88(bool) = value == 0
+TMP_89 = CONVERT this to address
+TMP_90(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:allowance, arguments:['TMP_89', 'spender']  
+EXPRESSION:IERC20(dai).safeApprove(cdai,0)	NodeType.EXPRESSION
+require(bool,string)((value == 0) || (token.allowance(address(this),spender) == 0),SafeERC20: approve from non-zero to non-zero allowance)	NodeType.EXPRESSION";
+"BlockID: 175
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+TMP_649 = CONVERT cdai to ICToken
+TMP_650(uint256) = HIGH_LEVEL_CALL, dest:TMP_649(ICToken), function:repayBorrow, arguments:['_redeemAndRepay']  
+EXPRESSION:IERC20(dai).safeApprove(cdai,_redeemAndRepay)	NodeType.EXPRESSION
+require(bool,string)(ICToken(cdai).repayBorrow(_redeemAndRepay) == 0,!repay)	NodeType.EXPRESSION";
+"BlockID: 185
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+True
+TMP_653(uint256) = a - b
+supplied(uint256) := TMP_653(uint256)
+TMP_637(bool) = supplied > _supplyAmount
+CONDITION TMP_637
+EXPRESSION:supplied = supplied.sub(_redeemAndRepay)	NodeType.EXPRESSION
+supplied = supplied.sub(_redeemAndRepay)	NodeType.EXPRESSION
+supplied > _supplyAmount	NodeType.IFLOOP";
+"BlockID: 187
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 72
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+True
+TMP_635(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 73
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 100
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+TMP_643(bool) = TMP_642 == 0
+CONDITION TMP_643
+EXPRESSION:TMP_643(bool) = TMP_642 == 0	NodeType.IF";
+"BlockID: 102
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+True
+TMP_644(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 103
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 180
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+TMP_651(bool) = TMP_650 == 0
+CONDITION TMP_651
+EXPRESSION:TMP_651(bool) = TMP_650 == 0	NodeType.IF";
+"BlockID: 182
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+True
+TMP_652(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 183
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 56
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+True
+TMP_713(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 57
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 65
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,getSuppliedUnleveraged
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_562(uint256)
+TMP_568 = CONVERT cdai to ICToken
+TMP_569 = CONVERT this to address
+TMP_570(uint256) = HIGH_LEVEL_CALL, dest:TMP_568(ICToken), function:borrowBalanceCurrent, arguments:['TMP_569']  
+EXPRESSION:supplied = getSupplied()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceCurrent(address(this))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 67
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,getSuppliedUnleveraged
+None
+TMP_1071(None) := TMP_570(uint256)
+borrowed(uint256) := TMP_563(uint256)
+TMP_564(uint256) = a - b
+TMP_1069(None) := TMP_564(uint256)
+unleveragedSupply(uint256) := TMP_630(uint256)
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:borrowed = getBorrowed()	NodeType.VARIABLE
+borrowed = getBorrowed()	NodeType.EXPRESSION
+supplied.sub(borrowed)	NodeType.EXPRESSION
+unleveragedSupply = getSuppliedUnleveraged()	NodeType.VARIABLE
+ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 70
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_631(uint256)
+TMP_632(bool) = _supplyAmount >= unleveragedSupply
+TMP_633(bool) = _supplyAmount <= supplied
+TMP_634(bool) = TMP_632 && TMP_633
+CONDITION TMP_634
+EXPRESSION:TMP_634(bool) = TMP_632 && TMP_633	NodeType.IF" [shape=box];
+"BlockID: 87
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+None
+borrowed(uint256) := TMP_572(uint256)
+NEW VARIABLE colFactor
+TMP_573 = CONVERT comptroller to IComptroller
+TUPLE_50(bool,uint256) = HIGH_LEVEL_CALL, dest:TMP_573(IComptroller), function:markets, arguments:['cdai']  
+EXPRESSION:borrowed = getBorrowed()	NodeType.VARIABLE
+borrowed = getBorrowed()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+(colFactor) = IComptroller(comptroller).markets(cdai)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 89
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+None
+colFactor(uint256)= UNPACK TUPLE_50 index: 1 
+TMP_574(uint256) = a * b
+TMP_575(uint256) = a / b
+TMP_576(uint256) = a - b
+TMP_577(uint256) = a * b
+TMP_578(uint256) = a / b
+TMP_1072(None) := TMP_578(uint256)
+_redeemAndRepay(uint256) := TMP_636(uint256)
+EXPRESSION:(colFactor) = IComptroller(comptroller).markets(cdai)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+_redeemAndRepay = getBorrowable()	NodeType.VARIABLE
+_redeemAndRepay = getBorrowable()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 83
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,getBorrowable
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_571(uint256)
+TMP_568 = CONVERT cdai to ICToken
+TMP_569 = CONVERT this to address
+TMP_570(uint256) = HIGH_LEVEL_CALL, dest:TMP_568(ICToken), function:borrowBalanceCurrent, arguments:['TMP_569']  
+EXPRESSION:supplied = getSupplied()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceCurrent(address(this))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 85
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,getBorrowable
+None
+TMP_1071(None) := TMP_570(uint256)
+EXPRESSION:" [shape=box];
+"BlockID: 114
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+True
+REF_51(bytes4) (->None) := 157198259(uint256)
+TMP_94(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_51,spender,value)
+TMP_106 = CONVERT token to address
+NEW VARIABLE size
+INLINE ASM
+REF_10 -> CODESIZE account
+size(uint256) := REF_10(uint256)
+TMP_11(bool) = size > 0
+TMP_896(None) := TMP_11(bool)
+CONDITION TMP_25
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+size = extcodesize(uint256)(account)	NodeType.EXPRESSION
+qiantao require	NodeType.IF";
+"BlockID: 108
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+None
+TMP_91(bool) = TMP_90 == 0
+TMP_92(bool) = TMP_88 || TMP_91
+CONDITION TMP_92
+EXPRESSION:TMP_92(bool) = TMP_88 || TMP_91	NodeType.IF";
+"BlockID: 110
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+True
+TMP_93(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 111
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 136
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 137
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+None
+TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+CONDITION TMP_109
+EXPRESSION:TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)	NodeType.IF";
+"BlockID: 140
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+True
+TMP_110(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 141
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 130
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn
+None
+TMP_899(None) := TMP_18(bytes)
+returndata(bytes) := TMP_107(bytes)
+REF_63 -> LENGTH returndata
+TMP_108(bool) = REF_63 > 0
+CONDITION TMP_108
+EXPRESSION:returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.VARIABLE
+returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.EXPRESSION
+returndata.length > 0	NodeType.IF" [shape=box];
+"BlockID: 119
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_3(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:weiValue 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION";
+"BlockID: 122
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_3 index: 0 
+returndata(bytes)= UNPACK TUPLE_3 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION
+success	NodeType.IF" [shape=box];
+"BlockID: 126
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+TMP_902(None) := returndata(bytes)
+EXPRESSION:";
+"BlockID: 127
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+REF_13 -> LENGTH returndata
+TMP_27(bool) = REF_13 > 0
+CONDITION TMP_27
+EXPRESSION:returndata.length > 0	NodeType.IF";
+"BlockID: 131
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+INLINE ASM
+NEW VARIABLE returndata_size__functionCallWithValue_asm_0
+TMP_28(uint256) = SOLIDITY_CALL mload(uint256)(returndata)
+returndata_size__functionCallWithValue_asm_0(uint256) := TMP_28(uint256)
+TMP_29(uint256) = 32 + returndata
+TMP_30(None) = SOLIDITY_CALL revert(uint256,uint256)(TMP_29,returndata_size__functionCallWithValue_asm_0)
+EXPRESSION:None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+returndata_size__functionCallWithValue_asm_0 = mload(uint256)(returndata)	NodeType.EXPRESSION
+revert()()	ExtraNodeType.REVERT";
+"BlockID: 132
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+TMP_31(None) = SOLIDITY_CALL revert(string)(errorMessage)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 116
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+TMP_26(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 117
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 150
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+True
+REF_51(bytes4) (->None) := 157198259(uint256)
+TMP_94(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_51,spender,value)
+TMP_106 = CONVERT token to address
+NEW VARIABLE size
+INLINE ASM
+REF_10 -> CODESIZE account
+size(uint256) := REF_10(uint256)
+TMP_11(bool) = size > 0
+TMP_896(None) := TMP_11(bool)
+CONDITION TMP_25
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+size = extcodesize(uint256)(account)	NodeType.EXPRESSION
+qiantao require	NodeType.IF";
+"BlockID: 144
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+None
+TMP_91(bool) = TMP_90 == 0
+TMP_92(bool) = TMP_88 || TMP_91
+CONDITION TMP_92
+EXPRESSION:TMP_92(bool) = TMP_88 || TMP_91	NodeType.IF";
+"BlockID: 146
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+True
+TMP_93(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 147
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 172
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 173
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+None
+TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+CONDITION TMP_109
+EXPRESSION:TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)	NodeType.IF";
+"BlockID: 176
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+True
+TMP_110(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 177
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 166
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn
+None
+TMP_899(None) := TMP_18(bytes)
+returndata(bytes) := TMP_107(bytes)
+REF_63 -> LENGTH returndata
+TMP_108(bool) = REF_63 > 0
+CONDITION TMP_108
+EXPRESSION:returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.VARIABLE
+returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.EXPRESSION
+returndata.length > 0	NodeType.IF" [shape=box];
+"BlockID: 155
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_3(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:weiValue 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION";
+"BlockID: 158
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_3 index: 0 
+returndata(bytes)= UNPACK TUPLE_3 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION
+success	NodeType.IF" [shape=box];
+"BlockID: 162
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+TMP_902(None) := returndata(bytes)
+EXPRESSION:";
+"BlockID: 163
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+REF_13 -> LENGTH returndata
+TMP_27(bool) = REF_13 > 0
+CONDITION TMP_27
+EXPRESSION:returndata.length > 0	NodeType.IF";
+"BlockID: 167
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+INLINE ASM
+NEW VARIABLE returndata_size__functionCallWithValue_asm_0
+TMP_28(uint256) = SOLIDITY_CALL mload(uint256)(returndata)
+returndata_size__functionCallWithValue_asm_0(uint256) := TMP_28(uint256)
+TMP_29(uint256) = 32 + returndata
+TMP_30(None) = SOLIDITY_CALL revert(uint256,uint256)(TMP_29,returndata_size__functionCallWithValue_asm_0)
+EXPRESSION:None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+returndata_size__functionCallWithValue_asm_0 = mload(uint256)(returndata)	NodeType.EXPRESSION
+revert()()	ExtraNodeType.REVERT";
+"BlockID: 168
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+TMP_31(None) = SOLIDITY_CALL revert(string)(errorMessage)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 152
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+TMP_26(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 153
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 52
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION";
+"BlockID: 77
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+True
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION";
+"BlockID: 88
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+BEGIN_LOOP
+TMP_638(uint256) = a - b
+TMP_639(bool) = TMP_638 < _supplyAmount
+CONDITION TMP_639
+EXPRESSION:None	NodeType.STARTLOOP
+supplied.sub(_redeemAndRepay) < _supplyAmount	NodeType.EXPRESSION
+supplied.sub(_redeemAndRepay) < _supplyAmount	NodeType.IF";
+"BlockID: 90
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+True
+TMP_640(uint256) = a - b
+_redeemAndRepay(uint256) := TMP_640(uint256)
+EXPRESSION:_redeemAndRepay = supplied.sub(_supplyAmount)	NodeType.EXPRESSION
+_redeemAndRepay = supplied.sub(_supplyAmount)	NodeType.EXPRESSION";
+"BlockID: 91
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 93
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_641 = CONVERT cdai to ICToken
+TMP_642(uint256) = HIGH_LEVEL_CALL, dest:TMP_641(ICToken), function:redeemUnderlying, arguments:['_redeemAndRepay']  
+EXPRESSION:require(bool,string)(ICToken(cdai).redeemUnderlying(_redeemAndRepay) == 0,!redeem)	NodeType.EXPRESSION";
+"BlockID: 101
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+True
+TMP_645 = CONVERT dai to IERC20
+TMP_88(bool) = value == 0
+TMP_89 = CONVERT this to address
+TMP_90(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:allowance, arguments:['TMP_89', 'spender']  
+EXPRESSION:require(bool,string)((value == 0) || (token.allowance(address(this),spender) == 0),SafeERC20: approve from non-zero to non-zero allowance)	NodeType.EXPRESSION";
+"BlockID: 133
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_647 = CONVERT dai to IERC20
+TMP_88(bool) = value == 0
+TMP_89 = CONVERT this to address
+TMP_90(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:allowance, arguments:['TMP_89', 'spender']  
+EXPRESSION:IERC20(dai).safeApprove(cdai,0)	NodeType.EXPRESSION
+require(bool,string)((value == 0) || (token.allowance(address(this),spender) == 0),SafeERC20: approve from non-zero to non-zero allowance)	NodeType.EXPRESSION";
+"BlockID: 169
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_649 = CONVERT cdai to ICToken
+TMP_650(uint256) = HIGH_LEVEL_CALL, dest:TMP_649(ICToken), function:repayBorrow, arguments:['_redeemAndRepay']  
+EXPRESSION:IERC20(dai).safeApprove(cdai,_redeemAndRepay)	NodeType.EXPRESSION
+require(bool,string)(ICToken(cdai).repayBorrow(_redeemAndRepay) == 0,!repay)	NodeType.EXPRESSION";
+"BlockID: 181
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+True
+TMP_653(uint256) = a - b
+supplied(uint256) := TMP_653(uint256)
+TMP_637(bool) = supplied > _supplyAmount
+CONDITION TMP_637
+EXPRESSION:supplied = supplied.sub(_redeemAndRepay)	NodeType.EXPRESSION
+supplied = supplied.sub(_redeemAndRepay)	NodeType.EXPRESSION
+supplied > _supplyAmount	NodeType.IFLOOP";
+"BlockID: 184
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP";
+"BlockID: 68
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+True
+TMP_635(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 69
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 96
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_643(bool) = TMP_642 == 0
+CONDITION TMP_643
+EXPRESSION:TMP_643(bool) = TMP_642 == 0	NodeType.IF";
+"BlockID: 98
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+True
+TMP_644(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 99
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 174
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_651(bool) = TMP_650 == 0
+CONDITION TMP_651
+EXPRESSION:TMP_651(bool) = TMP_650 == 0	NodeType.IF";
+"BlockID: 178
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+True
+TMP_652(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 179
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 47
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+True
+TMP_713(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 48
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 58
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,getSuppliedUnleveraged
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_562(uint256)
+TMP_568 = CONVERT cdai to ICToken
+TMP_569 = CONVERT this to address
+TMP_570(uint256) = HIGH_LEVEL_CALL, dest:TMP_568(ICToken), function:borrowBalanceCurrent, arguments:['TMP_569']  
+EXPRESSION:supplied = getSupplied()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceCurrent(address(this))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 62
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,getSuppliedUnleveraged
+None
+TMP_1071(None) := TMP_570(uint256)
+borrowed(uint256) := TMP_563(uint256)
+TMP_564(uint256) = a - b
+TMP_1069(None) := TMP_564(uint256)
+unleveragedSupply(uint256) := TMP_630(uint256)
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:borrowed = getBorrowed()	NodeType.VARIABLE
+borrowed = getBorrowed()	NodeType.EXPRESSION
+supplied.sub(borrowed)	NodeType.EXPRESSION
+unleveragedSupply = getSuppliedUnleveraged()	NodeType.VARIABLE
+ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 66
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_631(uint256)
+TMP_632(bool) = _supplyAmount >= unleveragedSupply
+TMP_633(bool) = _supplyAmount <= supplied
+TMP_634(bool) = TMP_632 && TMP_633
+CONDITION TMP_634
+EXPRESSION:TMP_634(bool) = TMP_632 && TMP_633	NodeType.IF" [shape=box];
+"BlockID: 84
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+None
+borrowed(uint256) := TMP_572(uint256)
+NEW VARIABLE colFactor
+TMP_573 = CONVERT comptroller to IComptroller
+TUPLE_50(bool,uint256) = HIGH_LEVEL_CALL, dest:TMP_573(IComptroller), function:markets, arguments:['cdai']  
+EXPRESSION:borrowed = getBorrowed()	NodeType.VARIABLE
+borrowed = getBorrowed()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+(colFactor) = IComptroller(comptroller).markets(cdai)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 86
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+None
+colFactor(uint256)= UNPACK TUPLE_50 index: 1 
+TMP_574(uint256) = a * b
+TMP_575(uint256) = a / b
+TMP_576(uint256) = a - b
+TMP_577(uint256) = a * b
+TMP_578(uint256) = a / b
+TMP_1072(None) := TMP_578(uint256)
+_redeemAndRepay(uint256) := TMP_636(uint256)
+EXPRESSION:(colFactor) = IComptroller(comptroller).markets(cdai)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+_redeemAndRepay = getBorrowable()	NodeType.VARIABLE
+_redeemAndRepay = getBorrowable()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 80
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,getBorrowable
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_571(uint256)
+TMP_568 = CONVERT cdai to ICToken
+TMP_569 = CONVERT this to address
+TMP_570(uint256) = HIGH_LEVEL_CALL, dest:TMP_568(ICToken), function:borrowBalanceCurrent, arguments:['TMP_569']  
+EXPRESSION:supplied = getSupplied()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceCurrent(address(this))	NodeType.EXPRESSION" [shape=box];
+"BlockID: 82
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,getBorrowable
+None
+TMP_1071(None) := TMP_570(uint256)
+EXPRESSION:" [shape=box];
+"BlockID: 109
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+True
+REF_51(bytes4) (->None) := 157198259(uint256)
+TMP_94(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_51,spender,value)
+TMP_106 = CONVERT token to address
+NEW VARIABLE size
+INLINE ASM
+REF_10 -> CODESIZE account
+size(uint256) := REF_10(uint256)
+TMP_11(bool) = size > 0
+TMP_896(None) := TMP_11(bool)
+CONDITION TMP_25
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+size = extcodesize(uint256)(account)	NodeType.EXPRESSION
+qiantao require	NodeType.IF";
+"BlockID: 104
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+None
+TMP_91(bool) = TMP_90 == 0
+TMP_92(bool) = TMP_88 || TMP_91
+CONDITION TMP_92
+EXPRESSION:TMP_92(bool) = TMP_88 || TMP_91	NodeType.IF";
+"BlockID: 106
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+True
+TMP_93(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 107
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 128
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 129
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+None
+TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+CONDITION TMP_109
+EXPRESSION:TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)	NodeType.IF";
+"BlockID: 134
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+True
+TMP_110(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 135
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 123
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn
+None
+TMP_899(None) := TMP_18(bytes)
+returndata(bytes) := TMP_107(bytes)
+REF_63 -> LENGTH returndata
+TMP_108(bool) = REF_63 > 0
+CONDITION TMP_108
+EXPRESSION:returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.VARIABLE
+returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.EXPRESSION
+returndata.length > 0	NodeType.IF" [shape=box];
+"BlockID: 115
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_3(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:weiValue 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION";
+"BlockID: 118
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_3 index: 0 
+returndata(bytes)= UNPACK TUPLE_3 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION
+success	NodeType.IF" [shape=box];
+"BlockID: 120
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+TMP_902(None) := returndata(bytes)
+EXPRESSION:";
+"BlockID: 121
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+REF_13 -> LENGTH returndata
+TMP_27(bool) = REF_13 > 0
+CONDITION TMP_27
+EXPRESSION:returndata.length > 0	NodeType.IF";
+"BlockID: 124
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+INLINE ASM
+NEW VARIABLE returndata_size__functionCallWithValue_asm_0
+TMP_28(uint256) = SOLIDITY_CALL mload(uint256)(returndata)
+returndata_size__functionCallWithValue_asm_0(uint256) := TMP_28(uint256)
+TMP_29(uint256) = 32 + returndata
+TMP_30(None) = SOLIDITY_CALL revert(uint256,uint256)(TMP_29,returndata_size__functionCallWithValue_asm_0)
+EXPRESSION:None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+returndata_size__functionCallWithValue_asm_0 = mload(uint256)(returndata)	NodeType.EXPRESSION
+revert()()	ExtraNodeType.REVERT";
+"BlockID: 125
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+TMP_31(None) = SOLIDITY_CALL revert(string)(errorMessage)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 112
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+TMP_26(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 113
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 145
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+True
+REF_51(bytes4) (->None) := 157198259(uint256)
+TMP_94(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_51,spender,value)
+TMP_106 = CONVERT token to address
+NEW VARIABLE size
+INLINE ASM
+REF_10 -> CODESIZE account
+size(uint256) := REF_10(uint256)
+TMP_11(bool) = size > 0
+TMP_896(None) := TMP_11(bool)
+CONDITION TMP_25
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+size = extcodesize(uint256)(account)	NodeType.EXPRESSION
+qiantao require	NodeType.IF";
+"BlockID: 138
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+None
+TMP_91(bool) = TMP_90 == 0
+TMP_92(bool) = TMP_88 || TMP_91
+CONDITION TMP_92
+EXPRESSION:TMP_92(bool) = TMP_88 || TMP_91	NodeType.IF";
+"BlockID: 142
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+True
+TMP_93(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 143
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 164
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 165
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+None
+TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+CONDITION TMP_109
+EXPRESSION:TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)	NodeType.IF";
+"BlockID: 170
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+True
+TMP_110(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 171
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 159
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn
+None
+TMP_899(None) := TMP_18(bytes)
+returndata(bytes) := TMP_107(bytes)
+REF_63 -> LENGTH returndata
+TMP_108(bool) = REF_63 > 0
+CONDITION TMP_108
+EXPRESSION:returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.VARIABLE
+returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.EXPRESSION
+returndata.length > 0	NodeType.IF" [shape=box];
+"BlockID: 151
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_3(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:weiValue 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION";
+"BlockID: 154
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_3 index: 0 
+returndata(bytes)= UNPACK TUPLE_3 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION
+success	NodeType.IF" [shape=box];
+"BlockID: 156
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+TMP_902(None) := returndata(bytes)
+EXPRESSION:";
+"BlockID: 157
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+REF_13 -> LENGTH returndata
+TMP_27(bool) = REF_13 > 0
+CONDITION TMP_27
+EXPRESSION:returndata.length > 0	NodeType.IF";
+"BlockID: 160
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+INLINE ASM
+NEW VARIABLE returndata_size__functionCallWithValue_asm_0
+TMP_28(uint256) = SOLIDITY_CALL mload(uint256)(returndata)
+returndata_size__functionCallWithValue_asm_0(uint256) := TMP_28(uint256)
+TMP_29(uint256) = 32 + returndata
+TMP_30(None) = SOLIDITY_CALL revert(uint256,uint256)(TMP_29,returndata_size__functionCallWithValue_asm_0)
+EXPRESSION:None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+returndata_size__functionCallWithValue_asm_0 = mload(uint256)(returndata)	NodeType.EXPRESSION
+revert()()	ExtraNodeType.REVERT";
+"BlockID: 161
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+TMP_31(None) = SOLIDITY_CALL revert(string)(errorMessage)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 148
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+TMP_26(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 149
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 59
+Call context: withdrawAll,safeTransfer
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 60
+Call context: withdrawAll,safeTransfer
+None
+TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+CONDITION TMP_109
+EXPRESSION:TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)	NodeType.IF";
+"BlockID: 63
+Call context: withdrawAll,safeTransfer
+True
+TMP_110(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 64
+Call context: withdrawAll,safeTransfer
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 53
+Call context: withdrawAll,safeTransfer,_callOptionalReturn
+None
+TMP_899(None) := TMP_18(bytes)
+returndata(bytes) := TMP_107(bytes)
+REF_63 -> LENGTH returndata
+TMP_108(bool) = REF_63 > 0
+CONDITION TMP_108
+EXPRESSION:returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.VARIABLE
+returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.EXPRESSION
+returndata.length > 0	NodeType.IF" [shape=box];
+"BlockID: 42
+Call context: withdrawAll,safeTransfer,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_3(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:weiValue 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION";
+"BlockID: 45
+Call context: withdrawAll,safeTransfer,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_3 index: 0 
+returndata(bytes)= UNPACK TUPLE_3 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION
+success	NodeType.IF" [shape=box];
+"BlockID: 49
+Call context: withdrawAll,safeTransfer,_callOptionalReturn,functionCall
+True
+TMP_902(None) := returndata(bytes)
+EXPRESSION:";
+"BlockID: 50
+Call context: withdrawAll,safeTransfer,_callOptionalReturn,functionCall
+False
+REF_13 -> LENGTH returndata
+TMP_27(bool) = REF_13 > 0
+CONDITION TMP_27
+EXPRESSION:returndata.length > 0	NodeType.IF";
+"BlockID: 54
+Call context: withdrawAll,safeTransfer,_callOptionalReturn,functionCall
+True
+INLINE ASM
+NEW VARIABLE returndata_size__functionCallWithValue_asm_0
+TMP_28(uint256) = SOLIDITY_CALL mload(uint256)(returndata)
+returndata_size__functionCallWithValue_asm_0(uint256) := TMP_28(uint256)
+TMP_29(uint256) = 32 + returndata
+TMP_30(None) = SOLIDITY_CALL revert(uint256,uint256)(TMP_29,returndata_size__functionCallWithValue_asm_0)
+EXPRESSION:None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+returndata_size__functionCallWithValue_asm_0 = mload(uint256)(returndata)	NodeType.EXPRESSION
+revert()()	ExtraNodeType.REVERT";
+"BlockID: 55
+Call context: withdrawAll,safeTransfer,_callOptionalReturn,functionCall
+False
+TMP_31(None) = SOLIDITY_CALL revert(string)(errorMessage)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 39
+Call context: withdrawAll,safeTransfer,_callOptionalReturn,functionCall
+True
+TMP_26(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 40
+Call context: withdrawAll,safeTransfer,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 76
+Call context: 
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_631(uint256)
+TMP_632(bool) = _supplyAmount >= unleveragedSupply
+TMP_633(bool) = _supplyAmount <= supplied
+TMP_634(bool) = TMP_632 && TMP_633
+CONDITION TMP_634
+EXPRESSION:TMP_634(bool) = TMP_632 && TMP_633	NodeType.IF";
+"BlockID: 78
+Call context: 
+True
+TMP_634(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 79
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 71
+Call context: 
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_631(uint256)
+TMP_632(bool) = _supplyAmount >= unleveragedSupply
+TMP_633(bool) = _supplyAmount <= supplied
+TMP_634(bool) = TMP_632 && TMP_633
+CONDITION TMP_634
+EXPRESSION:TMP_634(bool) = TMP_632 && TMP_633	NodeType.IF";
+"BlockID: 74
+Call context: 
+True
+TMP_634(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 75
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+TMP_450(bool) = msg.sender == controller
+CONDITION TMP_450
+EXPRESSION:TMP_450(bool) = msg.sender == controller	NodeType.IF" [key=0];
+"BlockID: 4
+Call context: 
+True
+NEW VARIABLE cTokenBal
+NEW VARIABLE exchangeRate
+TMP_531 = CONVERT cdai to ICToken
+TMP_532 = CONVERT this to address
+TUPLE_46(uint256,uint256,uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_531(ICToken), function:getAccountSnapshot, arguments:['TMP_532']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(cTokenBal,exchangeRate) = ICToken(cdai).getAccountSnapshot(address(this))	NodeType.EXPRESSION" -> "BlockID: 5
+Call context: withdrawAll,_withdrawAll,balanceOfPool
+None
+cTokenBal(uint256)= UNPACK TUPLE_46 index: 1 
+exchangeRate(uint256)= UNPACK TUPLE_46 index: 3 
+NEW VARIABLE bal
+TMP_533(Exponential.Exp) = new Exp(exchangeRate)
+NEW VARIABLE err
+NEW VARIABLE product
+NEW VARIABLE err0
+NEW VARIABLE scaledMantissa
+REF_143(uint256) -> a.mantissa
+TMP_349(bool) = a == 0
+CONDITION TMP_349
+EXPRESSION:(cTokenBal,exchangeRate) = ICToken(cdai).getAccountSnapshot(address(this))	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF" [key="successor_5"];
+"BlockID: 27
+Call context: 
+None
+TMP_453 = CONVERT want to IERC20
+TMP_454 = CONVERT this to address
+TMP_455(uint256) = HIGH_LEVEL_CALL, dest:TMP_453(IERC20), function:balanceOf, arguments:['TMP_454']  
+EXPRESSION:_withdrawAll()	NodeType.EXPRESSION
+balance = IERC20(want).balanceOf(address(this))	NodeType.EXPRESSION" -> "BlockID: 30
+Call context: 
+None
+balance(uint256) := TMP_455(uint256)
+TMP_456 = CONVERT controller to IController
+TMP_457 = CONVERT want to address
+TMP_458(address) = HIGH_LEVEL_CALL, dest:TMP_456(IController), function:jars, arguments:['TMP_457']  
+EXPRESSION:balance = IERC20(want).balanceOf(address(this))	NodeType.EXPRESSION" [key=0];
+"BlockID: 30
+Call context: 
+None
+balance(uint256) := TMP_455(uint256)
+TMP_456 = CONVERT controller to IController
+TMP_457 = CONVERT want to address
+TMP_458(address) = HIGH_LEVEL_CALL, dest:TMP_456(IController), function:jars, arguments:['TMP_457']  
+EXPRESSION:balance = IERC20(want).balanceOf(address(this))	NodeType.EXPRESSION" -> "BlockID: 32
+Call context: 
+None
+_jar(address) := TMP_458(address)
+TMP_459 = CONVERT 0 to address
+TMP_460(bool) = _jar != TMP_459
+CONDITION TMP_460
+EXPRESSION:TMP_460(bool) = _jar != TMP_459	NodeType.IF" [key=0];
+"BlockID: 37
+Call context: 
+True
+TMP_462 = CONVERT want to IERC20
+REF_44(bytes4) (->None) := 2835717307(uint256)
+TMP_84(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_44,to,value)
+TMP_106 = CONVERT token to address
+NEW VARIABLE size
+INLINE ASM
+REF_10 -> CODESIZE account
+size(uint256) := REF_10(uint256)
+TMP_11(bool) = size > 0
+TMP_896(None) := TMP_11(bool)
+CONDITION TMP_25
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+size = extcodesize(uint256)(account)	NodeType.EXPRESSION
+qiantao require	NodeType.IF" -> "BlockID: 39
+Call context: withdrawAll,safeTransfer,_callOptionalReturn,functionCall
+True
+TMP_26(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 37
+Call context: 
+True
+TMP_462 = CONVERT want to IERC20
+REF_44(bytes4) (->None) := 2835717307(uint256)
+TMP_84(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_44,to,value)
+TMP_106 = CONVERT token to address
+NEW VARIABLE size
+INLINE ASM
+REF_10 -> CODESIZE account
+size(uint256) := REF_10(uint256)
+TMP_11(bool) = size > 0
+TMP_896(None) := TMP_11(bool)
+CONDITION TMP_25
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+size = extcodesize(uint256)(account)	NodeType.EXPRESSION
+qiantao require	NodeType.IF" -> "BlockID: 40
+Call context: withdrawAll,safeTransfer,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+TMP_450(bool) = msg.sender == controller
+CONDITION TMP_450
+EXPRESSION:TMP_450(bool) = msg.sender == controller	NodeType.IF" -> "BlockID: 2
+Call context: 
+True
+TMP_451(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_450(bool) = msg.sender == controller
+CONDITION TMP_450
+EXPRESSION:TMP_450(bool) = msg.sender == controller	NodeType.IF" -> "BlockID: 3
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: 
+True
+NEW VARIABLE cTokenBal
+NEW VARIABLE exchangeRate
+TMP_531 = CONVERT cdai to ICToken
+TMP_532 = CONVERT this to address
+TUPLE_46(uint256,uint256,uint256,uint256) = HIGH_LEVEL_CALL, dest:TMP_531(ICToken), function:getAccountSnapshot, arguments:['TMP_532']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(cTokenBal,exchangeRate) = ICToken(cdai).getAccountSnapshot(address(this))	NodeType.EXPRESSION" [key=0];
+"BlockID: 32
+Call context: 
+None
+_jar(address) := TMP_458(address)
+TMP_459 = CONVERT 0 to address
+TMP_460(bool) = _jar != TMP_459
+CONDITION TMP_460
+EXPRESSION:TMP_460(bool) = _jar != TMP_459	NodeType.IF" -> "BlockID: 34
+Call context: 
+True
+TMP_461(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 32
+Call context: 
+None
+_jar(address) := TMP_458(address)
+TMP_459 = CONVERT 0 to address
+TMP_460(bool) = _jar != TMP_459
+CONDITION TMP_460
+EXPRESSION:TMP_460(bool) = _jar != TMP_459	NodeType.IF" -> "BlockID: 35
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 35
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 37
+Call context: 
+True
+TMP_462 = CONVERT want to IERC20
+REF_44(bytes4) (->None) := 2835717307(uint256)
+TMP_84(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_44,to,value)
+TMP_106 = CONVERT token to address
+NEW VARIABLE size
+INLINE ASM
+REF_10 -> CODESIZE account
+size(uint256) := REF_10(uint256)
+TMP_11(bool) = size > 0
+TMP_896(None) := TMP_11(bool)
+CONDITION TMP_25
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+size = extcodesize(uint256)(account)	NodeType.EXPRESSION
+qiantao require	NodeType.IF" [key=0];
+"BlockID: 5
+Call context: withdrawAll,_withdrawAll,balanceOfPool
+None
+cTokenBal(uint256)= UNPACK TUPLE_46 index: 1 
+exchangeRate(uint256)= UNPACK TUPLE_46 index: 3 
+NEW VARIABLE bal
+TMP_533(Exponential.Exp) = new Exp(exchangeRate)
+NEW VARIABLE err
+NEW VARIABLE product
+NEW VARIABLE err0
+NEW VARIABLE scaledMantissa
+REF_143(uint256) -> a.mantissa
+TMP_349(bool) = a == 0
+CONDITION TMP_349
+EXPRESSION:(cTokenBal,exchangeRate) = ICToken(cdai).getAccountSnapshot(address(this))	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF" -> "BlockID: 6
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+True
+REF_197(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1033(None) := REF_197(CarefulMath.MathError)
+TMP_1033(None) := c(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 5
+Call context: withdrawAll,_withdrawAll,balanceOfPool
+None
+cTokenBal(uint256)= UNPACK TUPLE_46 index: 1 
+exchangeRate(uint256)= UNPACK TUPLE_46 index: 3 
+NEW VARIABLE bal
+TMP_533(Exponential.Exp) = new Exp(exchangeRate)
+NEW VARIABLE err
+NEW VARIABLE product
+NEW VARIABLE err0
+NEW VARIABLE scaledMantissa
+REF_143(uint256) -> a.mantissa
+TMP_349(bool) = a == 0
+CONDITION TMP_349
+EXPRESSION:(cTokenBal,exchangeRate) = ICToken(cdai).getAccountSnapshot(address(this))	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+a == 0	NodeType.IF" -> "BlockID: 7
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 18
+Call context: withdrawAll,_withdrawAll,balanceOfPool
+None
+bal(uint256)= UNPACK TUPLE_47 index: 1 
+TMP_1059(None) := bal(uint256)
+supplied(uint256) := TMP_537(uint256)
+TMP_534 = CONVERT cdai to ICToken
+TMP_535 = CONVERT this to address
+TMP_536(uint256) = HIGH_LEVEL_CALL, dest:TMP_534(ICToken), function:borrowBalanceStored, arguments:['TMP_535']  
+EXPRESSION:(bal) = mulScalarTruncate(Exp(exchangeRate),cTokenBal)	NodeType.EXPRESSION
+supplied = getSuppliedView()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceStored(address(this))	NodeType.EXPRESSION" -> "BlockID: 20
+Call context: withdrawAll,_withdrawAll,balanceOfPool
+None
+TMP_1060(None) := TMP_536(uint256)
+borrowed(uint256) := TMP_538(uint256)
+TMP_539(uint256) = a - b
+TMP_1061(None) := TMP_539(uint256)
+TMP_375 = CONVERT want to IERC20
+TMP_376 = CONVERT this to address
+TMP_377(uint256) = HIGH_LEVEL_CALL, dest:TMP_375(IERC20), function:balanceOf, arguments:['TMP_376']  
+EXPRESSION:borrowed = getBorrowedView()	NodeType.VARIABLE
+borrowed = getBorrowedView()	NodeType.EXPRESSION
+supplied.sub(borrowed)	NodeType.EXPRESSION
+IERC20(want).balanceOf(address(this))	NodeType.EXPRESSION" [key="successor_1"];
+"BlockID: 14
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_30 index: 0 
+product(Exponential.Exp)= UNPACK TUPLE_30 index: 1 
+REF_146(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_256(bool) = err != REF_146
+CONDITION TMP_256
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 16
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView
+True
+TMP_992(None) := err(CarefulMath.MathError)
+TMP_992(None) := TMP_257(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 14
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_30 index: 0 
+product(Exponential.Exp)= UNPACK TUPLE_30 index: 1 
+REF_146(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_256(bool) = err != REF_146
+CONDITION TMP_256
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 17
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 16
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView
+True
+TMP_992(None) := err(CarefulMath.MathError)
+TMP_992(None) := TMP_257(uint256)
+EXPRESSION:" -> "BlockID: 18
+Call context: withdrawAll,_withdrawAll,balanceOfPool
+None
+bal(uint256)= UNPACK TUPLE_47 index: 1 
+TMP_1059(None) := bal(uint256)
+supplied(uint256) := TMP_537(uint256)
+TMP_534 = CONVERT cdai to ICToken
+TMP_535 = CONVERT this to address
+TMP_536(uint256) = HIGH_LEVEL_CALL, dest:TMP_534(ICToken), function:borrowBalanceStored, arguments:['TMP_535']  
+EXPRESSION:(bal) = mulScalarTruncate(Exp(exchangeRate),cTokenBal)	NodeType.EXPRESSION
+supplied = getSuppliedView()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceStored(address(this))	NodeType.EXPRESSION" [key="successor_5", ref="StrategyCmpdDaiV2.mulScalarTruncate"];
+"BlockID: 17
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 19
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView
+None
+REF_147(CarefulMath.MathError) -> MathError.NO_ERROR
+REF_165(uint256) -> exp.mantissa
+TMP_277(uint256) = REF_165 / expScale
+TMP_1001(None) := TMP_277(uint256)
+TMP_992(None) := REF_147(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 19
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView
+None
+REF_147(CarefulMath.MathError) -> MathError.NO_ERROR
+REF_165(uint256) -> exp.mantissa
+TMP_277(uint256) = REF_165 / expScale
+TMP_1001(None) := TMP_277(uint256)
+TMP_992(None) := REF_147(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 18
+Call context: withdrawAll,_withdrawAll,balanceOfPool
+None
+bal(uint256)= UNPACK TUPLE_47 index: 1 
+TMP_1059(None) := bal(uint256)
+supplied(uint256) := TMP_537(uint256)
+TMP_534 = CONVERT cdai to ICToken
+TMP_535 = CONVERT this to address
+TMP_536(uint256) = HIGH_LEVEL_CALL, dest:TMP_534(ICToken), function:borrowBalanceStored, arguments:['TMP_535']  
+EXPRESSION:(bal) = mulScalarTruncate(Exp(exchangeRate),cTokenBal)	NodeType.EXPRESSION
+supplied = getSuppliedView()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceStored(address(this))	NodeType.EXPRESSION" [key="successor_5", ref="StrategyCmpdDaiV2.mulScalarTruncate"];
+"BlockID: 8
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_29 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_29 index: 1 
+REF_144(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_253(bool) = err0 != REF_144
+CONDITION TMP_253
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 10
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate
+True
+TMP_254(Exponential.Exp) = new Exp(0)
+TMP_991(None) := err0(CarefulMath.MathError)
+TMP_991(None) := TMP_254(Exponential.Exp)
+TMP_991(None) := TMP_255(Exponential.Exp)
+EXPRESSION:" [key=0];
+"BlockID: 8
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_29 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_29 index: 1 
+REF_144(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_253(bool) = err0 != REF_144
+CONDITION TMP_253
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" -> "BlockID: 11
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 10
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate
+True
+TMP_254(Exponential.Exp) = new Exp(0)
+TMP_991(None) := err0(CarefulMath.MathError)
+TMP_991(None) := TMP_254(Exponential.Exp)
+TMP_991(None) := TMP_255(Exponential.Exp)
+EXPRESSION:" -> "BlockID: 14
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_30 index: 0 
+product(Exponential.Exp)= UNPACK TUPLE_30 index: 1 
+REF_146(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_256(bool) = err != REF_146
+CONDITION TMP_256
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="StrategyCmpdDaiV2.mulScalar"];
+"BlockID: 11
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 15
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate
+None
+REF_145(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_255(Exponential.Exp) = new Exp(scaledMantissa)
+TMP_991(None) := REF_145(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 15
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate
+None
+REF_145(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_255(Exponential.Exp) = new Exp(scaledMantissa)
+TMP_991(None) := REF_145(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 14
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView
+None
+err(CarefulMath.MathError)= UNPACK TUPLE_30 index: 0 
+product(Exponential.Exp)= UNPACK TUPLE_30 index: 1 
+REF_146(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_256(bool) = err != REF_146
+CONDITION TMP_256
+EXPRESSION:(err,product) = mulScalar(a,scalar)	NodeType.EXPRESSION
+err != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="StrategyCmpdDaiV2.mulScalar"];
+"BlockID: 6
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+True
+REF_197(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1033(None) := REF_197(CarefulMath.MathError)
+TMP_1033(None) := c(uint256)
+EXPRESSION:" -> "BlockID: 8
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_29 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_29 index: 1 
+REF_144(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_253(bool) = err0 != REF_144
+CONDITION TMP_253
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="StrategyCmpdDaiV2.mulUInt"];
+"BlockID: 7
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 9
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+None
+TMP_350(uint256) = a * b
+c(uint256) := TMP_350(uint256)
+TMP_351(uint256) = c / a
+TMP_352(bool) = TMP_351 != b
+CONDITION TMP_352
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF" [key=0];
+"BlockID: 9
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+None
+TMP_350(uint256) = a * b
+c(uint256) := TMP_350(uint256)
+TMP_351(uint256) = c / a
+TMP_352(bool) = TMP_351 != b
+CONDITION TMP_352
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF" -> "BlockID: 12
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+True
+REF_198(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1033(None) := REF_198(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 9
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+None
+TMP_350(uint256) = a * b
+c(uint256) := TMP_350(uint256)
+TMP_351(uint256) = c / a
+TMP_352(bool) = TMP_351 != b
+CONDITION TMP_352
+EXPRESSION:c = a * b	NodeType.VARIABLE
+c = a * b	NodeType.EXPRESSION
+c / a != b	NodeType.IF" -> "BlockID: 13
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+False
+REF_199(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1033(None) := REF_199(CarefulMath.MathError)
+EXPRESSION:" [key=0];
+"BlockID: 12
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+True
+REF_198(CarefulMath.MathError) -> MathError.INTEGER_OVERFLOW
+TMP_1033(None) := REF_198(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 8
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_29 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_29 index: 1 
+REF_144(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_253(bool) = err0 != REF_144
+CONDITION TMP_253
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="StrategyCmpdDaiV2.mulUInt"];
+"BlockID: 13
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate,mulScalar
+False
+REF_199(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_1033(None) := REF_199(CarefulMath.MathError)
+EXPRESSION:" -> "BlockID: 8
+Call context: withdrawAll,_withdrawAll,balanceOfPool,getSuppliedView,mulScalarTruncate
+None
+err0(CarefulMath.MathError)= UNPACK TUPLE_29 index: 0 
+scaledMantissa(uint256)= UNPACK TUPLE_29 index: 1 
+REF_144(CarefulMath.MathError) -> MathError.NO_ERROR
+TMP_253(bool) = err0 != REF_144
+CONDITION TMP_253
+EXPRESSION:(err0,scaledMantissa) = mulUInt(a.mantissa,scalar)	NodeType.EXPRESSION
+err0 != MathError.NO_ERROR	NodeType.IF" [key="successor_5", ref="StrategyCmpdDaiV2.mulUInt"];
+"BlockID: 20
+Call context: withdrawAll,_withdrawAll,balanceOfPool
+None
+TMP_1060(None) := TMP_536(uint256)
+borrowed(uint256) := TMP_538(uint256)
+TMP_539(uint256) = a - b
+TMP_1061(None) := TMP_539(uint256)
+TMP_375 = CONVERT want to IERC20
+TMP_376 = CONVERT this to address
+TMP_377(uint256) = HIGH_LEVEL_CALL, dest:TMP_375(IERC20), function:balanceOf, arguments:['TMP_376']  
+EXPRESSION:borrowed = getBorrowedView()	NodeType.VARIABLE
+borrowed = getBorrowedView()	NodeType.EXPRESSION
+supplied.sub(borrowed)	NodeType.EXPRESSION
+IERC20(want).balanceOf(address(this))	NodeType.EXPRESSION" -> "BlockID: 21
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_1039(None) := TMP_377(uint256)
+_want(uint256) := TMP_679(uint256)
+TMP_680(bool) = _want < _amount
+CONDITION TMP_680
+EXPRESSION:_want = balanceOfWant()	NodeType.VARIABLE
+_want = balanceOfWant()	NodeType.EXPRESSION
+_want < _amount	NodeType.IF" [key="successor_1"];
+"BlockID: 22
+Call context: withdrawAll,_withdrawAll
+True
+TMP_681(uint256) = a - b
+EXPRESSION:" -> "BlockID: 24
+Call context: withdrawAll,_withdrawAll
+None
+_redeem(uint256) := TMP_681(uint256)
+TMP_682 = CONVERT cdai to ICToken
+TMP_683(uint256) = HIGH_LEVEL_CALL, dest:TMP_682(ICToken), function:getCash, arguments:[]  
+EXPRESSION:_redeem = _amount.sub(_want)	NodeType.VARIABLE
+_redeem = _amount.sub(_want)	NodeType.EXPRESSION
+require(bool,string)(ICToken(cdai).getCash() >= _redeem,!cash-liquidity)	NodeType.EXPRESSION" [key=0];
+"BlockID: 23
+Call context: withdrawAll,_withdrawAll
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 25
+Call context: withdrawAll,_withdrawAll
+None
+TMP_1085(None) := _amount(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 25
+Call context: withdrawAll,_withdrawAll
+None
+TMP_1085(None) := _amount(uint256)
+EXPRESSION:" -> "BlockID: 27
+Call context: 
+None
+TMP_453 = CONVERT want to IERC20
+TMP_454 = CONVERT this to address
+TMP_455(uint256) = HIGH_LEVEL_CALL, dest:TMP_453(IERC20), function:balanceOf, arguments:['TMP_454']  
+EXPRESSION:_withdrawAll()	NodeType.EXPRESSION
+balance = IERC20(want).balanceOf(address(this))	NodeType.EXPRESSION" [key="Exit: _withdrawAll", ref="StrategyCmpdDaiV2._withdrawAll"];
+"BlockID: 24
+Call context: withdrawAll,_withdrawAll
+None
+_redeem(uint256) := TMP_681(uint256)
+TMP_682 = CONVERT cdai to ICToken
+TMP_683(uint256) = HIGH_LEVEL_CALL, dest:TMP_682(ICToken), function:getCash, arguments:[]  
+EXPRESSION:_redeem = _amount.sub(_want)	NodeType.VARIABLE
+_redeem = _amount.sub(_want)	NodeType.EXPRESSION
+require(bool,string)(ICToken(cdai).getCash() >= _redeem,!cash-liquidity)	NodeType.EXPRESSION" -> "BlockID: 26
+Call context: withdrawAll,_withdrawAll
+None
+TMP_684(bool) = TMP_683 >= _redeem
+CONDITION TMP_684
+EXPRESSION:TMP_684(bool) = TMP_683 >= _redeem	NodeType.IF" [key=0];
+"BlockID: 31
+Call context: withdrawAll,_withdrawAll
+True
+TMP_568 = CONVERT cdai to ICToken
+TMP_569 = CONVERT this to address
+TMP_570(uint256) = HIGH_LEVEL_CALL, dest:TMP_568(ICToken), function:borrowBalanceCurrent, arguments:['TMP_569']  
+EXPRESSION:ICToken(cdai).borrowBalanceCurrent(address(this))	NodeType.EXPRESSION" -> "BlockID: 33
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_1071(None) := TMP_570(uint256)
+borrowed(uint256) := TMP_686(uint256)
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:borrowed = getBorrowed()	NodeType.VARIABLE
+ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 43
+Call context: withdrawAll,_withdrawAll
+True
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION" -> "BlockID: 46
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,getSuppliedUnleveraged
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_562(uint256)
+TMP_568 = CONVERT cdai to ICToken
+TMP_569 = CONVERT this to address
+TMP_570(uint256) = HIGH_LEVEL_CALL, dest:TMP_568(ICToken), function:borrowBalanceCurrent, arguments:['TMP_569']  
+EXPRESSION:supplied = getSupplied()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceCurrent(address(this))	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 44
+Call context: withdrawAll,_withdrawAll
+False
+TMP_693(uint256) = a - b
+REF_310(bool) -> keepers[msg.sender]
+TMP_706 = CONVERT this to address
+TMP_707(bool) = msg.sender == TMP_706
+TMP_708(bool) = REF_310 || TMP_707
+TMP_709(bool) = msg.sender == strategist
+TMP_710(bool) = TMP_708 || TMP_709
+TMP_711(bool) = msg.sender == governance
+TMP_712(bool) = TMP_710 || TMP_711
+CONDITION TMP_712
+EXPRESSION:this.deleverageUntil(supplied.sub(borrowedToBeFree))	NodeType.EXPRESSION
+TMP_712(bool) = TMP_710 || TMP_711	NodeType.IF" -> "BlockID: 47
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+True
+TMP_713(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_1"];
+"BlockID: 44
+Call context: withdrawAll,_withdrawAll
+False
+TMP_693(uint256) = a - b
+REF_310(bool) -> keepers[msg.sender]
+TMP_706 = CONVERT this to address
+TMP_707(bool) = msg.sender == TMP_706
+TMP_708(bool) = REF_310 || TMP_707
+TMP_709(bool) = msg.sender == strategist
+TMP_710(bool) = TMP_708 || TMP_709
+TMP_711(bool) = msg.sender == governance
+TMP_712(bool) = TMP_710 || TMP_711
+CONDITION TMP_712
+EXPRESSION:this.deleverageUntil(supplied.sub(borrowedToBeFree))	NodeType.EXPRESSION
+TMP_712(bool) = TMP_710 || TMP_711	NodeType.IF" -> "BlockID: 48
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_1"];
+"BlockID: 186
+Call context: withdrawAll,_withdrawAll
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 188
+Call context: withdrawAll,_withdrawAll
+None
+TMP_695 = CONVERT cdai to ICToken
+TMP_696(uint256) = HIGH_LEVEL_CALL, dest:TMP_695(ICToken), function:redeemUnderlying, arguments:['_redeem']  
+EXPRESSION:require(bool,string)(ICToken(cdai).redeemUnderlying(_redeem) == 0,!redeem)	NodeType.EXPRESSION" [key=0];
+"BlockID: 188
+Call context: withdrawAll,_withdrawAll
+None
+TMP_695 = CONVERT cdai to ICToken
+TMP_696(uint256) = HIGH_LEVEL_CALL, dest:TMP_695(ICToken), function:redeemUnderlying, arguments:['_redeem']  
+EXPRESSION:require(bool,string)(ICToken(cdai).redeemUnderlying(_redeem) == 0,!redeem)	NodeType.EXPRESSION" -> "BlockID: 189
+Call context: withdrawAll,_withdrawAll
+None
+TMP_697(bool) = TMP_696 == 0
+CONDITION TMP_697
+EXPRESSION:TMP_697(bool) = TMP_696 == 0	NodeType.IF" [key=0];
+"BlockID: 26
+Call context: withdrawAll,_withdrawAll
+None
+TMP_684(bool) = TMP_683 >= _redeem
+CONDITION TMP_684
+EXPRESSION:TMP_684(bool) = TMP_683 >= _redeem	NodeType.IF" -> "BlockID: 28
+Call context: withdrawAll,_withdrawAll
+True
+TMP_685(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 26
+Call context: withdrawAll,_withdrawAll
+None
+TMP_684(bool) = TMP_683 >= _redeem
+CONDITION TMP_684
+EXPRESSION:TMP_684(bool) = TMP_683 >= _redeem	NodeType.IF" -> "BlockID: 29
+Call context: withdrawAll,_withdrawAll
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 29
+Call context: withdrawAll,_withdrawAll
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 31
+Call context: withdrawAll,_withdrawAll
+True
+TMP_568 = CONVERT cdai to ICToken
+TMP_569 = CONVERT this to address
+TMP_570(uint256) = HIGH_LEVEL_CALL, dest:TMP_568(ICToken), function:borrowBalanceCurrent, arguments:['TMP_569']  
+EXPRESSION:ICToken(cdai).borrowBalanceCurrent(address(this))	NodeType.EXPRESSION" [key=0];
+"BlockID: 189
+Call context: withdrawAll,_withdrawAll
+None
+TMP_697(bool) = TMP_696 == 0
+CONDITION TMP_697
+EXPRESSION:TMP_697(bool) = TMP_696 == 0	NodeType.IF" -> "BlockID: 190
+Call context: withdrawAll,_withdrawAll
+True
+TMP_698(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 189
+Call context: withdrawAll,_withdrawAll
+None
+TMP_697(bool) = TMP_696 == 0
+CONDITION TMP_697
+EXPRESSION:TMP_697(bool) = TMP_696 == 0	NodeType.IF" -> "BlockID: 191
+Call context: withdrawAll,_withdrawAll
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 191
+Call context: withdrawAll,_withdrawAll
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 23
+Call context: withdrawAll,_withdrawAll
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 21
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_1039(None) := TMP_377(uint256)
+_want(uint256) := TMP_679(uint256)
+TMP_680(bool) = _want < _amount
+CONDITION TMP_680
+EXPRESSION:_want = balanceOfWant()	NodeType.VARIABLE
+_want = balanceOfWant()	NodeType.EXPRESSION
+_want < _amount	NodeType.IF" -> "BlockID: 22
+Call context: withdrawAll,_withdrawAll
+True
+TMP_681(uint256) = a - b
+EXPRESSION:" [key="successor_2"];
+"BlockID: 21
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_1039(None) := TMP_377(uint256)
+_want(uint256) := TMP_679(uint256)
+TMP_680(bool) = _want < _amount
+CONDITION TMP_680
+EXPRESSION:_want = balanceOfWant()	NodeType.VARIABLE
+_want = balanceOfWant()	NodeType.EXPRESSION
+_want < _amount	NodeType.IF" -> "BlockID: 23
+Call context: withdrawAll,_withdrawAll
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+"BlockID: 33
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_1071(None) := TMP_570(uint256)
+borrowed(uint256) := TMP_686(uint256)
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:borrowed = getBorrowed()	NodeType.VARIABLE
+ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION" -> "BlockID: 36
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_687(uint256)
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:supplied = getSupplied()	NodeType.VARIABLE
+ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION" [key="successor_1"];
+"BlockID: 36
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_687(uint256)
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:supplied = getSupplied()	NodeType.VARIABLE
+ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION" -> "BlockID: 38
+Call context: withdrawAll,_withdrawAll,_withdrawSome,getCurrentLeverage
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_579(uint256)
+TMP_568 = CONVERT cdai to ICToken
+TMP_569 = CONVERT this to address
+TMP_570(uint256) = HIGH_LEVEL_CALL, dest:TMP_568(ICToken), function:borrowBalanceCurrent, arguments:['TMP_569']  
+EXPRESSION:supplied = getSupplied()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceCurrent(address(this))	NodeType.EXPRESSION" [key="successor_1"];
+"BlockID: 38
+Call context: withdrawAll,_withdrawAll,_withdrawSome,getCurrentLeverage
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_579(uint256)
+TMP_568 = CONVERT cdai to ICToken
+TMP_569 = CONVERT this to address
+TMP_570(uint256) = HIGH_LEVEL_CALL, dest:TMP_568(ICToken), function:borrowBalanceCurrent, arguments:['TMP_569']  
+EXPRESSION:supplied = getSupplied()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceCurrent(address(this))	NodeType.EXPRESSION" -> "BlockID: 41
+Call context: withdrawAll,_withdrawAll,_withdrawSome,getCurrentLeverage
+None
+TMP_1071(None) := TMP_570(uint256)
+borrowed(uint256) := TMP_580(uint256)
+TMP_581(uint256) = a * b
+TMP_582(uint256) = a - b
+TMP_583(uint256) = a / b
+TMP_1073(None) := TMP_583(uint256)
+curLeverage(uint256) := TMP_688(uint256)
+TMP_689(uint256) = a * b
+TMP_690(uint256) = a / b
+borrowedToBeFree(uint256) := TMP_690(uint256)
+TMP_691(bool) = borrowedToBeFree > borrowed
+CONDITION TMP_691
+EXPRESSION:borrowed = getBorrowed()	NodeType.VARIABLE
+borrowed = getBorrowed()	NodeType.EXPRESSION
+supplied.mul(1e18).div(supplied.sub(borrowed))	NodeType.EXPRESSION
+supplied.mul(1e18).div(supplied.sub(borrowed))	NodeType.EXPRESSION
+supplied.mul(1e18).div(supplied.sub(borrowed))	NodeType.EXPRESSION
+curLeverage = getCurrentLeverage()	NodeType.VARIABLE
+curLeverage = getCurrentLeverage()	NodeType.EXPRESSION
+borrowedToBeFree = _redeem.mul(curLeverage).div(1e18)	NodeType.VARIABLE
+borrowedToBeFree = _redeem.mul(curLeverage).div(1e18)	NodeType.EXPRESSION
+borrowedToBeFree > borrowed	NodeType.IF" [key="successor_1"];
+"BlockID: 41
+Call context: withdrawAll,_withdrawAll,_withdrawSome,getCurrentLeverage
+None
+TMP_1071(None) := TMP_570(uint256)
+borrowed(uint256) := TMP_580(uint256)
+TMP_581(uint256) = a * b
+TMP_582(uint256) = a - b
+TMP_583(uint256) = a / b
+TMP_1073(None) := TMP_583(uint256)
+curLeverage(uint256) := TMP_688(uint256)
+TMP_689(uint256) = a * b
+TMP_690(uint256) = a / b
+borrowedToBeFree(uint256) := TMP_690(uint256)
+TMP_691(bool) = borrowedToBeFree > borrowed
+CONDITION TMP_691
+EXPRESSION:borrowed = getBorrowed()	NodeType.VARIABLE
+borrowed = getBorrowed()	NodeType.EXPRESSION
+supplied.mul(1e18).div(supplied.sub(borrowed))	NodeType.EXPRESSION
+supplied.mul(1e18).div(supplied.sub(borrowed))	NodeType.EXPRESSION
+supplied.mul(1e18).div(supplied.sub(borrowed))	NodeType.EXPRESSION
+curLeverage = getCurrentLeverage()	NodeType.VARIABLE
+curLeverage = getCurrentLeverage()	NodeType.EXPRESSION
+borrowedToBeFree = _redeem.mul(curLeverage).div(1e18)	NodeType.VARIABLE
+borrowedToBeFree = _redeem.mul(curLeverage).div(1e18)	NodeType.EXPRESSION
+borrowedToBeFree > borrowed	NodeType.IF" -> "BlockID: 43
+Call context: withdrawAll,_withdrawAll
+True
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION" [key="successor_1"];
+"BlockID: 41
+Call context: withdrawAll,_withdrawAll,_withdrawSome,getCurrentLeverage
+None
+TMP_1071(None) := TMP_570(uint256)
+borrowed(uint256) := TMP_580(uint256)
+TMP_581(uint256) = a * b
+TMP_582(uint256) = a - b
+TMP_583(uint256) = a / b
+TMP_1073(None) := TMP_583(uint256)
+curLeverage(uint256) := TMP_688(uint256)
+TMP_689(uint256) = a * b
+TMP_690(uint256) = a / b
+borrowedToBeFree(uint256) := TMP_690(uint256)
+TMP_691(bool) = borrowedToBeFree > borrowed
+CONDITION TMP_691
+EXPRESSION:borrowed = getBorrowed()	NodeType.VARIABLE
+borrowed = getBorrowed()	NodeType.EXPRESSION
+supplied.mul(1e18).div(supplied.sub(borrowed))	NodeType.EXPRESSION
+supplied.mul(1e18).div(supplied.sub(borrowed))	NodeType.EXPRESSION
+supplied.mul(1e18).div(supplied.sub(borrowed))	NodeType.EXPRESSION
+curLeverage = getCurrentLeverage()	NodeType.VARIABLE
+curLeverage = getCurrentLeverage()	NodeType.EXPRESSION
+borrowedToBeFree = _redeem.mul(curLeverage).div(1e18)	NodeType.VARIABLE
+borrowedToBeFree = _redeem.mul(curLeverage).div(1e18)	NodeType.EXPRESSION
+borrowedToBeFree > borrowed	NodeType.IF" -> "BlockID: 44
+Call context: withdrawAll,_withdrawAll
+False
+TMP_693(uint256) = a - b
+REF_310(bool) -> keepers[msg.sender]
+TMP_706 = CONVERT this to address
+TMP_707(bool) = msg.sender == TMP_706
+TMP_708(bool) = REF_310 || TMP_707
+TMP_709(bool) = msg.sender == strategist
+TMP_710(bool) = TMP_708 || TMP_709
+TMP_711(bool) = msg.sender == governance
+TMP_712(bool) = TMP_710 || TMP_711
+CONDITION TMP_712
+EXPRESSION:this.deleverageUntil(supplied.sub(borrowedToBeFree))	NodeType.EXPRESSION
+TMP_712(bool) = TMP_710 || TMP_711	NodeType.IF" [key="successor_1"];
+"BlockID: 46
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,getSuppliedUnleveraged
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_562(uint256)
+TMP_568 = CONVERT cdai to ICToken
+TMP_569 = CONVERT this to address
+TMP_570(uint256) = HIGH_LEVEL_CALL, dest:TMP_568(ICToken), function:borrowBalanceCurrent, arguments:['TMP_569']  
+EXPRESSION:supplied = getSupplied()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceCurrent(address(this))	NodeType.EXPRESSION" -> "BlockID: 51
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,getSuppliedUnleveraged
+None
+TMP_1071(None) := TMP_570(uint256)
+borrowed(uint256) := TMP_563(uint256)
+TMP_564(uint256) = a - b
+TMP_1069(None) := TMP_564(uint256)
+unleveragedSupply(uint256) := TMP_628(uint256)
+REF_310(bool) -> keepers[msg.sender]
+TMP_706 = CONVERT this to address
+TMP_707(bool) = msg.sender == TMP_706
+TMP_708(bool) = REF_310 || TMP_707
+TMP_709(bool) = msg.sender == strategist
+TMP_710(bool) = TMP_708 || TMP_709
+TMP_711(bool) = msg.sender == governance
+TMP_712(bool) = TMP_710 || TMP_711
+CONDITION TMP_712
+EXPRESSION:borrowed = getBorrowed()	NodeType.VARIABLE
+borrowed = getBorrowed()	NodeType.EXPRESSION
+supplied.sub(borrowed)	NodeType.EXPRESSION
+unleveragedSupply = getSuppliedUnleveraged()	NodeType.VARIABLE
+unleveragedSupply = getSuppliedUnleveraged()	NodeType.EXPRESSION
+TMP_712(bool) = TMP_710 || TMP_711	NodeType.IF" [key="successor_1"];
+"BlockID: 51
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,getSuppliedUnleveraged
+None
+TMP_1071(None) := TMP_570(uint256)
+borrowed(uint256) := TMP_563(uint256)
+TMP_564(uint256) = a - b
+TMP_1069(None) := TMP_564(uint256)
+unleveragedSupply(uint256) := TMP_628(uint256)
+REF_310(bool) -> keepers[msg.sender]
+TMP_706 = CONVERT this to address
+TMP_707(bool) = msg.sender == TMP_706
+TMP_708(bool) = REF_310 || TMP_707
+TMP_709(bool) = msg.sender == strategist
+TMP_710(bool) = TMP_708 || TMP_709
+TMP_711(bool) = msg.sender == governance
+TMP_712(bool) = TMP_710 || TMP_711
+CONDITION TMP_712
+EXPRESSION:borrowed = getBorrowed()	NodeType.VARIABLE
+borrowed = getBorrowed()	NodeType.EXPRESSION
+supplied.sub(borrowed)	NodeType.EXPRESSION
+unleveragedSupply = getSuppliedUnleveraged()	NodeType.VARIABLE
+unleveragedSupply = getSuppliedUnleveraged()	NodeType.EXPRESSION
+TMP_712(bool) = TMP_710 || TMP_711	NodeType.IF" -> "BlockID: 56
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+True
+TMP_713(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_1"];
+"BlockID: 51
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,getSuppliedUnleveraged
+None
+TMP_1071(None) := TMP_570(uint256)
+borrowed(uint256) := TMP_563(uint256)
+TMP_564(uint256) = a - b
+TMP_1069(None) := TMP_564(uint256)
+unleveragedSupply(uint256) := TMP_628(uint256)
+REF_310(bool) -> keepers[msg.sender]
+TMP_706 = CONVERT this to address
+TMP_707(bool) = msg.sender == TMP_706
+TMP_708(bool) = REF_310 || TMP_707
+TMP_709(bool) = msg.sender == strategist
+TMP_710(bool) = TMP_708 || TMP_709
+TMP_711(bool) = msg.sender == governance
+TMP_712(bool) = TMP_710 || TMP_711
+CONDITION TMP_712
+EXPRESSION:borrowed = getBorrowed()	NodeType.VARIABLE
+borrowed = getBorrowed()	NodeType.EXPRESSION
+supplied.sub(borrowed)	NodeType.EXPRESSION
+unleveragedSupply = getSuppliedUnleveraged()	NodeType.VARIABLE
+unleveragedSupply = getSuppliedUnleveraged()	NodeType.EXPRESSION
+TMP_712(bool) = TMP_710 || TMP_711	NodeType.IF" -> "BlockID: 57
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_1"];
+"BlockID: 61
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION" -> "BlockID: 65
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,getSuppliedUnleveraged
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_562(uint256)
+TMP_568 = CONVERT cdai to ICToken
+TMP_569 = CONVERT this to address
+TMP_570(uint256) = HIGH_LEVEL_CALL, dest:TMP_568(ICToken), function:borrowBalanceCurrent, arguments:['TMP_569']  
+EXPRESSION:supplied = getSupplied()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceCurrent(address(this))	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 81
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+True
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION" -> "BlockID: 83
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,getBorrowable
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_571(uint256)
+TMP_568 = CONVERT cdai to ICToken
+TMP_569 = CONVERT this to address
+TMP_570(uint256) = HIGH_LEVEL_CALL, dest:TMP_568(ICToken), function:borrowBalanceCurrent, arguments:['TMP_569']  
+EXPRESSION:supplied = getSupplied()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceCurrent(address(this))	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 92
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+BEGIN_LOOP
+TMP_638(uint256) = a - b
+TMP_639(bool) = TMP_638 < _supplyAmount
+CONDITION TMP_639
+EXPRESSION:None	NodeType.STARTLOOP
+supplied.sub(_redeemAndRepay) < _supplyAmount	NodeType.EXPRESSION
+supplied.sub(_redeemAndRepay) < _supplyAmount	NodeType.IF" -> "BlockID: 94
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+True
+TMP_640(uint256) = a - b
+_redeemAndRepay(uint256) := TMP_640(uint256)
+EXPRESSION:_redeemAndRepay = supplied.sub(_supplyAmount)	NodeType.EXPRESSION
+_redeemAndRepay = supplied.sub(_supplyAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 92
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+BEGIN_LOOP
+TMP_638(uint256) = a - b
+TMP_639(bool) = TMP_638 < _supplyAmount
+CONDITION TMP_639
+EXPRESSION:None	NodeType.STARTLOOP
+supplied.sub(_redeemAndRepay) < _supplyAmount	NodeType.EXPRESSION
+supplied.sub(_redeemAndRepay) < _supplyAmount	NodeType.IF" -> "BlockID: 95
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 94
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+True
+TMP_640(uint256) = a - b
+_redeemAndRepay(uint256) := TMP_640(uint256)
+EXPRESSION:_redeemAndRepay = supplied.sub(_supplyAmount)	NodeType.EXPRESSION
+_redeemAndRepay = supplied.sub(_supplyAmount)	NodeType.EXPRESSION" -> "BlockID: 95
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 95
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 97
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+TMP_641 = CONVERT cdai to ICToken
+TMP_642(uint256) = HIGH_LEVEL_CALL, dest:TMP_641(ICToken), function:redeemUnderlying, arguments:['_redeemAndRepay']  
+EXPRESSION:require(bool,string)(ICToken(cdai).redeemUnderlying(_redeemAndRepay) == 0,!redeem)	NodeType.EXPRESSION" [key=0];
+"BlockID: 97
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+TMP_641 = CONVERT cdai to ICToken
+TMP_642(uint256) = HIGH_LEVEL_CALL, dest:TMP_641(ICToken), function:redeemUnderlying, arguments:['_redeemAndRepay']  
+EXPRESSION:require(bool,string)(ICToken(cdai).redeemUnderlying(_redeemAndRepay) == 0,!redeem)	NodeType.EXPRESSION" -> "BlockID: 100
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+TMP_643(bool) = TMP_642 == 0
+CONDITION TMP_643
+EXPRESSION:TMP_643(bool) = TMP_642 == 0	NodeType.IF" [key=0];
+"BlockID: 105
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+True
+TMP_645 = CONVERT dai to IERC20
+TMP_88(bool) = value == 0
+TMP_89 = CONVERT this to address
+TMP_90(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:allowance, arguments:['TMP_89', 'spender']  
+EXPRESSION:require(bool,string)((value == 0) || (token.allowance(address(this),spender) == 0),SafeERC20: approve from non-zero to non-zero allowance)	NodeType.EXPRESSION" -> "BlockID: 108
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+None
+TMP_91(bool) = TMP_90 == 0
+TMP_92(bool) = TMP_88 || TMP_91
+CONDITION TMP_92
+EXPRESSION:TMP_92(bool) = TMP_88 || TMP_91	NodeType.IF" [key="successor_5"];
+"BlockID: 139
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+TMP_647 = CONVERT dai to IERC20
+TMP_88(bool) = value == 0
+TMP_89 = CONVERT this to address
+TMP_90(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:allowance, arguments:['TMP_89', 'spender']  
+EXPRESSION:IERC20(dai).safeApprove(cdai,0)	NodeType.EXPRESSION
+require(bool,string)((value == 0) || (token.allowance(address(this),spender) == 0),SafeERC20: approve from non-zero to non-zero allowance)	NodeType.EXPRESSION" -> "BlockID: 144
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+None
+TMP_91(bool) = TMP_90 == 0
+TMP_92(bool) = TMP_88 || TMP_91
+CONDITION TMP_92
+EXPRESSION:TMP_92(bool) = TMP_88 || TMP_91	NodeType.IF" [key="successor_5"];
+"BlockID: 175
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+TMP_649 = CONVERT cdai to ICToken
+TMP_650(uint256) = HIGH_LEVEL_CALL, dest:TMP_649(ICToken), function:repayBorrow, arguments:['_redeemAndRepay']  
+EXPRESSION:IERC20(dai).safeApprove(cdai,_redeemAndRepay)	NodeType.EXPRESSION
+require(bool,string)(ICToken(cdai).repayBorrow(_redeemAndRepay) == 0,!repay)	NodeType.EXPRESSION" -> "BlockID: 180
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+TMP_651(bool) = TMP_650 == 0
+CONDITION TMP_651
+EXPRESSION:TMP_651(bool) = TMP_650 == 0	NodeType.IF" [key=0];
+"BlockID: 185
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+True
+TMP_653(uint256) = a - b
+supplied(uint256) := TMP_653(uint256)
+TMP_637(bool) = supplied > _supplyAmount
+CONDITION TMP_637
+EXPRESSION:supplied = supplied.sub(_redeemAndRepay)	NodeType.EXPRESSION
+supplied = supplied.sub(_redeemAndRepay)	NodeType.EXPRESSION
+supplied > _supplyAmount	NodeType.IFLOOP" -> "BlockID: 92
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+BEGIN_LOOP
+TMP_638(uint256) = a - b
+TMP_639(bool) = TMP_638 < _supplyAmount
+CONDITION TMP_639
+EXPRESSION:None	NodeType.STARTLOOP
+supplied.sub(_redeemAndRepay) < _supplyAmount	NodeType.EXPRESSION
+supplied.sub(_redeemAndRepay) < _supplyAmount	NodeType.IF" [key=0];
+"BlockID: 185
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+True
+TMP_653(uint256) = a - b
+supplied(uint256) := TMP_653(uint256)
+TMP_637(bool) = supplied > _supplyAmount
+CONDITION TMP_637
+EXPRESSION:supplied = supplied.sub(_redeemAndRepay)	NodeType.EXPRESSION
+supplied = supplied.sub(_redeemAndRepay)	NodeType.EXPRESSION
+supplied > _supplyAmount	NodeType.IFLOOP" -> "BlockID: 187
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 187
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 186
+Call context: withdrawAll,_withdrawAll
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="Exit: deleverageToMin", ref="StrategyCmpdDaiV2.deleverageToMin"];
+"BlockID: 73
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 76
+Call context: 
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_631(uint256)
+TMP_632(bool) = _supplyAmount >= unleveragedSupply
+TMP_633(bool) = _supplyAmount <= supplied
+TMP_634(bool) = TMP_632 && TMP_633
+CONDITION TMP_634
+EXPRESSION:TMP_634(bool) = TMP_632 && TMP_633	NodeType.IF" [key=0];
+"BlockID: 100
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+TMP_643(bool) = TMP_642 == 0
+CONDITION TMP_643
+EXPRESSION:TMP_643(bool) = TMP_642 == 0	NodeType.IF" -> "BlockID: 102
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+True
+TMP_644(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 100
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+TMP_643(bool) = TMP_642 == 0
+CONDITION TMP_643
+EXPRESSION:TMP_643(bool) = TMP_642 == 0	NodeType.IF" -> "BlockID: 103
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 103
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 105
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+True
+TMP_645 = CONVERT dai to IERC20
+TMP_88(bool) = value == 0
+TMP_89 = CONVERT this to address
+TMP_90(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:allowance, arguments:['TMP_89', 'spender']  
+EXPRESSION:require(bool,string)((value == 0) || (token.allowance(address(this),spender) == 0),SafeERC20: approve from non-zero to non-zero allowance)	NodeType.EXPRESSION" [key=0];
+"BlockID: 180
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+TMP_651(bool) = TMP_650 == 0
+CONDITION TMP_651
+EXPRESSION:TMP_651(bool) = TMP_650 == 0	NodeType.IF" -> "BlockID: 182
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+True
+TMP_652(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 180
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+TMP_651(bool) = TMP_650 == 0
+CONDITION TMP_651
+EXPRESSION:TMP_651(bool) = TMP_650 == 0	NodeType.IF" -> "BlockID: 183
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 183
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 185
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+True
+TMP_653(uint256) = a - b
+supplied(uint256) := TMP_653(uint256)
+TMP_637(bool) = supplied > _supplyAmount
+CONDITION TMP_637
+EXPRESSION:supplied = supplied.sub(_redeemAndRepay)	NodeType.EXPRESSION
+supplied = supplied.sub(_redeemAndRepay)	NodeType.EXPRESSION
+supplied > _supplyAmount	NodeType.IFLOOP" [key=0];
+"BlockID: 57
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 61
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION" [key="Exit: onlyKeepers", ref="StrategyCmpdDaiV2.onlyKeepers"];
+"BlockID: 65
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,getSuppliedUnleveraged
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_562(uint256)
+TMP_568 = CONVERT cdai to ICToken
+TMP_569 = CONVERT this to address
+TMP_570(uint256) = HIGH_LEVEL_CALL, dest:TMP_568(ICToken), function:borrowBalanceCurrent, arguments:['TMP_569']  
+EXPRESSION:supplied = getSupplied()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceCurrent(address(this))	NodeType.EXPRESSION" -> "BlockID: 67
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,getSuppliedUnleveraged
+None
+TMP_1071(None) := TMP_570(uint256)
+borrowed(uint256) := TMP_563(uint256)
+TMP_564(uint256) = a - b
+TMP_1069(None) := TMP_564(uint256)
+unleveragedSupply(uint256) := TMP_630(uint256)
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:borrowed = getBorrowed()	NodeType.VARIABLE
+borrowed = getBorrowed()	NodeType.EXPRESSION
+supplied.sub(borrowed)	NodeType.EXPRESSION
+unleveragedSupply = getSuppliedUnleveraged()	NodeType.VARIABLE
+ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION" [key="successor_1"];
+"BlockID: 67
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,getSuppliedUnleveraged
+None
+TMP_1071(None) := TMP_570(uint256)
+borrowed(uint256) := TMP_563(uint256)
+TMP_564(uint256) = a - b
+TMP_1069(None) := TMP_564(uint256)
+unleveragedSupply(uint256) := TMP_630(uint256)
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:borrowed = getBorrowed()	NodeType.VARIABLE
+borrowed = getBorrowed()	NodeType.EXPRESSION
+supplied.sub(borrowed)	NodeType.EXPRESSION
+unleveragedSupply = getSuppliedUnleveraged()	NodeType.VARIABLE
+ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION" -> "BlockID: 70
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_631(uint256)
+TMP_632(bool) = _supplyAmount >= unleveragedSupply
+TMP_633(bool) = _supplyAmount <= supplied
+TMP_634(bool) = TMP_632 && TMP_633
+CONDITION TMP_634
+EXPRESSION:TMP_634(bool) = TMP_632 && TMP_633	NodeType.IF" [key="successor_1"];
+"BlockID: 70
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_631(uint256)
+TMP_632(bool) = _supplyAmount >= unleveragedSupply
+TMP_633(bool) = _supplyAmount <= supplied
+TMP_634(bool) = TMP_632 && TMP_633
+CONDITION TMP_634
+EXPRESSION:TMP_634(bool) = TMP_632 && TMP_633	NodeType.IF" -> "BlockID: 72
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+True
+TMP_635(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_2"];
+"BlockID: 70
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_631(uint256)
+TMP_632(bool) = _supplyAmount >= unleveragedSupply
+TMP_633(bool) = _supplyAmount <= supplied
+TMP_634(bool) = TMP_632 && TMP_633
+CONDITION TMP_634
+EXPRESSION:TMP_634(bool) = TMP_632 && TMP_633	NodeType.IF" -> "BlockID: 73
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+"BlockID: 87
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+None
+borrowed(uint256) := TMP_572(uint256)
+NEW VARIABLE colFactor
+TMP_573 = CONVERT comptroller to IComptroller
+TUPLE_50(bool,uint256) = HIGH_LEVEL_CALL, dest:TMP_573(IComptroller), function:markets, arguments:['cdai']  
+EXPRESSION:borrowed = getBorrowed()	NodeType.VARIABLE
+borrowed = getBorrowed()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+(colFactor) = IComptroller(comptroller).markets(cdai)	NodeType.EXPRESSION" -> "BlockID: 89
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+None
+colFactor(uint256)= UNPACK TUPLE_50 index: 1 
+TMP_574(uint256) = a * b
+TMP_575(uint256) = a / b
+TMP_576(uint256) = a - b
+TMP_577(uint256) = a * b
+TMP_578(uint256) = a / b
+TMP_1072(None) := TMP_578(uint256)
+_redeemAndRepay(uint256) := TMP_636(uint256)
+EXPRESSION:(colFactor) = IComptroller(comptroller).markets(cdai)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+_redeemAndRepay = getBorrowable()	NodeType.VARIABLE
+_redeemAndRepay = getBorrowable()	NodeType.EXPRESSION" [key=0];
+"BlockID: 89
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+None
+colFactor(uint256)= UNPACK TUPLE_50 index: 1 
+TMP_574(uint256) = a * b
+TMP_575(uint256) = a / b
+TMP_576(uint256) = a - b
+TMP_577(uint256) = a * b
+TMP_578(uint256) = a / b
+TMP_1072(None) := TMP_578(uint256)
+_redeemAndRepay(uint256) := TMP_636(uint256)
+EXPRESSION:(colFactor) = IComptroller(comptroller).markets(cdai)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+_redeemAndRepay = getBorrowable()	NodeType.VARIABLE
+_redeemAndRepay = getBorrowable()	NodeType.EXPRESSION" -> "BlockID: 92
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+BEGIN_LOOP
+TMP_638(uint256) = a - b
+TMP_639(bool) = TMP_638 < _supplyAmount
+CONDITION TMP_639
+EXPRESSION:None	NodeType.STARTLOOP
+supplied.sub(_redeemAndRepay) < _supplyAmount	NodeType.EXPRESSION
+supplied.sub(_redeemAndRepay) < _supplyAmount	NodeType.IF" [key="successor_2"];
+"BlockID: 83
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,getBorrowable
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_571(uint256)
+TMP_568 = CONVERT cdai to ICToken
+TMP_569 = CONVERT this to address
+TMP_570(uint256) = HIGH_LEVEL_CALL, dest:TMP_568(ICToken), function:borrowBalanceCurrent, arguments:['TMP_569']  
+EXPRESSION:supplied = getSupplied()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceCurrent(address(this))	NodeType.EXPRESSION" -> "BlockID: 85
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,getBorrowable
+None
+TMP_1071(None) := TMP_570(uint256)
+EXPRESSION:" [key="successor_1"];
+"BlockID: 85
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,getBorrowable
+None
+TMP_1071(None) := TMP_570(uint256)
+EXPRESSION:" -> "BlockID: 87
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+None
+borrowed(uint256) := TMP_572(uint256)
+NEW VARIABLE colFactor
+TMP_573 = CONVERT comptroller to IComptroller
+TUPLE_50(bool,uint256) = HIGH_LEVEL_CALL, dest:TMP_573(IComptroller), function:markets, arguments:['cdai']  
+EXPRESSION:borrowed = getBorrowed()	NodeType.VARIABLE
+borrowed = getBorrowed()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+(colFactor) = IComptroller(comptroller).markets(cdai)	NodeType.EXPRESSION" [key="Exit: getBorrowed", ref="StrategyCmpdDaiV2.getBorrowed"];
+"BlockID: 114
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+True
+REF_51(bytes4) (->None) := 157198259(uint256)
+TMP_94(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_51,spender,value)
+TMP_106 = CONVERT token to address
+NEW VARIABLE size
+INLINE ASM
+REF_10 -> CODESIZE account
+size(uint256) := REF_10(uint256)
+TMP_11(bool) = size > 0
+TMP_896(None) := TMP_11(bool)
+CONDITION TMP_25
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+size = extcodesize(uint256)(account)	NodeType.EXPRESSION
+qiantao require	NodeType.IF" -> "BlockID: 116
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+TMP_26(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 114
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+True
+REF_51(bytes4) (->None) := 157198259(uint256)
+TMP_94(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_51,spender,value)
+TMP_106 = CONVERT token to address
+NEW VARIABLE size
+INLINE ASM
+REF_10 -> CODESIZE account
+size(uint256) := REF_10(uint256)
+TMP_11(bool) = size > 0
+TMP_896(None) := TMP_11(bool)
+CONDITION TMP_25
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+size = extcodesize(uint256)(account)	NodeType.EXPRESSION
+qiantao require	NodeType.IF" -> "BlockID: 117
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 108
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+None
+TMP_91(bool) = TMP_90 == 0
+TMP_92(bool) = TMP_88 || TMP_91
+CONDITION TMP_92
+EXPRESSION:TMP_92(bool) = TMP_88 || TMP_91	NodeType.IF" -> "BlockID: 110
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+True
+TMP_93(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 108
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+None
+TMP_91(bool) = TMP_90 == 0
+TMP_92(bool) = TMP_88 || TMP_91
+CONDITION TMP_92
+EXPRESSION:TMP_92(bool) = TMP_88 || TMP_91	NodeType.IF" -> "BlockID: 111
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 111
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 114
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+True
+REF_51(bytes4) (->None) := 157198259(uint256)
+TMP_94(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_51,spender,value)
+TMP_106 = CONVERT token to address
+NEW VARIABLE size
+INLINE ASM
+REF_10 -> CODESIZE account
+size(uint256) := REF_10(uint256)
+TMP_11(bool) = size > 0
+TMP_896(None) := TMP_11(bool)
+CONDITION TMP_25
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+size = extcodesize(uint256)(account)	NodeType.EXPRESSION
+qiantao require	NodeType.IF" [key=0];
+"BlockID: 136
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 139
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+TMP_647 = CONVERT dai to IERC20
+TMP_88(bool) = value == 0
+TMP_89 = CONVERT this to address
+TMP_90(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:allowance, arguments:['TMP_89', 'spender']  
+EXPRESSION:IERC20(dai).safeApprove(cdai,0)	NodeType.EXPRESSION
+require(bool,string)((value == 0) || (token.allowance(address(this),spender) == 0),SafeERC20: approve from non-zero to non-zero allowance)	NodeType.EXPRESSION" [key="Exit: safeApprove", ref="SafeERC20.safeApprove"];
+"BlockID: 137
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+None
+TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+CONDITION TMP_109
+EXPRESSION:TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)	NodeType.IF" -> "BlockID: 140
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+True
+TMP_110(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 137
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+None
+TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+CONDITION TMP_109
+EXPRESSION:TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)	NodeType.IF" -> "BlockID: 141
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 141
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 136
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 130
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn
+None
+TMP_899(None) := TMP_18(bytes)
+returndata(bytes) := TMP_107(bytes)
+REF_63 -> LENGTH returndata
+TMP_108(bool) = REF_63 > 0
+CONDITION TMP_108
+EXPRESSION:returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.VARIABLE
+returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.EXPRESSION
+returndata.length > 0	NodeType.IF" -> "BlockID: 136
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+"BlockID: 130
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn
+None
+TMP_899(None) := TMP_18(bytes)
+returndata(bytes) := TMP_107(bytes)
+REF_63 -> LENGTH returndata
+TMP_108(bool) = REF_63 > 0
+CONDITION TMP_108
+EXPRESSION:returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.VARIABLE
+returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.EXPRESSION
+returndata.length > 0	NodeType.IF" -> "BlockID: 137
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+None
+TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+CONDITION TMP_109
+EXPRESSION:TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)	NodeType.IF" [key="successor_2"];
+"BlockID: 119
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_3(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:weiValue 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION" -> "BlockID: 122
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_3 index: 0 
+returndata(bytes)= UNPACK TUPLE_3 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION
+success	NodeType.IF" [key=0];
+"BlockID: 122
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_3 index: 0 
+returndata(bytes)= UNPACK TUPLE_3 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION
+success	NodeType.IF" -> "BlockID: 126
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+TMP_902(None) := returndata(bytes)
+EXPRESSION:" [key=0];
+"BlockID: 122
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_3 index: 0 
+returndata(bytes)= UNPACK TUPLE_3 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION
+success	NodeType.IF" -> "BlockID: 127
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+REF_13 -> LENGTH returndata
+TMP_27(bool) = REF_13 > 0
+CONDITION TMP_27
+EXPRESSION:returndata.length > 0	NodeType.IF" [key=0];
+"BlockID: 126
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+TMP_902(None) := returndata(bytes)
+EXPRESSION:" -> "BlockID: 130
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn
+None
+TMP_899(None) := TMP_18(bytes)
+returndata(bytes) := TMP_107(bytes)
+REF_63 -> LENGTH returndata
+TMP_108(bool) = REF_63 > 0
+CONDITION TMP_108
+EXPRESSION:returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.VARIABLE
+returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.EXPRESSION
+returndata.length > 0	NodeType.IF" [key="successor_5", ref="Address._functionCallWithValue"];
+"BlockID: 127
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+REF_13 -> LENGTH returndata
+TMP_27(bool) = REF_13 > 0
+CONDITION TMP_27
+EXPRESSION:returndata.length > 0	NodeType.IF" -> "BlockID: 131
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+INLINE ASM
+NEW VARIABLE returndata_size__functionCallWithValue_asm_0
+TMP_28(uint256) = SOLIDITY_CALL mload(uint256)(returndata)
+returndata_size__functionCallWithValue_asm_0(uint256) := TMP_28(uint256)
+TMP_29(uint256) = 32 + returndata
+TMP_30(None) = SOLIDITY_CALL revert(uint256,uint256)(TMP_29,returndata_size__functionCallWithValue_asm_0)
+EXPRESSION:None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+returndata_size__functionCallWithValue_asm_0 = mload(uint256)(returndata)	NodeType.EXPRESSION
+revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 127
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+REF_13 -> LENGTH returndata
+TMP_27(bool) = REF_13 > 0
+CONDITION TMP_27
+EXPRESSION:returndata.length > 0	NodeType.IF" -> "BlockID: 132
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+TMP_31(None) = SOLIDITY_CALL revert(string)(errorMessage)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 117
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 119
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_3(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:weiValue 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION" [key=0];
+"BlockID: 150
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+True
+REF_51(bytes4) (->None) := 157198259(uint256)
+TMP_94(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_51,spender,value)
+TMP_106 = CONVERT token to address
+NEW VARIABLE size
+INLINE ASM
+REF_10 -> CODESIZE account
+size(uint256) := REF_10(uint256)
+TMP_11(bool) = size > 0
+TMP_896(None) := TMP_11(bool)
+CONDITION TMP_25
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+size = extcodesize(uint256)(account)	NodeType.EXPRESSION
+qiantao require	NodeType.IF" -> "BlockID: 152
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+TMP_26(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 150
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+True
+REF_51(bytes4) (->None) := 157198259(uint256)
+TMP_94(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_51,spender,value)
+TMP_106 = CONVERT token to address
+NEW VARIABLE size
+INLINE ASM
+REF_10 -> CODESIZE account
+size(uint256) := REF_10(uint256)
+TMP_11(bool) = size > 0
+TMP_896(None) := TMP_11(bool)
+CONDITION TMP_25
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+size = extcodesize(uint256)(account)	NodeType.EXPRESSION
+qiantao require	NodeType.IF" -> "BlockID: 153
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 144
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+None
+TMP_91(bool) = TMP_90 == 0
+TMP_92(bool) = TMP_88 || TMP_91
+CONDITION TMP_92
+EXPRESSION:TMP_92(bool) = TMP_88 || TMP_91	NodeType.IF" -> "BlockID: 146
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+True
+TMP_93(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 144
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+None
+TMP_91(bool) = TMP_90 == 0
+TMP_92(bool) = TMP_88 || TMP_91
+CONDITION TMP_92
+EXPRESSION:TMP_92(bool) = TMP_88 || TMP_91	NodeType.IF" -> "BlockID: 147
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 147
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 150
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil
+True
+REF_51(bytes4) (->None) := 157198259(uint256)
+TMP_94(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_51,spender,value)
+TMP_106 = CONVERT token to address
+NEW VARIABLE size
+INLINE ASM
+REF_10 -> CODESIZE account
+size(uint256) := REF_10(uint256)
+TMP_11(bool) = size > 0
+TMP_896(None) := TMP_11(bool)
+CONDITION TMP_25
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+size = extcodesize(uint256)(account)	NodeType.EXPRESSION
+qiantao require	NodeType.IF" [key=0];
+"BlockID: 172
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 175
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+None
+TMP_649 = CONVERT cdai to ICToken
+TMP_650(uint256) = HIGH_LEVEL_CALL, dest:TMP_649(ICToken), function:repayBorrow, arguments:['_redeemAndRepay']  
+EXPRESSION:IERC20(dai).safeApprove(cdai,_redeemAndRepay)	NodeType.EXPRESSION
+require(bool,string)(ICToken(cdai).repayBorrow(_redeemAndRepay) == 0,!repay)	NodeType.EXPRESSION" [key="Exit: safeApprove", ref="SafeERC20.safeApprove"];
+"BlockID: 173
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+None
+TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+CONDITION TMP_109
+EXPRESSION:TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)	NodeType.IF" -> "BlockID: 176
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+True
+TMP_110(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 173
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+None
+TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+CONDITION TMP_109
+EXPRESSION:TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)	NodeType.IF" -> "BlockID: 177
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 177
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 172
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 166
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn
+None
+TMP_899(None) := TMP_18(bytes)
+returndata(bytes) := TMP_107(bytes)
+REF_63 -> LENGTH returndata
+TMP_108(bool) = REF_63 > 0
+CONDITION TMP_108
+EXPRESSION:returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.VARIABLE
+returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.EXPRESSION
+returndata.length > 0	NodeType.IF" -> "BlockID: 172
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+"BlockID: 166
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn
+None
+TMP_899(None) := TMP_18(bytes)
+returndata(bytes) := TMP_107(bytes)
+REF_63 -> LENGTH returndata
+TMP_108(bool) = REF_63 > 0
+CONDITION TMP_108
+EXPRESSION:returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.VARIABLE
+returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.EXPRESSION
+returndata.length > 0	NodeType.IF" -> "BlockID: 173
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove
+None
+TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+CONDITION TMP_109
+EXPRESSION:TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)	NodeType.IF" [key="successor_2"];
+"BlockID: 155
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_3(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:weiValue 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION" -> "BlockID: 158
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_3 index: 0 
+returndata(bytes)= UNPACK TUPLE_3 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION
+success	NodeType.IF" [key=0];
+"BlockID: 158
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_3 index: 0 
+returndata(bytes)= UNPACK TUPLE_3 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION
+success	NodeType.IF" -> "BlockID: 162
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+TMP_902(None) := returndata(bytes)
+EXPRESSION:" [key=0];
+"BlockID: 158
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_3 index: 0 
+returndata(bytes)= UNPACK TUPLE_3 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION
+success	NodeType.IF" -> "BlockID: 163
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+REF_13 -> LENGTH returndata
+TMP_27(bool) = REF_13 > 0
+CONDITION TMP_27
+EXPRESSION:returndata.length > 0	NodeType.IF" [key=0];
+"BlockID: 162
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+TMP_902(None) := returndata(bytes)
+EXPRESSION:" -> "BlockID: 166
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn
+None
+TMP_899(None) := TMP_18(bytes)
+returndata(bytes) := TMP_107(bytes)
+REF_63 -> LENGTH returndata
+TMP_108(bool) = REF_63 > 0
+CONDITION TMP_108
+EXPRESSION:returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.VARIABLE
+returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.EXPRESSION
+returndata.length > 0	NodeType.IF" [key="successor_5", ref="Address._functionCallWithValue"];
+"BlockID: 163
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+REF_13 -> LENGTH returndata
+TMP_27(bool) = REF_13 > 0
+CONDITION TMP_27
+EXPRESSION:returndata.length > 0	NodeType.IF" -> "BlockID: 167
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+INLINE ASM
+NEW VARIABLE returndata_size__functionCallWithValue_asm_0
+TMP_28(uint256) = SOLIDITY_CALL mload(uint256)(returndata)
+returndata_size__functionCallWithValue_asm_0(uint256) := TMP_28(uint256)
+TMP_29(uint256) = 32 + returndata
+TMP_30(None) = SOLIDITY_CALL revert(uint256,uint256)(TMP_29,returndata_size__functionCallWithValue_asm_0)
+EXPRESSION:None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+returndata_size__functionCallWithValue_asm_0 = mload(uint256)(returndata)	NodeType.EXPRESSION
+revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 163
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+REF_13 -> LENGTH returndata
+TMP_27(bool) = REF_13 > 0
+CONDITION TMP_27
+EXPRESSION:returndata.length > 0	NodeType.IF" -> "BlockID: 168
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+TMP_31(None) = SOLIDITY_CALL revert(string)(errorMessage)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 153
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 155
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_3(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:weiValue 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION" [key=0];
+"BlockID: 52
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION" -> "BlockID: 58
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,getSuppliedUnleveraged
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_562(uint256)
+TMP_568 = CONVERT cdai to ICToken
+TMP_569 = CONVERT this to address
+TMP_570(uint256) = HIGH_LEVEL_CALL, dest:TMP_568(ICToken), function:borrowBalanceCurrent, arguments:['TMP_569']  
+EXPRESSION:supplied = getSupplied()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceCurrent(address(this))	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 77
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+True
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION" -> "BlockID: 80
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,getBorrowable
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_571(uint256)
+TMP_568 = CONVERT cdai to ICToken
+TMP_569 = CONVERT this to address
+TMP_570(uint256) = HIGH_LEVEL_CALL, dest:TMP_568(ICToken), function:borrowBalanceCurrent, arguments:['TMP_569']  
+EXPRESSION:supplied = getSupplied()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceCurrent(address(this))	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 88
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+BEGIN_LOOP
+TMP_638(uint256) = a - b
+TMP_639(bool) = TMP_638 < _supplyAmount
+CONDITION TMP_639
+EXPRESSION:None	NodeType.STARTLOOP
+supplied.sub(_redeemAndRepay) < _supplyAmount	NodeType.EXPRESSION
+supplied.sub(_redeemAndRepay) < _supplyAmount	NodeType.IF" -> "BlockID: 90
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+True
+TMP_640(uint256) = a - b
+_redeemAndRepay(uint256) := TMP_640(uint256)
+EXPRESSION:_redeemAndRepay = supplied.sub(_supplyAmount)	NodeType.EXPRESSION
+_redeemAndRepay = supplied.sub(_supplyAmount)	NodeType.EXPRESSION" [key=0];
+"BlockID: 88
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+BEGIN_LOOP
+TMP_638(uint256) = a - b
+TMP_639(bool) = TMP_638 < _supplyAmount
+CONDITION TMP_639
+EXPRESSION:None	NodeType.STARTLOOP
+supplied.sub(_redeemAndRepay) < _supplyAmount	NodeType.EXPRESSION
+supplied.sub(_redeemAndRepay) < _supplyAmount	NodeType.IF" -> "BlockID: 91
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 90
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+True
+TMP_640(uint256) = a - b
+_redeemAndRepay(uint256) := TMP_640(uint256)
+EXPRESSION:_redeemAndRepay = supplied.sub(_supplyAmount)	NodeType.EXPRESSION
+_redeemAndRepay = supplied.sub(_supplyAmount)	NodeType.EXPRESSION" -> "BlockID: 91
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 91
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 93
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_641 = CONVERT cdai to ICToken
+TMP_642(uint256) = HIGH_LEVEL_CALL, dest:TMP_641(ICToken), function:redeemUnderlying, arguments:['_redeemAndRepay']  
+EXPRESSION:require(bool,string)(ICToken(cdai).redeemUnderlying(_redeemAndRepay) == 0,!redeem)	NodeType.EXPRESSION" [key=0];
+"BlockID: 93
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_641 = CONVERT cdai to ICToken
+TMP_642(uint256) = HIGH_LEVEL_CALL, dest:TMP_641(ICToken), function:redeemUnderlying, arguments:['_redeemAndRepay']  
+EXPRESSION:require(bool,string)(ICToken(cdai).redeemUnderlying(_redeemAndRepay) == 0,!redeem)	NodeType.EXPRESSION" -> "BlockID: 96
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_643(bool) = TMP_642 == 0
+CONDITION TMP_643
+EXPRESSION:TMP_643(bool) = TMP_642 == 0	NodeType.IF" [key=0];
+"BlockID: 101
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+True
+TMP_645 = CONVERT dai to IERC20
+TMP_88(bool) = value == 0
+TMP_89 = CONVERT this to address
+TMP_90(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:allowance, arguments:['TMP_89', 'spender']  
+EXPRESSION:require(bool,string)((value == 0) || (token.allowance(address(this),spender) == 0),SafeERC20: approve from non-zero to non-zero allowance)	NodeType.EXPRESSION" -> "BlockID: 104
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+None
+TMP_91(bool) = TMP_90 == 0
+TMP_92(bool) = TMP_88 || TMP_91
+CONDITION TMP_92
+EXPRESSION:TMP_92(bool) = TMP_88 || TMP_91	NodeType.IF" [key="successor_5"];
+"BlockID: 133
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_647 = CONVERT dai to IERC20
+TMP_88(bool) = value == 0
+TMP_89 = CONVERT this to address
+TMP_90(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:allowance, arguments:['TMP_89', 'spender']  
+EXPRESSION:IERC20(dai).safeApprove(cdai,0)	NodeType.EXPRESSION
+require(bool,string)((value == 0) || (token.allowance(address(this),spender) == 0),SafeERC20: approve from non-zero to non-zero allowance)	NodeType.EXPRESSION" -> "BlockID: 138
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+None
+TMP_91(bool) = TMP_90 == 0
+TMP_92(bool) = TMP_88 || TMP_91
+CONDITION TMP_92
+EXPRESSION:TMP_92(bool) = TMP_88 || TMP_91	NodeType.IF" [key="successor_5"];
+"BlockID: 169
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_649 = CONVERT cdai to ICToken
+TMP_650(uint256) = HIGH_LEVEL_CALL, dest:TMP_649(ICToken), function:repayBorrow, arguments:['_redeemAndRepay']  
+EXPRESSION:IERC20(dai).safeApprove(cdai,_redeemAndRepay)	NodeType.EXPRESSION
+require(bool,string)(ICToken(cdai).repayBorrow(_redeemAndRepay) == 0,!repay)	NodeType.EXPRESSION" -> "BlockID: 174
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_651(bool) = TMP_650 == 0
+CONDITION TMP_651
+EXPRESSION:TMP_651(bool) = TMP_650 == 0	NodeType.IF" [key=0];
+"BlockID: 181
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+True
+TMP_653(uint256) = a - b
+supplied(uint256) := TMP_653(uint256)
+TMP_637(bool) = supplied > _supplyAmount
+CONDITION TMP_637
+EXPRESSION:supplied = supplied.sub(_redeemAndRepay)	NodeType.EXPRESSION
+supplied = supplied.sub(_redeemAndRepay)	NodeType.EXPRESSION
+supplied > _supplyAmount	NodeType.IFLOOP" -> "BlockID: 88
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+BEGIN_LOOP
+TMP_638(uint256) = a - b
+TMP_639(bool) = TMP_638 < _supplyAmount
+CONDITION TMP_639
+EXPRESSION:None	NodeType.STARTLOOP
+supplied.sub(_redeemAndRepay) < _supplyAmount	NodeType.EXPRESSION
+supplied.sub(_redeemAndRepay) < _supplyAmount	NodeType.IF" [key=0];
+"BlockID: 181
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+True
+TMP_653(uint256) = a - b
+supplied(uint256) := TMP_653(uint256)
+TMP_637(bool) = supplied > _supplyAmount
+CONDITION TMP_637
+EXPRESSION:supplied = supplied.sub(_redeemAndRepay)	NodeType.EXPRESSION
+supplied = supplied.sub(_redeemAndRepay)	NodeType.EXPRESSION
+supplied > _supplyAmount	NodeType.IFLOOP" -> "BlockID: 184
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" [key=0];
+"BlockID: 184
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+False
+END_LOOP
+EXPRESSION:None	NodeType.ENDLOOP" -> "BlockID: 186
+Call context: withdrawAll,_withdrawAll
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="Exit: deleverageUntil", ref="StrategyCmpdDaiV2.deleverageUntil"];
+"BlockID: 69
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 71
+Call context: 
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_631(uint256)
+TMP_632(bool) = _supplyAmount >= unleveragedSupply
+TMP_633(bool) = _supplyAmount <= supplied
+TMP_634(bool) = TMP_632 && TMP_633
+CONDITION TMP_634
+EXPRESSION:TMP_634(bool) = TMP_632 && TMP_633	NodeType.IF" [key=0];
+"BlockID: 96
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_643(bool) = TMP_642 == 0
+CONDITION TMP_643
+EXPRESSION:TMP_643(bool) = TMP_642 == 0	NodeType.IF" -> "BlockID: 98
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+True
+TMP_644(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 96
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_643(bool) = TMP_642 == 0
+CONDITION TMP_643
+EXPRESSION:TMP_643(bool) = TMP_642 == 0	NodeType.IF" -> "BlockID: 99
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 99
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 101
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+True
+TMP_645 = CONVERT dai to IERC20
+TMP_88(bool) = value == 0
+TMP_89 = CONVERT this to address
+TMP_90(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:allowance, arguments:['TMP_89', 'spender']  
+EXPRESSION:require(bool,string)((value == 0) || (token.allowance(address(this),spender) == 0),SafeERC20: approve from non-zero to non-zero allowance)	NodeType.EXPRESSION" [key=0];
+"BlockID: 174
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_651(bool) = TMP_650 == 0
+CONDITION TMP_651
+EXPRESSION:TMP_651(bool) = TMP_650 == 0	NodeType.IF" -> "BlockID: 178
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+True
+TMP_652(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 174
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_651(bool) = TMP_650 == 0
+CONDITION TMP_651
+EXPRESSION:TMP_651(bool) = TMP_650 == 0	NodeType.IF" -> "BlockID: 179
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 179
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 181
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+True
+TMP_653(uint256) = a - b
+supplied(uint256) := TMP_653(uint256)
+TMP_637(bool) = supplied > _supplyAmount
+CONDITION TMP_637
+EXPRESSION:supplied = supplied.sub(_redeemAndRepay)	NodeType.EXPRESSION
+supplied = supplied.sub(_redeemAndRepay)	NodeType.EXPRESSION
+supplied > _supplyAmount	NodeType.IFLOOP" [key=0];
+"BlockID: 48
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 52
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION" [key="Exit: onlyKeepers", ref="StrategyCmpdDaiV2.onlyKeepers"];
+"BlockID: 58
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,getSuppliedUnleveraged
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_562(uint256)
+TMP_568 = CONVERT cdai to ICToken
+TMP_569 = CONVERT this to address
+TMP_570(uint256) = HIGH_LEVEL_CALL, dest:TMP_568(ICToken), function:borrowBalanceCurrent, arguments:['TMP_569']  
+EXPRESSION:supplied = getSupplied()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceCurrent(address(this))	NodeType.EXPRESSION" -> "BlockID: 62
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,getSuppliedUnleveraged
+None
+TMP_1071(None) := TMP_570(uint256)
+borrowed(uint256) := TMP_563(uint256)
+TMP_564(uint256) = a - b
+TMP_1069(None) := TMP_564(uint256)
+unleveragedSupply(uint256) := TMP_630(uint256)
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:borrowed = getBorrowed()	NodeType.VARIABLE
+borrowed = getBorrowed()	NodeType.EXPRESSION
+supplied.sub(borrowed)	NodeType.EXPRESSION
+unleveragedSupply = getSuppliedUnleveraged()	NodeType.VARIABLE
+ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION" [key="successor_1"];
+"BlockID: 62
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,getSuppliedUnleveraged
+None
+TMP_1071(None) := TMP_570(uint256)
+borrowed(uint256) := TMP_563(uint256)
+TMP_564(uint256) = a - b
+TMP_1069(None) := TMP_564(uint256)
+unleveragedSupply(uint256) := TMP_630(uint256)
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:borrowed = getBorrowed()	NodeType.VARIABLE
+borrowed = getBorrowed()	NodeType.EXPRESSION
+supplied.sub(borrowed)	NodeType.EXPRESSION
+unleveragedSupply = getSuppliedUnleveraged()	NodeType.VARIABLE
+ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION" -> "BlockID: 66
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_631(uint256)
+TMP_632(bool) = _supplyAmount >= unleveragedSupply
+TMP_633(bool) = _supplyAmount <= supplied
+TMP_634(bool) = TMP_632 && TMP_633
+CONDITION TMP_634
+EXPRESSION:TMP_634(bool) = TMP_632 && TMP_633	NodeType.IF" [key="successor_1"];
+"BlockID: 66
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_631(uint256)
+TMP_632(bool) = _supplyAmount >= unleveragedSupply
+TMP_633(bool) = _supplyAmount <= supplied
+TMP_634(bool) = TMP_632 && TMP_633
+CONDITION TMP_634
+EXPRESSION:TMP_634(bool) = TMP_632 && TMP_633	NodeType.IF" -> "BlockID: 68
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+True
+TMP_635(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_2"];
+"BlockID: 66
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_631(uint256)
+TMP_632(bool) = _supplyAmount >= unleveragedSupply
+TMP_633(bool) = _supplyAmount <= supplied
+TMP_634(bool) = TMP_632 && TMP_633
+CONDITION TMP_634
+EXPRESSION:TMP_634(bool) = TMP_632 && TMP_633	NodeType.IF" -> "BlockID: 69
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+"BlockID: 84
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+None
+borrowed(uint256) := TMP_572(uint256)
+NEW VARIABLE colFactor
+TMP_573 = CONVERT comptroller to IComptroller
+TUPLE_50(bool,uint256) = HIGH_LEVEL_CALL, dest:TMP_573(IComptroller), function:markets, arguments:['cdai']  
+EXPRESSION:borrowed = getBorrowed()	NodeType.VARIABLE
+borrowed = getBorrowed()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+(colFactor) = IComptroller(comptroller).markets(cdai)	NodeType.EXPRESSION" -> "BlockID: 86
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+None
+colFactor(uint256)= UNPACK TUPLE_50 index: 1 
+TMP_574(uint256) = a * b
+TMP_575(uint256) = a / b
+TMP_576(uint256) = a - b
+TMP_577(uint256) = a * b
+TMP_578(uint256) = a / b
+TMP_1072(None) := TMP_578(uint256)
+_redeemAndRepay(uint256) := TMP_636(uint256)
+EXPRESSION:(colFactor) = IComptroller(comptroller).markets(cdai)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+_redeemAndRepay = getBorrowable()	NodeType.VARIABLE
+_redeemAndRepay = getBorrowable()	NodeType.EXPRESSION" [key=0];
+"BlockID: 86
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+None
+colFactor(uint256)= UNPACK TUPLE_50 index: 1 
+TMP_574(uint256) = a * b
+TMP_575(uint256) = a / b
+TMP_576(uint256) = a - b
+TMP_577(uint256) = a * b
+TMP_578(uint256) = a / b
+TMP_1072(None) := TMP_578(uint256)
+_redeemAndRepay(uint256) := TMP_636(uint256)
+EXPRESSION:(colFactor) = IComptroller(comptroller).markets(cdai)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+supplied.mul(colFactor).div(1e18).sub(borrowed).mul(9999).div(10000)	NodeType.EXPRESSION
+_redeemAndRepay = getBorrowable()	NodeType.VARIABLE
+_redeemAndRepay = getBorrowable()	NodeType.EXPRESSION" -> "BlockID: 88
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+BEGIN_LOOP
+TMP_638(uint256) = a - b
+TMP_639(bool) = TMP_638 < _supplyAmount
+CONDITION TMP_639
+EXPRESSION:None	NodeType.STARTLOOP
+supplied.sub(_redeemAndRepay) < _supplyAmount	NodeType.EXPRESSION
+supplied.sub(_redeemAndRepay) < _supplyAmount	NodeType.IF" [key="successor_2"];
+"BlockID: 80
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,getBorrowable
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_571(uint256)
+TMP_568 = CONVERT cdai to ICToken
+TMP_569 = CONVERT this to address
+TMP_570(uint256) = HIGH_LEVEL_CALL, dest:TMP_568(ICToken), function:borrowBalanceCurrent, arguments:['TMP_569']  
+EXPRESSION:supplied = getSupplied()	NodeType.VARIABLE
+ICToken(cdai).borrowBalanceCurrent(address(this))	NodeType.EXPRESSION" -> "BlockID: 82
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,getBorrowable
+None
+TMP_1071(None) := TMP_570(uint256)
+EXPRESSION:" [key="successor_1"];
+"BlockID: 82
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,getBorrowable
+None
+TMP_1071(None) := TMP_570(uint256)
+EXPRESSION:" -> "BlockID: 84
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+None
+borrowed(uint256) := TMP_572(uint256)
+NEW VARIABLE colFactor
+TMP_573 = CONVERT comptroller to IComptroller
+TUPLE_50(bool,uint256) = HIGH_LEVEL_CALL, dest:TMP_573(IComptroller), function:markets, arguments:['cdai']  
+EXPRESSION:borrowed = getBorrowed()	NodeType.VARIABLE
+borrowed = getBorrowed()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+(colFactor) = IComptroller(comptroller).markets(cdai)	NodeType.EXPRESSION" [key="Exit: getBorrowed", ref="StrategyCmpdDaiV2.getBorrowed"];
+"BlockID: 109
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+True
+REF_51(bytes4) (->None) := 157198259(uint256)
+TMP_94(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_51,spender,value)
+TMP_106 = CONVERT token to address
+NEW VARIABLE size
+INLINE ASM
+REF_10 -> CODESIZE account
+size(uint256) := REF_10(uint256)
+TMP_11(bool) = size > 0
+TMP_896(None) := TMP_11(bool)
+CONDITION TMP_25
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+size = extcodesize(uint256)(account)	NodeType.EXPRESSION
+qiantao require	NodeType.IF" -> "BlockID: 112
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+TMP_26(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 109
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+True
+REF_51(bytes4) (->None) := 157198259(uint256)
+TMP_94(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_51,spender,value)
+TMP_106 = CONVERT token to address
+NEW VARIABLE size
+INLINE ASM
+REF_10 -> CODESIZE account
+size(uint256) := REF_10(uint256)
+TMP_11(bool) = size > 0
+TMP_896(None) := TMP_11(bool)
+CONDITION TMP_25
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+size = extcodesize(uint256)(account)	NodeType.EXPRESSION
+qiantao require	NodeType.IF" -> "BlockID: 113
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 104
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+None
+TMP_91(bool) = TMP_90 == 0
+TMP_92(bool) = TMP_88 || TMP_91
+CONDITION TMP_92
+EXPRESSION:TMP_92(bool) = TMP_88 || TMP_91	NodeType.IF" -> "BlockID: 106
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+True
+TMP_93(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 104
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+None
+TMP_91(bool) = TMP_90 == 0
+TMP_92(bool) = TMP_88 || TMP_91
+CONDITION TMP_92
+EXPRESSION:TMP_92(bool) = TMP_88 || TMP_91	NodeType.IF" -> "BlockID: 107
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 107
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 109
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+True
+REF_51(bytes4) (->None) := 157198259(uint256)
+TMP_94(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_51,spender,value)
+TMP_106 = CONVERT token to address
+NEW VARIABLE size
+INLINE ASM
+REF_10 -> CODESIZE account
+size(uint256) := REF_10(uint256)
+TMP_11(bool) = size > 0
+TMP_896(None) := TMP_11(bool)
+CONDITION TMP_25
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+size = extcodesize(uint256)(account)	NodeType.EXPRESSION
+qiantao require	NodeType.IF" [key=0];
+"BlockID: 128
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 133
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_647 = CONVERT dai to IERC20
+TMP_88(bool) = value == 0
+TMP_89 = CONVERT this to address
+TMP_90(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:allowance, arguments:['TMP_89', 'spender']  
+EXPRESSION:IERC20(dai).safeApprove(cdai,0)	NodeType.EXPRESSION
+require(bool,string)((value == 0) || (token.allowance(address(this),spender) == 0),SafeERC20: approve from non-zero to non-zero allowance)	NodeType.EXPRESSION" [key="Exit: safeApprove", ref="SafeERC20.safeApprove"];
+"BlockID: 129
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+None
+TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+CONDITION TMP_109
+EXPRESSION:TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)	NodeType.IF" -> "BlockID: 134
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+True
+TMP_110(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 129
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+None
+TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+CONDITION TMP_109
+EXPRESSION:TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)	NodeType.IF" -> "BlockID: 135
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 135
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 128
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 123
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn
+None
+TMP_899(None) := TMP_18(bytes)
+returndata(bytes) := TMP_107(bytes)
+REF_63 -> LENGTH returndata
+TMP_108(bool) = REF_63 > 0
+CONDITION TMP_108
+EXPRESSION:returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.VARIABLE
+returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.EXPRESSION
+returndata.length > 0	NodeType.IF" -> "BlockID: 128
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+"BlockID: 123
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn
+None
+TMP_899(None) := TMP_18(bytes)
+returndata(bytes) := TMP_107(bytes)
+REF_63 -> LENGTH returndata
+TMP_108(bool) = REF_63 > 0
+CONDITION TMP_108
+EXPRESSION:returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.VARIABLE
+returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.EXPRESSION
+returndata.length > 0	NodeType.IF" -> "BlockID: 129
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+None
+TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+CONDITION TMP_109
+EXPRESSION:TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)	NodeType.IF" [key="successor_2"];
+"BlockID: 115
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_3(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:weiValue 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION" -> "BlockID: 118
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_3 index: 0 
+returndata(bytes)= UNPACK TUPLE_3 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION
+success	NodeType.IF" [key=0];
+"BlockID: 118
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_3 index: 0 
+returndata(bytes)= UNPACK TUPLE_3 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION
+success	NodeType.IF" -> "BlockID: 120
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+TMP_902(None) := returndata(bytes)
+EXPRESSION:" [key=0];
+"BlockID: 118
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_3 index: 0 
+returndata(bytes)= UNPACK TUPLE_3 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION
+success	NodeType.IF" -> "BlockID: 121
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+REF_13 -> LENGTH returndata
+TMP_27(bool) = REF_13 > 0
+CONDITION TMP_27
+EXPRESSION:returndata.length > 0	NodeType.IF" [key=0];
+"BlockID: 120
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+TMP_902(None) := returndata(bytes)
+EXPRESSION:" -> "BlockID: 123
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn
+None
+TMP_899(None) := TMP_18(bytes)
+returndata(bytes) := TMP_107(bytes)
+REF_63 -> LENGTH returndata
+TMP_108(bool) = REF_63 > 0
+CONDITION TMP_108
+EXPRESSION:returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.VARIABLE
+returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.EXPRESSION
+returndata.length > 0	NodeType.IF" [key="successor_5", ref="Address._functionCallWithValue"];
+"BlockID: 121
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+REF_13 -> LENGTH returndata
+TMP_27(bool) = REF_13 > 0
+CONDITION TMP_27
+EXPRESSION:returndata.length > 0	NodeType.IF" -> "BlockID: 124
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+INLINE ASM
+NEW VARIABLE returndata_size__functionCallWithValue_asm_0
+TMP_28(uint256) = SOLIDITY_CALL mload(uint256)(returndata)
+returndata_size__functionCallWithValue_asm_0(uint256) := TMP_28(uint256)
+TMP_29(uint256) = 32 + returndata
+TMP_30(None) = SOLIDITY_CALL revert(uint256,uint256)(TMP_29,returndata_size__functionCallWithValue_asm_0)
+EXPRESSION:None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+returndata_size__functionCallWithValue_asm_0 = mload(uint256)(returndata)	NodeType.EXPRESSION
+revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 121
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+REF_13 -> LENGTH returndata
+TMP_27(bool) = REF_13 > 0
+CONDITION TMP_27
+EXPRESSION:returndata.length > 0	NodeType.IF" -> "BlockID: 125
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+TMP_31(None) = SOLIDITY_CALL revert(string)(errorMessage)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 113
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 115
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_3(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:weiValue 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION" [key=0];
+"BlockID: 145
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+True
+REF_51(bytes4) (->None) := 157198259(uint256)
+TMP_94(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_51,spender,value)
+TMP_106 = CONVERT token to address
+NEW VARIABLE size
+INLINE ASM
+REF_10 -> CODESIZE account
+size(uint256) := REF_10(uint256)
+TMP_11(bool) = size > 0
+TMP_896(None) := TMP_11(bool)
+CONDITION TMP_25
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+size = extcodesize(uint256)(account)	NodeType.EXPRESSION
+qiantao require	NodeType.IF" -> "BlockID: 148
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+TMP_26(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 145
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+True
+REF_51(bytes4) (->None) := 157198259(uint256)
+TMP_94(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_51,spender,value)
+TMP_106 = CONVERT token to address
+NEW VARIABLE size
+INLINE ASM
+REF_10 -> CODESIZE account
+size(uint256) := REF_10(uint256)
+TMP_11(bool) = size > 0
+TMP_896(None) := TMP_11(bool)
+CONDITION TMP_25
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+size = extcodesize(uint256)(account)	NodeType.EXPRESSION
+qiantao require	NodeType.IF" -> "BlockID: 149
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 138
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+None
+TMP_91(bool) = TMP_90 == 0
+TMP_92(bool) = TMP_88 || TMP_91
+CONDITION TMP_92
+EXPRESSION:TMP_92(bool) = TMP_88 || TMP_91	NodeType.IF" -> "BlockID: 142
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+True
+TMP_93(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 138
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+None
+TMP_91(bool) = TMP_90 == 0
+TMP_92(bool) = TMP_88 || TMP_91
+CONDITION TMP_92
+EXPRESSION:TMP_92(bool) = TMP_88 || TMP_91	NodeType.IF" -> "BlockID: 143
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 143
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 145
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil
+True
+REF_51(bytes4) (->None) := 157198259(uint256)
+TMP_94(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_51,spender,value)
+TMP_106 = CONVERT token to address
+NEW VARIABLE size
+INLINE ASM
+REF_10 -> CODESIZE account
+size(uint256) := REF_10(uint256)
+TMP_11(bool) = size > 0
+TMP_896(None) := TMP_11(bool)
+CONDITION TMP_25
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+size = extcodesize(uint256)(account)	NodeType.EXPRESSION
+qiantao require	NodeType.IF" [key=0];
+"BlockID: 164
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 169
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+None
+TMP_649 = CONVERT cdai to ICToken
+TMP_650(uint256) = HIGH_LEVEL_CALL, dest:TMP_649(ICToken), function:repayBorrow, arguments:['_redeemAndRepay']  
+EXPRESSION:IERC20(dai).safeApprove(cdai,_redeemAndRepay)	NodeType.EXPRESSION
+require(bool,string)(ICToken(cdai).repayBorrow(_redeemAndRepay) == 0,!repay)	NodeType.EXPRESSION" [key="Exit: safeApprove", ref="SafeERC20.safeApprove"];
+"BlockID: 165
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+None
+TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+CONDITION TMP_109
+EXPRESSION:TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)	NodeType.IF" -> "BlockID: 170
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+True
+TMP_110(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 165
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+None
+TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+CONDITION TMP_109
+EXPRESSION:TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)	NodeType.IF" -> "BlockID: 171
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 171
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 164
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 159
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn
+None
+TMP_899(None) := TMP_18(bytes)
+returndata(bytes) := TMP_107(bytes)
+REF_63 -> LENGTH returndata
+TMP_108(bool) = REF_63 > 0
+CONDITION TMP_108
+EXPRESSION:returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.VARIABLE
+returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.EXPRESSION
+returndata.length > 0	NodeType.IF" -> "BlockID: 164
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+"BlockID: 159
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn
+None
+TMP_899(None) := TMP_18(bytes)
+returndata(bytes) := TMP_107(bytes)
+REF_63 -> LENGTH returndata
+TMP_108(bool) = REF_63 > 0
+CONDITION TMP_108
+EXPRESSION:returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.VARIABLE
+returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.EXPRESSION
+returndata.length > 0	NodeType.IF" -> "BlockID: 165
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove
+None
+TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+CONDITION TMP_109
+EXPRESSION:TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)	NodeType.IF" [key="successor_2"];
+"BlockID: 151
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_3(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:weiValue 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION" -> "BlockID: 154
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_3 index: 0 
+returndata(bytes)= UNPACK TUPLE_3 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION
+success	NodeType.IF" [key=0];
+"BlockID: 154
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_3 index: 0 
+returndata(bytes)= UNPACK TUPLE_3 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION
+success	NodeType.IF" -> "BlockID: 156
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+TMP_902(None) := returndata(bytes)
+EXPRESSION:" [key=0];
+"BlockID: 154
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_3 index: 0 
+returndata(bytes)= UNPACK TUPLE_3 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION
+success	NodeType.IF" -> "BlockID: 157
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+REF_13 -> LENGTH returndata
+TMP_27(bool) = REF_13 > 0
+CONDITION TMP_27
+EXPRESSION:returndata.length > 0	NodeType.IF" [key=0];
+"BlockID: 156
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+TMP_902(None) := returndata(bytes)
+EXPRESSION:" -> "BlockID: 159
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn
+None
+TMP_899(None) := TMP_18(bytes)
+returndata(bytes) := TMP_107(bytes)
+REF_63 -> LENGTH returndata
+TMP_108(bool) = REF_63 > 0
+CONDITION TMP_108
+EXPRESSION:returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.VARIABLE
+returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.EXPRESSION
+returndata.length > 0	NodeType.IF" [key="successor_5", ref="Address._functionCallWithValue"];
+"BlockID: 157
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+REF_13 -> LENGTH returndata
+TMP_27(bool) = REF_13 > 0
+CONDITION TMP_27
+EXPRESSION:returndata.length > 0	NodeType.IF" -> "BlockID: 160
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+INLINE ASM
+NEW VARIABLE returndata_size__functionCallWithValue_asm_0
+TMP_28(uint256) = SOLIDITY_CALL mload(uint256)(returndata)
+returndata_size__functionCallWithValue_asm_0(uint256) := TMP_28(uint256)
+TMP_29(uint256) = 32 + returndata
+TMP_30(None) = SOLIDITY_CALL revert(uint256,uint256)(TMP_29,returndata_size__functionCallWithValue_asm_0)
+EXPRESSION:None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+returndata_size__functionCallWithValue_asm_0 = mload(uint256)(returndata)	NodeType.EXPRESSION
+revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 157
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+REF_13 -> LENGTH returndata
+TMP_27(bool) = REF_13 > 0
+CONDITION TMP_27
+EXPRESSION:returndata.length > 0	NodeType.IF" -> "BlockID: 161
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+TMP_31(None) = SOLIDITY_CALL revert(string)(errorMessage)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 149
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 151
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageUntil,safeApprove,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_3(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:weiValue 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION" [key=0];
+"BlockID: 60
+Call context: withdrawAll,safeTransfer
+None
+TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+CONDITION TMP_109
+EXPRESSION:TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)	NodeType.IF" -> "BlockID: 63
+Call context: withdrawAll,safeTransfer
+True
+TMP_110(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 60
+Call context: withdrawAll,safeTransfer
+None
+TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+CONDITION TMP_109
+EXPRESSION:TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)	NodeType.IF" -> "BlockID: 64
+Call context: withdrawAll,safeTransfer
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 64
+Call context: withdrawAll,safeTransfer
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 59
+Call context: withdrawAll,safeTransfer
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 53
+Call context: withdrawAll,safeTransfer,_callOptionalReturn
+None
+TMP_899(None) := TMP_18(bytes)
+returndata(bytes) := TMP_107(bytes)
+REF_63 -> LENGTH returndata
+TMP_108(bool) = REF_63 > 0
+CONDITION TMP_108
+EXPRESSION:returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.VARIABLE
+returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.EXPRESSION
+returndata.length > 0	NodeType.IF" -> "BlockID: 59
+Call context: withdrawAll,safeTransfer
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+"BlockID: 53
+Call context: withdrawAll,safeTransfer,_callOptionalReturn
+None
+TMP_899(None) := TMP_18(bytes)
+returndata(bytes) := TMP_107(bytes)
+REF_63 -> LENGTH returndata
+TMP_108(bool) = REF_63 > 0
+CONDITION TMP_108
+EXPRESSION:returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.VARIABLE
+returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.EXPRESSION
+returndata.length > 0	NodeType.IF" -> "BlockID: 60
+Call context: withdrawAll,safeTransfer
+None
+TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+CONDITION TMP_109
+EXPRESSION:TMP_109(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)	NodeType.IF" [key="successor_2"];
+"BlockID: 42
+Call context: withdrawAll,safeTransfer,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_3(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:weiValue 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION" -> "BlockID: 45
+Call context: withdrawAll,safeTransfer,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_3 index: 0 
+returndata(bytes)= UNPACK TUPLE_3 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION
+success	NodeType.IF" [key=0];
+"BlockID: 45
+Call context: withdrawAll,safeTransfer,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_3 index: 0 
+returndata(bytes)= UNPACK TUPLE_3 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION
+success	NodeType.IF" -> "BlockID: 49
+Call context: withdrawAll,safeTransfer,_callOptionalReturn,functionCall
+True
+TMP_902(None) := returndata(bytes)
+EXPRESSION:" [key=0];
+"BlockID: 45
+Call context: withdrawAll,safeTransfer,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_3 index: 0 
+returndata(bytes)= UNPACK TUPLE_3 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION
+success	NodeType.IF" -> "BlockID: 50
+Call context: withdrawAll,safeTransfer,_callOptionalReturn,functionCall
+False
+REF_13 -> LENGTH returndata
+TMP_27(bool) = REF_13 > 0
+CONDITION TMP_27
+EXPRESSION:returndata.length > 0	NodeType.IF" [key=0];
+"BlockID: 49
+Call context: withdrawAll,safeTransfer,_callOptionalReturn,functionCall
+True
+TMP_902(None) := returndata(bytes)
+EXPRESSION:" -> "BlockID: 53
+Call context: withdrawAll,safeTransfer,_callOptionalReturn
+None
+TMP_899(None) := TMP_18(bytes)
+returndata(bytes) := TMP_107(bytes)
+REF_63 -> LENGTH returndata
+TMP_108(bool) = REF_63 > 0
+CONDITION TMP_108
+EXPRESSION:returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.VARIABLE
+returndata = address(token).functionCall(data,SafeERC20: low-level call failed)	NodeType.EXPRESSION
+returndata.length > 0	NodeType.IF" [key="successor_5", ref="Address._functionCallWithValue"];
+"BlockID: 50
+Call context: withdrawAll,safeTransfer,_callOptionalReturn,functionCall
+False
+REF_13 -> LENGTH returndata
+TMP_27(bool) = REF_13 > 0
+CONDITION TMP_27
+EXPRESSION:returndata.length > 0	NodeType.IF" -> "BlockID: 54
+Call context: withdrawAll,safeTransfer,_callOptionalReturn,functionCall
+True
+INLINE ASM
+NEW VARIABLE returndata_size__functionCallWithValue_asm_0
+TMP_28(uint256) = SOLIDITY_CALL mload(uint256)(returndata)
+returndata_size__functionCallWithValue_asm_0(uint256) := TMP_28(uint256)
+TMP_29(uint256) = 32 + returndata
+TMP_30(None) = SOLIDITY_CALL revert(uint256,uint256)(TMP_29,returndata_size__functionCallWithValue_asm_0)
+EXPRESSION:None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+returndata_size__functionCallWithValue_asm_0 = mload(uint256)(returndata)	NodeType.EXPRESSION
+revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 50
+Call context: withdrawAll,safeTransfer,_callOptionalReturn,functionCall
+False
+REF_13 -> LENGTH returndata
+TMP_27(bool) = REF_13 > 0
+CONDITION TMP_27
+EXPRESSION:returndata.length > 0	NodeType.IF" -> "BlockID: 55
+Call context: withdrawAll,safeTransfer,_callOptionalReturn,functionCall
+False
+TMP_31(None) = SOLIDITY_CALL revert(string)(errorMessage)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 40
+Call context: withdrawAll,safeTransfer,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 42
+Call context: withdrawAll,safeTransfer,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_3(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:weiValue 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: weiValue}(data)	NodeType.EXPRESSION" [key=0];
+"BlockID: 76
+Call context: 
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_631(uint256)
+TMP_632(bool) = _supplyAmount >= unleveragedSupply
+TMP_633(bool) = _supplyAmount <= supplied
+TMP_634(bool) = TMP_632 && TMP_633
+CONDITION TMP_634
+EXPRESSION:TMP_634(bool) = TMP_632 && TMP_633	NodeType.IF" -> "BlockID: 78
+Call context: 
+True
+TMP_634(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 76
+Call context: 
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_631(uint256)
+TMP_632(bool) = _supplyAmount >= unleveragedSupply
+TMP_633(bool) = _supplyAmount <= supplied
+TMP_634(bool) = TMP_632 && TMP_633
+CONDITION TMP_634
+EXPRESSION:TMP_634(bool) = TMP_632 && TMP_633	NodeType.IF" -> "BlockID: 79
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 79
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 81
+Call context: withdrawAll,_withdrawAll,_withdrawSome,deleverageToMin
+True
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION" [key=0];
+"BlockID: 71
+Call context: 
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_631(uint256)
+TMP_632(bool) = _supplyAmount >= unleveragedSupply
+TMP_633(bool) = _supplyAmount <= supplied
+TMP_634(bool) = TMP_632 && TMP_633
+CONDITION TMP_634
+EXPRESSION:TMP_634(bool) = TMP_632 && TMP_633	NodeType.IF" -> "BlockID: 74
+Call context: 
+True
+TMP_634(bool) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 71
+Call context: 
+None
+TMP_1070(None) := TMP_567(uint256)
+supplied(uint256) := TMP_631(uint256)
+TMP_632(bool) = _supplyAmount >= unleveragedSupply
+TMP_633(bool) = _supplyAmount <= supplied
+TMP_634(bool) = TMP_632 && TMP_633
+CONDITION TMP_634
+EXPRESSION:TMP_634(bool) = TMP_632 && TMP_633	NodeType.IF" -> "BlockID: 75
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 75
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 77
+Call context: withdrawAll,_withdrawAll,_withdrawSome
+True
+TMP_565 = CONVERT cdai to ICToken
+TMP_566 = CONVERT this to address
+TMP_567(uint256) = HIGH_LEVEL_CALL, dest:TMP_565(ICToken), function:balanceOfUnderlying, arguments:['TMP_566']  
+EXPRESSION:ICToken(cdai).balanceOfUnderlying(address(this))	NodeType.EXPRESSION" [key=0];
+}

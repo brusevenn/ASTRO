@@ -1,0 +1,383 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+TMP_4382(bool) = reward <= 0
+CONDITION TMP_4382
+EXPRESSION:reward <= 0	NodeType.IF";
+"BlockID: 2
+Call context: 
+True
+TMP_4383(None) = SOLIDITY_CALL revert IncentiveRewardMustBePositive()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 3
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 4
+Call context: 
+None
+TMP_1083(uint256) = timestamp (c)- INCENTIVES_OFFSET
+TMP_1084(uint256) = TMP_1083 (c)/ INCENTIVES_DURATION
+TMP_1085(uint256) = TMP_1084 (c)+ 1
+TMP_1086(uint256) = TMP_1085 (c)* INCENTIVES_DURATION
+TMP_1087(uint256) = TMP_1086 (c)+ INCENTIVES_OFFSET
+TMP_1088 = CONVERT TMP_1087 to uint96
+TMP_4771(None) := TMP_1088(uint96)
+startTime(uint96) := TMP_4384(uint96)
+REF_1240(IUniswapV3Pool) -> gaugePool[msg.sender]
+pool(IUniswapV3Pool) := REF_1240(IUniswapV3Pool)
+TMP_4385 = CONVERT pool to address
+TMP_4386 = CONVERT 0 to address
+TMP_4387(bool) = TMP_4385 == TMP_4386
+CONDITION TMP_4387
+EXPRESSION:startTime = IncentiveTime.computeEnd(block.timestamp)	NodeType.VARIABLE
+startTime = IncentiveTime.computeEnd(block.timestamp)	NodeType.EXPRESSION
+pool = gaugePool[msg.sender]	NodeType.VARIABLE
+pool = gaugePool[msg.sender]	NodeType.EXPRESSION
+address(pool) == address(0)	NodeType.IF";
+"BlockID: 5
+Call context: 
+True
+TMP_4388(None) = SOLIDITY_CALL revert IncentiveCallerMustBeRegisteredGauge()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 7
+Call context: 
+None
+TMP_4389(IUniswapV3Staker.IncentiveKey) = new IncentiveKey(startTime,pool)
+key(IUniswapV3Staker.IncentiveKey) := TMP_4389(IUniswapV3Staker.IncentiveKey)
+TMP_4338(bytes) = SOLIDITY_CALL abi.encode()(key)
+TMP_4339(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_4338)
+TMP_5464(None) := TMP_4339(bytes32)
+incentiveId(bytes32) := TMP_4390(bytes32)
+REF_1242(IUniswapV3Staker.Incentive) -> incentives[incentiveId]
+REF_1243(uint256) -> REF_1242.totalRewardUnclaimed
+REF_1243(-> incentives) = REF_1243 (c)+ reward
+TMP_4391 = CONVERT this to address
+INLINE ASM
+NEW VARIABLE m_safeTransferFrom_asm_0
+TMP_916(uint256) = SOLIDITY_CALL mload(uint256)(64)
+m_safeTransferFrom_asm_0(uint256) := TMP_916(uint256)
+TMP_917(None) = SOLIDITY_CALL mstore(uint256,uint256)(96,amount)
+TMP_918(None) = SOLIDITY_CALL mstore(uint256,uint256)(64,to)
+TMP_919(address) = from << 96
+TMP_920(None) = SOLIDITY_CALL mstore(uint256,uint256)(44,TMP_919)
+TMP_921(None) = SOLIDITY_CALL mstore(uint256,uint256)(12,47480692178561195778129796594248187904)
+TMP_922(uint256) = SOLIDITY_CALL mload(uint256)(0)
+TMP_923(bool) = TMP_922 == 1
+TMP_924(uint256) = SOLIDITY_CALL returndatasize()()
+TMP_925 = ! TMP_924 
+TMP_926(bool) = TMP_923 | TMP_925
+TMP_927(uint256) = SOLIDITY_CALL gas()()
+TMP_928(uint256) = SOLIDITY_CALL call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(TMP_927,token,0,28,100,0,32)
+TMP_929(bool) = TMP_926 & TMP_928
+TMP_930 = ! TMP_929 
+CONDITION TMP_930
+EXPRESSION:key = IncentiveKey(startTime,pool)	NodeType.VARIABLE
+incentiveId = IncentiveId.compute(key)	NodeType.VARIABLE
+incentiveId = IncentiveId.compute(key)	NodeType.EXPRESSION
+incentives[incentiveId].totalRewardUnclaimed += reward	NodeType.EXPRESSION
+None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+m_safeTransferFrom_asm_0 = mload(uint256)(0x40)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x60,amount)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x40,to)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x2c,from << 96)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x0c,0x23b872dd000000000000000000000000)	NodeType.EXPRESSION
+! mload(uint256)(0x00) == 1 | ! returndatasize()() & call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(gas()(),token,0,0x1c,0x64,0x00,0x20)	NodeType.IF";
+"BlockID: 8
+Call context: createIncentiveFromGauge
+True
+TMP_931(None) = SOLIDITY_CALL mstore(uint256,uint256)(0,2033841188)
+TMP_932(None) = SOLIDITY_CALL revert(uint256,uint256)(28,4)
+EXPRESSION:mstore(uint256,uint256)(0x00,0x7939f424)	NodeType.EXPRESSION
+revert()()	ExtraNodeType.REVERT";
+"BlockID: 9
+Call context: createIncentiveFromGauge
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 10
+Call context: createIncentiveFromGauge
+None
+TMP_933(None) = SOLIDITY_CALL mstore(uint256,uint256)(96,0)
+TMP_934(None) = SOLIDITY_CALL mstore(uint256,uint256)(64,m_safeTransferFrom_asm_0)
+EXPRESSION:mstore(uint256,uint256)(0x60,0)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x40,m_safeTransferFrom_asm_0)	NodeType.EXPRESSION";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+TMP_4382(bool) = reward <= 0
+CONDITION TMP_4382
+EXPRESSION:reward <= 0	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_4382(bool) = reward <= 0
+CONDITION TMP_4382
+EXPRESSION:reward <= 0	NodeType.IF" -> "BlockID: 2
+Call context: 
+True
+TMP_4383(None) = SOLIDITY_CALL revert IncentiveRewardMustBePositive()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_4382(bool) = reward <= 0
+CONDITION TMP_4382
+EXPRESSION:reward <= 0	NodeType.IF" -> "BlockID: 3
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 3
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: 
+None
+TMP_1083(uint256) = timestamp (c)- INCENTIVES_OFFSET
+TMP_1084(uint256) = TMP_1083 (c)/ INCENTIVES_DURATION
+TMP_1085(uint256) = TMP_1084 (c)+ 1
+TMP_1086(uint256) = TMP_1085 (c)* INCENTIVES_DURATION
+TMP_1087(uint256) = TMP_1086 (c)+ INCENTIVES_OFFSET
+TMP_1088 = CONVERT TMP_1087 to uint96
+TMP_4771(None) := TMP_1088(uint96)
+startTime(uint96) := TMP_4384(uint96)
+REF_1240(IUniswapV3Pool) -> gaugePool[msg.sender]
+pool(IUniswapV3Pool) := REF_1240(IUniswapV3Pool)
+TMP_4385 = CONVERT pool to address
+TMP_4386 = CONVERT 0 to address
+TMP_4387(bool) = TMP_4385 == TMP_4386
+CONDITION TMP_4387
+EXPRESSION:startTime = IncentiveTime.computeEnd(block.timestamp)	NodeType.VARIABLE
+startTime = IncentiveTime.computeEnd(block.timestamp)	NodeType.EXPRESSION
+pool = gaugePool[msg.sender]	NodeType.VARIABLE
+pool = gaugePool[msg.sender]	NodeType.EXPRESSION
+address(pool) == address(0)	NodeType.IF" [key=0];
+"BlockID: 4
+Call context: 
+None
+TMP_1083(uint256) = timestamp (c)- INCENTIVES_OFFSET
+TMP_1084(uint256) = TMP_1083 (c)/ INCENTIVES_DURATION
+TMP_1085(uint256) = TMP_1084 (c)+ 1
+TMP_1086(uint256) = TMP_1085 (c)* INCENTIVES_DURATION
+TMP_1087(uint256) = TMP_1086 (c)+ INCENTIVES_OFFSET
+TMP_1088 = CONVERT TMP_1087 to uint96
+TMP_4771(None) := TMP_1088(uint96)
+startTime(uint96) := TMP_4384(uint96)
+REF_1240(IUniswapV3Pool) -> gaugePool[msg.sender]
+pool(IUniswapV3Pool) := REF_1240(IUniswapV3Pool)
+TMP_4385 = CONVERT pool to address
+TMP_4386 = CONVERT 0 to address
+TMP_4387(bool) = TMP_4385 == TMP_4386
+CONDITION TMP_4387
+EXPRESSION:startTime = IncentiveTime.computeEnd(block.timestamp)	NodeType.VARIABLE
+startTime = IncentiveTime.computeEnd(block.timestamp)	NodeType.EXPRESSION
+pool = gaugePool[msg.sender]	NodeType.VARIABLE
+pool = gaugePool[msg.sender]	NodeType.EXPRESSION
+address(pool) == address(0)	NodeType.IF" -> "BlockID: 5
+Call context: 
+True
+TMP_4388(None) = SOLIDITY_CALL revert IncentiveCallerMustBeRegisteredGauge()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_3"];
+"BlockID: 4
+Call context: 
+None
+TMP_1083(uint256) = timestamp (c)- INCENTIVES_OFFSET
+TMP_1084(uint256) = TMP_1083 (c)/ INCENTIVES_DURATION
+TMP_1085(uint256) = TMP_1084 (c)+ 1
+TMP_1086(uint256) = TMP_1085 (c)* INCENTIVES_DURATION
+TMP_1087(uint256) = TMP_1086 (c)+ INCENTIVES_OFFSET
+TMP_1088 = CONVERT TMP_1087 to uint96
+TMP_4771(None) := TMP_1088(uint96)
+startTime(uint96) := TMP_4384(uint96)
+REF_1240(IUniswapV3Pool) -> gaugePool[msg.sender]
+pool(IUniswapV3Pool) := REF_1240(IUniswapV3Pool)
+TMP_4385 = CONVERT pool to address
+TMP_4386 = CONVERT 0 to address
+TMP_4387(bool) = TMP_4385 == TMP_4386
+CONDITION TMP_4387
+EXPRESSION:startTime = IncentiveTime.computeEnd(block.timestamp)	NodeType.VARIABLE
+startTime = IncentiveTime.computeEnd(block.timestamp)	NodeType.EXPRESSION
+pool = gaugePool[msg.sender]	NodeType.VARIABLE
+pool = gaugePool[msg.sender]	NodeType.EXPRESSION
+address(pool) == address(0)	NodeType.IF" -> "BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_3"];
+"BlockID: 6
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 7
+Call context: 
+None
+TMP_4389(IUniswapV3Staker.IncentiveKey) = new IncentiveKey(startTime,pool)
+key(IUniswapV3Staker.IncentiveKey) := TMP_4389(IUniswapV3Staker.IncentiveKey)
+TMP_4338(bytes) = SOLIDITY_CALL abi.encode()(key)
+TMP_4339(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_4338)
+TMP_5464(None) := TMP_4339(bytes32)
+incentiveId(bytes32) := TMP_4390(bytes32)
+REF_1242(IUniswapV3Staker.Incentive) -> incentives[incentiveId]
+REF_1243(uint256) -> REF_1242.totalRewardUnclaimed
+REF_1243(-> incentives) = REF_1243 (c)+ reward
+TMP_4391 = CONVERT this to address
+INLINE ASM
+NEW VARIABLE m_safeTransferFrom_asm_0
+TMP_916(uint256) = SOLIDITY_CALL mload(uint256)(64)
+m_safeTransferFrom_asm_0(uint256) := TMP_916(uint256)
+TMP_917(None) = SOLIDITY_CALL mstore(uint256,uint256)(96,amount)
+TMP_918(None) = SOLIDITY_CALL mstore(uint256,uint256)(64,to)
+TMP_919(address) = from << 96
+TMP_920(None) = SOLIDITY_CALL mstore(uint256,uint256)(44,TMP_919)
+TMP_921(None) = SOLIDITY_CALL mstore(uint256,uint256)(12,47480692178561195778129796594248187904)
+TMP_922(uint256) = SOLIDITY_CALL mload(uint256)(0)
+TMP_923(bool) = TMP_922 == 1
+TMP_924(uint256) = SOLIDITY_CALL returndatasize()()
+TMP_925 = ! TMP_924 
+TMP_926(bool) = TMP_923 | TMP_925
+TMP_927(uint256) = SOLIDITY_CALL gas()()
+TMP_928(uint256) = SOLIDITY_CALL call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(TMP_927,token,0,28,100,0,32)
+TMP_929(bool) = TMP_926 & TMP_928
+TMP_930 = ! TMP_929 
+CONDITION TMP_930
+EXPRESSION:key = IncentiveKey(startTime,pool)	NodeType.VARIABLE
+incentiveId = IncentiveId.compute(key)	NodeType.VARIABLE
+incentiveId = IncentiveId.compute(key)	NodeType.EXPRESSION
+incentives[incentiveId].totalRewardUnclaimed += reward	NodeType.EXPRESSION
+None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+m_safeTransferFrom_asm_0 = mload(uint256)(0x40)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x60,amount)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x40,to)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x2c,from << 96)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x0c,0x23b872dd000000000000000000000000)	NodeType.EXPRESSION
+! mload(uint256)(0x00) == 1 | ! returndatasize()() & call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(gas()(),token,0,0x1c,0x64,0x00,0x20)	NodeType.IF" [key=0];
+"BlockID: 7
+Call context: 
+None
+TMP_4389(IUniswapV3Staker.IncentiveKey) = new IncentiveKey(startTime,pool)
+key(IUniswapV3Staker.IncentiveKey) := TMP_4389(IUniswapV3Staker.IncentiveKey)
+TMP_4338(bytes) = SOLIDITY_CALL abi.encode()(key)
+TMP_4339(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_4338)
+TMP_5464(None) := TMP_4339(bytes32)
+incentiveId(bytes32) := TMP_4390(bytes32)
+REF_1242(IUniswapV3Staker.Incentive) -> incentives[incentiveId]
+REF_1243(uint256) -> REF_1242.totalRewardUnclaimed
+REF_1243(-> incentives) = REF_1243 (c)+ reward
+TMP_4391 = CONVERT this to address
+INLINE ASM
+NEW VARIABLE m_safeTransferFrom_asm_0
+TMP_916(uint256) = SOLIDITY_CALL mload(uint256)(64)
+m_safeTransferFrom_asm_0(uint256) := TMP_916(uint256)
+TMP_917(None) = SOLIDITY_CALL mstore(uint256,uint256)(96,amount)
+TMP_918(None) = SOLIDITY_CALL mstore(uint256,uint256)(64,to)
+TMP_919(address) = from << 96
+TMP_920(None) = SOLIDITY_CALL mstore(uint256,uint256)(44,TMP_919)
+TMP_921(None) = SOLIDITY_CALL mstore(uint256,uint256)(12,47480692178561195778129796594248187904)
+TMP_922(uint256) = SOLIDITY_CALL mload(uint256)(0)
+TMP_923(bool) = TMP_922 == 1
+TMP_924(uint256) = SOLIDITY_CALL returndatasize()()
+TMP_925 = ! TMP_924 
+TMP_926(bool) = TMP_923 | TMP_925
+TMP_927(uint256) = SOLIDITY_CALL gas()()
+TMP_928(uint256) = SOLIDITY_CALL call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(TMP_927,token,0,28,100,0,32)
+TMP_929(bool) = TMP_926 & TMP_928
+TMP_930 = ! TMP_929 
+CONDITION TMP_930
+EXPRESSION:key = IncentiveKey(startTime,pool)	NodeType.VARIABLE
+incentiveId = IncentiveId.compute(key)	NodeType.VARIABLE
+incentiveId = IncentiveId.compute(key)	NodeType.EXPRESSION
+incentives[incentiveId].totalRewardUnclaimed += reward	NodeType.EXPRESSION
+None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+m_safeTransferFrom_asm_0 = mload(uint256)(0x40)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x60,amount)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x40,to)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x2c,from << 96)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x0c,0x23b872dd000000000000000000000000)	NodeType.EXPRESSION
+! mload(uint256)(0x00) == 1 | ! returndatasize()() & call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(gas()(),token,0,0x1c,0x64,0x00,0x20)	NodeType.IF" -> "BlockID: 8
+Call context: createIncentiveFromGauge
+True
+TMP_931(None) = SOLIDITY_CALL mstore(uint256,uint256)(0,2033841188)
+TMP_932(None) = SOLIDITY_CALL revert(uint256,uint256)(28,4)
+EXPRESSION:mstore(uint256,uint256)(0x00,0x7939f424)	NodeType.EXPRESSION
+revert()()	ExtraNodeType.REVERT" [key="successor_1"];
+"BlockID: 7
+Call context: 
+None
+TMP_4389(IUniswapV3Staker.IncentiveKey) = new IncentiveKey(startTime,pool)
+key(IUniswapV3Staker.IncentiveKey) := TMP_4389(IUniswapV3Staker.IncentiveKey)
+TMP_4338(bytes) = SOLIDITY_CALL abi.encode()(key)
+TMP_4339(bytes32) = SOLIDITY_CALL keccak256(bytes)(TMP_4338)
+TMP_5464(None) := TMP_4339(bytes32)
+incentiveId(bytes32) := TMP_4390(bytes32)
+REF_1242(IUniswapV3Staker.Incentive) -> incentives[incentiveId]
+REF_1243(uint256) -> REF_1242.totalRewardUnclaimed
+REF_1243(-> incentives) = REF_1243 (c)+ reward
+TMP_4391 = CONVERT this to address
+INLINE ASM
+NEW VARIABLE m_safeTransferFrom_asm_0
+TMP_916(uint256) = SOLIDITY_CALL mload(uint256)(64)
+m_safeTransferFrom_asm_0(uint256) := TMP_916(uint256)
+TMP_917(None) = SOLIDITY_CALL mstore(uint256,uint256)(96,amount)
+TMP_918(None) = SOLIDITY_CALL mstore(uint256,uint256)(64,to)
+TMP_919(address) = from << 96
+TMP_920(None) = SOLIDITY_CALL mstore(uint256,uint256)(44,TMP_919)
+TMP_921(None) = SOLIDITY_CALL mstore(uint256,uint256)(12,47480692178561195778129796594248187904)
+TMP_922(uint256) = SOLIDITY_CALL mload(uint256)(0)
+TMP_923(bool) = TMP_922 == 1
+TMP_924(uint256) = SOLIDITY_CALL returndatasize()()
+TMP_925 = ! TMP_924 
+TMP_926(bool) = TMP_923 | TMP_925
+TMP_927(uint256) = SOLIDITY_CALL gas()()
+TMP_928(uint256) = SOLIDITY_CALL call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(TMP_927,token,0,28,100,0,32)
+TMP_929(bool) = TMP_926 & TMP_928
+TMP_930 = ! TMP_929 
+CONDITION TMP_930
+EXPRESSION:key = IncentiveKey(startTime,pool)	NodeType.VARIABLE
+incentiveId = IncentiveId.compute(key)	NodeType.VARIABLE
+incentiveId = IncentiveId.compute(key)	NodeType.EXPRESSION
+incentives[incentiveId].totalRewardUnclaimed += reward	NodeType.EXPRESSION
+None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+m_safeTransferFrom_asm_0 = mload(uint256)(0x40)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x60,amount)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x40,to)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x2c,from << 96)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x0c,0x23b872dd000000000000000000000000)	NodeType.EXPRESSION
+! mload(uint256)(0x00) == 1 | ! returndatasize()() & call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(gas()(),token,0,0x1c,0x64,0x00,0x20)	NodeType.IF" -> "BlockID: 9
+Call context: createIncentiveFromGauge
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_1"];
+"BlockID: 9
+Call context: createIncentiveFromGauge
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 10
+Call context: createIncentiveFromGauge
+None
+TMP_933(None) = SOLIDITY_CALL mstore(uint256,uint256)(96,0)
+TMP_934(None) = SOLIDITY_CALL mstore(uint256,uint256)(64,m_safeTransferFrom_asm_0)
+EXPRESSION:mstore(uint256,uint256)(0x60,0)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x40,m_safeTransferFrom_asm_0)	NodeType.EXPRESSION" [key=0];
+}

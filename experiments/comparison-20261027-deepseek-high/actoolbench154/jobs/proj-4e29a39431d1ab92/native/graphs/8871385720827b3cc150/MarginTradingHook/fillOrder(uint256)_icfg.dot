@@ -1,0 +1,2877 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+REF_287(Order) -> __orders[_orderId]
+order(Order) := REF_287(Order)
+REF_288(OrderStatus) -> order.status
+REF_289(OrderStatus) -> OrderStatus.Active
+TMP_577(bool) = REF_288 == REF_289
+REF_290(uint32) -> Errors.INVALID_INPUT
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:order = __orders[_orderId]	NodeType.VARIABLE
+order = __orders[_orderId]	NodeType.EXPRESSION
+! _condition	NodeType.IF";
+"BlockID: 4
+Call context: 
+None
+REF_291(uint256) -> order.initPosId
+REF_292(MarginPos) -> __marginPositions[REF_291]
+marginPos(MarginPos) := REF_292(MarginPos)
+REF_293(address) -> marginPos.collPool
+TMP_579 = CONVERT REF_293 to ILendingPool
+TMP_580(address) = HIGH_LEVEL_CALL, dest:TMP_579(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:_require(order.status == OrderStatus.Active,Errors.INVALID_INPUT)	NodeType.EXPRESSION
+marginPos = __marginPositions[order.initPosId]	NodeType.VARIABLE
+marginPos = __marginPositions[order.initPosId]	NodeType.EXPRESSION";
+"BlockID: 5
+Call context: 
+None
+collToken(address) := TMP_580(address)
+REF_295(address) -> marginPos.borrPool
+TMP_581 = CONVERT REF_295 to ILendingPool
+TMP_582(address) = HIGH_LEVEL_CALL, dest:TMP_581(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:collToken = ILendingPool(marginPos.collPool).underlyingToken()	NodeType.VARIABLE
+collToken = ILendingPool(marginPos.collPool).underlyingToken()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 6
+Call context: 
+None
+borrToken(address) := TMP_582(address)
+TMP_583 = CONVERT POS_MANAGER to IPosManager
+REF_298(uint256) -> order.initPosId
+REF_299(address) -> marginPos.collPool
+TMP_584(uint256) = HIGH_LEVEL_CALL, dest:TMP_583(IPosManager), function:getCollAmt, arguments:['REF_298', 'REF_299']  
+EXPRESSION:borrToken = ILendingPool(marginPos.borrPool).underlyingToken()	NodeType.VARIABLE
+borrToken = ILendingPool(marginPos.borrPool).underlyingToken()	NodeType.EXPRESSION
+IPosManager(POS_MANAGER).getCollAmt(order.initPosId,marginPos.collPool) == 0	NodeType.EXPRESSION" [shape=box];
+"BlockID: 7
+Call context: 
+None
+TMP_585(bool) = TMP_584 == 0
+CONDITION TMP_585
+EXPRESSION:IPosManager(POS_MANAGER).getCollAmt(order.initPosId,marginPos.collPool) == 0	NodeType.IF" [shape=box];
+"BlockID: 8
+Call context: 
+True
+REF_300(OrderStatus) -> order.status
+REF_301(OrderStatus) -> OrderStatus.Cancelled
+REF_300(OrderStatus) (->order) := REF_301(OrderStatus)
+RETURN
+EXPRESSION:order.status = OrderStatus.Cancelled	NodeType.EXPRESSION
+None	NodeType.RETURN";
+"BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 10
+Call context: 
+None
+TMP_692 = CONVERT CORE to IInitCore
+TMP_693(address) = HIGH_LEVEL_CALL, dest:TMP_692(IInitCore), function:oracle, arguments:[]  
+EXPRESSION:";
+"BlockID: 28
+Call context: 
+None
+NEW VARIABLE amtOut
+NEW VARIABLE repayShares
+NEW VARIABLE repayAmt
+TMP_705 = CONVERT POS_MANAGER to IPosManager
+REF_422(uint256) -> _order.initPosId
+REF_423(address) -> _marginPos.collPool
+TMP_706(uint256) = HIGH_LEVEL_CALL, dest:TMP_705(IPosManager), function:getCollAmt, arguments:['REF_422', 'REF_423']  
+EXPRESSION:_validateTriggerPrice(order,marginPos)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE";
+"BlockID: 68
+Call context: 
+None
+REF_304(address) -> order.tokenOut
+TMP_591 = CONVERT REF_304 to IERC20
+REF_306(address) -> order.recipient
+REF_75(bytes4) (->None) := 599290589(uint256)
+TMP_289(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_75,from,to,value)
+TMP_323 = CONVERT token to address
+TMP_10 = CONVERT this to address
+TMP_11(uint256) = SOLIDITY_CALL balance(address)(TMP_10)
+TMP_12(bool) = TMP_11 >= value
+CONDITION TMP_12
+EXPRESSION:IERC20(borrToken).safeTransferFrom(msg.sender,address(this),repayAmt)	NodeType.EXPRESSION
+TMP_12(bool) = TMP_11 >= value	NodeType.IF";
+"BlockID: 84
+Call context: 
+None
+TMP_404 = CONVERT _token to IERC20
+TMP_405 = CONVERT this to address
+TMP_406(uint256) = HIGH_LEVEL_CALL, dest:TMP_404(IERC20), function:allowance, arguments:['TMP_405', 'CORE']  
+EXPRESSION:IERC20(order.tokenOut).safeTransferFrom(msg.sender,order.recipient,amtOut)	NodeType.EXPRESSION
+IERC20(_token).allowance(address(this),CORE) < _amt	NodeType.EXPRESSION";
+"BlockID: 89
+Call context: 
+None
+TMP_594 = CONVERT CORE to IInitCore
+REF_308(address) -> marginPos.borrPool
+REF_309(uint256) -> order.initPosId
+TMP_595(uint256) = HIGH_LEVEL_CALL, dest:TMP_594(IInitCore), function:repay, arguments:['REF_308', 'repayShares', 'REF_309']  
+EXPRESSION:_ensureApprove(borrToken,repayAmt)	NodeType.EXPRESSION
+IInitCore(CORE).repay(marginPos.borrPool,repayShares,order.initPosId)	NodeType.EXPRESSION";
+"BlockID: 92
+Call context: 
+None
+TMP_596 = CONVERT CORE to IInitCore
+REF_311(uint256) -> order.initPosId
+REF_312(address) -> marginPos.collPool
+REF_313(uint256) -> order.collAmt
+HIGH_LEVEL_CALL, dest:TMP_596(IInitCore), function:decollateralize, arguments:['REF_311', 'REF_312', 'REF_313', 'msg.sender']  
+EXPRESSION:IInitCore(CORE).repay(marginPos.borrPool,repayShares,order.initPosId)	NodeType.EXPRESSION
+IInitCore(CORE).decollateralize(order.initPosId,marginPos.collPool,order.collAmt,msg.sender)	NodeType.EXPRESSION";
+"BlockID: 94
+Call context: 
+None
+REF_314(Order) -> __orders[_orderId]
+REF_315(OrderStatus) -> REF_314.status
+REF_316(OrderStatus) -> OrderStatus.Filled
+REF_315(OrderStatus) (->__orders) := REF_316(OrderStatus)
+EXPRESSION:IInitCore(CORE).decollateralize(order.initPosId,marginPos.collPool,order.collAmt,msg.sender)	NodeType.EXPRESSION
+__orders[_orderId].status = OrderStatus.Filled	NodeType.EXPRESSION";
+"BlockID: 2
+Call context: fillOrder
+True
+TMP_766(bytes) = SOLIDITY_CALL abi.encodePacked()(_errorCode)
+TMP_767 = CONVERT TMP_766 to string
+TMP_768(None) = SOLIDITY_CALL revert(string)(TMP_767)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 3
+Call context: fillOrder
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 11
+Call context: fillOrder
+None
+oracle(address) := TMP_693(address)
+TMP_694 = CONVERT oracle to IInitOracle
+REF_410(address) -> _marginPos.baseAsset
+TMP_695(uint256) = HIGH_LEVEL_CALL, dest:TMP_694(IInitOracle), function:getPrice_e36, arguments:['REF_410']  
+EXPRESSION:oracle = IInitCore(CORE).oracle()	NodeType.VARIABLE
+oracle = IInitCore(CORE).oracle()	NodeType.EXPRESSION" [shape=box];
+"BlockID: 12
+Call context: fillOrder
+None
+TMP_696 = CONVERT oracle to IInitOracle
+REF_413(address) -> _marginPos.quoteAsset
+TMP_697(uint256) = HIGH_LEVEL_CALL, dest:TMP_696(IInitOracle), function:getPrice_e36, arguments:['REF_413']  
+EXPRESSION:" [shape=box];
+"BlockID: 13
+Call context: fillOrder
+None
+NEW VARIABLE prod0
+NEW VARIABLE prod1
+INLINE ASM
+NEW VARIABLE mm_mulDiv_asm_0
+TMP_39 = ~ 0 
+TMP_40(uint256) = SOLIDITY_CALL mulmod(uint256,uint256,uint256)(x,y,TMP_39)
+mm_mulDiv_asm_0(uint256) := TMP_40(uint256)
+TMP_41(uint256) = x * y
+prod0(uint256) := TMP_41(uint256)
+TMP_42(uint256) = mm_mulDiv_asm_0 - prod0
+TMP_43(bool) = mm_mulDiv_asm_0 < prod0
+TMP_44(uint256) = TMP_42 - TMP_43
+prod1(uint256) := TMP_44(uint256)
+TMP_45(bool) = prod1 == 0
+CONDITION TMP_45
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+mm_mulDiv_asm_0 = mulmod(uint256,uint256,uint256)(x,y,~ 0)	NodeType.EXPRESSION
+prod0 = x * y	NodeType.EXPRESSION
+prod1 = mm_mulDiv_asm_0 - prod0 - mm_mulDiv_asm_0 < prod0	NodeType.EXPRESSION
+prod1 == 0	NodeType.IF" [shape=box];
+"BlockID: 16
+Call context: fillOrder
+None
+markPrice_e36(uint256) := TMP_698(uint256)
+REF_414(OrderType) -> _order.orderType
+REF_415(OrderType) -> OrderType.TakeProfit
+TMP_699(bool) = REF_414 == REF_415
+REF_416(bool) -> _marginPos.isLongBaseAsset
+TMP_700(bool) = TMP_699 == REF_416
+CONDITION TMP_700
+EXPRESSION:markPrice_e36 = IInitOracle(oracle).getPrice_e36(_marginPos.baseAsset).mulDiv(ONE_E36,IInitOracle(oracle).getPrice_e36(_marginPos.quoteAsset))	NodeType.VARIABLE
+markPrice_e36 = IInitOracle(oracle).getPrice_e36(_marginPos.baseAsset).mulDiv(ONE_E36,IInitOracle(oracle).getPrice_e36(_marginPos.quoteAsset))	NodeType.EXPRESSION
+(_order.orderType == OrderType.TakeProfit) == _marginPos.isLongBaseAsset	NodeType.IF" [shape=box];
+"BlockID: 18
+Call context: fillOrder
+True
+REF_417(uint256) -> _order.triggerPrice_e36
+TMP_701(bool) = markPrice_e36 >= REF_417
+REF_418(uint32) -> Errors.INVALID_INPUT
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:! _condition	NodeType.IF";
+"BlockID: 19
+Call context: fillOrder
+False
+REF_419(uint256) -> _order.triggerPrice_e36
+TMP_703(bool) = markPrice_e36 <= REF_419
+REF_420(uint32) -> Errors.INVALID_INPUT
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:! _condition	NodeType.IF";
+"BlockID: 27
+Call context: fillOrder
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 14
+Call context: fillOrder,_validateTriggerPrice
+True
+TMP_46(uint256) = prod0 / denominator
+TMP_804(None) := TMP_46(uint256)
+EXPRESSION:";
+"BlockID: 15
+Call context: fillOrder,_validateTriggerPrice
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 26
+Call context: fillOrder,_validateTriggerPrice
+True
+NEW VARIABLE remainder
+INLINE ASM
+TMP_49(uint256) = SOLIDITY_CALL mulmod(uint256,uint256,uint256)(x,y,denominator)
+remainder(uint256) := TMP_49(uint256)
+TMP_50(bool) = remainder > prod0
+TMP_51(uint256) = prod1 - TMP_50
+prod1(uint256) := TMP_51(uint256)
+TMP_52(uint256) = prod0 - remainder
+prod0(uint256) := TMP_52(uint256)
+TMP_53 = ~ denominator 
+TMP_54(uint256) = TMP_53 + 1
+TMP_55(uint256) = denominator & TMP_54
+twos(uint256) := TMP_55(uint256)
+INLINE ASM
+TMP_56(uint256) = denominator / twos
+denominator(uint256) := TMP_56(uint256)
+TMP_57(uint256) = prod0 / twos
+prod0(uint256) := TMP_57(uint256)
+TMP_58(uint256) = 0 - twos
+TMP_59(uint256) = TMP_58 / twos
+TMP_60(uint256) = TMP_59 + 1
+twos(uint256) := TMP_60(uint256)
+TMP_61(uint256) = prod1 * twos
+prod0(uint256) = prod0 | TMP_61
+TMP_62(uint256) = 3 * denominator
+TMP_63(uint256) = TMP_62 ^ 2
+inverse(uint256) := TMP_63(uint256)
+TMP_64(uint256) = denominator * inverse
+TMP_65(uint256) = 2 - TMP_64
+inverse(uint256) = inverse * TMP_65
+TMP_66(uint256) = denominator * inverse
+TMP_67(uint256) = 2 - TMP_66
+inverse(uint256) = inverse * TMP_67
+TMP_68(uint256) = denominator * inverse
+TMP_69(uint256) = 2 - TMP_68
+inverse(uint256) = inverse * TMP_69
+TMP_70(uint256) = denominator * inverse
+TMP_71(uint256) = 2 - TMP_70
+inverse(uint256) = inverse * TMP_71
+TMP_72(uint256) = denominator * inverse
+TMP_73(uint256) = 2 - TMP_72
+inverse(uint256) = inverse * TMP_73
+TMP_74(uint256) = denominator * inverse
+TMP_75(uint256) = 2 - TMP_74
+inverse(uint256) = inverse * TMP_75
+TMP_76(uint256) = prod0 * inverse
+result(uint256) := TMP_76(uint256)
+TMP_804(None) := result(uint256)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+remainder = mulmod(uint256,uint256,uint256)(x,y,denominator)	NodeType.EXPRESSION
+prod1 = prod1 - remainder > prod0	NodeType.EXPRESSION
+prod0 = prod0 - remainder	NodeType.EXPRESSION
+twos = denominator & (~ denominator + 1)	NodeType.VARIABLE
+twos = denominator & (~ denominator + 1)	NodeType.EXPRESSION
+None	NodeType.ASSEMBLY
+denominator = denominator / twos	NodeType.EXPRESSION
+prod0 = prod0 / twos	NodeType.EXPRESSION
+twos = 0 - twos / twos + 1	NodeType.EXPRESSION
+prod0 |= prod1 * twos	NodeType.EXPRESSION
+inverse = (3 * denominator) ^ 2	NodeType.VARIABLE
+inverse = (3 * denominator) ^ 2	NodeType.EXPRESSION
+inverse *= 2 - denominator * inverse	NodeType.EXPRESSION
+inverse *= 2 - denominator * inverse	NodeType.EXPRESSION
+inverse *= 2 - denominator * inverse	NodeType.EXPRESSION
+inverse *= 2 - denominator * inverse	NodeType.EXPRESSION
+inverse *= 2 - denominator * inverse	NodeType.EXPRESSION
+inverse *= 2 - denominator * inverse	NodeType.EXPRESSION
+result = prod0 * inverse	NodeType.EXPRESSION";
+"BlockID: 17
+Call context: fillOrder,_validateTriggerPrice
+None
+TMP_47(bool) = denominator > prod1
+CONDITION TMP_47
+EXPRESSION:TMP_47(bool) = denominator > prod1	NodeType.IF";
+"BlockID: 20
+Call context: fillOrder,_validateTriggerPrice
+True
+TMP_48(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 21
+Call context: fillOrder,_validateTriggerPrice
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 22
+Call context: fillOrder,_validateTriggerPrice
+True
+TMP_766(bytes) = SOLIDITY_CALL abi.encodePacked()(_errorCode)
+TMP_767 = CONVERT TMP_766 to string
+TMP_768(None) = SOLIDITY_CALL revert(string)(TMP_767)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 23
+Call context: fillOrder,_validateTriggerPrice
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 24
+Call context: fillOrder,_validateTriggerPrice
+True
+TMP_766(bytes) = SOLIDITY_CALL abi.encodePacked()(_errorCode)
+TMP_767 = CONVERT TMP_766 to string
+TMP_768(None) = SOLIDITY_CALL revert(string)(TMP_767)
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 25
+Call context: fillOrder,_validateTriggerPrice
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 35
+Call context: fillOrder
+None
+repayShares(uint256)= UNPACK TUPLE_12 index: 0 
+repayAmt(uint256)= UNPACK TUPLE_12 index: 1 
+REF_396(address) -> _marginPos.collPool
+TMP_677 = CONVERT REF_396 to ILendingPool
+REF_398(uint256) -> _order.collAmt
+TMP_678(uint256) = HIGH_LEVEL_CALL, dest:TMP_677(ILendingPool), function:toAmtCurrent, arguments:['REF_398']  
+EXPRESSION:(repayShares,repayAmt) = _calculateRepaySize(_order,_marginPos)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 36
+Call context: fillOrder
+None
+collTokenAmt(uint256) := TMP_678(uint256)
+REF_399(address) -> _order.tokenOut
+TMP_679(bool) = _collToken == REF_399
+CONDITION TMP_679
+EXPRESSION:collTokenAmt = ILendingPool(_marginPos.collPool).toAmtCurrent(_order.collAmt)	NodeType.VARIABLE
+collTokenAmt = ILendingPool(_marginPos.collPool).toAmtCurrent(_order.collAmt)	NodeType.EXPRESSION
+_collToken == _order.tokenOut	NodeType.IF" [shape=box];
+"BlockID: 37
+Call context: fillOrder
+True
+REF_400(bool) -> _marginPos.isLongBaseAsset
+CONDITION REF_400
+EXPRESSION:_marginPos.isLongBaseAsset	NodeType.IF";
+"BlockID: 38
+Call context: fillOrder
+False
+REF_403(bool) -> _marginPos.isLongBaseAsset
+CONDITION REF_403
+EXPRESSION:_marginPos.isLongBaseAsset	NodeType.IF";
+"BlockID: 41
+Call context: fillOrder
+True
+REF_404(uint256) -> _order.limitPrice_e36
+TMP_686(uint256) = collTokenAmt (c)* REF_404
+TMP_35(bool) = a == 0
+CONDITION TMP_35
+EXPRESSION:a == 0	NodeType.IF";
+"BlockID: 42
+Call context: fillOrder
+False
+TMP_689(uint256) = collTokenAmt (c)* ONE_E36
+REF_407(uint256) -> _order.limitPrice_e36
+TMP_35(bool) = a == 0
+CONDITION TMP_35
+EXPRESSION:a == 0	NodeType.IF";
+"BlockID: 50
+Call context: fillOrder
+None
+TMP_691(uint256) = TMP_690 (c)- repayAmt
+amtOut(uint256) := TMP_691(uint256)
+EXPRESSION:amtOut = (collTokenAmt * ONE_E36).ceilDiv(_order.limitPrice_e36) - repayAmt	NodeType.EXPRESSION" [shape=box];
+"BlockID: 52
+Call context: fillOrder
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 48
+Call context: fillOrder
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 49
+Call context: fillOrder
+None
+TMP_688(uint256) = TMP_687 (c)- repayAmt
+amtOut(uint256) := TMP_688(uint256)
+EXPRESSION:amtOut = (collTokenAmt * _order.limitPrice_e36).ceilDiv(ONE_E36) - repayAmt	NodeType.EXPRESSION" [shape=box];
+"BlockID: 39
+Call context: fillOrder
+True
+TMP_680(uint256) = repayAmt (c)* ONE_E36
+REF_401(uint256) -> _order.limitPrice_e36
+TMP_681(uint256) = TMP_680 (c)/ REF_401
+TMP_682(uint256) = collTokenAmt (c)- TMP_681
+amtOut(uint256) := TMP_682(uint256)
+EXPRESSION:amtOut = collTokenAmt - repayAmt * ONE_E36 / _order.limitPrice_e36	NodeType.EXPRESSION";
+"BlockID: 40
+Call context: fillOrder
+False
+REF_402(uint256) -> _order.limitPrice_e36
+TMP_683(uint256) = repayAmt (c)* REF_402
+TMP_684(uint256) = TMP_683 (c)/ ONE_E36
+TMP_685(uint256) = collTokenAmt (c)- TMP_684
+amtOut(uint256) := TMP_685(uint256)
+EXPRESSION:amtOut = collTokenAmt - (repayAmt * _order.limitPrice_e36 / ONE_E36)	NodeType.EXPRESSION";
+"BlockID: 43
+Call context: fillOrder
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 29
+Call context: fillOrder,_calculateFillOrderInfo
+None
+totalCollAmt(uint256) := TMP_706(uint256)
+REF_424(uint256) -> _order.collAmt
+TMP_707(bool) = REF_424 > totalCollAmt
+CONDITION TMP_707
+EXPRESSION:totalCollAmt = IPosManager(POS_MANAGER).getCollAmt(_order.initPosId,_marginPos.collPool)	NodeType.VARIABLE
+totalCollAmt = IPosManager(POS_MANAGER).getCollAmt(_order.initPosId,_marginPos.collPool)	NodeType.EXPRESSION
+_order.collAmt > totalCollAmt	NodeType.IF" [shape=box];
+"BlockID: 30
+Call context: fillOrder,_calculateFillOrderInfo
+True
+REF_425(uint256) -> _order.collAmt
+REF_425(uint256) (->_order) := totalCollAmt(uint256)
+EXPRESSION:_order.collAmt = totalCollAmt	NodeType.EXPRESSION";
+"BlockID: 31
+Call context: fillOrder,_calculateFillOrderInfo
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 32
+Call context: fillOrder,_calculateFillOrderInfo
+None
+TMP_708 = CONVERT POS_MANAGER to IPosManager
+REF_427(uint256) -> _order.initPosId
+REF_428(address) -> _marginPos.borrPool
+TMP_709(uint256) = HIGH_LEVEL_CALL, dest:TMP_708(IPosManager), function:getPosDebtShares, arguments:['REF_427', 'REF_428']  
+EXPRESSION:";
+"BlockID: 33
+Call context: fillOrder,_calculateFillOrderInfo
+None
+totalDebtShares(uint256) := TMP_709(uint256)
+REF_429(uint256) -> _order.collAmt
+TMP_710(uint256) = totalDebtShares (c)* REF_429
+TMP_711(uint256) = TMP_710 (c)/ totalCollAmt
+repayShares(uint256) := TMP_711(uint256)
+REF_430(address) -> _marginPos.borrPool
+TMP_712 = CONVERT REF_430 to ILendingPool
+TMP_713(uint256) = HIGH_LEVEL_CALL, dest:TMP_712(ILendingPool), function:debtShareToAmtCurrent, arguments:['repayShares']  
+EXPRESSION:totalDebtShares = IPosManager(POS_MANAGER).getPosDebtShares(_order.initPosId,_marginPos.borrPool)	NodeType.VARIABLE
+totalDebtShares = IPosManager(POS_MANAGER).getPosDebtShares(_order.initPosId,_marginPos.borrPool)	NodeType.EXPRESSION
+repayShares = totalDebtShares * _order.collAmt / totalCollAmt	NodeType.EXPRESSION
+repayAmt = ILendingPool(_marginPos.borrPool).debtShareToAmtCurrent(repayShares)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 34
+Call context: fillOrder,_calculateFillOrderInfo
+None
+repayAmt(uint256) := TMP_713(uint256)
+TMP_911(None) := repayShares(uint256)
+TMP_911(None) := repayAmt(uint256)
+EXPRESSION:repayAmt = ILendingPool(_marginPos.borrPool).debtShareToAmtCurrent(repayShares)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 44
+Call context: fillOrder,_calculateFillOrderInfo
+True
+TMP_803(None) := 0(uint256)
+EXPRESSION:";
+"BlockID: 45
+Call context: fillOrder,_calculateFillOrderInfo
+False
+TMP_36(uint256) = a (c)- 1
+TMP_37(uint256) = TMP_36 (c)/ b
+TMP_38(uint256) = TMP_37 (c)+ 1
+TMP_803(None) := TMP_38(uint256)
+EXPRESSION:";
+"BlockID: 46
+Call context: fillOrder,_calculateFillOrderInfo
+True
+TMP_803(None) := 0(uint256)
+EXPRESSION:";
+"BlockID: 47
+Call context: fillOrder,_calculateFillOrderInfo
+False
+TMP_36(uint256) = a (c)- 1
+TMP_37(uint256) = TMP_36 (c)/ b
+TMP_38(uint256) = TMP_37 (c)+ 1
+TMP_803(None) := TMP_38(uint256)
+EXPRESSION:";
+"BlockID: 51
+Call context: 
+None
+TMP_909(None) := repayAmt(uint256)
+TMP_909(None) := repayShares(uint256)
+TMP_909(None) := amtOut(uint256)
+amtOut(uint256)= UNPACK TUPLE_11 index: 0 
+repayShares(uint256)= UNPACK TUPLE_11 index: 1 
+repayAmt(uint256)= UNPACK TUPLE_11 index: 2 
+TMP_588 = CONVERT borrToken to IERC20
+TMP_589 = CONVERT this to address
+REF_75(bytes4) (->None) := 599290589(uint256)
+TMP_289(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_75,from,to,value)
+TMP_323 = CONVERT token to address
+TMP_10 = CONVERT this to address
+TMP_11(uint256) = SOLIDITY_CALL balance(address)(TMP_10)
+TMP_12(bool) = TMP_11 >= value
+CONDITION TMP_12
+EXPRESSION:(amtOut,repayShares,repayAmt) = _calculateFillOrderInfo(order,marginPos,collToken)	NodeType.EXPRESSION
+TMP_12(bool) = TMP_11 >= value	NodeType.IF";
+"BlockID: 66
+Call context: fillOrder,safeTransferFrom
+True
+TMP_328(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 67
+Call context: fillOrder,safeTransferFrom
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 55
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_1(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:value 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION";
+"BlockID: 56
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_1 index: 0 
+returndata(bytes)= UNPACK TUPLE_1 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION
+success	NodeType.IF" [shape=box];
+"BlockID: 53
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall
+True
+TMP_13(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 54
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 57
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+REF_5 -> LENGTH returndata
+TMP_19(bool) = REF_5 == 0
+CONDITION TMP_19
+EXPRESSION:returndata.length == 0	NodeType.IF";
+"BlockID: 58
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+False
+REF_6 -> LENGTH returndata
+TMP_24(bool) = REF_6 > 0
+CONDITION TMP_24
+END_IF
+EXPRESSION:returndata.length > 0	NodeType.IF
+None	NodeType.ENDIF";
+"BlockID: 59
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+TMP_0(bytes) = SOLIDITY_CALL code(address)(account)
+REF_0 -> LENGTH TMP_0
+TMP_1(bool) = REF_0 > 0
+TMP_787(None) := TMP_1(bool)
+CONDITION TMP_20
+EXPRESSION:qiantao require	NodeType.IF";
+"BlockID: 60
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 65
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+None
+TMP_797(None) := returndata(bytes)
+TMP_792(None) := TMP_14(bytes)
+TMP_790(None) := TMP_8(bytes)
+returndata(bytes) := TMP_324(bytes)
+REF_98 -> LENGTH returndata
+TMP_325(bool) = REF_98 == 0
+TMP_326(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+TMP_327(bool) = TMP_325 || TMP_326
+CONDITION TMP_327
+EXPRESSION:TMP_327(bool) = TMP_325 || TMP_326	NodeType.IF";
+"BlockID: 63
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+TMP_21(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 64
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 61
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue,verifyCallResultFromTarget
+True
+INLINE ASM
+NEW VARIABLE returndata_size__revert_asm_0
+TMP_25(uint256) = SOLIDITY_CALL mload(uint256)(returndata)
+returndata_size__revert_asm_0(uint256) := TMP_25(uint256)
+TMP_26(uint256) = 32 + returndata
+TMP_27(None) = SOLIDITY_CALL revert(uint256,uint256)(TMP_26,returndata_size__revert_asm_0)
+EXPRESSION:None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+returndata_size__revert_asm_0 = mload(uint256)(returndata)	NodeType.EXPRESSION
+revert(uint256,uint256)(32 + returndata,returndata_size__revert_asm_0)	NodeType.EXPRESSION";
+"BlockID: 62
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue,verifyCallResultFromTarget
+False
+TMP_28(None) = SOLIDITY_CALL revert(string)(errorMessage)
+EXPRESSION:revert(string)(errorMessage)	NodeType.EXPRESSION";
+"BlockID: 82
+Call context: fillOrder,safeTransferFrom
+True
+TMP_328(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 83
+Call context: fillOrder,safeTransferFrom
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 71
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_1(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:value 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION";
+"BlockID: 72
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_1 index: 0 
+returndata(bytes)= UNPACK TUPLE_1 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION
+success	NodeType.IF" [shape=box];
+"BlockID: 69
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall
+True
+TMP_13(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 70
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 73
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+REF_5 -> LENGTH returndata
+TMP_19(bool) = REF_5 == 0
+CONDITION TMP_19
+EXPRESSION:returndata.length == 0	NodeType.IF";
+"BlockID: 74
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+False
+REF_6 -> LENGTH returndata
+TMP_24(bool) = REF_6 > 0
+CONDITION TMP_24
+END_IF
+EXPRESSION:returndata.length > 0	NodeType.IF
+None	NodeType.ENDIF";
+"BlockID: 75
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+TMP_0(bytes) = SOLIDITY_CALL code(address)(account)
+REF_0 -> LENGTH TMP_0
+TMP_1(bool) = REF_0 > 0
+TMP_787(None) := TMP_1(bool)
+CONDITION TMP_20
+EXPRESSION:qiantao require	NodeType.IF";
+"BlockID: 76
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 81
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+None
+TMP_797(None) := returndata(bytes)
+TMP_792(None) := TMP_14(bytes)
+TMP_790(None) := TMP_8(bytes)
+returndata(bytes) := TMP_324(bytes)
+REF_98 -> LENGTH returndata
+TMP_325(bool) = REF_98 == 0
+TMP_326(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+TMP_327(bool) = TMP_325 || TMP_326
+CONDITION TMP_327
+EXPRESSION:TMP_327(bool) = TMP_325 || TMP_326	NodeType.IF";
+"BlockID: 79
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+TMP_21(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 80
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 77
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue,verifyCallResultFromTarget
+True
+INLINE ASM
+NEW VARIABLE returndata_size__revert_asm_0
+TMP_25(uint256) = SOLIDITY_CALL mload(uint256)(returndata)
+returndata_size__revert_asm_0(uint256) := TMP_25(uint256)
+TMP_26(uint256) = 32 + returndata
+TMP_27(None) = SOLIDITY_CALL revert(uint256,uint256)(TMP_26,returndata_size__revert_asm_0)
+EXPRESSION:None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+returndata_size__revert_asm_0 = mload(uint256)(returndata)	NodeType.EXPRESSION
+revert(uint256,uint256)(32 + returndata,returndata_size__revert_asm_0)	NodeType.EXPRESSION";
+"BlockID: 78
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue,verifyCallResultFromTarget
+False
+TMP_28(None) = SOLIDITY_CALL revert(string)(errorMessage)
+EXPRESSION:revert(string)(errorMessage)	NodeType.EXPRESSION";
+"BlockID: 85
+Call context: fillOrder
+None
+TMP_407(bool) = TMP_406 < _amt
+CONDITION TMP_407
+EXPRESSION:IERC20(_token).allowance(address(this),CORE) < _amt	NodeType.IF" [shape=box];
+"BlockID: 86
+Call context: fillOrder
+True
+TMP_408 = CONVERT _token to IERC20
+TMP_410(uint256) := 115792089237316195423570985008687907853269984665640564039457584007913129639935(uint256)
+TMP_291(bool) = value == 0
+TMP_292 = CONVERT this to address
+TMP_293(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:allowance, arguments:['TMP_292', 'spender']  
+EXPRESSION:require(bool,string)((value == 0) || (token.allowance(address(this),spender) == 0),SafeERC20: approve from non-zero to non-zero allowance)	NodeType.EXPRESSION";
+"BlockID: 87
+Call context: fillOrder
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 93
+Call context: fillOrder,_ensureApprove
+True
+REF_79(bytes4) (->None) := 157198259(uint256)
+TMP_297(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_79,spender,value)
+TMP_323 = CONVERT token to address
+TMP_10 = CONVERT this to address
+TMP_11(uint256) = SOLIDITY_CALL balance(address)(TMP_10)
+TMP_12(bool) = TMP_11 >= value
+CONDITION TMP_12
+EXPRESSION:TMP_12(bool) = TMP_11 >= value	NodeType.IF";
+"BlockID: 88
+Call context: fillOrder,_ensureApprove
+None
+TMP_294(bool) = TMP_293 == 0
+TMP_295(bool) = TMP_291 || TMP_294
+CONDITION TMP_295
+EXPRESSION:TMP_295(bool) = TMP_291 || TMP_294	NodeType.IF";
+"BlockID: 90
+Call context: fillOrder,_ensureApprove
+True
+TMP_296(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 91
+Call context: fillOrder,_ensureApprove
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 108
+Call context: fillOrder,_ensureApprove,safeApprove
+True
+TMP_328(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 109
+Call context: fillOrder,_ensureApprove,safeApprove
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 97
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_1(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:value 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION";
+"BlockID: 98
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_1 index: 0 
+returndata(bytes)= UNPACK TUPLE_1 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION
+success	NodeType.IF" [shape=box];
+"BlockID: 95
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall
+True
+TMP_13(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 96
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 99
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+True
+REF_5 -> LENGTH returndata
+TMP_19(bool) = REF_5 == 0
+CONDITION TMP_19
+EXPRESSION:returndata.length == 0	NodeType.IF";
+"BlockID: 100
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+False
+REF_6 -> LENGTH returndata
+TMP_24(bool) = REF_6 > 0
+CONDITION TMP_24
+END_IF
+EXPRESSION:returndata.length > 0	NodeType.IF
+None	NodeType.ENDIF";
+"BlockID: 101
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+True
+TMP_0(bytes) = SOLIDITY_CALL code(address)(account)
+REF_0 -> LENGTH TMP_0
+TMP_1(bool) = REF_0 > 0
+TMP_787(None) := TMP_1(bool)
+CONDITION TMP_20
+EXPRESSION:qiantao require	NodeType.IF";
+"BlockID: 102
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 107
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+None
+TMP_797(None) := returndata(bytes)
+TMP_792(None) := TMP_14(bytes)
+TMP_790(None) := TMP_8(bytes)
+returndata(bytes) := TMP_324(bytes)
+REF_98 -> LENGTH returndata
+TMP_325(bool) = REF_98 == 0
+TMP_326(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+TMP_327(bool) = TMP_325 || TMP_326
+CONDITION TMP_327
+EXPRESSION:TMP_327(bool) = TMP_325 || TMP_326	NodeType.IF";
+"BlockID: 105
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+True
+TMP_21(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 106
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 103
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue,verifyCallResultFromTarget
+True
+INLINE ASM
+NEW VARIABLE returndata_size__revert_asm_0
+TMP_25(uint256) = SOLIDITY_CALL mload(uint256)(returndata)
+returndata_size__revert_asm_0(uint256) := TMP_25(uint256)
+TMP_26(uint256) = 32 + returndata
+TMP_27(None) = SOLIDITY_CALL revert(uint256,uint256)(TMP_26,returndata_size__revert_asm_0)
+EXPRESSION:None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+returndata_size__revert_asm_0 = mload(uint256)(returndata)	NodeType.EXPRESSION
+revert(uint256,uint256)(32 + returndata,returndata_size__revert_asm_0)	NodeType.EXPRESSION";
+"BlockID: 104
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue,verifyCallResultFromTarget
+False
+TMP_28(None) = SOLIDITY_CALL revert(string)(errorMessage)
+EXPRESSION:revert(string)(errorMessage)	NodeType.EXPRESSION";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+REF_287(Order) -> __orders[_orderId]
+order(Order) := REF_287(Order)
+REF_288(OrderStatus) -> order.status
+REF_289(OrderStatus) -> OrderStatus.Active
+TMP_577(bool) = REF_288 == REF_289
+REF_290(uint32) -> Errors.INVALID_INPUT
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:order = __orders[_orderId]	NodeType.VARIABLE
+order = __orders[_orderId]	NodeType.EXPRESSION
+! _condition	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+REF_287(Order) -> __orders[_orderId]
+order(Order) := REF_287(Order)
+REF_288(OrderStatus) -> order.status
+REF_289(OrderStatus) -> OrderStatus.Active
+TMP_577(bool) = REF_288 == REF_289
+REF_290(uint32) -> Errors.INVALID_INPUT
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:order = __orders[_orderId]	NodeType.VARIABLE
+order = __orders[_orderId]	NodeType.EXPRESSION
+! _condition	NodeType.IF" -> "BlockID: 2
+Call context: fillOrder
+True
+TMP_766(bytes) = SOLIDITY_CALL abi.encodePacked()(_errorCode)
+TMP_767 = CONVERT TMP_766 to string
+TMP_768(None) = SOLIDITY_CALL revert(string)(TMP_767)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+REF_287(Order) -> __orders[_orderId]
+order(Order) := REF_287(Order)
+REF_288(OrderStatus) -> order.status
+REF_289(OrderStatus) -> OrderStatus.Active
+TMP_577(bool) = REF_288 == REF_289
+REF_290(uint32) -> Errors.INVALID_INPUT
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:order = __orders[_orderId]	NodeType.VARIABLE
+order = __orders[_orderId]	NodeType.EXPRESSION
+! _condition	NodeType.IF" -> "BlockID: 3
+Call context: fillOrder
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 4
+Call context: 
+None
+REF_291(uint256) -> order.initPosId
+REF_292(MarginPos) -> __marginPositions[REF_291]
+marginPos(MarginPos) := REF_292(MarginPos)
+REF_293(address) -> marginPos.collPool
+TMP_579 = CONVERT REF_293 to ILendingPool
+TMP_580(address) = HIGH_LEVEL_CALL, dest:TMP_579(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:_require(order.status == OrderStatus.Active,Errors.INVALID_INPUT)	NodeType.EXPRESSION
+marginPos = __marginPositions[order.initPosId]	NodeType.VARIABLE
+marginPos = __marginPositions[order.initPosId]	NodeType.EXPRESSION" -> "BlockID: 5
+Call context: 
+None
+collToken(address) := TMP_580(address)
+REF_295(address) -> marginPos.borrPool
+TMP_581 = CONVERT REF_295 to ILendingPool
+TMP_582(address) = HIGH_LEVEL_CALL, dest:TMP_581(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:collToken = ILendingPool(marginPos.collPool).underlyingToken()	NodeType.VARIABLE
+collToken = ILendingPool(marginPos.collPool).underlyingToken()	NodeType.EXPRESSION" [key=0];
+"BlockID: 5
+Call context: 
+None
+collToken(address) := TMP_580(address)
+REF_295(address) -> marginPos.borrPool
+TMP_581 = CONVERT REF_295 to ILendingPool
+TMP_582(address) = HIGH_LEVEL_CALL, dest:TMP_581(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:collToken = ILendingPool(marginPos.collPool).underlyingToken()	NodeType.VARIABLE
+collToken = ILendingPool(marginPos.collPool).underlyingToken()	NodeType.EXPRESSION" -> "BlockID: 6
+Call context: 
+None
+borrToken(address) := TMP_582(address)
+TMP_583 = CONVERT POS_MANAGER to IPosManager
+REF_298(uint256) -> order.initPosId
+REF_299(address) -> marginPos.collPool
+TMP_584(uint256) = HIGH_LEVEL_CALL, dest:TMP_583(IPosManager), function:getCollAmt, arguments:['REF_298', 'REF_299']  
+EXPRESSION:borrToken = ILendingPool(marginPos.borrPool).underlyingToken()	NodeType.VARIABLE
+borrToken = ILendingPool(marginPos.borrPool).underlyingToken()	NodeType.EXPRESSION
+IPosManager(POS_MANAGER).getCollAmt(order.initPosId,marginPos.collPool) == 0	NodeType.EXPRESSION" [key=0];
+"BlockID: 6
+Call context: 
+None
+borrToken(address) := TMP_582(address)
+TMP_583 = CONVERT POS_MANAGER to IPosManager
+REF_298(uint256) -> order.initPosId
+REF_299(address) -> marginPos.collPool
+TMP_584(uint256) = HIGH_LEVEL_CALL, dest:TMP_583(IPosManager), function:getCollAmt, arguments:['REF_298', 'REF_299']  
+EXPRESSION:borrToken = ILendingPool(marginPos.borrPool).underlyingToken()	NodeType.VARIABLE
+borrToken = ILendingPool(marginPos.borrPool).underlyingToken()	NodeType.EXPRESSION
+IPosManager(POS_MANAGER).getCollAmt(order.initPosId,marginPos.collPool) == 0	NodeType.EXPRESSION" -> "BlockID: 7
+Call context: 
+None
+TMP_585(bool) = TMP_584 == 0
+CONDITION TMP_585
+EXPRESSION:IPosManager(POS_MANAGER).getCollAmt(order.initPosId,marginPos.collPool) == 0	NodeType.IF" [key=0];
+"BlockID: 7
+Call context: 
+None
+TMP_585(bool) = TMP_584 == 0
+CONDITION TMP_585
+EXPRESSION:IPosManager(POS_MANAGER).getCollAmt(order.initPosId,marginPos.collPool) == 0	NodeType.IF" -> "BlockID: 8
+Call context: 
+True
+REF_300(OrderStatus) -> order.status
+REF_301(OrderStatus) -> OrderStatus.Cancelled
+REF_300(OrderStatus) (->order) := REF_301(OrderStatus)
+RETURN
+EXPRESSION:order.status = OrderStatus.Cancelled	NodeType.EXPRESSION
+None	NodeType.RETURN" [key=0];
+"BlockID: 7
+Call context: 
+None
+TMP_585(bool) = TMP_584 == 0
+CONDITION TMP_585
+EXPRESSION:IPosManager(POS_MANAGER).getCollAmt(order.initPosId,marginPos.collPool) == 0	NodeType.IF" -> "BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 9
+Call context: 
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 10
+Call context: 
+None
+TMP_692 = CONVERT CORE to IInitCore
+TMP_693(address) = HIGH_LEVEL_CALL, dest:TMP_692(IInitCore), function:oracle, arguments:[]  
+EXPRESSION:" [key=0];
+"BlockID: 10
+Call context: 
+None
+TMP_692 = CONVERT CORE to IInitCore
+TMP_693(address) = HIGH_LEVEL_CALL, dest:TMP_692(IInitCore), function:oracle, arguments:[]  
+EXPRESSION:" -> "BlockID: 11
+Call context: fillOrder
+None
+oracle(address) := TMP_693(address)
+TMP_694 = CONVERT oracle to IInitOracle
+REF_410(address) -> _marginPos.baseAsset
+TMP_695(uint256) = HIGH_LEVEL_CALL, dest:TMP_694(IInitOracle), function:getPrice_e36, arguments:['REF_410']  
+EXPRESSION:oracle = IInitCore(CORE).oracle()	NodeType.VARIABLE
+oracle = IInitCore(CORE).oracle()	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 28
+Call context: 
+None
+NEW VARIABLE amtOut
+NEW VARIABLE repayShares
+NEW VARIABLE repayAmt
+TMP_705 = CONVERT POS_MANAGER to IPosManager
+REF_422(uint256) -> _order.initPosId
+REF_423(address) -> _marginPos.collPool
+TMP_706(uint256) = HIGH_LEVEL_CALL, dest:TMP_705(IPosManager), function:getCollAmt, arguments:['REF_422', 'REF_423']  
+EXPRESSION:_validateTriggerPrice(order,marginPos)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE" -> "BlockID: 29
+Call context: fillOrder,_calculateFillOrderInfo
+None
+totalCollAmt(uint256) := TMP_706(uint256)
+REF_424(uint256) -> _order.collAmt
+TMP_707(bool) = REF_424 > totalCollAmt
+CONDITION TMP_707
+EXPRESSION:totalCollAmt = IPosManager(POS_MANAGER).getCollAmt(_order.initPosId,_marginPos.collPool)	NodeType.VARIABLE
+totalCollAmt = IPosManager(POS_MANAGER).getCollAmt(_order.initPosId,_marginPos.collPool)	NodeType.EXPRESSION
+_order.collAmt > totalCollAmt	NodeType.IF" [key="successor_5"];
+"BlockID: 68
+Call context: 
+None
+REF_304(address) -> order.tokenOut
+TMP_591 = CONVERT REF_304 to IERC20
+REF_306(address) -> order.recipient
+REF_75(bytes4) (->None) := 599290589(uint256)
+TMP_289(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_75,from,to,value)
+TMP_323 = CONVERT token to address
+TMP_10 = CONVERT this to address
+TMP_11(uint256) = SOLIDITY_CALL balance(address)(TMP_10)
+TMP_12(bool) = TMP_11 >= value
+CONDITION TMP_12
+EXPRESSION:IERC20(borrToken).safeTransferFrom(msg.sender,address(this),repayAmt)	NodeType.EXPRESSION
+TMP_12(bool) = TMP_11 >= value	NodeType.IF" -> "BlockID: 69
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall
+True
+TMP_13(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 68
+Call context: 
+None
+REF_304(address) -> order.tokenOut
+TMP_591 = CONVERT REF_304 to IERC20
+REF_306(address) -> order.recipient
+REF_75(bytes4) (->None) := 599290589(uint256)
+TMP_289(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_75,from,to,value)
+TMP_323 = CONVERT token to address
+TMP_10 = CONVERT this to address
+TMP_11(uint256) = SOLIDITY_CALL balance(address)(TMP_10)
+TMP_12(bool) = TMP_11 >= value
+CONDITION TMP_12
+EXPRESSION:IERC20(borrToken).safeTransferFrom(msg.sender,address(this),repayAmt)	NodeType.EXPRESSION
+TMP_12(bool) = TMP_11 >= value	NodeType.IF" -> "BlockID: 70
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 84
+Call context: 
+None
+TMP_404 = CONVERT _token to IERC20
+TMP_405 = CONVERT this to address
+TMP_406(uint256) = HIGH_LEVEL_CALL, dest:TMP_404(IERC20), function:allowance, arguments:['TMP_405', 'CORE']  
+EXPRESSION:IERC20(order.tokenOut).safeTransferFrom(msg.sender,order.recipient,amtOut)	NodeType.EXPRESSION
+IERC20(_token).allowance(address(this),CORE) < _amt	NodeType.EXPRESSION" -> "BlockID: 85
+Call context: fillOrder
+None
+TMP_407(bool) = TMP_406 < _amt
+CONDITION TMP_407
+EXPRESSION:IERC20(_token).allowance(address(this),CORE) < _amt	NodeType.IF" [key="successor_5"];
+"BlockID: 89
+Call context: 
+None
+TMP_594 = CONVERT CORE to IInitCore
+REF_308(address) -> marginPos.borrPool
+REF_309(uint256) -> order.initPosId
+TMP_595(uint256) = HIGH_LEVEL_CALL, dest:TMP_594(IInitCore), function:repay, arguments:['REF_308', 'repayShares', 'REF_309']  
+EXPRESSION:_ensureApprove(borrToken,repayAmt)	NodeType.EXPRESSION
+IInitCore(CORE).repay(marginPos.borrPool,repayShares,order.initPosId)	NodeType.EXPRESSION" -> "BlockID: 92
+Call context: 
+None
+TMP_596 = CONVERT CORE to IInitCore
+REF_311(uint256) -> order.initPosId
+REF_312(address) -> marginPos.collPool
+REF_313(uint256) -> order.collAmt
+HIGH_LEVEL_CALL, dest:TMP_596(IInitCore), function:decollateralize, arguments:['REF_311', 'REF_312', 'REF_313', 'msg.sender']  
+EXPRESSION:IInitCore(CORE).repay(marginPos.borrPool,repayShares,order.initPosId)	NodeType.EXPRESSION
+IInitCore(CORE).decollateralize(order.initPosId,marginPos.collPool,order.collAmt,msg.sender)	NodeType.EXPRESSION" [key=0];
+"BlockID: 92
+Call context: 
+None
+TMP_596 = CONVERT CORE to IInitCore
+REF_311(uint256) -> order.initPosId
+REF_312(address) -> marginPos.collPool
+REF_313(uint256) -> order.collAmt
+HIGH_LEVEL_CALL, dest:TMP_596(IInitCore), function:decollateralize, arguments:['REF_311', 'REF_312', 'REF_313', 'msg.sender']  
+EXPRESSION:IInitCore(CORE).repay(marginPos.borrPool,repayShares,order.initPosId)	NodeType.EXPRESSION
+IInitCore(CORE).decollateralize(order.initPosId,marginPos.collPool,order.collAmt,msg.sender)	NodeType.EXPRESSION" -> "BlockID: 94
+Call context: 
+None
+REF_314(Order) -> __orders[_orderId]
+REF_315(OrderStatus) -> REF_314.status
+REF_316(OrderStatus) -> OrderStatus.Filled
+REF_315(OrderStatus) (->__orders) := REF_316(OrderStatus)
+EXPRESSION:IInitCore(CORE).decollateralize(order.initPosId,marginPos.collPool,order.collAmt,msg.sender)	NodeType.EXPRESSION
+__orders[_orderId].status = OrderStatus.Filled	NodeType.EXPRESSION" [key=0];
+"BlockID: 3
+Call context: fillOrder
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: 
+None
+REF_291(uint256) -> order.initPosId
+REF_292(MarginPos) -> __marginPositions[REF_291]
+marginPos(MarginPos) := REF_292(MarginPos)
+REF_293(address) -> marginPos.collPool
+TMP_579 = CONVERT REF_293 to ILendingPool
+TMP_580(address) = HIGH_LEVEL_CALL, dest:TMP_579(ILendingPool), function:underlyingToken, arguments:[]  
+EXPRESSION:_require(order.status == OrderStatus.Active,Errors.INVALID_INPUT)	NodeType.EXPRESSION
+marginPos = __marginPositions[order.initPosId]	NodeType.VARIABLE
+marginPos = __marginPositions[order.initPosId]	NodeType.EXPRESSION" [key="Exit: _require", ref="TopLevel._require"];
+"BlockID: 11
+Call context: fillOrder
+None
+oracle(address) := TMP_693(address)
+TMP_694 = CONVERT oracle to IInitOracle
+REF_410(address) -> _marginPos.baseAsset
+TMP_695(uint256) = HIGH_LEVEL_CALL, dest:TMP_694(IInitOracle), function:getPrice_e36, arguments:['REF_410']  
+EXPRESSION:oracle = IInitCore(CORE).oracle()	NodeType.VARIABLE
+oracle = IInitCore(CORE).oracle()	NodeType.EXPRESSION" -> "BlockID: 12
+Call context: fillOrder
+None
+TMP_696 = CONVERT oracle to IInitOracle
+REF_413(address) -> _marginPos.quoteAsset
+TMP_697(uint256) = HIGH_LEVEL_CALL, dest:TMP_696(IInitOracle), function:getPrice_e36, arguments:['REF_413']  
+EXPRESSION:" [key=0];
+"BlockID: 12
+Call context: fillOrder
+None
+TMP_696 = CONVERT oracle to IInitOracle
+REF_413(address) -> _marginPos.quoteAsset
+TMP_697(uint256) = HIGH_LEVEL_CALL, dest:TMP_696(IInitOracle), function:getPrice_e36, arguments:['REF_413']  
+EXPRESSION:" -> "BlockID: 13
+Call context: fillOrder
+None
+NEW VARIABLE prod0
+NEW VARIABLE prod1
+INLINE ASM
+NEW VARIABLE mm_mulDiv_asm_0
+TMP_39 = ~ 0 
+TMP_40(uint256) = SOLIDITY_CALL mulmod(uint256,uint256,uint256)(x,y,TMP_39)
+mm_mulDiv_asm_0(uint256) := TMP_40(uint256)
+TMP_41(uint256) = x * y
+prod0(uint256) := TMP_41(uint256)
+TMP_42(uint256) = mm_mulDiv_asm_0 - prod0
+TMP_43(bool) = mm_mulDiv_asm_0 < prod0
+TMP_44(uint256) = TMP_42 - TMP_43
+prod1(uint256) := TMP_44(uint256)
+TMP_45(bool) = prod1 == 0
+CONDITION TMP_45
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+mm_mulDiv_asm_0 = mulmod(uint256,uint256,uint256)(x,y,~ 0)	NodeType.EXPRESSION
+prod0 = x * y	NodeType.EXPRESSION
+prod1 = mm_mulDiv_asm_0 - prod0 - mm_mulDiv_asm_0 < prod0	NodeType.EXPRESSION
+prod1 == 0	NodeType.IF" [key=0];
+"BlockID: 13
+Call context: fillOrder
+None
+NEW VARIABLE prod0
+NEW VARIABLE prod1
+INLINE ASM
+NEW VARIABLE mm_mulDiv_asm_0
+TMP_39 = ~ 0 
+TMP_40(uint256) = SOLIDITY_CALL mulmod(uint256,uint256,uint256)(x,y,TMP_39)
+mm_mulDiv_asm_0(uint256) := TMP_40(uint256)
+TMP_41(uint256) = x * y
+prod0(uint256) := TMP_41(uint256)
+TMP_42(uint256) = mm_mulDiv_asm_0 - prod0
+TMP_43(bool) = mm_mulDiv_asm_0 < prod0
+TMP_44(uint256) = TMP_42 - TMP_43
+prod1(uint256) := TMP_44(uint256)
+TMP_45(bool) = prod1 == 0
+CONDITION TMP_45
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+mm_mulDiv_asm_0 = mulmod(uint256,uint256,uint256)(x,y,~ 0)	NodeType.EXPRESSION
+prod0 = x * y	NodeType.EXPRESSION
+prod1 = mm_mulDiv_asm_0 - prod0 - mm_mulDiv_asm_0 < prod0	NodeType.EXPRESSION
+prod1 == 0	NodeType.IF" -> "BlockID: 14
+Call context: fillOrder,_validateTriggerPrice
+True
+TMP_46(uint256) = prod0 / denominator
+TMP_804(None) := TMP_46(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 13
+Call context: fillOrder
+None
+NEW VARIABLE prod0
+NEW VARIABLE prod1
+INLINE ASM
+NEW VARIABLE mm_mulDiv_asm_0
+TMP_39 = ~ 0 
+TMP_40(uint256) = SOLIDITY_CALL mulmod(uint256,uint256,uint256)(x,y,TMP_39)
+mm_mulDiv_asm_0(uint256) := TMP_40(uint256)
+TMP_41(uint256) = x * y
+prod0(uint256) := TMP_41(uint256)
+TMP_42(uint256) = mm_mulDiv_asm_0 - prod0
+TMP_43(bool) = mm_mulDiv_asm_0 < prod0
+TMP_44(uint256) = TMP_42 - TMP_43
+prod1(uint256) := TMP_44(uint256)
+TMP_45(bool) = prod1 == 0
+CONDITION TMP_45
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+mm_mulDiv_asm_0 = mulmod(uint256,uint256,uint256)(x,y,~ 0)	NodeType.EXPRESSION
+prod0 = x * y	NodeType.EXPRESSION
+prod1 = mm_mulDiv_asm_0 - prod0 - mm_mulDiv_asm_0 < prod0	NodeType.EXPRESSION
+prod1 == 0	NodeType.IF" -> "BlockID: 15
+Call context: fillOrder,_validateTriggerPrice
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 16
+Call context: fillOrder
+None
+markPrice_e36(uint256) := TMP_698(uint256)
+REF_414(OrderType) -> _order.orderType
+REF_415(OrderType) -> OrderType.TakeProfit
+TMP_699(bool) = REF_414 == REF_415
+REF_416(bool) -> _marginPos.isLongBaseAsset
+TMP_700(bool) = TMP_699 == REF_416
+CONDITION TMP_700
+EXPRESSION:markPrice_e36 = IInitOracle(oracle).getPrice_e36(_marginPos.baseAsset).mulDiv(ONE_E36,IInitOracle(oracle).getPrice_e36(_marginPos.quoteAsset))	NodeType.VARIABLE
+markPrice_e36 = IInitOracle(oracle).getPrice_e36(_marginPos.baseAsset).mulDiv(ONE_E36,IInitOracle(oracle).getPrice_e36(_marginPos.quoteAsset))	NodeType.EXPRESSION
+(_order.orderType == OrderType.TakeProfit) == _marginPos.isLongBaseAsset	NodeType.IF" -> "BlockID: 18
+Call context: fillOrder
+True
+REF_417(uint256) -> _order.triggerPrice_e36
+TMP_701(bool) = markPrice_e36 >= REF_417
+REF_418(uint32) -> Errors.INVALID_INPUT
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:! _condition	NodeType.IF" [key=0];
+"BlockID: 16
+Call context: fillOrder
+None
+markPrice_e36(uint256) := TMP_698(uint256)
+REF_414(OrderType) -> _order.orderType
+REF_415(OrderType) -> OrderType.TakeProfit
+TMP_699(bool) = REF_414 == REF_415
+REF_416(bool) -> _marginPos.isLongBaseAsset
+TMP_700(bool) = TMP_699 == REF_416
+CONDITION TMP_700
+EXPRESSION:markPrice_e36 = IInitOracle(oracle).getPrice_e36(_marginPos.baseAsset).mulDiv(ONE_E36,IInitOracle(oracle).getPrice_e36(_marginPos.quoteAsset))	NodeType.VARIABLE
+markPrice_e36 = IInitOracle(oracle).getPrice_e36(_marginPos.baseAsset).mulDiv(ONE_E36,IInitOracle(oracle).getPrice_e36(_marginPos.quoteAsset))	NodeType.EXPRESSION
+(_order.orderType == OrderType.TakeProfit) == _marginPos.isLongBaseAsset	NodeType.IF" -> "BlockID: 19
+Call context: fillOrder
+False
+REF_419(uint256) -> _order.triggerPrice_e36
+TMP_703(bool) = markPrice_e36 <= REF_419
+REF_420(uint32) -> Errors.INVALID_INPUT
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:! _condition	NodeType.IF" [key=0];
+"BlockID: 18
+Call context: fillOrder
+True
+REF_417(uint256) -> _order.triggerPrice_e36
+TMP_701(bool) = markPrice_e36 >= REF_417
+REF_418(uint32) -> Errors.INVALID_INPUT
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:! _condition	NodeType.IF" -> "BlockID: 22
+Call context: fillOrder,_validateTriggerPrice
+True
+TMP_766(bytes) = SOLIDITY_CALL abi.encodePacked()(_errorCode)
+TMP_767 = CONVERT TMP_766 to string
+TMP_768(None) = SOLIDITY_CALL revert(string)(TMP_767)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 18
+Call context: fillOrder
+True
+REF_417(uint256) -> _order.triggerPrice_e36
+TMP_701(bool) = markPrice_e36 >= REF_417
+REF_418(uint32) -> Errors.INVALID_INPUT
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:! _condition	NodeType.IF" -> "BlockID: 23
+Call context: fillOrder,_validateTriggerPrice
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 19
+Call context: fillOrder
+False
+REF_419(uint256) -> _order.triggerPrice_e36
+TMP_703(bool) = markPrice_e36 <= REF_419
+REF_420(uint32) -> Errors.INVALID_INPUT
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:! _condition	NodeType.IF" -> "BlockID: 24
+Call context: fillOrder,_validateTriggerPrice
+True
+TMP_766(bytes) = SOLIDITY_CALL abi.encodePacked()(_errorCode)
+TMP_767 = CONVERT TMP_766 to string
+TMP_768(None) = SOLIDITY_CALL revert(string)(TMP_767)
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 19
+Call context: fillOrder
+False
+REF_419(uint256) -> _order.triggerPrice_e36
+TMP_703(bool) = markPrice_e36 <= REF_419
+REF_420(uint32) -> Errors.INVALID_INPUT
+TMP_765 = ! _condition 
+CONDITION TMP_765
+EXPRESSION:! _condition	NodeType.IF" -> "BlockID: 25
+Call context: fillOrder,_validateTriggerPrice
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 27
+Call context: fillOrder
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 28
+Call context: 
+None
+NEW VARIABLE amtOut
+NEW VARIABLE repayShares
+NEW VARIABLE repayAmt
+TMP_705 = CONVERT POS_MANAGER to IPosManager
+REF_422(uint256) -> _order.initPosId
+REF_423(address) -> _marginPos.collPool
+TMP_706(uint256) = HIGH_LEVEL_CALL, dest:TMP_705(IPosManager), function:getCollAmt, arguments:['REF_422', 'REF_423']  
+EXPRESSION:_validateTriggerPrice(order,marginPos)	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE" [key="Exit: _validateTriggerPrice", ref="MarginTradingHook._validateTriggerPrice"];
+"BlockID: 14
+Call context: fillOrder,_validateTriggerPrice
+True
+TMP_46(uint256) = prod0 / denominator
+TMP_804(None) := TMP_46(uint256)
+EXPRESSION:" -> "BlockID: 16
+Call context: fillOrder
+None
+markPrice_e36(uint256) := TMP_698(uint256)
+REF_414(OrderType) -> _order.orderType
+REF_415(OrderType) -> OrderType.TakeProfit
+TMP_699(bool) = REF_414 == REF_415
+REF_416(bool) -> _marginPos.isLongBaseAsset
+TMP_700(bool) = TMP_699 == REF_416
+CONDITION TMP_700
+EXPRESSION:markPrice_e36 = IInitOracle(oracle).getPrice_e36(_marginPos.baseAsset).mulDiv(ONE_E36,IInitOracle(oracle).getPrice_e36(_marginPos.quoteAsset))	NodeType.VARIABLE
+markPrice_e36 = IInitOracle(oracle).getPrice_e36(_marginPos.baseAsset).mulDiv(ONE_E36,IInitOracle(oracle).getPrice_e36(_marginPos.quoteAsset))	NodeType.EXPRESSION
+(_order.orderType == OrderType.TakeProfit) == _marginPos.isLongBaseAsset	NodeType.IF" [key="successor_5", ref="Math.mulDiv"];
+"BlockID: 15
+Call context: fillOrder,_validateTriggerPrice
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 17
+Call context: fillOrder,_validateTriggerPrice
+None
+TMP_47(bool) = denominator > prod1
+CONDITION TMP_47
+EXPRESSION:TMP_47(bool) = denominator > prod1	NodeType.IF" [key=0];
+"BlockID: 26
+Call context: fillOrder,_validateTriggerPrice
+True
+NEW VARIABLE remainder
+INLINE ASM
+TMP_49(uint256) = SOLIDITY_CALL mulmod(uint256,uint256,uint256)(x,y,denominator)
+remainder(uint256) := TMP_49(uint256)
+TMP_50(bool) = remainder > prod0
+TMP_51(uint256) = prod1 - TMP_50
+prod1(uint256) := TMP_51(uint256)
+TMP_52(uint256) = prod0 - remainder
+prod0(uint256) := TMP_52(uint256)
+TMP_53 = ~ denominator 
+TMP_54(uint256) = TMP_53 + 1
+TMP_55(uint256) = denominator & TMP_54
+twos(uint256) := TMP_55(uint256)
+INLINE ASM
+TMP_56(uint256) = denominator / twos
+denominator(uint256) := TMP_56(uint256)
+TMP_57(uint256) = prod0 / twos
+prod0(uint256) := TMP_57(uint256)
+TMP_58(uint256) = 0 - twos
+TMP_59(uint256) = TMP_58 / twos
+TMP_60(uint256) = TMP_59 + 1
+twos(uint256) := TMP_60(uint256)
+TMP_61(uint256) = prod1 * twos
+prod0(uint256) = prod0 | TMP_61
+TMP_62(uint256) = 3 * denominator
+TMP_63(uint256) = TMP_62 ^ 2
+inverse(uint256) := TMP_63(uint256)
+TMP_64(uint256) = denominator * inverse
+TMP_65(uint256) = 2 - TMP_64
+inverse(uint256) = inverse * TMP_65
+TMP_66(uint256) = denominator * inverse
+TMP_67(uint256) = 2 - TMP_66
+inverse(uint256) = inverse * TMP_67
+TMP_68(uint256) = denominator * inverse
+TMP_69(uint256) = 2 - TMP_68
+inverse(uint256) = inverse * TMP_69
+TMP_70(uint256) = denominator * inverse
+TMP_71(uint256) = 2 - TMP_70
+inverse(uint256) = inverse * TMP_71
+TMP_72(uint256) = denominator * inverse
+TMP_73(uint256) = 2 - TMP_72
+inverse(uint256) = inverse * TMP_73
+TMP_74(uint256) = denominator * inverse
+TMP_75(uint256) = 2 - TMP_74
+inverse(uint256) = inverse * TMP_75
+TMP_76(uint256) = prod0 * inverse
+result(uint256) := TMP_76(uint256)
+TMP_804(None) := result(uint256)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+remainder = mulmod(uint256,uint256,uint256)(x,y,denominator)	NodeType.EXPRESSION
+prod1 = prod1 - remainder > prod0	NodeType.EXPRESSION
+prod0 = prod0 - remainder	NodeType.EXPRESSION
+twos = denominator & (~ denominator + 1)	NodeType.VARIABLE
+twos = denominator & (~ denominator + 1)	NodeType.EXPRESSION
+None	NodeType.ASSEMBLY
+denominator = denominator / twos	NodeType.EXPRESSION
+prod0 = prod0 / twos	NodeType.EXPRESSION
+twos = 0 - twos / twos + 1	NodeType.EXPRESSION
+prod0 |= prod1 * twos	NodeType.EXPRESSION
+inverse = (3 * denominator) ^ 2	NodeType.VARIABLE
+inverse = (3 * denominator) ^ 2	NodeType.EXPRESSION
+inverse *= 2 - denominator * inverse	NodeType.EXPRESSION
+inverse *= 2 - denominator * inverse	NodeType.EXPRESSION
+inverse *= 2 - denominator * inverse	NodeType.EXPRESSION
+inverse *= 2 - denominator * inverse	NodeType.EXPRESSION
+inverse *= 2 - denominator * inverse	NodeType.EXPRESSION
+inverse *= 2 - denominator * inverse	NodeType.EXPRESSION
+result = prod0 * inverse	NodeType.EXPRESSION" -> "BlockID: 16
+Call context: fillOrder
+None
+markPrice_e36(uint256) := TMP_698(uint256)
+REF_414(OrderType) -> _order.orderType
+REF_415(OrderType) -> OrderType.TakeProfit
+TMP_699(bool) = REF_414 == REF_415
+REF_416(bool) -> _marginPos.isLongBaseAsset
+TMP_700(bool) = TMP_699 == REF_416
+CONDITION TMP_700
+EXPRESSION:markPrice_e36 = IInitOracle(oracle).getPrice_e36(_marginPos.baseAsset).mulDiv(ONE_E36,IInitOracle(oracle).getPrice_e36(_marginPos.quoteAsset))	NodeType.VARIABLE
+markPrice_e36 = IInitOracle(oracle).getPrice_e36(_marginPos.baseAsset).mulDiv(ONE_E36,IInitOracle(oracle).getPrice_e36(_marginPos.quoteAsset))	NodeType.EXPRESSION
+(_order.orderType == OrderType.TakeProfit) == _marginPos.isLongBaseAsset	NodeType.IF" [key="successor_5", ref="Math.mulDiv"];
+"BlockID: 17
+Call context: fillOrder,_validateTriggerPrice
+None
+TMP_47(bool) = denominator > prod1
+CONDITION TMP_47
+EXPRESSION:TMP_47(bool) = denominator > prod1	NodeType.IF" -> "BlockID: 20
+Call context: fillOrder,_validateTriggerPrice
+True
+TMP_48(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 17
+Call context: fillOrder,_validateTriggerPrice
+None
+TMP_47(bool) = denominator > prod1
+CONDITION TMP_47
+EXPRESSION:TMP_47(bool) = denominator > prod1	NodeType.IF" -> "BlockID: 21
+Call context: fillOrder,_validateTriggerPrice
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 21
+Call context: fillOrder,_validateTriggerPrice
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 26
+Call context: fillOrder,_validateTriggerPrice
+True
+NEW VARIABLE remainder
+INLINE ASM
+TMP_49(uint256) = SOLIDITY_CALL mulmod(uint256,uint256,uint256)(x,y,denominator)
+remainder(uint256) := TMP_49(uint256)
+TMP_50(bool) = remainder > prod0
+TMP_51(uint256) = prod1 - TMP_50
+prod1(uint256) := TMP_51(uint256)
+TMP_52(uint256) = prod0 - remainder
+prod0(uint256) := TMP_52(uint256)
+TMP_53 = ~ denominator 
+TMP_54(uint256) = TMP_53 + 1
+TMP_55(uint256) = denominator & TMP_54
+twos(uint256) := TMP_55(uint256)
+INLINE ASM
+TMP_56(uint256) = denominator / twos
+denominator(uint256) := TMP_56(uint256)
+TMP_57(uint256) = prod0 / twos
+prod0(uint256) := TMP_57(uint256)
+TMP_58(uint256) = 0 - twos
+TMP_59(uint256) = TMP_58 / twos
+TMP_60(uint256) = TMP_59 + 1
+twos(uint256) := TMP_60(uint256)
+TMP_61(uint256) = prod1 * twos
+prod0(uint256) = prod0 | TMP_61
+TMP_62(uint256) = 3 * denominator
+TMP_63(uint256) = TMP_62 ^ 2
+inverse(uint256) := TMP_63(uint256)
+TMP_64(uint256) = denominator * inverse
+TMP_65(uint256) = 2 - TMP_64
+inverse(uint256) = inverse * TMP_65
+TMP_66(uint256) = denominator * inverse
+TMP_67(uint256) = 2 - TMP_66
+inverse(uint256) = inverse * TMP_67
+TMP_68(uint256) = denominator * inverse
+TMP_69(uint256) = 2 - TMP_68
+inverse(uint256) = inverse * TMP_69
+TMP_70(uint256) = denominator * inverse
+TMP_71(uint256) = 2 - TMP_70
+inverse(uint256) = inverse * TMP_71
+TMP_72(uint256) = denominator * inverse
+TMP_73(uint256) = 2 - TMP_72
+inverse(uint256) = inverse * TMP_73
+TMP_74(uint256) = denominator * inverse
+TMP_75(uint256) = 2 - TMP_74
+inverse(uint256) = inverse * TMP_75
+TMP_76(uint256) = prod0 * inverse
+result(uint256) := TMP_76(uint256)
+TMP_804(None) := result(uint256)
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.ASSEMBLY
+remainder = mulmod(uint256,uint256,uint256)(x,y,denominator)	NodeType.EXPRESSION
+prod1 = prod1 - remainder > prod0	NodeType.EXPRESSION
+prod0 = prod0 - remainder	NodeType.EXPRESSION
+twos = denominator & (~ denominator + 1)	NodeType.VARIABLE
+twos = denominator & (~ denominator + 1)	NodeType.EXPRESSION
+None	NodeType.ASSEMBLY
+denominator = denominator / twos	NodeType.EXPRESSION
+prod0 = prod0 / twos	NodeType.EXPRESSION
+twos = 0 - twos / twos + 1	NodeType.EXPRESSION
+prod0 |= prod1 * twos	NodeType.EXPRESSION
+inverse = (3 * denominator) ^ 2	NodeType.VARIABLE
+inverse = (3 * denominator) ^ 2	NodeType.EXPRESSION
+inverse *= 2 - denominator * inverse	NodeType.EXPRESSION
+inverse *= 2 - denominator * inverse	NodeType.EXPRESSION
+inverse *= 2 - denominator * inverse	NodeType.EXPRESSION
+inverse *= 2 - denominator * inverse	NodeType.EXPRESSION
+inverse *= 2 - denominator * inverse	NodeType.EXPRESSION
+inverse *= 2 - denominator * inverse	NodeType.EXPRESSION
+result = prod0 * inverse	NodeType.EXPRESSION" [key=0];
+"BlockID: 23
+Call context: fillOrder,_validateTriggerPrice
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 27
+Call context: fillOrder
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="Exit: _require", ref="TopLevel._require"];
+"BlockID: 25
+Call context: fillOrder,_validateTriggerPrice
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 27
+Call context: fillOrder
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="Exit: _require", ref="TopLevel._require"];
+"BlockID: 35
+Call context: fillOrder
+None
+repayShares(uint256)= UNPACK TUPLE_12 index: 0 
+repayAmt(uint256)= UNPACK TUPLE_12 index: 1 
+REF_396(address) -> _marginPos.collPool
+TMP_677 = CONVERT REF_396 to ILendingPool
+REF_398(uint256) -> _order.collAmt
+TMP_678(uint256) = HIGH_LEVEL_CALL, dest:TMP_677(ILendingPool), function:toAmtCurrent, arguments:['REF_398']  
+EXPRESSION:(repayShares,repayAmt) = _calculateRepaySize(_order,_marginPos)	NodeType.EXPRESSION" -> "BlockID: 36
+Call context: fillOrder
+None
+collTokenAmt(uint256) := TMP_678(uint256)
+REF_399(address) -> _order.tokenOut
+TMP_679(bool) = _collToken == REF_399
+CONDITION TMP_679
+EXPRESSION:collTokenAmt = ILendingPool(_marginPos.collPool).toAmtCurrent(_order.collAmt)	NodeType.VARIABLE
+collTokenAmt = ILendingPool(_marginPos.collPool).toAmtCurrent(_order.collAmt)	NodeType.EXPRESSION
+_collToken == _order.tokenOut	NodeType.IF" [key=0];
+"BlockID: 36
+Call context: fillOrder
+None
+collTokenAmt(uint256) := TMP_678(uint256)
+REF_399(address) -> _order.tokenOut
+TMP_679(bool) = _collToken == REF_399
+CONDITION TMP_679
+EXPRESSION:collTokenAmt = ILendingPool(_marginPos.collPool).toAmtCurrent(_order.collAmt)	NodeType.VARIABLE
+collTokenAmt = ILendingPool(_marginPos.collPool).toAmtCurrent(_order.collAmt)	NodeType.EXPRESSION
+_collToken == _order.tokenOut	NodeType.IF" -> "BlockID: 37
+Call context: fillOrder
+True
+REF_400(bool) -> _marginPos.isLongBaseAsset
+CONDITION REF_400
+EXPRESSION:_marginPos.isLongBaseAsset	NodeType.IF" [key=0];
+"BlockID: 36
+Call context: fillOrder
+None
+collTokenAmt(uint256) := TMP_678(uint256)
+REF_399(address) -> _order.tokenOut
+TMP_679(bool) = _collToken == REF_399
+CONDITION TMP_679
+EXPRESSION:collTokenAmt = ILendingPool(_marginPos.collPool).toAmtCurrent(_order.collAmt)	NodeType.VARIABLE
+collTokenAmt = ILendingPool(_marginPos.collPool).toAmtCurrent(_order.collAmt)	NodeType.EXPRESSION
+_collToken == _order.tokenOut	NodeType.IF" -> "BlockID: 38
+Call context: fillOrder
+False
+REF_403(bool) -> _marginPos.isLongBaseAsset
+CONDITION REF_403
+EXPRESSION:_marginPos.isLongBaseAsset	NodeType.IF" [key=0];
+"BlockID: 37
+Call context: fillOrder
+True
+REF_400(bool) -> _marginPos.isLongBaseAsset
+CONDITION REF_400
+EXPRESSION:_marginPos.isLongBaseAsset	NodeType.IF" -> "BlockID: 39
+Call context: fillOrder
+True
+TMP_680(uint256) = repayAmt (c)* ONE_E36
+REF_401(uint256) -> _order.limitPrice_e36
+TMP_681(uint256) = TMP_680 (c)/ REF_401
+TMP_682(uint256) = collTokenAmt (c)- TMP_681
+amtOut(uint256) := TMP_682(uint256)
+EXPRESSION:amtOut = collTokenAmt - repayAmt * ONE_E36 / _order.limitPrice_e36	NodeType.EXPRESSION" [key=0];
+"BlockID: 37
+Call context: fillOrder
+True
+REF_400(bool) -> _marginPos.isLongBaseAsset
+CONDITION REF_400
+EXPRESSION:_marginPos.isLongBaseAsset	NodeType.IF" -> "BlockID: 40
+Call context: fillOrder
+False
+REF_402(uint256) -> _order.limitPrice_e36
+TMP_683(uint256) = repayAmt (c)* REF_402
+TMP_684(uint256) = TMP_683 (c)/ ONE_E36
+TMP_685(uint256) = collTokenAmt (c)- TMP_684
+amtOut(uint256) := TMP_685(uint256)
+EXPRESSION:amtOut = collTokenAmt - (repayAmt * _order.limitPrice_e36 / ONE_E36)	NodeType.EXPRESSION" [key=0];
+"BlockID: 38
+Call context: fillOrder
+False
+REF_403(bool) -> _marginPos.isLongBaseAsset
+CONDITION REF_403
+EXPRESSION:_marginPos.isLongBaseAsset	NodeType.IF" -> "BlockID: 41
+Call context: fillOrder
+True
+REF_404(uint256) -> _order.limitPrice_e36
+TMP_686(uint256) = collTokenAmt (c)* REF_404
+TMP_35(bool) = a == 0
+CONDITION TMP_35
+EXPRESSION:a == 0	NodeType.IF" [key=0];
+"BlockID: 38
+Call context: fillOrder
+False
+REF_403(bool) -> _marginPos.isLongBaseAsset
+CONDITION REF_403
+EXPRESSION:_marginPos.isLongBaseAsset	NodeType.IF" -> "BlockID: 42
+Call context: fillOrder
+False
+TMP_689(uint256) = collTokenAmt (c)* ONE_E36
+REF_407(uint256) -> _order.limitPrice_e36
+TMP_35(bool) = a == 0
+CONDITION TMP_35
+EXPRESSION:a == 0	NodeType.IF" [key=0];
+"BlockID: 41
+Call context: fillOrder
+True
+REF_404(uint256) -> _order.limitPrice_e36
+TMP_686(uint256) = collTokenAmt (c)* REF_404
+TMP_35(bool) = a == 0
+CONDITION TMP_35
+EXPRESSION:a == 0	NodeType.IF" -> "BlockID: 44
+Call context: fillOrder,_calculateFillOrderInfo
+True
+TMP_803(None) := 0(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 41
+Call context: fillOrder
+True
+REF_404(uint256) -> _order.limitPrice_e36
+TMP_686(uint256) = collTokenAmt (c)* REF_404
+TMP_35(bool) = a == 0
+CONDITION TMP_35
+EXPRESSION:a == 0	NodeType.IF" -> "BlockID: 45
+Call context: fillOrder,_calculateFillOrderInfo
+False
+TMP_36(uint256) = a (c)- 1
+TMP_37(uint256) = TMP_36 (c)/ b
+TMP_38(uint256) = TMP_37 (c)+ 1
+TMP_803(None) := TMP_38(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 42
+Call context: fillOrder
+False
+TMP_689(uint256) = collTokenAmt (c)* ONE_E36
+REF_407(uint256) -> _order.limitPrice_e36
+TMP_35(bool) = a == 0
+CONDITION TMP_35
+EXPRESSION:a == 0	NodeType.IF" -> "BlockID: 46
+Call context: fillOrder,_calculateFillOrderInfo
+True
+TMP_803(None) := 0(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 42
+Call context: fillOrder
+False
+TMP_689(uint256) = collTokenAmt (c)* ONE_E36
+REF_407(uint256) -> _order.limitPrice_e36
+TMP_35(bool) = a == 0
+CONDITION TMP_35
+EXPRESSION:a == 0	NodeType.IF" -> "BlockID: 47
+Call context: fillOrder,_calculateFillOrderInfo
+False
+TMP_36(uint256) = a (c)- 1
+TMP_37(uint256) = TMP_36 (c)/ b
+TMP_38(uint256) = TMP_37 (c)+ 1
+TMP_803(None) := TMP_38(uint256)
+EXPRESSION:" [key="successor_5"];
+"BlockID: 50
+Call context: fillOrder
+None
+TMP_691(uint256) = TMP_690 (c)- repayAmt
+amtOut(uint256) := TMP_691(uint256)
+EXPRESSION:amtOut = (collTokenAmt * ONE_E36).ceilDiv(_order.limitPrice_e36) - repayAmt	NodeType.EXPRESSION" -> "BlockID: 52
+Call context: fillOrder
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 52
+Call context: fillOrder
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 48
+Call context: fillOrder
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 48
+Call context: fillOrder
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 51
+Call context: 
+None
+TMP_909(None) := repayAmt(uint256)
+TMP_909(None) := repayShares(uint256)
+TMP_909(None) := amtOut(uint256)
+amtOut(uint256)= UNPACK TUPLE_11 index: 0 
+repayShares(uint256)= UNPACK TUPLE_11 index: 1 
+repayAmt(uint256)= UNPACK TUPLE_11 index: 2 
+TMP_588 = CONVERT borrToken to IERC20
+TMP_589 = CONVERT this to address
+REF_75(bytes4) (->None) := 599290589(uint256)
+TMP_289(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_75,from,to,value)
+TMP_323 = CONVERT token to address
+TMP_10 = CONVERT this to address
+TMP_11(uint256) = SOLIDITY_CALL balance(address)(TMP_10)
+TMP_12(bool) = TMP_11 >= value
+CONDITION TMP_12
+EXPRESSION:(amtOut,repayShares,repayAmt) = _calculateFillOrderInfo(order,marginPos,collToken)	NodeType.EXPRESSION
+TMP_12(bool) = TMP_11 >= value	NodeType.IF" [key=N, ref=N];
+"BlockID: 49
+Call context: fillOrder
+None
+TMP_688(uint256) = TMP_687 (c)- repayAmt
+amtOut(uint256) := TMP_688(uint256)
+EXPRESSION:amtOut = (collTokenAmt * _order.limitPrice_e36).ceilDiv(ONE_E36) - repayAmt	NodeType.EXPRESSION" -> "BlockID: 52
+Call context: fillOrder
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 39
+Call context: fillOrder
+True
+TMP_680(uint256) = repayAmt (c)* ONE_E36
+REF_401(uint256) -> _order.limitPrice_e36
+TMP_681(uint256) = TMP_680 (c)/ REF_401
+TMP_682(uint256) = collTokenAmt (c)- TMP_681
+amtOut(uint256) := TMP_682(uint256)
+EXPRESSION:amtOut = collTokenAmt - repayAmt * ONE_E36 / _order.limitPrice_e36	NodeType.EXPRESSION" -> "BlockID: 43
+Call context: fillOrder
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 40
+Call context: fillOrder
+False
+REF_402(uint256) -> _order.limitPrice_e36
+TMP_683(uint256) = repayAmt (c)* REF_402
+TMP_684(uint256) = TMP_683 (c)/ ONE_E36
+TMP_685(uint256) = collTokenAmt (c)- TMP_684
+amtOut(uint256) := TMP_685(uint256)
+EXPRESSION:amtOut = collTokenAmt - (repayAmt * _order.limitPrice_e36 / ONE_E36)	NodeType.EXPRESSION" -> "BlockID: 43
+Call context: fillOrder
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 43
+Call context: fillOrder
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 48
+Call context: fillOrder
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 29
+Call context: fillOrder,_calculateFillOrderInfo
+None
+totalCollAmt(uint256) := TMP_706(uint256)
+REF_424(uint256) -> _order.collAmt
+TMP_707(bool) = REF_424 > totalCollAmt
+CONDITION TMP_707
+EXPRESSION:totalCollAmt = IPosManager(POS_MANAGER).getCollAmt(_order.initPosId,_marginPos.collPool)	NodeType.VARIABLE
+totalCollAmt = IPosManager(POS_MANAGER).getCollAmt(_order.initPosId,_marginPos.collPool)	NodeType.EXPRESSION
+_order.collAmt > totalCollAmt	NodeType.IF" -> "BlockID: 30
+Call context: fillOrder,_calculateFillOrderInfo
+True
+REF_425(uint256) -> _order.collAmt
+REF_425(uint256) (->_order) := totalCollAmt(uint256)
+EXPRESSION:_order.collAmt = totalCollAmt	NodeType.EXPRESSION" [key=0];
+"BlockID: 29
+Call context: fillOrder,_calculateFillOrderInfo
+None
+totalCollAmt(uint256) := TMP_706(uint256)
+REF_424(uint256) -> _order.collAmt
+TMP_707(bool) = REF_424 > totalCollAmt
+CONDITION TMP_707
+EXPRESSION:totalCollAmt = IPosManager(POS_MANAGER).getCollAmt(_order.initPosId,_marginPos.collPool)	NodeType.VARIABLE
+totalCollAmt = IPosManager(POS_MANAGER).getCollAmt(_order.initPosId,_marginPos.collPool)	NodeType.EXPRESSION
+_order.collAmt > totalCollAmt	NodeType.IF" -> "BlockID: 31
+Call context: fillOrder,_calculateFillOrderInfo
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 30
+Call context: fillOrder,_calculateFillOrderInfo
+True
+REF_425(uint256) -> _order.collAmt
+REF_425(uint256) (->_order) := totalCollAmt(uint256)
+EXPRESSION:_order.collAmt = totalCollAmt	NodeType.EXPRESSION" -> "BlockID: 31
+Call context: fillOrder,_calculateFillOrderInfo
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 31
+Call context: fillOrder,_calculateFillOrderInfo
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 32
+Call context: fillOrder,_calculateFillOrderInfo
+None
+TMP_708 = CONVERT POS_MANAGER to IPosManager
+REF_427(uint256) -> _order.initPosId
+REF_428(address) -> _marginPos.borrPool
+TMP_709(uint256) = HIGH_LEVEL_CALL, dest:TMP_708(IPosManager), function:getPosDebtShares, arguments:['REF_427', 'REF_428']  
+EXPRESSION:" [key=0];
+"BlockID: 32
+Call context: fillOrder,_calculateFillOrderInfo
+None
+TMP_708 = CONVERT POS_MANAGER to IPosManager
+REF_427(uint256) -> _order.initPosId
+REF_428(address) -> _marginPos.borrPool
+TMP_709(uint256) = HIGH_LEVEL_CALL, dest:TMP_708(IPosManager), function:getPosDebtShares, arguments:['REF_427', 'REF_428']  
+EXPRESSION:" -> "BlockID: 33
+Call context: fillOrder,_calculateFillOrderInfo
+None
+totalDebtShares(uint256) := TMP_709(uint256)
+REF_429(uint256) -> _order.collAmt
+TMP_710(uint256) = totalDebtShares (c)* REF_429
+TMP_711(uint256) = TMP_710 (c)/ totalCollAmt
+repayShares(uint256) := TMP_711(uint256)
+REF_430(address) -> _marginPos.borrPool
+TMP_712 = CONVERT REF_430 to ILendingPool
+TMP_713(uint256) = HIGH_LEVEL_CALL, dest:TMP_712(ILendingPool), function:debtShareToAmtCurrent, arguments:['repayShares']  
+EXPRESSION:totalDebtShares = IPosManager(POS_MANAGER).getPosDebtShares(_order.initPosId,_marginPos.borrPool)	NodeType.VARIABLE
+totalDebtShares = IPosManager(POS_MANAGER).getPosDebtShares(_order.initPosId,_marginPos.borrPool)	NodeType.EXPRESSION
+repayShares = totalDebtShares * _order.collAmt / totalCollAmt	NodeType.EXPRESSION
+repayAmt = ILendingPool(_marginPos.borrPool).debtShareToAmtCurrent(repayShares)	NodeType.EXPRESSION" [key=0];
+"BlockID: 33
+Call context: fillOrder,_calculateFillOrderInfo
+None
+totalDebtShares(uint256) := TMP_709(uint256)
+REF_429(uint256) -> _order.collAmt
+TMP_710(uint256) = totalDebtShares (c)* REF_429
+TMP_711(uint256) = TMP_710 (c)/ totalCollAmt
+repayShares(uint256) := TMP_711(uint256)
+REF_430(address) -> _marginPos.borrPool
+TMP_712 = CONVERT REF_430 to ILendingPool
+TMP_713(uint256) = HIGH_LEVEL_CALL, dest:TMP_712(ILendingPool), function:debtShareToAmtCurrent, arguments:['repayShares']  
+EXPRESSION:totalDebtShares = IPosManager(POS_MANAGER).getPosDebtShares(_order.initPosId,_marginPos.borrPool)	NodeType.VARIABLE
+totalDebtShares = IPosManager(POS_MANAGER).getPosDebtShares(_order.initPosId,_marginPos.borrPool)	NodeType.EXPRESSION
+repayShares = totalDebtShares * _order.collAmt / totalCollAmt	NodeType.EXPRESSION
+repayAmt = ILendingPool(_marginPos.borrPool).debtShareToAmtCurrent(repayShares)	NodeType.EXPRESSION" -> "BlockID: 34
+Call context: fillOrder,_calculateFillOrderInfo
+None
+repayAmt(uint256) := TMP_713(uint256)
+TMP_911(None) := repayShares(uint256)
+TMP_911(None) := repayAmt(uint256)
+EXPRESSION:repayAmt = ILendingPool(_marginPos.borrPool).debtShareToAmtCurrent(repayShares)	NodeType.EXPRESSION" [key=0];
+"BlockID: 34
+Call context: fillOrder,_calculateFillOrderInfo
+None
+repayAmt(uint256) := TMP_713(uint256)
+TMP_911(None) := repayShares(uint256)
+TMP_911(None) := repayAmt(uint256)
+EXPRESSION:repayAmt = ILendingPool(_marginPos.borrPool).debtShareToAmtCurrent(repayShares)	NodeType.EXPRESSION" -> "BlockID: 35
+Call context: fillOrder
+None
+repayShares(uint256)= UNPACK TUPLE_12 index: 0 
+repayAmt(uint256)= UNPACK TUPLE_12 index: 1 
+REF_396(address) -> _marginPos.collPool
+TMP_677 = CONVERT REF_396 to ILendingPool
+REF_398(uint256) -> _order.collAmt
+TMP_678(uint256) = HIGH_LEVEL_CALL, dest:TMP_677(ILendingPool), function:toAmtCurrent, arguments:['REF_398']  
+EXPRESSION:(repayShares,repayAmt) = _calculateRepaySize(_order,_marginPos)	NodeType.EXPRESSION" [key="Exit: _calculateRepaySize", ref="MarginTradingHook._calculateRepaySize"];
+"BlockID: 44
+Call context: fillOrder,_calculateFillOrderInfo
+True
+TMP_803(None) := 0(uint256)
+EXPRESSION:" -> "BlockID: 49
+Call context: fillOrder
+None
+TMP_688(uint256) = TMP_687 (c)- repayAmt
+amtOut(uint256) := TMP_688(uint256)
+EXPRESSION:amtOut = (collTokenAmt * _order.limitPrice_e36).ceilDiv(ONE_E36) - repayAmt	NodeType.EXPRESSION" [key="successor_5", ref="Math.ceilDiv"];
+"BlockID: 45
+Call context: fillOrder,_calculateFillOrderInfo
+False
+TMP_36(uint256) = a (c)- 1
+TMP_37(uint256) = TMP_36 (c)/ b
+TMP_38(uint256) = TMP_37 (c)+ 1
+TMP_803(None) := TMP_38(uint256)
+EXPRESSION:" -> "BlockID: 49
+Call context: fillOrder
+None
+TMP_688(uint256) = TMP_687 (c)- repayAmt
+amtOut(uint256) := TMP_688(uint256)
+EXPRESSION:amtOut = (collTokenAmt * _order.limitPrice_e36).ceilDiv(ONE_E36) - repayAmt	NodeType.EXPRESSION" [key="successor_5", ref="Math.ceilDiv"];
+"BlockID: 46
+Call context: fillOrder,_calculateFillOrderInfo
+True
+TMP_803(None) := 0(uint256)
+EXPRESSION:" -> "BlockID: 50
+Call context: fillOrder
+None
+TMP_691(uint256) = TMP_690 (c)- repayAmt
+amtOut(uint256) := TMP_691(uint256)
+EXPRESSION:amtOut = (collTokenAmt * ONE_E36).ceilDiv(_order.limitPrice_e36) - repayAmt	NodeType.EXPRESSION" [key="successor_5", ref="Math.ceilDiv"];
+"BlockID: 47
+Call context: fillOrder,_calculateFillOrderInfo
+False
+TMP_36(uint256) = a (c)- 1
+TMP_37(uint256) = TMP_36 (c)/ b
+TMP_38(uint256) = TMP_37 (c)+ 1
+TMP_803(None) := TMP_38(uint256)
+EXPRESSION:" -> "BlockID: 50
+Call context: fillOrder
+None
+TMP_691(uint256) = TMP_690 (c)- repayAmt
+amtOut(uint256) := TMP_691(uint256)
+EXPRESSION:amtOut = (collTokenAmt * ONE_E36).ceilDiv(_order.limitPrice_e36) - repayAmt	NodeType.EXPRESSION" [key="successor_5", ref="Math.ceilDiv"];
+"BlockID: 51
+Call context: 
+None
+TMP_909(None) := repayAmt(uint256)
+TMP_909(None) := repayShares(uint256)
+TMP_909(None) := amtOut(uint256)
+amtOut(uint256)= UNPACK TUPLE_11 index: 0 
+repayShares(uint256)= UNPACK TUPLE_11 index: 1 
+repayAmt(uint256)= UNPACK TUPLE_11 index: 2 
+TMP_588 = CONVERT borrToken to IERC20
+TMP_589 = CONVERT this to address
+REF_75(bytes4) (->None) := 599290589(uint256)
+TMP_289(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_75,from,to,value)
+TMP_323 = CONVERT token to address
+TMP_10 = CONVERT this to address
+TMP_11(uint256) = SOLIDITY_CALL balance(address)(TMP_10)
+TMP_12(bool) = TMP_11 >= value
+CONDITION TMP_12
+EXPRESSION:(amtOut,repayShares,repayAmt) = _calculateFillOrderInfo(order,marginPos,collToken)	NodeType.EXPRESSION
+TMP_12(bool) = TMP_11 >= value	NodeType.IF" -> "BlockID: 53
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall
+True
+TMP_13(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_1"];
+"BlockID: 51
+Call context: 
+None
+TMP_909(None) := repayAmt(uint256)
+TMP_909(None) := repayShares(uint256)
+TMP_909(None) := amtOut(uint256)
+amtOut(uint256)= UNPACK TUPLE_11 index: 0 
+repayShares(uint256)= UNPACK TUPLE_11 index: 1 
+repayAmt(uint256)= UNPACK TUPLE_11 index: 2 
+TMP_588 = CONVERT borrToken to IERC20
+TMP_589 = CONVERT this to address
+REF_75(bytes4) (->None) := 599290589(uint256)
+TMP_289(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_75,from,to,value)
+TMP_323 = CONVERT token to address
+TMP_10 = CONVERT this to address
+TMP_11(uint256) = SOLIDITY_CALL balance(address)(TMP_10)
+TMP_12(bool) = TMP_11 >= value
+CONDITION TMP_12
+EXPRESSION:(amtOut,repayShares,repayAmt) = _calculateFillOrderInfo(order,marginPos,collToken)	NodeType.EXPRESSION
+TMP_12(bool) = TMP_11 >= value	NodeType.IF" -> "BlockID: 54
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_1"];
+"BlockID: 67
+Call context: fillOrder,safeTransferFrom
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 68
+Call context: 
+None
+REF_304(address) -> order.tokenOut
+TMP_591 = CONVERT REF_304 to IERC20
+REF_306(address) -> order.recipient
+REF_75(bytes4) (->None) := 599290589(uint256)
+TMP_289(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_75,from,to,value)
+TMP_323 = CONVERT token to address
+TMP_10 = CONVERT this to address
+TMP_11(uint256) = SOLIDITY_CALL balance(address)(TMP_10)
+TMP_12(bool) = TMP_11 >= value
+CONDITION TMP_12
+EXPRESSION:IERC20(borrToken).safeTransferFrom(msg.sender,address(this),repayAmt)	NodeType.EXPRESSION
+TMP_12(bool) = TMP_11 >= value	NodeType.IF" [key="Exit: safeTransferFrom", ref="SafeERC20.safeTransferFrom"];
+"BlockID: 55
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_1(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:value 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION" -> "BlockID: 56
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_1 index: 0 
+returndata(bytes)= UNPACK TUPLE_1 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION
+success	NodeType.IF" [key=0];
+"BlockID: 56
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_1 index: 0 
+returndata(bytes)= UNPACK TUPLE_1 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION
+success	NodeType.IF" -> "BlockID: 57
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+REF_5 -> LENGTH returndata
+TMP_19(bool) = REF_5 == 0
+CONDITION TMP_19
+EXPRESSION:returndata.length == 0	NodeType.IF" [key="successor_5"];
+"BlockID: 56
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_1 index: 0 
+returndata(bytes)= UNPACK TUPLE_1 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION
+success	NodeType.IF" -> "BlockID: 58
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+False
+REF_6 -> LENGTH returndata
+TMP_24(bool) = REF_6 > 0
+CONDITION TMP_24
+END_IF
+EXPRESSION:returndata.length > 0	NodeType.IF
+None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 54
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 55
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_1(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:value 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION" [key=0];
+"BlockID: 57
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+REF_5 -> LENGTH returndata
+TMP_19(bool) = REF_5 == 0
+CONDITION TMP_19
+EXPRESSION:returndata.length == 0	NodeType.IF" -> "BlockID: 59
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+TMP_0(bytes) = SOLIDITY_CALL code(address)(account)
+REF_0 -> LENGTH TMP_0
+TMP_1(bool) = REF_0 > 0
+TMP_787(None) := TMP_1(bool)
+CONDITION TMP_20
+EXPRESSION:qiantao require	NodeType.IF" [key=0];
+"BlockID: 57
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+REF_5 -> LENGTH returndata
+TMP_19(bool) = REF_5 == 0
+CONDITION TMP_19
+EXPRESSION:returndata.length == 0	NodeType.IF" -> "BlockID: 60
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 58
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+False
+REF_6 -> LENGTH returndata
+TMP_24(bool) = REF_6 > 0
+CONDITION TMP_24
+END_IF
+EXPRESSION:returndata.length > 0	NodeType.IF
+None	NodeType.ENDIF" -> "BlockID: 61
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue,verifyCallResultFromTarget
+True
+INLINE ASM
+NEW VARIABLE returndata_size__revert_asm_0
+TMP_25(uint256) = SOLIDITY_CALL mload(uint256)(returndata)
+returndata_size__revert_asm_0(uint256) := TMP_25(uint256)
+TMP_26(uint256) = 32 + returndata
+TMP_27(None) = SOLIDITY_CALL revert(uint256,uint256)(TMP_26,returndata_size__revert_asm_0)
+EXPRESSION:None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+returndata_size__revert_asm_0 = mload(uint256)(returndata)	NodeType.EXPRESSION
+revert(uint256,uint256)(32 + returndata,returndata_size__revert_asm_0)	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 58
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+False
+REF_6 -> LENGTH returndata
+TMP_24(bool) = REF_6 > 0
+CONDITION TMP_24
+END_IF
+EXPRESSION:returndata.length > 0	NodeType.IF
+None	NodeType.ENDIF" -> "BlockID: 62
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue,verifyCallResultFromTarget
+False
+TMP_28(None) = SOLIDITY_CALL revert(string)(errorMessage)
+EXPRESSION:revert(string)(errorMessage)	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 59
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+TMP_0(bytes) = SOLIDITY_CALL code(address)(account)
+REF_0 -> LENGTH TMP_0
+TMP_1(bool) = REF_0 > 0
+TMP_787(None) := TMP_1(bool)
+CONDITION TMP_20
+EXPRESSION:qiantao require	NodeType.IF" -> "BlockID: 63
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+TMP_21(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_3"];
+"BlockID: 59
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+TMP_0(bytes) = SOLIDITY_CALL code(address)(account)
+REF_0 -> LENGTH TMP_0
+TMP_1(bool) = REF_0 > 0
+TMP_787(None) := TMP_1(bool)
+CONDITION TMP_20
+EXPRESSION:qiantao require	NodeType.IF" -> "BlockID: 64
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_3"];
+"BlockID: 60
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 65
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+None
+TMP_797(None) := returndata(bytes)
+TMP_792(None) := TMP_14(bytes)
+TMP_790(None) := TMP_8(bytes)
+returndata(bytes) := TMP_324(bytes)
+REF_98 -> LENGTH returndata
+TMP_325(bool) = REF_98 == 0
+TMP_326(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+TMP_327(bool) = TMP_325 || TMP_326
+CONDITION TMP_327
+EXPRESSION:TMP_327(bool) = TMP_325 || TMP_326	NodeType.IF" [key=0];
+"BlockID: 65
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+None
+TMP_797(None) := returndata(bytes)
+TMP_792(None) := TMP_14(bytes)
+TMP_790(None) := TMP_8(bytes)
+returndata(bytes) := TMP_324(bytes)
+REF_98 -> LENGTH returndata
+TMP_325(bool) = REF_98 == 0
+TMP_326(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+TMP_327(bool) = TMP_325 || TMP_326
+CONDITION TMP_327
+EXPRESSION:TMP_327(bool) = TMP_325 || TMP_326	NodeType.IF" -> "BlockID: 66
+Call context: fillOrder,safeTransferFrom
+True
+TMP_328(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_2"];
+"BlockID: 65
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+None
+TMP_797(None) := returndata(bytes)
+TMP_792(None) := TMP_14(bytes)
+TMP_790(None) := TMP_8(bytes)
+returndata(bytes) := TMP_324(bytes)
+REF_98 -> LENGTH returndata
+TMP_325(bool) = REF_98 == 0
+TMP_326(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+TMP_327(bool) = TMP_325 || TMP_326
+CONDITION TMP_327
+EXPRESSION:TMP_327(bool) = TMP_325 || TMP_326	NodeType.IF" -> "BlockID: 67
+Call context: fillOrder,safeTransferFrom
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+"BlockID: 64
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 60
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 83
+Call context: fillOrder,safeTransferFrom
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 84
+Call context: 
+None
+TMP_404 = CONVERT _token to IERC20
+TMP_405 = CONVERT this to address
+TMP_406(uint256) = HIGH_LEVEL_CALL, dest:TMP_404(IERC20), function:allowance, arguments:['TMP_405', 'CORE']  
+EXPRESSION:IERC20(order.tokenOut).safeTransferFrom(msg.sender,order.recipient,amtOut)	NodeType.EXPRESSION
+IERC20(_token).allowance(address(this),CORE) < _amt	NodeType.EXPRESSION" [key="Exit: safeTransferFrom", ref="SafeERC20.safeTransferFrom"];
+"BlockID: 71
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_1(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:value 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION" -> "BlockID: 72
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_1 index: 0 
+returndata(bytes)= UNPACK TUPLE_1 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION
+success	NodeType.IF" [key=0];
+"BlockID: 72
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_1 index: 0 
+returndata(bytes)= UNPACK TUPLE_1 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION
+success	NodeType.IF" -> "BlockID: 73
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+REF_5 -> LENGTH returndata
+TMP_19(bool) = REF_5 == 0
+CONDITION TMP_19
+EXPRESSION:returndata.length == 0	NodeType.IF" [key="successor_5"];
+"BlockID: 72
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_1 index: 0 
+returndata(bytes)= UNPACK TUPLE_1 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION
+success	NodeType.IF" -> "BlockID: 74
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+False
+REF_6 -> LENGTH returndata
+TMP_24(bool) = REF_6 > 0
+CONDITION TMP_24
+END_IF
+EXPRESSION:returndata.length > 0	NodeType.IF
+None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 70
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 71
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_1(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:value 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION" [key=0];
+"BlockID: 73
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+REF_5 -> LENGTH returndata
+TMP_19(bool) = REF_5 == 0
+CONDITION TMP_19
+EXPRESSION:returndata.length == 0	NodeType.IF" -> "BlockID: 75
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+TMP_0(bytes) = SOLIDITY_CALL code(address)(account)
+REF_0 -> LENGTH TMP_0
+TMP_1(bool) = REF_0 > 0
+TMP_787(None) := TMP_1(bool)
+CONDITION TMP_20
+EXPRESSION:qiantao require	NodeType.IF" [key=0];
+"BlockID: 73
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+REF_5 -> LENGTH returndata
+TMP_19(bool) = REF_5 == 0
+CONDITION TMP_19
+EXPRESSION:returndata.length == 0	NodeType.IF" -> "BlockID: 76
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 74
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+False
+REF_6 -> LENGTH returndata
+TMP_24(bool) = REF_6 > 0
+CONDITION TMP_24
+END_IF
+EXPRESSION:returndata.length > 0	NodeType.IF
+None	NodeType.ENDIF" -> "BlockID: 77
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue,verifyCallResultFromTarget
+True
+INLINE ASM
+NEW VARIABLE returndata_size__revert_asm_0
+TMP_25(uint256) = SOLIDITY_CALL mload(uint256)(returndata)
+returndata_size__revert_asm_0(uint256) := TMP_25(uint256)
+TMP_26(uint256) = 32 + returndata
+TMP_27(None) = SOLIDITY_CALL revert(uint256,uint256)(TMP_26,returndata_size__revert_asm_0)
+EXPRESSION:None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+returndata_size__revert_asm_0 = mload(uint256)(returndata)	NodeType.EXPRESSION
+revert(uint256,uint256)(32 + returndata,returndata_size__revert_asm_0)	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 74
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+False
+REF_6 -> LENGTH returndata
+TMP_24(bool) = REF_6 > 0
+CONDITION TMP_24
+END_IF
+EXPRESSION:returndata.length > 0	NodeType.IF
+None	NodeType.ENDIF" -> "BlockID: 78
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue,verifyCallResultFromTarget
+False
+TMP_28(None) = SOLIDITY_CALL revert(string)(errorMessage)
+EXPRESSION:revert(string)(errorMessage)	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 75
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+TMP_0(bytes) = SOLIDITY_CALL code(address)(account)
+REF_0 -> LENGTH TMP_0
+TMP_1(bool) = REF_0 > 0
+TMP_787(None) := TMP_1(bool)
+CONDITION TMP_20
+EXPRESSION:qiantao require	NodeType.IF" -> "BlockID: 79
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+TMP_21(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_3"];
+"BlockID: 75
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+TMP_0(bytes) = SOLIDITY_CALL code(address)(account)
+REF_0 -> LENGTH TMP_0
+TMP_1(bool) = REF_0 > 0
+TMP_787(None) := TMP_1(bool)
+CONDITION TMP_20
+EXPRESSION:qiantao require	NodeType.IF" -> "BlockID: 80
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_3"];
+"BlockID: 76
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 81
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+None
+TMP_797(None) := returndata(bytes)
+TMP_792(None) := TMP_14(bytes)
+TMP_790(None) := TMP_8(bytes)
+returndata(bytes) := TMP_324(bytes)
+REF_98 -> LENGTH returndata
+TMP_325(bool) = REF_98 == 0
+TMP_326(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+TMP_327(bool) = TMP_325 || TMP_326
+CONDITION TMP_327
+EXPRESSION:TMP_327(bool) = TMP_325 || TMP_326	NodeType.IF" [key=0];
+"BlockID: 81
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+None
+TMP_797(None) := returndata(bytes)
+TMP_792(None) := TMP_14(bytes)
+TMP_790(None) := TMP_8(bytes)
+returndata(bytes) := TMP_324(bytes)
+REF_98 -> LENGTH returndata
+TMP_325(bool) = REF_98 == 0
+TMP_326(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+TMP_327(bool) = TMP_325 || TMP_326
+CONDITION TMP_327
+EXPRESSION:TMP_327(bool) = TMP_325 || TMP_326	NodeType.IF" -> "BlockID: 82
+Call context: fillOrder,safeTransferFrom
+True
+TMP_328(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_2"];
+"BlockID: 81
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+None
+TMP_797(None) := returndata(bytes)
+TMP_792(None) := TMP_14(bytes)
+TMP_790(None) := TMP_8(bytes)
+returndata(bytes) := TMP_324(bytes)
+REF_98 -> LENGTH returndata
+TMP_325(bool) = REF_98 == 0
+TMP_326(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+TMP_327(bool) = TMP_325 || TMP_326
+CONDITION TMP_327
+EXPRESSION:TMP_327(bool) = TMP_325 || TMP_326	NodeType.IF" -> "BlockID: 83
+Call context: fillOrder,safeTransferFrom
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+"BlockID: 80
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 76
+Call context: fillOrder,safeTransferFrom,_callOptionalReturn,functionCall,functionCallWithValue
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 85
+Call context: fillOrder
+None
+TMP_407(bool) = TMP_406 < _amt
+CONDITION TMP_407
+EXPRESSION:IERC20(_token).allowance(address(this),CORE) < _amt	NodeType.IF" -> "BlockID: 86
+Call context: fillOrder
+True
+TMP_408 = CONVERT _token to IERC20
+TMP_410(uint256) := 115792089237316195423570985008687907853269984665640564039457584007913129639935(uint256)
+TMP_291(bool) = value == 0
+TMP_292 = CONVERT this to address
+TMP_293(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:allowance, arguments:['TMP_292', 'spender']  
+EXPRESSION:require(bool,string)((value == 0) || (token.allowance(address(this),spender) == 0),SafeERC20: approve from non-zero to non-zero allowance)	NodeType.EXPRESSION" [key=0];
+"BlockID: 85
+Call context: fillOrder
+None
+TMP_407(bool) = TMP_406 < _amt
+CONDITION TMP_407
+EXPRESSION:IERC20(_token).allowance(address(this),CORE) < _amt	NodeType.IF" -> "BlockID: 87
+Call context: fillOrder
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 86
+Call context: fillOrder
+True
+TMP_408 = CONVERT _token to IERC20
+TMP_410(uint256) := 115792089237316195423570985008687907853269984665640564039457584007913129639935(uint256)
+TMP_291(bool) = value == 0
+TMP_292 = CONVERT this to address
+TMP_293(uint256) = HIGH_LEVEL_CALL, dest:token(IERC20), function:allowance, arguments:['TMP_292', 'spender']  
+EXPRESSION:require(bool,string)((value == 0) || (token.allowance(address(this),spender) == 0),SafeERC20: approve from non-zero to non-zero allowance)	NodeType.EXPRESSION" -> "BlockID: 88
+Call context: fillOrder,_ensureApprove
+None
+TMP_294(bool) = TMP_293 == 0
+TMP_295(bool) = TMP_291 || TMP_294
+CONDITION TMP_295
+EXPRESSION:TMP_295(bool) = TMP_291 || TMP_294	NodeType.IF" [key="successor_5"];
+"BlockID: 87
+Call context: fillOrder
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 89
+Call context: 
+None
+TMP_594 = CONVERT CORE to IInitCore
+REF_308(address) -> marginPos.borrPool
+REF_309(uint256) -> order.initPosId
+TMP_595(uint256) = HIGH_LEVEL_CALL, dest:TMP_594(IInitCore), function:repay, arguments:['REF_308', 'repayShares', 'REF_309']  
+EXPRESSION:_ensureApprove(borrToken,repayAmt)	NodeType.EXPRESSION
+IInitCore(CORE).repay(marginPos.borrPool,repayShares,order.initPosId)	NodeType.EXPRESSION" [key="Exit: _ensureApprove", ref="MarginTradingHook._ensureApprove"];
+"BlockID: 93
+Call context: fillOrder,_ensureApprove
+True
+REF_79(bytes4) (->None) := 157198259(uint256)
+TMP_297(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_79,spender,value)
+TMP_323 = CONVERT token to address
+TMP_10 = CONVERT this to address
+TMP_11(uint256) = SOLIDITY_CALL balance(address)(TMP_10)
+TMP_12(bool) = TMP_11 >= value
+CONDITION TMP_12
+EXPRESSION:TMP_12(bool) = TMP_11 >= value	NodeType.IF" -> "BlockID: 95
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall
+True
+TMP_13(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 93
+Call context: fillOrder,_ensureApprove
+True
+REF_79(bytes4) (->None) := 157198259(uint256)
+TMP_297(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_79,spender,value)
+TMP_323 = CONVERT token to address
+TMP_10 = CONVERT this to address
+TMP_11(uint256) = SOLIDITY_CALL balance(address)(TMP_10)
+TMP_12(bool) = TMP_11 >= value
+CONDITION TMP_12
+EXPRESSION:TMP_12(bool) = TMP_11 >= value	NodeType.IF" -> "BlockID: 96
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 88
+Call context: fillOrder,_ensureApprove
+None
+TMP_294(bool) = TMP_293 == 0
+TMP_295(bool) = TMP_291 || TMP_294
+CONDITION TMP_295
+EXPRESSION:TMP_295(bool) = TMP_291 || TMP_294	NodeType.IF" -> "BlockID: 90
+Call context: fillOrder,_ensureApprove
+True
+TMP_296(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 88
+Call context: fillOrder,_ensureApprove
+None
+TMP_294(bool) = TMP_293 == 0
+TMP_295(bool) = TMP_291 || TMP_294
+CONDITION TMP_295
+EXPRESSION:TMP_295(bool) = TMP_291 || TMP_294	NodeType.IF" -> "BlockID: 91
+Call context: fillOrder,_ensureApprove
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 91
+Call context: fillOrder,_ensureApprove
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 93
+Call context: fillOrder,_ensureApprove
+True
+REF_79(bytes4) (->None) := 157198259(uint256)
+TMP_297(bytes) = SOLIDITY_CALL abi.encodeWithSelector()(REF_79,spender,value)
+TMP_323 = CONVERT token to address
+TMP_10 = CONVERT this to address
+TMP_11(uint256) = SOLIDITY_CALL balance(address)(TMP_10)
+TMP_12(bool) = TMP_11 >= value
+CONDITION TMP_12
+EXPRESSION:TMP_12(bool) = TMP_11 >= value	NodeType.IF" [key=0];
+"BlockID: 109
+Call context: fillOrder,_ensureApprove,safeApprove
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 87
+Call context: fillOrder
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="Exit: safeApprove", ref="SafeERC20.safeApprove"];
+"BlockID: 97
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_1(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:value 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION" -> "BlockID: 98
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_1 index: 0 
+returndata(bytes)= UNPACK TUPLE_1 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION
+success	NodeType.IF" [key=0];
+"BlockID: 98
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_1 index: 0 
+returndata(bytes)= UNPACK TUPLE_1 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION
+success	NodeType.IF" -> "BlockID: 99
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+True
+REF_5 -> LENGTH returndata
+TMP_19(bool) = REF_5 == 0
+CONDITION TMP_19
+EXPRESSION:returndata.length == 0	NodeType.IF" [key="successor_5"];
+"BlockID: 98
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall
+None
+success(bool)= UNPACK TUPLE_1 index: 0 
+returndata(bytes)= UNPACK TUPLE_1 index: 1 
+CONDITION success
+EXPRESSION:(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION
+success	NodeType.IF" -> "BlockID: 100
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+False
+REF_6 -> LENGTH returndata
+TMP_24(bool) = REF_6 > 0
+CONDITION TMP_24
+END_IF
+EXPRESSION:returndata.length > 0	NodeType.IF
+None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 96
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 97
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall
+True
+NEW VARIABLE success
+NEW VARIABLE returndata
+TUPLE_1(bool,bytes) = LOW_LEVEL_CALL, dest:target, function:call, arguments:['data'] value:value 
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(success,returndata) = target.call{value: value}(data)	NodeType.EXPRESSION" [key=0];
+"BlockID: 99
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+True
+REF_5 -> LENGTH returndata
+TMP_19(bool) = REF_5 == 0
+CONDITION TMP_19
+EXPRESSION:returndata.length == 0	NodeType.IF" -> "BlockID: 101
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+True
+TMP_0(bytes) = SOLIDITY_CALL code(address)(account)
+REF_0 -> LENGTH TMP_0
+TMP_1(bool) = REF_0 > 0
+TMP_787(None) := TMP_1(bool)
+CONDITION TMP_20
+EXPRESSION:qiantao require	NodeType.IF" [key=0];
+"BlockID: 99
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+True
+REF_5 -> LENGTH returndata
+TMP_19(bool) = REF_5 == 0
+CONDITION TMP_19
+EXPRESSION:returndata.length == 0	NodeType.IF" -> "BlockID: 102
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 100
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+False
+REF_6 -> LENGTH returndata
+TMP_24(bool) = REF_6 > 0
+CONDITION TMP_24
+END_IF
+EXPRESSION:returndata.length > 0	NodeType.IF
+None	NodeType.ENDIF" -> "BlockID: 103
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue,verifyCallResultFromTarget
+True
+INLINE ASM
+NEW VARIABLE returndata_size__revert_asm_0
+TMP_25(uint256) = SOLIDITY_CALL mload(uint256)(returndata)
+returndata_size__revert_asm_0(uint256) := TMP_25(uint256)
+TMP_26(uint256) = 32 + returndata
+TMP_27(None) = SOLIDITY_CALL revert(uint256,uint256)(TMP_26,returndata_size__revert_asm_0)
+EXPRESSION:None	NodeType.ASSEMBLY
+None	NodeType.VARIABLE
+returndata_size__revert_asm_0 = mload(uint256)(returndata)	NodeType.EXPRESSION
+revert(uint256,uint256)(32 + returndata,returndata_size__revert_asm_0)	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 100
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+False
+REF_6 -> LENGTH returndata
+TMP_24(bool) = REF_6 > 0
+CONDITION TMP_24
+END_IF
+EXPRESSION:returndata.length > 0	NodeType.IF
+None	NodeType.ENDIF" -> "BlockID: 104
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue,verifyCallResultFromTarget
+False
+TMP_28(None) = SOLIDITY_CALL revert(string)(errorMessage)
+EXPRESSION:revert(string)(errorMessage)	NodeType.EXPRESSION" [key="successor_5"];
+"BlockID: 101
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+True
+TMP_0(bytes) = SOLIDITY_CALL code(address)(account)
+REF_0 -> LENGTH TMP_0
+TMP_1(bool) = REF_0 > 0
+TMP_787(None) := TMP_1(bool)
+CONDITION TMP_20
+EXPRESSION:qiantao require	NodeType.IF" -> "BlockID: 105
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+True
+TMP_21(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_3"];
+"BlockID: 101
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+True
+TMP_0(bytes) = SOLIDITY_CALL code(address)(account)
+REF_0 -> LENGTH TMP_0
+TMP_1(bool) = REF_0 > 0
+TMP_787(None) := TMP_1(bool)
+CONDITION TMP_20
+EXPRESSION:qiantao require	NodeType.IF" -> "BlockID: 106
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_3"];
+"BlockID: 102
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 107
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+None
+TMP_797(None) := returndata(bytes)
+TMP_792(None) := TMP_14(bytes)
+TMP_790(None) := TMP_8(bytes)
+returndata(bytes) := TMP_324(bytes)
+REF_98 -> LENGTH returndata
+TMP_325(bool) = REF_98 == 0
+TMP_326(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+TMP_327(bool) = TMP_325 || TMP_326
+CONDITION TMP_327
+EXPRESSION:TMP_327(bool) = TMP_325 || TMP_326	NodeType.IF" [key=0];
+"BlockID: 107
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+None
+TMP_797(None) := returndata(bytes)
+TMP_792(None) := TMP_14(bytes)
+TMP_790(None) := TMP_8(bytes)
+returndata(bytes) := TMP_324(bytes)
+REF_98 -> LENGTH returndata
+TMP_325(bool) = REF_98 == 0
+TMP_326(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+TMP_327(bool) = TMP_325 || TMP_326
+CONDITION TMP_327
+EXPRESSION:TMP_327(bool) = TMP_325 || TMP_326	NodeType.IF" -> "BlockID: 108
+Call context: fillOrder,_ensureApprove,safeApprove
+True
+TMP_328(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_2"];
+"BlockID: 107
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+None
+TMP_797(None) := returndata(bytes)
+TMP_792(None) := TMP_14(bytes)
+TMP_790(None) := TMP_8(bytes)
+returndata(bytes) := TMP_324(bytes)
+REF_98 -> LENGTH returndata
+TMP_325(bool) = REF_98 == 0
+TMP_326(bool) = SOLIDITY_CALL abi.decode()(returndata,bool)
+TMP_327(bool) = TMP_325 || TMP_326
+CONDITION TMP_327
+EXPRESSION:TMP_327(bool) = TMP_325 || TMP_326	NodeType.IF" -> "BlockID: 109
+Call context: fillOrder,_ensureApprove,safeApprove
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_2"];
+"BlockID: 106
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 102
+Call context: fillOrder,_ensureApprove,safeApprove,_callOptionalReturn,functionCall,functionCallWithValue
+True
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}

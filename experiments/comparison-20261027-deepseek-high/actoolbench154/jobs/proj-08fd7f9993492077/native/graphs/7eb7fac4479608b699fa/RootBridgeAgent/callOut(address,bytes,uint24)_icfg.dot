@@ -1,0 +1,1747 @@
+digraph {
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" [shape=box];
+"BlockID: 1
+Call context: 
+None
+TMP_1172(bool) = _unlocked == 1
+CONDITION TMP_1172
+EXPRESSION:TMP_1172(bool) = _unlocked == 1	NodeType.IF";
+"BlockID: 7
+Call context: 
+None
+TMP_804 = CONVERT 0 to bytes1
+TMP_805(uint32) := settlementNonce(uint32)
+settlementNonce(uint32) = settlementNonce (c)+ 1
+NEW VARIABLE amountOut
+NEW VARIABLE gasToken
+_initialGas(uint256) := initialGas(uint256)
+TMP_979(bool) = _toChain == localChainId
+CONDITION TMP_979
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+_initialGas = initialGas	NodeType.VARIABLE
+_initialGas = initialGas	NodeType.EXPRESSION
+_toChain == localChainId	NodeType.IF";
+"BlockID: 19
+Call context: 
+None
+TMP_807(bytes) = SOLIDITY_CALL abi.encodePacked()(TMP_804,_recipient,TMP_805,_data,TMP_806)
+data(bytes) := TMP_807(bytes)
+REF_238(address) -> getBranchBridgeAgent[_toChain]
+callee(address) := REF_238(address)
+TMP_996 = CONVERT 0 to address
+TMP_997(bool) = callee == TMP_996
+CONDITION TMP_997
+EXPRESSION:data = abi.encodePacked(bytes1(0x00),_recipient,settlementNonce ++,_data,_manageGasOut(_toChain))	NodeType.VARIABLE
+data = abi.encodePacked(bytes1(0x00),_recipient,settlementNonce ++,_data,_manageGasOut(_toChain))	NodeType.EXPRESSION
+callee = getBranchBridgeAgent[_toChain]	NodeType.VARIABLE
+callee = getBranchBridgeAgent[_toChain]	NodeType.EXPRESSION
+callee == address(0)	NodeType.IF" [shape=box];
+"BlockID: 4
+Call context: callOut
+True
+_unlocked(uint256) := 2(uint256)
+_unlocked(uint256) := 1(uint256)
+TMP_1170(bool) = msg.sender != localRouterAddress
+CONDITION TMP_1170
+EXPRESSION:_unlocked = 2	NodeType.EXPRESSION
+_unlocked = 1	NodeType.EXPRESSION
+lock()	NodeType.EXPRESSION
+msg.sender != localRouterAddress	NodeType.IF";
+"BlockID: 2
+Call context: callOut
+True
+TMP_1173(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 3
+Call context: callOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 5
+Call context: callOut,requiresRouter
+True
+TMP_1171(None) = SOLIDITY_CALL revert UnrecognizedCallerNotRouter()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 6
+Call context: callOut,requiresRouter
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 8
+Call context: callOut
+True
+TMP_980(bool) = _initialGas > 0
+CONDITION TMP_980
+EXPRESSION:_initialGas > 0	NodeType.IF";
+"BlockID: 9
+Call context: callOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 12
+Call context: callOut
+None
+TMP_984(bool) = _initialGas > 0
+CONDITION TMP_984
+EXPRESSION:_initialGas > 0	NodeType.IF";
+"BlockID: 16
+Call context: callOut
+True
+REF_233(uint128) -> userFeeInfo.gasToBridgeOut
+TMP_985(uint256) = MIN_FALLBACK_RESERVE (c)* tx.gasprice
+TMP_986(bool) = REF_233 <= TMP_985
+CONDITION TMP_986
+EXPRESSION:userFeeInfo.gasToBridgeOut <= MIN_FALLBACK_RESERVE * tx.gasprice	NodeType.IF";
+"BlockID: 17
+Call context: callOut
+False
+TMP_988(uint256) = MIN_FALLBACK_RESERVE (c)* tx.gasprice
+TMP_989(bool) = msg.value <= TMP_988
+CONDITION TMP_989
+EXPRESSION:msg.value <= MIN_FALLBACK_RESERVE * tx.gasprice	NodeType.IF";
+"BlockID: 22
+Call context: callOut
+True
+TMP_990(None) = SOLIDITY_CALL revert InsufficientGasForFees()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 23
+Call context: callOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 27
+Call context: callOut
+None
+HIGH_LEVEL_CALL, dest:wrappedNativeToken(WETH9), function:deposit, arguments:[] value:msg.value 
+EXPRESSION:wrappedNativeToken.deposit{value: msg.value}()	NodeType.EXPRESSION";
+"BlockID: 30
+Call context: callOut
+None
+NEW VARIABLE zeroForOneOnInflow
+NEW VARIABLE priceImpactPercentage
+NEW VARIABLE gasTokenGlobalAddress
+NEW VARIABLE poolAddress
+TMP_955 = CONVERT localPortAddress to IRootPort
+TUPLE_11(bool,uint24,address,address) = HIGH_LEVEL_CALL, dest:TMP_955(IRootPort), function:getGasPoolInfo, arguments:['_toChain']  
+EXPRESSION:wrappedNativeToken.deposit{value: msg.value}()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(zeroForOneOnInflow,priceImpactPercentage,gasTokenGlobalAddress,poolAddress) = IRootPort(localPortAddress).getGasPoolInfo(_toChain)	NodeType.EXPRESSION";
+"BlockID: 65
+Call context: callOut
+None
+amountOut(uint256)= UNPACK TUPLE_15 index: 0 
+gasToken(address)= UNPACK TUPLE_15 index: 1 
+EXPRESSION:(amountOut,gasToken) = _gasSwapOut(msg.value,_toChain)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 64
+Call context: callOut
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 66
+Call context: callOut
+None
+TMP_992 = CONVERT localPortAddress to IRootPort
+TMP_993 = CONVERT this to address
+HIGH_LEVEL_CALL, dest:TMP_992(IRootPort), function:burn, arguments:['TMP_993', 'gasToken', 'amountOut', '_toChain']  
+EXPRESSION:IRootPort(localPortAddress).burn(address(this),gasToken,amountOut,_toChain)	NodeType.EXPRESSION";
+"BlockID: 67
+Call context: callOut
+None
+TMP_122(uint256) = 1 << 128
+TMP_123(bool) = x >= TMP_122
+CONDITION TMP_123
+EXPRESSION:IRootPort(localPortAddress).burn(address(this),gasToken,amountOut,_toChain)	NodeType.EXPRESSION
+x >= 1 << 128	NodeType.IF";
+"BlockID: 20
+Call context: callOut
+True
+TMP_987(None) = SOLIDITY_CALL revert InsufficientGasForFees()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 21
+Call context: callOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 26
+Call context: callOut
+None
+REF_234(uint128) -> userFeeInfo.gasToBridgeOut
+NEW VARIABLE zeroForOneOnInflow
+NEW VARIABLE priceImpactPercentage
+NEW VARIABLE gasTokenGlobalAddress
+NEW VARIABLE poolAddress
+TMP_955 = CONVERT localPortAddress to IRootPort
+TUPLE_11(bool,uint24,address,address) = HIGH_LEVEL_CALL, dest:TMP_955(IRootPort), function:getGasPoolInfo, arguments:['_toChain']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(zeroForOneOnInflow,priceImpactPercentage,gasTokenGlobalAddress,poolAddress) = IRootPort(localPortAddress).getGasPoolInfo(_toChain)	NodeType.EXPRESSION";
+"BlockID: 61
+Call context: callOut
+None
+amountOut(uint256)= UNPACK TUPLE_14 index: 0 
+gasToken(address)= UNPACK TUPLE_14 index: 1 
+EXPRESSION:(amountOut,gasToken) = _gasSwapOut(userFeeInfo.gasToBridgeOut,_toChain)	NodeType.EXPRESSION" [shape=box];
+"BlockID: 10
+Call context: callOut
+True
+TMP_981 = CONVERT wrappedNativeToken to address
+REF_230(address) -> getBranchBridgeAgent[localChainId]
+REF_231(uint128) -> userFeeInfo.gasToBridgeOut
+INLINE ASM
+TMP_364(None) = SOLIDITY_CALL mstore(uint256,uint256)(20,to)
+TMP_365(None) = SOLIDITY_CALL mstore(uint256,uint256)(52,amount)
+TMP_366(None) = SOLIDITY_CALL mstore(uint256,uint256)(0,224668671643508016486903311432943665152)
+TMP_367(uint256) = SOLIDITY_CALL mload(uint256)(0)
+TMP_368(bool) = TMP_367 == 1
+TMP_369(uint256) = SOLIDITY_CALL returndatasize()()
+TMP_370 = ! TMP_369 
+TMP_371(bool) = TMP_368 | TMP_370
+TMP_372(uint256) = SOLIDITY_CALL gas()()
+TMP_373(uint256) = SOLIDITY_CALL call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(TMP_372,token,0,16,68,0,32)
+TMP_374(bool) = TMP_371 & TMP_373
+TMP_375 = ! TMP_374 
+CONDITION TMP_375
+EXPRESSION:None	NodeType.ASSEMBLY
+mstore(uint256,uint256)(0x14,to)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x34,amount)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x00,0xa9059cbb000000000000000000000000)	NodeType.EXPRESSION
+! mload(uint256)(0x00) == 1 | ! returndatasize()() & call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(gas()(),token,0,0x10,0x44,0x00,0x20)	NodeType.IF";
+"BlockID: 11
+Call context: callOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 15
+Call context: callOut
+None
+REF_232(uint128) -> userFeeInfo.gasToBridgeOut
+TMP_983 = CONVERT REF_232 to uint128
+TMP_1361(None) := TMP_983(uint128)
+EXPRESSION:";
+"BlockID: 35
+Call context: callOut,_manageGasOut
+None
+zeroForOneOnInflow(bool)= UNPACK TUPLE_11 index: 0 
+priceImpactPercentage(uint24)= UNPACK TUPLE_11 index: 1 
+gasTokenGlobalAddress(address)= UNPACK TUPLE_11 index: 2 
+poolAddress(address)= UNPACK TUPLE_11 index: 3 
+TMP_956 = CONVERT 0 to address
+TMP_957(bool) = gasTokenGlobalAddress == TMP_956
+TMP_958 = CONVERT 0 to address
+TMP_959(bool) = poolAddress == TMP_958
+TMP_960(bool) = TMP_957 || TMP_959
+CONDITION TMP_960
+EXPRESSION:(zeroForOneOnInflow,priceImpactPercentage,gasTokenGlobalAddress,poolAddress) = IRootPort(localPortAddress).getGasPoolInfo(_toChain)	NodeType.EXPRESSION
+gasTokenGlobalAddress == address(0) || poolAddress == address(0)	NodeType.IF" [shape=box];
+"BlockID: 38
+Call context: callOut,_manageGasOut
+True
+TMP_961(None) = SOLIDITY_CALL revert InvalidGasPool()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 39
+Call context: callOut,_manageGasOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 42
+Call context: callOut,_manageGasOut
+None
+REF_224(bool) -> approvedGasPool[poolAddress]
+TMP_962 = ! REF_224 
+CONDITION TMP_962
+EXPRESSION:! approvedGasPool[poolAddress]	NodeType.IF";
+"BlockID: 44
+Call context: callOut,_manageGasOut
+True
+REF_225(bool) -> approvedGasPool[poolAddress]
+REF_225(bool) (->approvedGasPool) := True(bool)
+EXPRESSION:approvedGasPool[poolAddress] = true	NodeType.EXPRESSION";
+"BlockID: 45
+Call context: callOut,_manageGasOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 47
+Call context: callOut,_manageGasOut
+None
+NEW VARIABLE sqrtPriceLimitX96
+NEW VARIABLE sqrtPriceX96
+TMP_963 = CONVERT poolAddress to IUniswapV3Pool
+TUPLE_12(uint160,int24,uint16,uint16,uint16,uint8,bool) = HIGH_LEVEL_CALL, dest:TMP_963(IUniswapV3Pool), function:slot0, arguments:[]  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(sqrtPriceX96) = IUniswapV3Pool(poolAddress).slot0()	NodeType.EXPRESSION";
+"BlockID: 50
+Call context: callOut,_manageGasOut
+None
+sqrtPriceX96(uint160)= UNPACK TUPLE_12 index: 0 
+TMP_964(uint24) = priceImpactPercentage (c)/ 2
+TMP_965(uint160) = sqrtPriceX96 (c)* TMP_964
+TMP_966(uint160) = TMP_965 (c)/ GLOBAL_DIVISIONER
+exactSqrtPriceImpact(uint160) := TMP_966(uint160)
+CONDITION zeroForOneOnInflow
+EXPRESSION:(sqrtPriceX96) = IUniswapV3Pool(poolAddress).slot0()	NodeType.EXPRESSION
+exactSqrtPriceImpact = (sqrtPriceX96 * (priceImpactPercentage / 2)) / GLOBAL_DIVISIONER	NodeType.VARIABLE
+exactSqrtPriceImpact = (sqrtPriceX96 * (priceImpactPercentage / 2)) / GLOBAL_DIVISIONER	NodeType.EXPRESSION
+zeroForOneOnInflow	NodeType.IF" [shape=box];
+"BlockID: 52
+Call context: callOut,_manageGasOut
+True
+TMP_974(uint160) = sqrtPriceX96 (c)+ exactSqrtPriceImpact
+sqrtPriceLimitX96(uint160) := TMP_974(uint160)
+EXPRESSION:sqrtPriceLimitX96 = sqrtPriceX96 + exactSqrtPriceImpact	NodeType.EXPRESSION";
+"BlockID: 53
+Call context: callOut,_manageGasOut
+False
+TMP_975(uint160) = sqrtPriceX96 (c)- exactSqrtPriceImpact
+sqrtPriceLimitX96(uint160) := TMP_975(uint160)
+EXPRESSION:sqrtPriceLimitX96 = sqrtPriceX96 - exactSqrtPriceImpact	NodeType.EXPRESSION";
+"BlockID: 55
+Call context: callOut,_manageGasOut
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 57
+Call context: callOut,_manageGasOut
+None
+NEW VARIABLE amount0
+NEW VARIABLE amount1
+TMP_967 = CONVERT poolAddress to IUniswapV3Pool
+TMP_968 = CONVERT this to address
+TMP_969 = ! zeroForOneOnInflow 
+TMP_970 = CONVERT _amount to int256
+TMP_971 = CONVERT wrappedNativeToken to address
+TMP_972(SwapCallbackData) = new SwapCallbackData(TMP_971)
+TMP_973(bytes) = SOLIDITY_CALL abi.encode()(TMP_972)
+TUPLE_13(int256,int256) = HIGH_LEVEL_CALL, dest:TMP_967(IUniswapV3Pool), function:swap, arguments:['TMP_968', 'TMP_969', 'TMP_970', 'sqrtPriceLimitX96', 'TMP_973']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0,amount1) = IUniswapV3Pool(poolAddress).swap(address(this),! zeroForOneOnInflow,int256(_amount),sqrtPriceLimitX96,abi.encode(SwapCallbackData(address(wrappedNativeToken))))	NodeType.EXPRESSION";
+"BlockID: 60
+Call context: callOut,_manageGasOut
+None
+amount0(int256)= UNPACK TUPLE_13 index: 0 
+amount1(int256)= UNPACK TUPLE_13 index: 1 
+TMP_976 = ! zeroForOneOnInflow 
+CONDITION TMP_976
+EXPRESSION:(amount0,amount1) = IUniswapV3Pool(poolAddress).swap(address(this),! zeroForOneOnInflow,int256(_amount),sqrtPriceLimitX96,abi.encode(SwapCallbackData(address(wrappedNativeToken))))	NodeType.EXPRESSION
+! zeroForOneOnInflow	NodeType.IF" [shape=box];
+"BlockID: 62
+Call context: callOut,_manageGasOut
+True
+TMP_977 = CONVERT amount1 to uint256
+TMP_1360(None) := TMP_977(uint256)
+TMP_1360(None) := gasTokenGlobalAddress(address)
+EXPRESSION:";
+"BlockID: 63
+Call context: callOut,_manageGasOut
+False
+TMP_978 = CONVERT amount0 to uint256
+TMP_1360(None) := TMP_978(uint256)
+EXPRESSION:";
+"BlockID: 68
+Call context: callOut,_manageGasOut
+True
+INLINE ASM
+TMP_279(None) = SOLIDITY_CALL mstore(uint256,uint256)(0,891784466)
+TMP_280(None) = SOLIDITY_CALL revert(uint256,uint256)(28,4)
+END_IF
+EXPRESSION:None	NodeType.ASSEMBLY
+mstore(uint256,uint256)(0x00,0x35278d12)	NodeType.EXPRESSION
+revert(uint256,uint256)(0x1c,0x04)	NodeType.EXPRESSION
+None	NodeType.ENDIF";
+"BlockID: 69
+Call context: callOut,_manageGasOut
+None
+TMP_125 = CONVERT x to uint128
+TMP_1228(None) := TMP_125(uint128)
+TMP_1361(None) := TMP_995(uint128)
+EXPRESSION:";
+"BlockID: 29
+Call context: callOut,_manageGasOut
+None
+zeroForOneOnInflow(bool)= UNPACK TUPLE_11 index: 0 
+priceImpactPercentage(uint24)= UNPACK TUPLE_11 index: 1 
+gasTokenGlobalAddress(address)= UNPACK TUPLE_11 index: 2 
+poolAddress(address)= UNPACK TUPLE_11 index: 3 
+TMP_956 = CONVERT 0 to address
+TMP_957(bool) = gasTokenGlobalAddress == TMP_956
+TMP_958 = CONVERT 0 to address
+TMP_959(bool) = poolAddress == TMP_958
+TMP_960(bool) = TMP_957 || TMP_959
+CONDITION TMP_960
+EXPRESSION:(zeroForOneOnInflow,priceImpactPercentage,gasTokenGlobalAddress,poolAddress) = IRootPort(localPortAddress).getGasPoolInfo(_toChain)	NodeType.EXPRESSION
+gasTokenGlobalAddress == address(0) || poolAddress == address(0)	NodeType.IF" [shape=box];
+"BlockID: 33
+Call context: callOut,_manageGasOut
+True
+TMP_961(None) = SOLIDITY_CALL revert InvalidGasPool()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 34
+Call context: callOut,_manageGasOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 37
+Call context: callOut,_manageGasOut
+None
+REF_224(bool) -> approvedGasPool[poolAddress]
+TMP_962 = ! REF_224 
+CONDITION TMP_962
+EXPRESSION:! approvedGasPool[poolAddress]	NodeType.IF";
+"BlockID: 40
+Call context: callOut,_manageGasOut
+True
+REF_225(bool) -> approvedGasPool[poolAddress]
+REF_225(bool) (->approvedGasPool) := True(bool)
+EXPRESSION:approvedGasPool[poolAddress] = true	NodeType.EXPRESSION";
+"BlockID: 41
+Call context: callOut,_manageGasOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 43
+Call context: callOut,_manageGasOut
+None
+NEW VARIABLE sqrtPriceLimitX96
+NEW VARIABLE sqrtPriceX96
+TMP_963 = CONVERT poolAddress to IUniswapV3Pool
+TUPLE_12(uint160,int24,uint16,uint16,uint16,uint8,bool) = HIGH_LEVEL_CALL, dest:TMP_963(IUniswapV3Pool), function:slot0, arguments:[]  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(sqrtPriceX96) = IUniswapV3Pool(poolAddress).slot0()	NodeType.EXPRESSION";
+"BlockID: 46
+Call context: callOut,_manageGasOut
+None
+sqrtPriceX96(uint160)= UNPACK TUPLE_12 index: 0 
+TMP_964(uint24) = priceImpactPercentage (c)/ 2
+TMP_965(uint160) = sqrtPriceX96 (c)* TMP_964
+TMP_966(uint160) = TMP_965 (c)/ GLOBAL_DIVISIONER
+exactSqrtPriceImpact(uint160) := TMP_966(uint160)
+CONDITION zeroForOneOnInflow
+EXPRESSION:(sqrtPriceX96) = IUniswapV3Pool(poolAddress).slot0()	NodeType.EXPRESSION
+exactSqrtPriceImpact = (sqrtPriceX96 * (priceImpactPercentage / 2)) / GLOBAL_DIVISIONER	NodeType.VARIABLE
+exactSqrtPriceImpact = (sqrtPriceX96 * (priceImpactPercentage / 2)) / GLOBAL_DIVISIONER	NodeType.EXPRESSION
+zeroForOneOnInflow	NodeType.IF" [shape=box];
+"BlockID: 48
+Call context: callOut,_manageGasOut
+True
+TMP_974(uint160) = sqrtPriceX96 (c)+ exactSqrtPriceImpact
+sqrtPriceLimitX96(uint160) := TMP_974(uint160)
+EXPRESSION:sqrtPriceLimitX96 = sqrtPriceX96 + exactSqrtPriceImpact	NodeType.EXPRESSION";
+"BlockID: 49
+Call context: callOut,_manageGasOut
+False
+TMP_975(uint160) = sqrtPriceX96 (c)- exactSqrtPriceImpact
+sqrtPriceLimitX96(uint160) := TMP_975(uint160)
+EXPRESSION:sqrtPriceLimitX96 = sqrtPriceX96 - exactSqrtPriceImpact	NodeType.EXPRESSION";
+"BlockID: 51
+Call context: callOut,_manageGasOut
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 54
+Call context: callOut,_manageGasOut
+None
+NEW VARIABLE amount0
+NEW VARIABLE amount1
+TMP_967 = CONVERT poolAddress to IUniswapV3Pool
+TMP_968 = CONVERT this to address
+TMP_969 = ! zeroForOneOnInflow 
+TMP_970 = CONVERT _amount to int256
+TMP_971 = CONVERT wrappedNativeToken to address
+TMP_972(SwapCallbackData) = new SwapCallbackData(TMP_971)
+TMP_973(bytes) = SOLIDITY_CALL abi.encode()(TMP_972)
+TUPLE_13(int256,int256) = HIGH_LEVEL_CALL, dest:TMP_967(IUniswapV3Pool), function:swap, arguments:['TMP_968', 'TMP_969', 'TMP_970', 'sqrtPriceLimitX96', 'TMP_973']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0,amount1) = IUniswapV3Pool(poolAddress).swap(address(this),! zeroForOneOnInflow,int256(_amount),sqrtPriceLimitX96,abi.encode(SwapCallbackData(address(wrappedNativeToken))))	NodeType.EXPRESSION";
+"BlockID: 56
+Call context: callOut,_manageGasOut
+None
+amount0(int256)= UNPACK TUPLE_13 index: 0 
+amount1(int256)= UNPACK TUPLE_13 index: 1 
+TMP_976 = ! zeroForOneOnInflow 
+CONDITION TMP_976
+EXPRESSION:(amount0,amount1) = IUniswapV3Pool(poolAddress).swap(address(this),! zeroForOneOnInflow,int256(_amount),sqrtPriceLimitX96,abi.encode(SwapCallbackData(address(wrappedNativeToken))))	NodeType.EXPRESSION
+! zeroForOneOnInflow	NodeType.IF" [shape=box];
+"BlockID: 58
+Call context: callOut,_manageGasOut
+True
+TMP_977 = CONVERT amount1 to uint256
+TMP_1360(None) := TMP_977(uint256)
+TMP_1360(None) := gasTokenGlobalAddress(address)
+EXPRESSION:";
+"BlockID: 59
+Call context: callOut,_manageGasOut
+False
+TMP_978 = CONVERT amount0 to uint256
+TMP_1360(None) := TMP_978(uint256)
+EXPRESSION:";
+"BlockID: 13
+Call context: callOut,_manageGasOut
+True
+TMP_376(None) = SOLIDITY_CALL mstore(uint256,uint256)(0,2428038168)
+TMP_377(None) = SOLIDITY_CALL revert(uint256,uint256)(28,4)
+EXPRESSION:mstore(uint256,uint256)(0x00,0x90b8ec18)	NodeType.EXPRESSION
+revert()()	ExtraNodeType.REVERT";
+"BlockID: 14
+Call context: callOut,_manageGasOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 18
+Call context: callOut,_manageGasOut
+None
+TMP_378(None) = SOLIDITY_CALL mstore(uint256,uint256)(52,0)
+EXPRESSION:mstore(uint256,uint256)(0x34,0)	NodeType.EXPRESSION";
+"BlockID: 24
+Call context: callOut
+True
+TMP_998(None) = SOLIDITY_CALL revert UnrecognizedBridgeAgent()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT";
+"BlockID: 25
+Call context: callOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 28
+Call context: callOut
+None
+TMP_999(bool) = _toChain != localChainId
+CONDITION TMP_999
+EXPRESSION:_toChain != localChainId	NodeType.IF";
+"BlockID: 31
+Call context: callOut
+True
+TMP_1000 = CONVERT localAnyCallAddress to IAnycallProxy
+REF_240(uint256) -> AnycallFlags.FLAG_ALLOW_FALLBACK_DST
+HIGH_LEVEL_CALL, dest:TMP_1000(IAnycallProxy), function:anyCall, arguments:['callee', '_calldata', '_toChain', 'REF_240', '']  
+EXPRESSION:IAnycallProxy(localAnyCallAddress).anyCall(callee,_calldata,_toChain,AnycallFlags.FLAG_ALLOW_FALLBACK_DST,)	NodeType.EXPRESSION";
+"BlockID: 32
+Call context: callOut
+False
+TMP_1002 = CONVERT callee to IBranchBridgeAgent
+TUPLE_16(bool,bytes) = HIGH_LEVEL_CALL, dest:TMP_1002(IBranchBridgeAgent), function:anyExecute, arguments:['_calldata']  
+EXPRESSION:IBranchBridgeAgent(callee).anyExecute(_calldata)	NodeType.EXPRESSION";
+"BlockID: 36
+Call context: callOut
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF";
+"BlockID: 0
+Call context: 
+None
+ENTRY_POINT
+EXPRESSION:None	NodeType.ENTRYPOINT" -> "BlockID: 1
+Call context: 
+None
+TMP_1172(bool) = _unlocked == 1
+CONDITION TMP_1172
+EXPRESSION:TMP_1172(bool) = _unlocked == 1	NodeType.IF" [key=0];
+"BlockID: 1
+Call context: 
+None
+TMP_1172(bool) = _unlocked == 1
+CONDITION TMP_1172
+EXPRESSION:TMP_1172(bool) = _unlocked == 1	NodeType.IF" -> "BlockID: 2
+Call context: callOut
+True
+TMP_1173(None) = SOLIDITY_CALL revert()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 1
+Call context: 
+None
+TMP_1172(bool) = _unlocked == 1
+CONDITION TMP_1172
+EXPRESSION:TMP_1172(bool) = _unlocked == 1	NodeType.IF" -> "BlockID: 3
+Call context: callOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 7
+Call context: 
+None
+TMP_804 = CONVERT 0 to bytes1
+TMP_805(uint32) := settlementNonce(uint32)
+settlementNonce(uint32) = settlementNonce (c)+ 1
+NEW VARIABLE amountOut
+NEW VARIABLE gasToken
+_initialGas(uint256) := initialGas(uint256)
+TMP_979(bool) = _toChain == localChainId
+CONDITION TMP_979
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+_initialGas = initialGas	NodeType.VARIABLE
+_initialGas = initialGas	NodeType.EXPRESSION
+_toChain == localChainId	NodeType.IF" -> "BlockID: 8
+Call context: callOut
+True
+TMP_980(bool) = _initialGas > 0
+CONDITION TMP_980
+EXPRESSION:_initialGas > 0	NodeType.IF" [key="successor_5"];
+"BlockID: 7
+Call context: 
+None
+TMP_804 = CONVERT 0 to bytes1
+TMP_805(uint32) := settlementNonce(uint32)
+settlementNonce(uint32) = settlementNonce (c)+ 1
+NEW VARIABLE amountOut
+NEW VARIABLE gasToken
+_initialGas(uint256) := initialGas(uint256)
+TMP_979(bool) = _toChain == localChainId
+CONDITION TMP_979
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+_initialGas = initialGas	NodeType.VARIABLE
+_initialGas = initialGas	NodeType.EXPRESSION
+_toChain == localChainId	NodeType.IF" -> "BlockID: 9
+Call context: callOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 19
+Call context: 
+None
+TMP_807(bytes) = SOLIDITY_CALL abi.encodePacked()(TMP_804,_recipient,TMP_805,_data,TMP_806)
+data(bytes) := TMP_807(bytes)
+REF_238(address) -> getBranchBridgeAgent[_toChain]
+callee(address) := REF_238(address)
+TMP_996 = CONVERT 0 to address
+TMP_997(bool) = callee == TMP_996
+CONDITION TMP_997
+EXPRESSION:data = abi.encodePacked(bytes1(0x00),_recipient,settlementNonce ++,_data,_manageGasOut(_toChain))	NodeType.VARIABLE
+data = abi.encodePacked(bytes1(0x00),_recipient,settlementNonce ++,_data,_manageGasOut(_toChain))	NodeType.EXPRESSION
+callee = getBranchBridgeAgent[_toChain]	NodeType.VARIABLE
+callee = getBranchBridgeAgent[_toChain]	NodeType.EXPRESSION
+callee == address(0)	NodeType.IF" -> "BlockID: 24
+Call context: callOut
+True
+TMP_998(None) = SOLIDITY_CALL revert UnrecognizedBridgeAgent()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 19
+Call context: 
+None
+TMP_807(bytes) = SOLIDITY_CALL abi.encodePacked()(TMP_804,_recipient,TMP_805,_data,TMP_806)
+data(bytes) := TMP_807(bytes)
+REF_238(address) -> getBranchBridgeAgent[_toChain]
+callee(address) := REF_238(address)
+TMP_996 = CONVERT 0 to address
+TMP_997(bool) = callee == TMP_996
+CONDITION TMP_997
+EXPRESSION:data = abi.encodePacked(bytes1(0x00),_recipient,settlementNonce ++,_data,_manageGasOut(_toChain))	NodeType.VARIABLE
+data = abi.encodePacked(bytes1(0x00),_recipient,settlementNonce ++,_data,_manageGasOut(_toChain))	NodeType.EXPRESSION
+callee = getBranchBridgeAgent[_toChain]	NodeType.VARIABLE
+callee = getBranchBridgeAgent[_toChain]	NodeType.EXPRESSION
+callee == address(0)	NodeType.IF" -> "BlockID: 25
+Call context: callOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 4
+Call context: callOut
+True
+_unlocked(uint256) := 2(uint256)
+_unlocked(uint256) := 1(uint256)
+TMP_1170(bool) = msg.sender != localRouterAddress
+CONDITION TMP_1170
+EXPRESSION:_unlocked = 2	NodeType.EXPRESSION
+_unlocked = 1	NodeType.EXPRESSION
+lock()	NodeType.EXPRESSION
+msg.sender != localRouterAddress	NodeType.IF" -> "BlockID: 5
+Call context: callOut,requiresRouter
+True
+TMP_1171(None) = SOLIDITY_CALL revert UnrecognizedCallerNotRouter()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key="successor_1"];
+"BlockID: 4
+Call context: callOut
+True
+_unlocked(uint256) := 2(uint256)
+_unlocked(uint256) := 1(uint256)
+TMP_1170(bool) = msg.sender != localRouterAddress
+CONDITION TMP_1170
+EXPRESSION:_unlocked = 2	NodeType.EXPRESSION
+_unlocked = 1	NodeType.EXPRESSION
+lock()	NodeType.EXPRESSION
+msg.sender != localRouterAddress	NodeType.IF" -> "BlockID: 6
+Call context: callOut,requiresRouter
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_1"];
+"BlockID: 3
+Call context: callOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 4
+Call context: callOut
+True
+_unlocked(uint256) := 2(uint256)
+_unlocked(uint256) := 1(uint256)
+TMP_1170(bool) = msg.sender != localRouterAddress
+CONDITION TMP_1170
+EXPRESSION:_unlocked = 2	NodeType.EXPRESSION
+_unlocked = 1	NodeType.EXPRESSION
+lock()	NodeType.EXPRESSION
+msg.sender != localRouterAddress	NodeType.IF" [key=0];
+"BlockID: 6
+Call context: callOut,requiresRouter
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 7
+Call context: 
+None
+TMP_804 = CONVERT 0 to bytes1
+TMP_805(uint32) := settlementNonce(uint32)
+settlementNonce(uint32) = settlementNonce (c)+ 1
+NEW VARIABLE amountOut
+NEW VARIABLE gasToken
+_initialGas(uint256) := initialGas(uint256)
+TMP_979(bool) = _toChain == localChainId
+CONDITION TMP_979
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+_initialGas = initialGas	NodeType.VARIABLE
+_initialGas = initialGas	NodeType.EXPRESSION
+_toChain == localChainId	NodeType.IF" [key="Exit: requiresRouter", ref="RootBridgeAgent.requiresRouter"];
+"BlockID: 8
+Call context: callOut
+True
+TMP_980(bool) = _initialGas > 0
+CONDITION TMP_980
+EXPRESSION:_initialGas > 0	NodeType.IF" -> "BlockID: 10
+Call context: callOut
+True
+TMP_981 = CONVERT wrappedNativeToken to address
+REF_230(address) -> getBranchBridgeAgent[localChainId]
+REF_231(uint128) -> userFeeInfo.gasToBridgeOut
+INLINE ASM
+TMP_364(None) = SOLIDITY_CALL mstore(uint256,uint256)(20,to)
+TMP_365(None) = SOLIDITY_CALL mstore(uint256,uint256)(52,amount)
+TMP_366(None) = SOLIDITY_CALL mstore(uint256,uint256)(0,224668671643508016486903311432943665152)
+TMP_367(uint256) = SOLIDITY_CALL mload(uint256)(0)
+TMP_368(bool) = TMP_367 == 1
+TMP_369(uint256) = SOLIDITY_CALL returndatasize()()
+TMP_370 = ! TMP_369 
+TMP_371(bool) = TMP_368 | TMP_370
+TMP_372(uint256) = SOLIDITY_CALL gas()()
+TMP_373(uint256) = SOLIDITY_CALL call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(TMP_372,token,0,16,68,0,32)
+TMP_374(bool) = TMP_371 & TMP_373
+TMP_375 = ! TMP_374 
+CONDITION TMP_375
+EXPRESSION:None	NodeType.ASSEMBLY
+mstore(uint256,uint256)(0x14,to)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x34,amount)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x00,0xa9059cbb000000000000000000000000)	NodeType.EXPRESSION
+! mload(uint256)(0x00) == 1 | ! returndatasize()() & call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(gas()(),token,0,0x10,0x44,0x00,0x20)	NodeType.IF" [key=0];
+"BlockID: 8
+Call context: callOut
+True
+TMP_980(bool) = _initialGas > 0
+CONDITION TMP_980
+EXPRESSION:_initialGas > 0	NodeType.IF" -> "BlockID: 11
+Call context: callOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 9
+Call context: callOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 12
+Call context: callOut
+None
+TMP_984(bool) = _initialGas > 0
+CONDITION TMP_984
+EXPRESSION:_initialGas > 0	NodeType.IF" [key=0];
+"BlockID: 12
+Call context: callOut
+None
+TMP_984(bool) = _initialGas > 0
+CONDITION TMP_984
+EXPRESSION:_initialGas > 0	NodeType.IF" -> "BlockID: 16
+Call context: callOut
+True
+REF_233(uint128) -> userFeeInfo.gasToBridgeOut
+TMP_985(uint256) = MIN_FALLBACK_RESERVE (c)* tx.gasprice
+TMP_986(bool) = REF_233 <= TMP_985
+CONDITION TMP_986
+EXPRESSION:userFeeInfo.gasToBridgeOut <= MIN_FALLBACK_RESERVE * tx.gasprice	NodeType.IF" [key=0];
+"BlockID: 12
+Call context: callOut
+None
+TMP_984(bool) = _initialGas > 0
+CONDITION TMP_984
+EXPRESSION:_initialGas > 0	NodeType.IF" -> "BlockID: 17
+Call context: callOut
+False
+TMP_988(uint256) = MIN_FALLBACK_RESERVE (c)* tx.gasprice
+TMP_989(bool) = msg.value <= TMP_988
+CONDITION TMP_989
+EXPRESSION:msg.value <= MIN_FALLBACK_RESERVE * tx.gasprice	NodeType.IF" [key=0];
+"BlockID: 16
+Call context: callOut
+True
+REF_233(uint128) -> userFeeInfo.gasToBridgeOut
+TMP_985(uint256) = MIN_FALLBACK_RESERVE (c)* tx.gasprice
+TMP_986(bool) = REF_233 <= TMP_985
+CONDITION TMP_986
+EXPRESSION:userFeeInfo.gasToBridgeOut <= MIN_FALLBACK_RESERVE * tx.gasprice	NodeType.IF" -> "BlockID: 20
+Call context: callOut
+True
+TMP_987(None) = SOLIDITY_CALL revert InsufficientGasForFees()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 16
+Call context: callOut
+True
+REF_233(uint128) -> userFeeInfo.gasToBridgeOut
+TMP_985(uint256) = MIN_FALLBACK_RESERVE (c)* tx.gasprice
+TMP_986(bool) = REF_233 <= TMP_985
+CONDITION TMP_986
+EXPRESSION:userFeeInfo.gasToBridgeOut <= MIN_FALLBACK_RESERVE * tx.gasprice	NodeType.IF" -> "BlockID: 21
+Call context: callOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 17
+Call context: callOut
+False
+TMP_988(uint256) = MIN_FALLBACK_RESERVE (c)* tx.gasprice
+TMP_989(bool) = msg.value <= TMP_988
+CONDITION TMP_989
+EXPRESSION:msg.value <= MIN_FALLBACK_RESERVE * tx.gasprice	NodeType.IF" -> "BlockID: 22
+Call context: callOut
+True
+TMP_990(None) = SOLIDITY_CALL revert InsufficientGasForFees()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 17
+Call context: callOut
+False
+TMP_988(uint256) = MIN_FALLBACK_RESERVE (c)* tx.gasprice
+TMP_989(bool) = msg.value <= TMP_988
+CONDITION TMP_989
+EXPRESSION:msg.value <= MIN_FALLBACK_RESERVE * tx.gasprice	NodeType.IF" -> "BlockID: 23
+Call context: callOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 23
+Call context: callOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 27
+Call context: callOut
+None
+HIGH_LEVEL_CALL, dest:wrappedNativeToken(WETH9), function:deposit, arguments:[] value:msg.value 
+EXPRESSION:wrappedNativeToken.deposit{value: msg.value}()	NodeType.EXPRESSION" [key=0];
+"BlockID: 27
+Call context: callOut
+None
+HIGH_LEVEL_CALL, dest:wrappedNativeToken(WETH9), function:deposit, arguments:[] value:msg.value 
+EXPRESSION:wrappedNativeToken.deposit{value: msg.value}()	NodeType.EXPRESSION" -> "BlockID: 30
+Call context: callOut
+None
+NEW VARIABLE zeroForOneOnInflow
+NEW VARIABLE priceImpactPercentage
+NEW VARIABLE gasTokenGlobalAddress
+NEW VARIABLE poolAddress
+TMP_955 = CONVERT localPortAddress to IRootPort
+TUPLE_11(bool,uint24,address,address) = HIGH_LEVEL_CALL, dest:TMP_955(IRootPort), function:getGasPoolInfo, arguments:['_toChain']  
+EXPRESSION:wrappedNativeToken.deposit{value: msg.value}()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(zeroForOneOnInflow,priceImpactPercentage,gasTokenGlobalAddress,poolAddress) = IRootPort(localPortAddress).getGasPoolInfo(_toChain)	NodeType.EXPRESSION" [key=0];
+"BlockID: 30
+Call context: callOut
+None
+NEW VARIABLE zeroForOneOnInflow
+NEW VARIABLE priceImpactPercentage
+NEW VARIABLE gasTokenGlobalAddress
+NEW VARIABLE poolAddress
+TMP_955 = CONVERT localPortAddress to IRootPort
+TUPLE_11(bool,uint24,address,address) = HIGH_LEVEL_CALL, dest:TMP_955(IRootPort), function:getGasPoolInfo, arguments:['_toChain']  
+EXPRESSION:wrappedNativeToken.deposit{value: msg.value}()	NodeType.EXPRESSION
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(zeroForOneOnInflow,priceImpactPercentage,gasTokenGlobalAddress,poolAddress) = IRootPort(localPortAddress).getGasPoolInfo(_toChain)	NodeType.EXPRESSION" -> "BlockID: 35
+Call context: callOut,_manageGasOut
+None
+zeroForOneOnInflow(bool)= UNPACK TUPLE_11 index: 0 
+priceImpactPercentage(uint24)= UNPACK TUPLE_11 index: 1 
+gasTokenGlobalAddress(address)= UNPACK TUPLE_11 index: 2 
+poolAddress(address)= UNPACK TUPLE_11 index: 3 
+TMP_956 = CONVERT 0 to address
+TMP_957(bool) = gasTokenGlobalAddress == TMP_956
+TMP_958 = CONVERT 0 to address
+TMP_959(bool) = poolAddress == TMP_958
+TMP_960(bool) = TMP_957 || TMP_959
+CONDITION TMP_960
+EXPRESSION:(zeroForOneOnInflow,priceImpactPercentage,gasTokenGlobalAddress,poolAddress) = IRootPort(localPortAddress).getGasPoolInfo(_toChain)	NodeType.EXPRESSION
+gasTokenGlobalAddress == address(0) || poolAddress == address(0)	NodeType.IF" [key="successor_5"];
+"BlockID: 65
+Call context: callOut
+None
+amountOut(uint256)= UNPACK TUPLE_15 index: 0 
+gasToken(address)= UNPACK TUPLE_15 index: 1 
+EXPRESSION:(amountOut,gasToken) = _gasSwapOut(msg.value,_toChain)	NodeType.EXPRESSION" -> "BlockID: 64
+Call context: callOut
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 64
+Call context: callOut
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 66
+Call context: callOut
+None
+TMP_992 = CONVERT localPortAddress to IRootPort
+TMP_993 = CONVERT this to address
+HIGH_LEVEL_CALL, dest:TMP_992(IRootPort), function:burn, arguments:['TMP_993', 'gasToken', 'amountOut', '_toChain']  
+EXPRESSION:IRootPort(localPortAddress).burn(address(this),gasToken,amountOut,_toChain)	NodeType.EXPRESSION" [key=0];
+"BlockID: 66
+Call context: callOut
+None
+TMP_992 = CONVERT localPortAddress to IRootPort
+TMP_993 = CONVERT this to address
+HIGH_LEVEL_CALL, dest:TMP_992(IRootPort), function:burn, arguments:['TMP_993', 'gasToken', 'amountOut', '_toChain']  
+EXPRESSION:IRootPort(localPortAddress).burn(address(this),gasToken,amountOut,_toChain)	NodeType.EXPRESSION" -> "BlockID: 67
+Call context: callOut
+None
+TMP_122(uint256) = 1 << 128
+TMP_123(bool) = x >= TMP_122
+CONDITION TMP_123
+EXPRESSION:IRootPort(localPortAddress).burn(address(this),gasToken,amountOut,_toChain)	NodeType.EXPRESSION
+x >= 1 << 128	NodeType.IF" [key=0];
+"BlockID: 67
+Call context: callOut
+None
+TMP_122(uint256) = 1 << 128
+TMP_123(bool) = x >= TMP_122
+CONDITION TMP_123
+EXPRESSION:IRootPort(localPortAddress).burn(address(this),gasToken,amountOut,_toChain)	NodeType.EXPRESSION
+x >= 1 << 128	NodeType.IF" -> "BlockID: 68
+Call context: callOut,_manageGasOut
+True
+INLINE ASM
+TMP_279(None) = SOLIDITY_CALL mstore(uint256,uint256)(0,891784466)
+TMP_280(None) = SOLIDITY_CALL revert(uint256,uint256)(28,4)
+END_IF
+EXPRESSION:None	NodeType.ASSEMBLY
+mstore(uint256,uint256)(0x00,0x35278d12)	NodeType.EXPRESSION
+revert(uint256,uint256)(0x1c,0x04)	NodeType.EXPRESSION
+None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 21
+Call context: callOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 26
+Call context: callOut
+None
+REF_234(uint128) -> userFeeInfo.gasToBridgeOut
+NEW VARIABLE zeroForOneOnInflow
+NEW VARIABLE priceImpactPercentage
+NEW VARIABLE gasTokenGlobalAddress
+NEW VARIABLE poolAddress
+TMP_955 = CONVERT localPortAddress to IRootPort
+TUPLE_11(bool,uint24,address,address) = HIGH_LEVEL_CALL, dest:TMP_955(IRootPort), function:getGasPoolInfo, arguments:['_toChain']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(zeroForOneOnInflow,priceImpactPercentage,gasTokenGlobalAddress,poolAddress) = IRootPort(localPortAddress).getGasPoolInfo(_toChain)	NodeType.EXPRESSION" [key=0];
+"BlockID: 26
+Call context: callOut
+None
+REF_234(uint128) -> userFeeInfo.gasToBridgeOut
+NEW VARIABLE zeroForOneOnInflow
+NEW VARIABLE priceImpactPercentage
+NEW VARIABLE gasTokenGlobalAddress
+NEW VARIABLE poolAddress
+TMP_955 = CONVERT localPortAddress to IRootPort
+TUPLE_11(bool,uint24,address,address) = HIGH_LEVEL_CALL, dest:TMP_955(IRootPort), function:getGasPoolInfo, arguments:['_toChain']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(zeroForOneOnInflow,priceImpactPercentage,gasTokenGlobalAddress,poolAddress) = IRootPort(localPortAddress).getGasPoolInfo(_toChain)	NodeType.EXPRESSION" -> "BlockID: 29
+Call context: callOut,_manageGasOut
+None
+zeroForOneOnInflow(bool)= UNPACK TUPLE_11 index: 0 
+priceImpactPercentage(uint24)= UNPACK TUPLE_11 index: 1 
+gasTokenGlobalAddress(address)= UNPACK TUPLE_11 index: 2 
+poolAddress(address)= UNPACK TUPLE_11 index: 3 
+TMP_956 = CONVERT 0 to address
+TMP_957(bool) = gasTokenGlobalAddress == TMP_956
+TMP_958 = CONVERT 0 to address
+TMP_959(bool) = poolAddress == TMP_958
+TMP_960(bool) = TMP_957 || TMP_959
+CONDITION TMP_960
+EXPRESSION:(zeroForOneOnInflow,priceImpactPercentage,gasTokenGlobalAddress,poolAddress) = IRootPort(localPortAddress).getGasPoolInfo(_toChain)	NodeType.EXPRESSION
+gasTokenGlobalAddress == address(0) || poolAddress == address(0)	NodeType.IF" [key="successor_5"];
+"BlockID: 61
+Call context: callOut
+None
+amountOut(uint256)= UNPACK TUPLE_14 index: 0 
+gasToken(address)= UNPACK TUPLE_14 index: 1 
+EXPRESSION:(amountOut,gasToken) = _gasSwapOut(userFeeInfo.gasToBridgeOut,_toChain)	NodeType.EXPRESSION" -> "BlockID: 64
+Call context: callOut
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 10
+Call context: callOut
+True
+TMP_981 = CONVERT wrappedNativeToken to address
+REF_230(address) -> getBranchBridgeAgent[localChainId]
+REF_231(uint128) -> userFeeInfo.gasToBridgeOut
+INLINE ASM
+TMP_364(None) = SOLIDITY_CALL mstore(uint256,uint256)(20,to)
+TMP_365(None) = SOLIDITY_CALL mstore(uint256,uint256)(52,amount)
+TMP_366(None) = SOLIDITY_CALL mstore(uint256,uint256)(0,224668671643508016486903311432943665152)
+TMP_367(uint256) = SOLIDITY_CALL mload(uint256)(0)
+TMP_368(bool) = TMP_367 == 1
+TMP_369(uint256) = SOLIDITY_CALL returndatasize()()
+TMP_370 = ! TMP_369 
+TMP_371(bool) = TMP_368 | TMP_370
+TMP_372(uint256) = SOLIDITY_CALL gas()()
+TMP_373(uint256) = SOLIDITY_CALL call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(TMP_372,token,0,16,68,0,32)
+TMP_374(bool) = TMP_371 & TMP_373
+TMP_375 = ! TMP_374 
+CONDITION TMP_375
+EXPRESSION:None	NodeType.ASSEMBLY
+mstore(uint256,uint256)(0x14,to)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x34,amount)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x00,0xa9059cbb000000000000000000000000)	NodeType.EXPRESSION
+! mload(uint256)(0x00) == 1 | ! returndatasize()() & call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(gas()(),token,0,0x10,0x44,0x00,0x20)	NodeType.IF" -> "BlockID: 13
+Call context: callOut,_manageGasOut
+True
+TMP_376(None) = SOLIDITY_CALL mstore(uint256,uint256)(0,2428038168)
+TMP_377(None) = SOLIDITY_CALL revert(uint256,uint256)(28,4)
+EXPRESSION:mstore(uint256,uint256)(0x00,0x90b8ec18)	NodeType.EXPRESSION
+revert()()	ExtraNodeType.REVERT" [key="successor_5"];
+"BlockID: 10
+Call context: callOut
+True
+TMP_981 = CONVERT wrappedNativeToken to address
+REF_230(address) -> getBranchBridgeAgent[localChainId]
+REF_231(uint128) -> userFeeInfo.gasToBridgeOut
+INLINE ASM
+TMP_364(None) = SOLIDITY_CALL mstore(uint256,uint256)(20,to)
+TMP_365(None) = SOLIDITY_CALL mstore(uint256,uint256)(52,amount)
+TMP_366(None) = SOLIDITY_CALL mstore(uint256,uint256)(0,224668671643508016486903311432943665152)
+TMP_367(uint256) = SOLIDITY_CALL mload(uint256)(0)
+TMP_368(bool) = TMP_367 == 1
+TMP_369(uint256) = SOLIDITY_CALL returndatasize()()
+TMP_370 = ! TMP_369 
+TMP_371(bool) = TMP_368 | TMP_370
+TMP_372(uint256) = SOLIDITY_CALL gas()()
+TMP_373(uint256) = SOLIDITY_CALL call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(TMP_372,token,0,16,68,0,32)
+TMP_374(bool) = TMP_371 & TMP_373
+TMP_375 = ! TMP_374 
+CONDITION TMP_375
+EXPRESSION:None	NodeType.ASSEMBLY
+mstore(uint256,uint256)(0x14,to)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x34,amount)	NodeType.EXPRESSION
+mstore(uint256,uint256)(0x00,0xa9059cbb000000000000000000000000)	NodeType.EXPRESSION
+! mload(uint256)(0x00) == 1 | ! returndatasize()() & call(uint256,uint256,uint256,uint256,uint256,uint256,uint256)(gas()(),token,0,0x10,0x44,0x00,0x20)	NodeType.IF" -> "BlockID: 14
+Call context: callOut,_manageGasOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="successor_5"];
+"BlockID: 11
+Call context: callOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 15
+Call context: callOut
+None
+REF_232(uint128) -> userFeeInfo.gasToBridgeOut
+TMP_983 = CONVERT REF_232 to uint128
+TMP_1361(None) := TMP_983(uint128)
+EXPRESSION:" [key=0];
+"BlockID: 15
+Call context: callOut
+None
+REF_232(uint128) -> userFeeInfo.gasToBridgeOut
+TMP_983 = CONVERT REF_232 to uint128
+TMP_1361(None) := TMP_983(uint128)
+EXPRESSION:" -> "BlockID: 19
+Call context: 
+None
+TMP_807(bytes) = SOLIDITY_CALL abi.encodePacked()(TMP_804,_recipient,TMP_805,_data,TMP_806)
+data(bytes) := TMP_807(bytes)
+REF_238(address) -> getBranchBridgeAgent[_toChain]
+callee(address) := REF_238(address)
+TMP_996 = CONVERT 0 to address
+TMP_997(bool) = callee == TMP_996
+CONDITION TMP_997
+EXPRESSION:data = abi.encodePacked(bytes1(0x00),_recipient,settlementNonce ++,_data,_manageGasOut(_toChain))	NodeType.VARIABLE
+data = abi.encodePacked(bytes1(0x00),_recipient,settlementNonce ++,_data,_manageGasOut(_toChain))	NodeType.EXPRESSION
+callee = getBranchBridgeAgent[_toChain]	NodeType.VARIABLE
+callee = getBranchBridgeAgent[_toChain]	NodeType.EXPRESSION
+callee == address(0)	NodeType.IF" [key="successor_5", ref="RootBridgeAgent._manageGasOut"];
+"BlockID: 35
+Call context: callOut,_manageGasOut
+None
+zeroForOneOnInflow(bool)= UNPACK TUPLE_11 index: 0 
+priceImpactPercentage(uint24)= UNPACK TUPLE_11 index: 1 
+gasTokenGlobalAddress(address)= UNPACK TUPLE_11 index: 2 
+poolAddress(address)= UNPACK TUPLE_11 index: 3 
+TMP_956 = CONVERT 0 to address
+TMP_957(bool) = gasTokenGlobalAddress == TMP_956
+TMP_958 = CONVERT 0 to address
+TMP_959(bool) = poolAddress == TMP_958
+TMP_960(bool) = TMP_957 || TMP_959
+CONDITION TMP_960
+EXPRESSION:(zeroForOneOnInflow,priceImpactPercentage,gasTokenGlobalAddress,poolAddress) = IRootPort(localPortAddress).getGasPoolInfo(_toChain)	NodeType.EXPRESSION
+gasTokenGlobalAddress == address(0) || poolAddress == address(0)	NodeType.IF" -> "BlockID: 38
+Call context: callOut,_manageGasOut
+True
+TMP_961(None) = SOLIDITY_CALL revert InvalidGasPool()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 35
+Call context: callOut,_manageGasOut
+None
+zeroForOneOnInflow(bool)= UNPACK TUPLE_11 index: 0 
+priceImpactPercentage(uint24)= UNPACK TUPLE_11 index: 1 
+gasTokenGlobalAddress(address)= UNPACK TUPLE_11 index: 2 
+poolAddress(address)= UNPACK TUPLE_11 index: 3 
+TMP_956 = CONVERT 0 to address
+TMP_957(bool) = gasTokenGlobalAddress == TMP_956
+TMP_958 = CONVERT 0 to address
+TMP_959(bool) = poolAddress == TMP_958
+TMP_960(bool) = TMP_957 || TMP_959
+CONDITION TMP_960
+EXPRESSION:(zeroForOneOnInflow,priceImpactPercentage,gasTokenGlobalAddress,poolAddress) = IRootPort(localPortAddress).getGasPoolInfo(_toChain)	NodeType.EXPRESSION
+gasTokenGlobalAddress == address(0) || poolAddress == address(0)	NodeType.IF" -> "BlockID: 39
+Call context: callOut,_manageGasOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 39
+Call context: callOut,_manageGasOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 42
+Call context: callOut,_manageGasOut
+None
+REF_224(bool) -> approvedGasPool[poolAddress]
+TMP_962 = ! REF_224 
+CONDITION TMP_962
+EXPRESSION:! approvedGasPool[poolAddress]	NodeType.IF" [key=0];
+"BlockID: 42
+Call context: callOut,_manageGasOut
+None
+REF_224(bool) -> approvedGasPool[poolAddress]
+TMP_962 = ! REF_224 
+CONDITION TMP_962
+EXPRESSION:! approvedGasPool[poolAddress]	NodeType.IF" -> "BlockID: 44
+Call context: callOut,_manageGasOut
+True
+REF_225(bool) -> approvedGasPool[poolAddress]
+REF_225(bool) (->approvedGasPool) := True(bool)
+EXPRESSION:approvedGasPool[poolAddress] = true	NodeType.EXPRESSION" [key=0];
+"BlockID: 42
+Call context: callOut,_manageGasOut
+None
+REF_224(bool) -> approvedGasPool[poolAddress]
+TMP_962 = ! REF_224 
+CONDITION TMP_962
+EXPRESSION:! approvedGasPool[poolAddress]	NodeType.IF" -> "BlockID: 45
+Call context: callOut,_manageGasOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 44
+Call context: callOut,_manageGasOut
+True
+REF_225(bool) -> approvedGasPool[poolAddress]
+REF_225(bool) (->approvedGasPool) := True(bool)
+EXPRESSION:approvedGasPool[poolAddress] = true	NodeType.EXPRESSION" -> "BlockID: 45
+Call context: callOut,_manageGasOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 45
+Call context: callOut,_manageGasOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 47
+Call context: callOut,_manageGasOut
+None
+NEW VARIABLE sqrtPriceLimitX96
+NEW VARIABLE sqrtPriceX96
+TMP_963 = CONVERT poolAddress to IUniswapV3Pool
+TUPLE_12(uint160,int24,uint16,uint16,uint16,uint8,bool) = HIGH_LEVEL_CALL, dest:TMP_963(IUniswapV3Pool), function:slot0, arguments:[]  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(sqrtPriceX96) = IUniswapV3Pool(poolAddress).slot0()	NodeType.EXPRESSION" [key=0];
+"BlockID: 47
+Call context: callOut,_manageGasOut
+None
+NEW VARIABLE sqrtPriceLimitX96
+NEW VARIABLE sqrtPriceX96
+TMP_963 = CONVERT poolAddress to IUniswapV3Pool
+TUPLE_12(uint160,int24,uint16,uint16,uint16,uint8,bool) = HIGH_LEVEL_CALL, dest:TMP_963(IUniswapV3Pool), function:slot0, arguments:[]  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(sqrtPriceX96) = IUniswapV3Pool(poolAddress).slot0()	NodeType.EXPRESSION" -> "BlockID: 50
+Call context: callOut,_manageGasOut
+None
+sqrtPriceX96(uint160)= UNPACK TUPLE_12 index: 0 
+TMP_964(uint24) = priceImpactPercentage (c)/ 2
+TMP_965(uint160) = sqrtPriceX96 (c)* TMP_964
+TMP_966(uint160) = TMP_965 (c)/ GLOBAL_DIVISIONER
+exactSqrtPriceImpact(uint160) := TMP_966(uint160)
+CONDITION zeroForOneOnInflow
+EXPRESSION:(sqrtPriceX96) = IUniswapV3Pool(poolAddress).slot0()	NodeType.EXPRESSION
+exactSqrtPriceImpact = (sqrtPriceX96 * (priceImpactPercentage / 2)) / GLOBAL_DIVISIONER	NodeType.VARIABLE
+exactSqrtPriceImpact = (sqrtPriceX96 * (priceImpactPercentage / 2)) / GLOBAL_DIVISIONER	NodeType.EXPRESSION
+zeroForOneOnInflow	NodeType.IF" [key=0];
+"BlockID: 50
+Call context: callOut,_manageGasOut
+None
+sqrtPriceX96(uint160)= UNPACK TUPLE_12 index: 0 
+TMP_964(uint24) = priceImpactPercentage (c)/ 2
+TMP_965(uint160) = sqrtPriceX96 (c)* TMP_964
+TMP_966(uint160) = TMP_965 (c)/ GLOBAL_DIVISIONER
+exactSqrtPriceImpact(uint160) := TMP_966(uint160)
+CONDITION zeroForOneOnInflow
+EXPRESSION:(sqrtPriceX96) = IUniswapV3Pool(poolAddress).slot0()	NodeType.EXPRESSION
+exactSqrtPriceImpact = (sqrtPriceX96 * (priceImpactPercentage / 2)) / GLOBAL_DIVISIONER	NodeType.VARIABLE
+exactSqrtPriceImpact = (sqrtPriceX96 * (priceImpactPercentage / 2)) / GLOBAL_DIVISIONER	NodeType.EXPRESSION
+zeroForOneOnInflow	NodeType.IF" -> "BlockID: 52
+Call context: callOut,_manageGasOut
+True
+TMP_974(uint160) = sqrtPriceX96 (c)+ exactSqrtPriceImpact
+sqrtPriceLimitX96(uint160) := TMP_974(uint160)
+EXPRESSION:sqrtPriceLimitX96 = sqrtPriceX96 + exactSqrtPriceImpact	NodeType.EXPRESSION" [key=0];
+"BlockID: 50
+Call context: callOut,_manageGasOut
+None
+sqrtPriceX96(uint160)= UNPACK TUPLE_12 index: 0 
+TMP_964(uint24) = priceImpactPercentage (c)/ 2
+TMP_965(uint160) = sqrtPriceX96 (c)* TMP_964
+TMP_966(uint160) = TMP_965 (c)/ GLOBAL_DIVISIONER
+exactSqrtPriceImpact(uint160) := TMP_966(uint160)
+CONDITION zeroForOneOnInflow
+EXPRESSION:(sqrtPriceX96) = IUniswapV3Pool(poolAddress).slot0()	NodeType.EXPRESSION
+exactSqrtPriceImpact = (sqrtPriceX96 * (priceImpactPercentage / 2)) / GLOBAL_DIVISIONER	NodeType.VARIABLE
+exactSqrtPriceImpact = (sqrtPriceX96 * (priceImpactPercentage / 2)) / GLOBAL_DIVISIONER	NodeType.EXPRESSION
+zeroForOneOnInflow	NodeType.IF" -> "BlockID: 53
+Call context: callOut,_manageGasOut
+False
+TMP_975(uint160) = sqrtPriceX96 (c)- exactSqrtPriceImpact
+sqrtPriceLimitX96(uint160) := TMP_975(uint160)
+EXPRESSION:sqrtPriceLimitX96 = sqrtPriceX96 - exactSqrtPriceImpact	NodeType.EXPRESSION" [key=0];
+"BlockID: 52
+Call context: callOut,_manageGasOut
+True
+TMP_974(uint160) = sqrtPriceX96 (c)+ exactSqrtPriceImpact
+sqrtPriceLimitX96(uint160) := TMP_974(uint160)
+EXPRESSION:sqrtPriceLimitX96 = sqrtPriceX96 + exactSqrtPriceImpact	NodeType.EXPRESSION" -> "BlockID: 55
+Call context: callOut,_manageGasOut
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 53
+Call context: callOut,_manageGasOut
+False
+TMP_975(uint160) = sqrtPriceX96 (c)- exactSqrtPriceImpact
+sqrtPriceLimitX96(uint160) := TMP_975(uint160)
+EXPRESSION:sqrtPriceLimitX96 = sqrtPriceX96 - exactSqrtPriceImpact	NodeType.EXPRESSION" -> "BlockID: 55
+Call context: callOut,_manageGasOut
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 55
+Call context: callOut,_manageGasOut
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 57
+Call context: callOut,_manageGasOut
+None
+NEW VARIABLE amount0
+NEW VARIABLE amount1
+TMP_967 = CONVERT poolAddress to IUniswapV3Pool
+TMP_968 = CONVERT this to address
+TMP_969 = ! zeroForOneOnInflow 
+TMP_970 = CONVERT _amount to int256
+TMP_971 = CONVERT wrappedNativeToken to address
+TMP_972(SwapCallbackData) = new SwapCallbackData(TMP_971)
+TMP_973(bytes) = SOLIDITY_CALL abi.encode()(TMP_972)
+TUPLE_13(int256,int256) = HIGH_LEVEL_CALL, dest:TMP_967(IUniswapV3Pool), function:swap, arguments:['TMP_968', 'TMP_969', 'TMP_970', 'sqrtPriceLimitX96', 'TMP_973']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0,amount1) = IUniswapV3Pool(poolAddress).swap(address(this),! zeroForOneOnInflow,int256(_amount),sqrtPriceLimitX96,abi.encode(SwapCallbackData(address(wrappedNativeToken))))	NodeType.EXPRESSION" [key=0];
+"BlockID: 57
+Call context: callOut,_manageGasOut
+None
+NEW VARIABLE amount0
+NEW VARIABLE amount1
+TMP_967 = CONVERT poolAddress to IUniswapV3Pool
+TMP_968 = CONVERT this to address
+TMP_969 = ! zeroForOneOnInflow 
+TMP_970 = CONVERT _amount to int256
+TMP_971 = CONVERT wrappedNativeToken to address
+TMP_972(SwapCallbackData) = new SwapCallbackData(TMP_971)
+TMP_973(bytes) = SOLIDITY_CALL abi.encode()(TMP_972)
+TUPLE_13(int256,int256) = HIGH_LEVEL_CALL, dest:TMP_967(IUniswapV3Pool), function:swap, arguments:['TMP_968', 'TMP_969', 'TMP_970', 'sqrtPriceLimitX96', 'TMP_973']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0,amount1) = IUniswapV3Pool(poolAddress).swap(address(this),! zeroForOneOnInflow,int256(_amount),sqrtPriceLimitX96,abi.encode(SwapCallbackData(address(wrappedNativeToken))))	NodeType.EXPRESSION" -> "BlockID: 60
+Call context: callOut,_manageGasOut
+None
+amount0(int256)= UNPACK TUPLE_13 index: 0 
+amount1(int256)= UNPACK TUPLE_13 index: 1 
+TMP_976 = ! zeroForOneOnInflow 
+CONDITION TMP_976
+EXPRESSION:(amount0,amount1) = IUniswapV3Pool(poolAddress).swap(address(this),! zeroForOneOnInflow,int256(_amount),sqrtPriceLimitX96,abi.encode(SwapCallbackData(address(wrappedNativeToken))))	NodeType.EXPRESSION
+! zeroForOneOnInflow	NodeType.IF" [key=0];
+"BlockID: 60
+Call context: callOut,_manageGasOut
+None
+amount0(int256)= UNPACK TUPLE_13 index: 0 
+amount1(int256)= UNPACK TUPLE_13 index: 1 
+TMP_976 = ! zeroForOneOnInflow 
+CONDITION TMP_976
+EXPRESSION:(amount0,amount1) = IUniswapV3Pool(poolAddress).swap(address(this),! zeroForOneOnInflow,int256(_amount),sqrtPriceLimitX96,abi.encode(SwapCallbackData(address(wrappedNativeToken))))	NodeType.EXPRESSION
+! zeroForOneOnInflow	NodeType.IF" -> "BlockID: 62
+Call context: callOut,_manageGasOut
+True
+TMP_977 = CONVERT amount1 to uint256
+TMP_1360(None) := TMP_977(uint256)
+TMP_1360(None) := gasTokenGlobalAddress(address)
+EXPRESSION:" [key=0];
+"BlockID: 60
+Call context: callOut,_manageGasOut
+None
+amount0(int256)= UNPACK TUPLE_13 index: 0 
+amount1(int256)= UNPACK TUPLE_13 index: 1 
+TMP_976 = ! zeroForOneOnInflow 
+CONDITION TMP_976
+EXPRESSION:(amount0,amount1) = IUniswapV3Pool(poolAddress).swap(address(this),! zeroForOneOnInflow,int256(_amount),sqrtPriceLimitX96,abi.encode(SwapCallbackData(address(wrappedNativeToken))))	NodeType.EXPRESSION
+! zeroForOneOnInflow	NodeType.IF" -> "BlockID: 63
+Call context: callOut,_manageGasOut
+False
+TMP_978 = CONVERT amount0 to uint256
+TMP_1360(None) := TMP_978(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 62
+Call context: callOut,_manageGasOut
+True
+TMP_977 = CONVERT amount1 to uint256
+TMP_1360(None) := TMP_977(uint256)
+TMP_1360(None) := gasTokenGlobalAddress(address)
+EXPRESSION:" -> "BlockID: 65
+Call context: callOut
+None
+amountOut(uint256)= UNPACK TUPLE_15 index: 0 
+gasToken(address)= UNPACK TUPLE_15 index: 1 
+EXPRESSION:(amountOut,gasToken) = _gasSwapOut(msg.value,_toChain)	NodeType.EXPRESSION" [key="successor_5", ref="RootBridgeAgent._gasSwapOut"];
+"BlockID: 63
+Call context: callOut,_manageGasOut
+False
+TMP_978 = CONVERT amount0 to uint256
+TMP_1360(None) := TMP_978(uint256)
+EXPRESSION:" -> "BlockID: 65
+Call context: callOut
+None
+amountOut(uint256)= UNPACK TUPLE_15 index: 0 
+gasToken(address)= UNPACK TUPLE_15 index: 1 
+EXPRESSION:(amountOut,gasToken) = _gasSwapOut(msg.value,_toChain)	NodeType.EXPRESSION" [key="successor_5", ref="RootBridgeAgent._gasSwapOut"];
+"BlockID: 68
+Call context: callOut,_manageGasOut
+True
+INLINE ASM
+TMP_279(None) = SOLIDITY_CALL mstore(uint256,uint256)(0,891784466)
+TMP_280(None) = SOLIDITY_CALL revert(uint256,uint256)(28,4)
+END_IF
+EXPRESSION:None	NodeType.ASSEMBLY
+mstore(uint256,uint256)(0x00,0x35278d12)	NodeType.EXPRESSION
+revert(uint256,uint256)(0x1c,0x04)	NodeType.EXPRESSION
+None	NodeType.ENDIF" -> "BlockID: 69
+Call context: callOut,_manageGasOut
+None
+TMP_125 = CONVERT x to uint128
+TMP_1228(None) := TMP_125(uint128)
+TMP_1361(None) := TMP_995(uint128)
+EXPRESSION:" [key="successor_3"];
+"BlockID: 69
+Call context: callOut,_manageGasOut
+None
+TMP_125 = CONVERT x to uint128
+TMP_1228(None) := TMP_125(uint128)
+TMP_1361(None) := TMP_995(uint128)
+EXPRESSION:" -> "BlockID: 19
+Call context: 
+None
+TMP_807(bytes) = SOLIDITY_CALL abi.encodePacked()(TMP_804,_recipient,TMP_805,_data,TMP_806)
+data(bytes) := TMP_807(bytes)
+REF_238(address) -> getBranchBridgeAgent[_toChain]
+callee(address) := REF_238(address)
+TMP_996 = CONVERT 0 to address
+TMP_997(bool) = callee == TMP_996
+CONDITION TMP_997
+EXPRESSION:data = abi.encodePacked(bytes1(0x00),_recipient,settlementNonce ++,_data,_manageGasOut(_toChain))	NodeType.VARIABLE
+data = abi.encodePacked(bytes1(0x00),_recipient,settlementNonce ++,_data,_manageGasOut(_toChain))	NodeType.EXPRESSION
+callee = getBranchBridgeAgent[_toChain]	NodeType.VARIABLE
+callee = getBranchBridgeAgent[_toChain]	NodeType.EXPRESSION
+callee == address(0)	NodeType.IF" [key="successor_5", ref="RootBridgeAgent._manageGasOut"];
+"BlockID: 29
+Call context: callOut,_manageGasOut
+None
+zeroForOneOnInflow(bool)= UNPACK TUPLE_11 index: 0 
+priceImpactPercentage(uint24)= UNPACK TUPLE_11 index: 1 
+gasTokenGlobalAddress(address)= UNPACK TUPLE_11 index: 2 
+poolAddress(address)= UNPACK TUPLE_11 index: 3 
+TMP_956 = CONVERT 0 to address
+TMP_957(bool) = gasTokenGlobalAddress == TMP_956
+TMP_958 = CONVERT 0 to address
+TMP_959(bool) = poolAddress == TMP_958
+TMP_960(bool) = TMP_957 || TMP_959
+CONDITION TMP_960
+EXPRESSION:(zeroForOneOnInflow,priceImpactPercentage,gasTokenGlobalAddress,poolAddress) = IRootPort(localPortAddress).getGasPoolInfo(_toChain)	NodeType.EXPRESSION
+gasTokenGlobalAddress == address(0) || poolAddress == address(0)	NodeType.IF" -> "BlockID: 33
+Call context: callOut,_manageGasOut
+True
+TMP_961(None) = SOLIDITY_CALL revert InvalidGasPool()()
+EXPRESSION:revert()()	ExtraNodeType.REVERT" [key=0];
+"BlockID: 29
+Call context: callOut,_manageGasOut
+None
+zeroForOneOnInflow(bool)= UNPACK TUPLE_11 index: 0 
+priceImpactPercentage(uint24)= UNPACK TUPLE_11 index: 1 
+gasTokenGlobalAddress(address)= UNPACK TUPLE_11 index: 2 
+poolAddress(address)= UNPACK TUPLE_11 index: 3 
+TMP_956 = CONVERT 0 to address
+TMP_957(bool) = gasTokenGlobalAddress == TMP_956
+TMP_958 = CONVERT 0 to address
+TMP_959(bool) = poolAddress == TMP_958
+TMP_960(bool) = TMP_957 || TMP_959
+CONDITION TMP_960
+EXPRESSION:(zeroForOneOnInflow,priceImpactPercentage,gasTokenGlobalAddress,poolAddress) = IRootPort(localPortAddress).getGasPoolInfo(_toChain)	NodeType.EXPRESSION
+gasTokenGlobalAddress == address(0) || poolAddress == address(0)	NodeType.IF" -> "BlockID: 34
+Call context: callOut,_manageGasOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 34
+Call context: callOut,_manageGasOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 37
+Call context: callOut,_manageGasOut
+None
+REF_224(bool) -> approvedGasPool[poolAddress]
+TMP_962 = ! REF_224 
+CONDITION TMP_962
+EXPRESSION:! approvedGasPool[poolAddress]	NodeType.IF" [key=0];
+"BlockID: 37
+Call context: callOut,_manageGasOut
+None
+REF_224(bool) -> approvedGasPool[poolAddress]
+TMP_962 = ! REF_224 
+CONDITION TMP_962
+EXPRESSION:! approvedGasPool[poolAddress]	NodeType.IF" -> "BlockID: 40
+Call context: callOut,_manageGasOut
+True
+REF_225(bool) -> approvedGasPool[poolAddress]
+REF_225(bool) (->approvedGasPool) := True(bool)
+EXPRESSION:approvedGasPool[poolAddress] = true	NodeType.EXPRESSION" [key=0];
+"BlockID: 37
+Call context: callOut,_manageGasOut
+None
+REF_224(bool) -> approvedGasPool[poolAddress]
+TMP_962 = ! REF_224 
+CONDITION TMP_962
+EXPRESSION:! approvedGasPool[poolAddress]	NodeType.IF" -> "BlockID: 41
+Call context: callOut,_manageGasOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 40
+Call context: callOut,_manageGasOut
+True
+REF_225(bool) -> approvedGasPool[poolAddress]
+REF_225(bool) (->approvedGasPool) := True(bool)
+EXPRESSION:approvedGasPool[poolAddress] = true	NodeType.EXPRESSION" -> "BlockID: 41
+Call context: callOut,_manageGasOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 41
+Call context: callOut,_manageGasOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 43
+Call context: callOut,_manageGasOut
+None
+NEW VARIABLE sqrtPriceLimitX96
+NEW VARIABLE sqrtPriceX96
+TMP_963 = CONVERT poolAddress to IUniswapV3Pool
+TUPLE_12(uint160,int24,uint16,uint16,uint16,uint8,bool) = HIGH_LEVEL_CALL, dest:TMP_963(IUniswapV3Pool), function:slot0, arguments:[]  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(sqrtPriceX96) = IUniswapV3Pool(poolAddress).slot0()	NodeType.EXPRESSION" [key=0];
+"BlockID: 43
+Call context: callOut,_manageGasOut
+None
+NEW VARIABLE sqrtPriceLimitX96
+NEW VARIABLE sqrtPriceX96
+TMP_963 = CONVERT poolAddress to IUniswapV3Pool
+TUPLE_12(uint160,int24,uint16,uint16,uint16,uint8,bool) = HIGH_LEVEL_CALL, dest:TMP_963(IUniswapV3Pool), function:slot0, arguments:[]  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(sqrtPriceX96) = IUniswapV3Pool(poolAddress).slot0()	NodeType.EXPRESSION" -> "BlockID: 46
+Call context: callOut,_manageGasOut
+None
+sqrtPriceX96(uint160)= UNPACK TUPLE_12 index: 0 
+TMP_964(uint24) = priceImpactPercentage (c)/ 2
+TMP_965(uint160) = sqrtPriceX96 (c)* TMP_964
+TMP_966(uint160) = TMP_965 (c)/ GLOBAL_DIVISIONER
+exactSqrtPriceImpact(uint160) := TMP_966(uint160)
+CONDITION zeroForOneOnInflow
+EXPRESSION:(sqrtPriceX96) = IUniswapV3Pool(poolAddress).slot0()	NodeType.EXPRESSION
+exactSqrtPriceImpact = (sqrtPriceX96 * (priceImpactPercentage / 2)) / GLOBAL_DIVISIONER	NodeType.VARIABLE
+exactSqrtPriceImpact = (sqrtPriceX96 * (priceImpactPercentage / 2)) / GLOBAL_DIVISIONER	NodeType.EXPRESSION
+zeroForOneOnInflow	NodeType.IF" [key=0];
+"BlockID: 46
+Call context: callOut,_manageGasOut
+None
+sqrtPriceX96(uint160)= UNPACK TUPLE_12 index: 0 
+TMP_964(uint24) = priceImpactPercentage (c)/ 2
+TMP_965(uint160) = sqrtPriceX96 (c)* TMP_964
+TMP_966(uint160) = TMP_965 (c)/ GLOBAL_DIVISIONER
+exactSqrtPriceImpact(uint160) := TMP_966(uint160)
+CONDITION zeroForOneOnInflow
+EXPRESSION:(sqrtPriceX96) = IUniswapV3Pool(poolAddress).slot0()	NodeType.EXPRESSION
+exactSqrtPriceImpact = (sqrtPriceX96 * (priceImpactPercentage / 2)) / GLOBAL_DIVISIONER	NodeType.VARIABLE
+exactSqrtPriceImpact = (sqrtPriceX96 * (priceImpactPercentage / 2)) / GLOBAL_DIVISIONER	NodeType.EXPRESSION
+zeroForOneOnInflow	NodeType.IF" -> "BlockID: 48
+Call context: callOut,_manageGasOut
+True
+TMP_974(uint160) = sqrtPriceX96 (c)+ exactSqrtPriceImpact
+sqrtPriceLimitX96(uint160) := TMP_974(uint160)
+EXPRESSION:sqrtPriceLimitX96 = sqrtPriceX96 + exactSqrtPriceImpact	NodeType.EXPRESSION" [key=0];
+"BlockID: 46
+Call context: callOut,_manageGasOut
+None
+sqrtPriceX96(uint160)= UNPACK TUPLE_12 index: 0 
+TMP_964(uint24) = priceImpactPercentage (c)/ 2
+TMP_965(uint160) = sqrtPriceX96 (c)* TMP_964
+TMP_966(uint160) = TMP_965 (c)/ GLOBAL_DIVISIONER
+exactSqrtPriceImpact(uint160) := TMP_966(uint160)
+CONDITION zeroForOneOnInflow
+EXPRESSION:(sqrtPriceX96) = IUniswapV3Pool(poolAddress).slot0()	NodeType.EXPRESSION
+exactSqrtPriceImpact = (sqrtPriceX96 * (priceImpactPercentage / 2)) / GLOBAL_DIVISIONER	NodeType.VARIABLE
+exactSqrtPriceImpact = (sqrtPriceX96 * (priceImpactPercentage / 2)) / GLOBAL_DIVISIONER	NodeType.EXPRESSION
+zeroForOneOnInflow	NodeType.IF" -> "BlockID: 49
+Call context: callOut,_manageGasOut
+False
+TMP_975(uint160) = sqrtPriceX96 (c)- exactSqrtPriceImpact
+sqrtPriceLimitX96(uint160) := TMP_975(uint160)
+EXPRESSION:sqrtPriceLimitX96 = sqrtPriceX96 - exactSqrtPriceImpact	NodeType.EXPRESSION" [key=0];
+"BlockID: 48
+Call context: callOut,_manageGasOut
+True
+TMP_974(uint160) = sqrtPriceX96 (c)+ exactSqrtPriceImpact
+sqrtPriceLimitX96(uint160) := TMP_974(uint160)
+EXPRESSION:sqrtPriceLimitX96 = sqrtPriceX96 + exactSqrtPriceImpact	NodeType.EXPRESSION" -> "BlockID: 51
+Call context: callOut,_manageGasOut
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 49
+Call context: callOut,_manageGasOut
+False
+TMP_975(uint160) = sqrtPriceX96 (c)- exactSqrtPriceImpact
+sqrtPriceLimitX96(uint160) := TMP_975(uint160)
+EXPRESSION:sqrtPriceLimitX96 = sqrtPriceX96 - exactSqrtPriceImpact	NodeType.EXPRESSION" -> "BlockID: 51
+Call context: callOut,_manageGasOut
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 51
+Call context: callOut,_manageGasOut
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 54
+Call context: callOut,_manageGasOut
+None
+NEW VARIABLE amount0
+NEW VARIABLE amount1
+TMP_967 = CONVERT poolAddress to IUniswapV3Pool
+TMP_968 = CONVERT this to address
+TMP_969 = ! zeroForOneOnInflow 
+TMP_970 = CONVERT _amount to int256
+TMP_971 = CONVERT wrappedNativeToken to address
+TMP_972(SwapCallbackData) = new SwapCallbackData(TMP_971)
+TMP_973(bytes) = SOLIDITY_CALL abi.encode()(TMP_972)
+TUPLE_13(int256,int256) = HIGH_LEVEL_CALL, dest:TMP_967(IUniswapV3Pool), function:swap, arguments:['TMP_968', 'TMP_969', 'TMP_970', 'sqrtPriceLimitX96', 'TMP_973']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0,amount1) = IUniswapV3Pool(poolAddress).swap(address(this),! zeroForOneOnInflow,int256(_amount),sqrtPriceLimitX96,abi.encode(SwapCallbackData(address(wrappedNativeToken))))	NodeType.EXPRESSION" [key=0];
+"BlockID: 54
+Call context: callOut,_manageGasOut
+None
+NEW VARIABLE amount0
+NEW VARIABLE amount1
+TMP_967 = CONVERT poolAddress to IUniswapV3Pool
+TMP_968 = CONVERT this to address
+TMP_969 = ! zeroForOneOnInflow 
+TMP_970 = CONVERT _amount to int256
+TMP_971 = CONVERT wrappedNativeToken to address
+TMP_972(SwapCallbackData) = new SwapCallbackData(TMP_971)
+TMP_973(bytes) = SOLIDITY_CALL abi.encode()(TMP_972)
+TUPLE_13(int256,int256) = HIGH_LEVEL_CALL, dest:TMP_967(IUniswapV3Pool), function:swap, arguments:['TMP_968', 'TMP_969', 'TMP_970', 'sqrtPriceLimitX96', 'TMP_973']  
+EXPRESSION:None	NodeType.VARIABLE
+None	NodeType.VARIABLE
+(amount0,amount1) = IUniswapV3Pool(poolAddress).swap(address(this),! zeroForOneOnInflow,int256(_amount),sqrtPriceLimitX96,abi.encode(SwapCallbackData(address(wrappedNativeToken))))	NodeType.EXPRESSION" -> "BlockID: 56
+Call context: callOut,_manageGasOut
+None
+amount0(int256)= UNPACK TUPLE_13 index: 0 
+amount1(int256)= UNPACK TUPLE_13 index: 1 
+TMP_976 = ! zeroForOneOnInflow 
+CONDITION TMP_976
+EXPRESSION:(amount0,amount1) = IUniswapV3Pool(poolAddress).swap(address(this),! zeroForOneOnInflow,int256(_amount),sqrtPriceLimitX96,abi.encode(SwapCallbackData(address(wrappedNativeToken))))	NodeType.EXPRESSION
+! zeroForOneOnInflow	NodeType.IF" [key=0];
+"BlockID: 56
+Call context: callOut,_manageGasOut
+None
+amount0(int256)= UNPACK TUPLE_13 index: 0 
+amount1(int256)= UNPACK TUPLE_13 index: 1 
+TMP_976 = ! zeroForOneOnInflow 
+CONDITION TMP_976
+EXPRESSION:(amount0,amount1) = IUniswapV3Pool(poolAddress).swap(address(this),! zeroForOneOnInflow,int256(_amount),sqrtPriceLimitX96,abi.encode(SwapCallbackData(address(wrappedNativeToken))))	NodeType.EXPRESSION
+! zeroForOneOnInflow	NodeType.IF" -> "BlockID: 58
+Call context: callOut,_manageGasOut
+True
+TMP_977 = CONVERT amount1 to uint256
+TMP_1360(None) := TMP_977(uint256)
+TMP_1360(None) := gasTokenGlobalAddress(address)
+EXPRESSION:" [key=0];
+"BlockID: 56
+Call context: callOut,_manageGasOut
+None
+amount0(int256)= UNPACK TUPLE_13 index: 0 
+amount1(int256)= UNPACK TUPLE_13 index: 1 
+TMP_976 = ! zeroForOneOnInflow 
+CONDITION TMP_976
+EXPRESSION:(amount0,amount1) = IUniswapV3Pool(poolAddress).swap(address(this),! zeroForOneOnInflow,int256(_amount),sqrtPriceLimitX96,abi.encode(SwapCallbackData(address(wrappedNativeToken))))	NodeType.EXPRESSION
+! zeroForOneOnInflow	NodeType.IF" -> "BlockID: 59
+Call context: callOut,_manageGasOut
+False
+TMP_978 = CONVERT amount0 to uint256
+TMP_1360(None) := TMP_978(uint256)
+EXPRESSION:" [key=0];
+"BlockID: 58
+Call context: callOut,_manageGasOut
+True
+TMP_977 = CONVERT amount1 to uint256
+TMP_1360(None) := TMP_977(uint256)
+TMP_1360(None) := gasTokenGlobalAddress(address)
+EXPRESSION:" -> "BlockID: 61
+Call context: callOut
+None
+amountOut(uint256)= UNPACK TUPLE_14 index: 0 
+gasToken(address)= UNPACK TUPLE_14 index: 1 
+EXPRESSION:(amountOut,gasToken) = _gasSwapOut(userFeeInfo.gasToBridgeOut,_toChain)	NodeType.EXPRESSION" [key="successor_5", ref="RootBridgeAgent._gasSwapOut"];
+"BlockID: 59
+Call context: callOut,_manageGasOut
+False
+TMP_978 = CONVERT amount0 to uint256
+TMP_1360(None) := TMP_978(uint256)
+EXPRESSION:" -> "BlockID: 61
+Call context: callOut
+None
+amountOut(uint256)= UNPACK TUPLE_14 index: 0 
+gasToken(address)= UNPACK TUPLE_14 index: 1 
+EXPRESSION:(amountOut,gasToken) = _gasSwapOut(userFeeInfo.gasToBridgeOut,_toChain)	NodeType.EXPRESSION" [key="successor_5", ref="RootBridgeAgent._gasSwapOut"];
+"BlockID: 14
+Call context: callOut,_manageGasOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 18
+Call context: callOut,_manageGasOut
+None
+TMP_378(None) = SOLIDITY_CALL mstore(uint256,uint256)(52,0)
+EXPRESSION:mstore(uint256,uint256)(0x34,0)	NodeType.EXPRESSION" [key=0];
+"BlockID: 18
+Call context: callOut,_manageGasOut
+None
+TMP_378(None) = SOLIDITY_CALL mstore(uint256,uint256)(52,0)
+EXPRESSION:mstore(uint256,uint256)(0x34,0)	NodeType.EXPRESSION" -> "BlockID: 11
+Call context: callOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key="Exit: safeTransfer", ref="SafeTransferLib.safeTransfer"];
+"BlockID: 25
+Call context: callOut
+False
+END_IF
+EXPRESSION:None	NodeType.ENDIF" -> "BlockID: 28
+Call context: callOut
+None
+TMP_999(bool) = _toChain != localChainId
+CONDITION TMP_999
+EXPRESSION:_toChain != localChainId	NodeType.IF" [key=0];
+"BlockID: 28
+Call context: callOut
+None
+TMP_999(bool) = _toChain != localChainId
+CONDITION TMP_999
+EXPRESSION:_toChain != localChainId	NodeType.IF" -> "BlockID: 31
+Call context: callOut
+True
+TMP_1000 = CONVERT localAnyCallAddress to IAnycallProxy
+REF_240(uint256) -> AnycallFlags.FLAG_ALLOW_FALLBACK_DST
+HIGH_LEVEL_CALL, dest:TMP_1000(IAnycallProxy), function:anyCall, arguments:['callee', '_calldata', '_toChain', 'REF_240', '']  
+EXPRESSION:IAnycallProxy(localAnyCallAddress).anyCall(callee,_calldata,_toChain,AnycallFlags.FLAG_ALLOW_FALLBACK_DST,)	NodeType.EXPRESSION" [key=0];
+"BlockID: 28
+Call context: callOut
+None
+TMP_999(bool) = _toChain != localChainId
+CONDITION TMP_999
+EXPRESSION:_toChain != localChainId	NodeType.IF" -> "BlockID: 32
+Call context: callOut
+False
+TMP_1002 = CONVERT callee to IBranchBridgeAgent
+TUPLE_16(bool,bytes) = HIGH_LEVEL_CALL, dest:TMP_1002(IBranchBridgeAgent), function:anyExecute, arguments:['_calldata']  
+EXPRESSION:IBranchBridgeAgent(callee).anyExecute(_calldata)	NodeType.EXPRESSION" [key=0];
+"BlockID: 31
+Call context: callOut
+True
+TMP_1000 = CONVERT localAnyCallAddress to IAnycallProxy
+REF_240(uint256) -> AnycallFlags.FLAG_ALLOW_FALLBACK_DST
+HIGH_LEVEL_CALL, dest:TMP_1000(IAnycallProxy), function:anyCall, arguments:['callee', '_calldata', '_toChain', 'REF_240', '']  
+EXPRESSION:IAnycallProxy(localAnyCallAddress).anyCall(callee,_calldata,_toChain,AnycallFlags.FLAG_ALLOW_FALLBACK_DST,)	NodeType.EXPRESSION" -> "BlockID: 36
+Call context: callOut
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+"BlockID: 32
+Call context: callOut
+False
+TMP_1002 = CONVERT callee to IBranchBridgeAgent
+TUPLE_16(bool,bytes) = HIGH_LEVEL_CALL, dest:TMP_1002(IBranchBridgeAgent), function:anyExecute, arguments:['_calldata']  
+EXPRESSION:IBranchBridgeAgent(callee).anyExecute(_calldata)	NodeType.EXPRESSION" -> "BlockID: 36
+Call context: callOut
+None
+END_IF
+EXPRESSION:None	NodeType.ENDIF" [key=0];
+}
