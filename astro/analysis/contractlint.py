@@ -20,7 +20,7 @@ ASTRO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if ASTRO_ROOT not in sys.path:
     sys.path.insert(0, ASTRO_ROOT)
 from analysis.callgraph import *
-from crytic_compile.localize import config as compile_config
+from lib import compile_config
 from analysis.detection import *
 from lib import *
 from lib import config
@@ -39,7 +39,10 @@ from wfg.wfg import *
 ETH_KEY = [
 
 ]
-eth_key_length = len(ETH_KEY)
+def _select_etherscan_api_key():
+    if not ETH_KEY:
+        return None
+    return ETH_KEY[random.randint(1, 1000) % len(ETH_KEY)]
 
 def analyze_contracts(contract_path, output_dir, dump_graph, **kwargs):
     try:
@@ -112,8 +115,7 @@ def analyze_contracts(contract_path, output_dir, dump_graph, **kwargs):
 
         # Initialize Slither
         if DEBUG: start_t = time.time()
-        index = random.randint(1, 1000) % eth_key_length
-        api_key = ETH_KEY[index]
+        api_key = _select_etherscan_api_key()
         try:
             if chain_num:
                 contract_path = chain_num + ":" + contract_path

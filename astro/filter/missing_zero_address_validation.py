@@ -12,7 +12,7 @@ from slither.core.declarations.function import ModifierStatements
 from slither.core.declarations.function_contract import FunctionContract
 from slither.core.solidity_types.elementary_type import ElementaryType
 from slither.core.variables.local_variable import LocalVariable
-from slither.detectors.abstract_detector import (DETECTOR_INFO,
+from slither.detectors.abstract_detector import (
                                                  AbstractDetector,
                                                  DetectorClassification)
 from slither.slithir.operations import Call, LowLevelCall, Send, Transfer

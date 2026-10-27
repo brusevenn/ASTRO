@@ -8,7 +8,7 @@ import pydot
 from analysis.util import *
 from analysis.basic_block import *
 from analysis.cfg import CFG
-from crytic_compile.localize import config as compile_config
+from lib import compile_config
 from lib import config
 from slither.core.cfg.node import Node, NodeType
 from slither.core.declarations.function import Function

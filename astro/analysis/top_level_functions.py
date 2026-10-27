@@ -15,7 +15,7 @@ import networkx as nx
 from callgraph import *
 from cfg import *
 from compose import *
-from crytic_compile.localize import config as compile_config
+from lib import compile_config
 from detection import *
 from icfg_for_top_level_function import *
 from instr_block import *

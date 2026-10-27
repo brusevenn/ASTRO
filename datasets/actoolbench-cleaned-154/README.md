@@ -1,8 +1,8 @@
 # ACToolBench-cleaned-154 input package for ASTRO
 
-This is a dataset-only adaptation for `ASTRO`. No detector/research code was changed, and no detector run, compilation, or evaluation was performed during packaging.
+This directory packages ACToolBench-cleaned inputs for `ASTRO`. Source/config bytes and the original manifest were preserved. The current working tree also contains local, uncommitted ASTRO portability/debug changes described below.
 
-**Target execution platform: Ubuntu 22.04 LTS.** Run the commands below from the repository root with POSIX paths. Each project needs its own compatible Python environment; this dataset packaging did not provision or test those environments.
+**Target execution platform: Ubuntu 22.04 LTS.** ASTRO's CLI and one synthetic Solidity contract were tested with Python 3.8.20, Slither 0.9.6, crytic-compile 0.3.11, web3 6.20.4, and Graphviz 14.1.2. The repository still has no complete, pinned runtime requirements file.
 
 ## Contents and provenance
 
@@ -23,18 +23,21 @@ Source bytes, including original comments and formatting, are preserved. No eval
 
 ## ASTRO input layout and limitations
 
-The ASTRO README specifies Python 3.8. The repository has no requirements file, so install its dependencies in an isolated Python 3.8 environment on Ubuntu 22.04; do not combine it with ACTaint’s Python 3.12 environment.
+The ASTRO README specifies Python 3.8. The tested runtime used Python 3.8.20 with Slither 0.9.6, crytic-compile 0.3.11, web3 6.20.4, and Graphviz 14.1.2. The repository does not yet declare the full dependency set. A shared environment containing `spcon`/`manticore` may report dependency conflicts after upgrading Slither; use this runtime for ASTRO only unless those tools are separately checked.
 
 - `tools/astro/source-files.txt` contains 694 Solidity paths relative to the repository root. `tools/astro/input-index.json` maps each path to the canonical project tree and case records.
 - ASTRO's documented `contractlint.py -c` entry point accepts one source file (or a non-recursive directory); the list is intended for one-file-at-a-time ACFG generation. Example from the repository root:
 
 ```sh
-python3.8 astro/analysis/contractlint.py -c "<path from tools/astro/source-files.txt>" -o case_result/ACToolBench154/<unique-output> -dg -scale -prune -normalize
+export PATH="$CONDA_PREFIX/bin:$PATH"
+python astro/analysis/contractlint.py -c "<path from tools/astro/source-files.txt>" -o case_result/ACToolBench154/<unique-output> -sc "$CONDA_PREFIX/bin/solc" -dg -scale -prune -normalize
 ```
 
 - `find_candidate/sim.py` compares generated function graphs against a target/reference directory. This package supplies ACToolBench source inputs and indexes, not an ASTRO target-function/reference database or precomputed ACFGs; the full similarity-detection stage is not turnkey from the source list alone.
 - Project `config.json` files are preserved but ASTRO's file-based entry point does not automatically apply them as compiler settings/remappings. Compilation and import resolution need tool-specific validation.
 
-### ASTRO WFG comparison helper
+### ASTRO runtime verification and limitations
 
-The local checkout now resolves `contractlint.py`, `sim.py`, and `call_contractlint.py` relative to the repository instead of using the original `/root/...` paths. `astro/wfg/call_hungarian.py` resolves its helper relative to the repository and uses `ASTRO_PYTHON2` (default `python2`). That helper is Python 2.7 syntax and imports the external `hungarian` module and `numpy` in that interpreter; the main ASTRO code still requires Python 3.8. The local path portability changes have regression tests but have not been pushed to GitHub, and the Python 2.7/helper dependency environment has not been exercised here.
+The checkout now resolves `contractlint.py`, `sim.py`, and `call_contractlint.py` paths relative to the repository. The local WFG helper uses SciPy's `linear_sum_assignment` instead of the original Python 2 `hungarian.lap` helper. Both minimize assignment cost, but tie-breaking parity is **not verified**. `criterion.find_addnode_candidate` consumes the mapping to select candidate anchors, so tied matrices can change downstream candidates; do not treat this replacement as baseline-equivalent until differential/golden tests establish parity.
+
+The local `astro/lib/compile_config.py` wrapper delegates to `crytic_compile.localize.config` when that project-specific extension exists. Without it, non-XBlock mode is supported and `-xblock` raises an actionable error. In the Ubuntu 22.04 runtime listed above, the 10-test suite passes, `contractlint.py --help` exits successfully, and one synthetic Solidity contract completes through callgraph, ICFG, and WFG generation using the environment's `solc` wrapper and Graphviz. No ACToolBench case or full benchmark was run. Slither 0.9.6 resolves the former `Contract.is_fully_implemented` failure, but the upgraded shared environment reports strict-version conflicts for the installed `spcon` and `manticore` packages; their operation was not validated. Local changes are not pushed to GitHub.

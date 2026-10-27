@@ -6,54 +6,21 @@ python3
 import json
 import os
 import re
-import shutil
-import subprocess
-from pathlib import Path
 
 import numpy as np
+from scipy.optimize import linear_sum_assignment
 
 def call_hungarian(Metrix, arg_dir=None):
-    row, column, metrix_str = from3to2(Metrix)
-    python2_executable = os.environ.get("ASTRO_PYTHON2", "python2")
-    helper_script = Path(__file__).resolve().parent / "python2" / "hungarian1.py"
-    command = [python2_executable, str(helper_script), arg_dir]
-    arg_str = str(row) + " " + str(column) + " " + metrix_str
-    if not arg_dir:
-        raise RuntimeError("         ")
-    arg_arg_path = os.path.join(arg_dir, "arg.txt")
-    with open(arg_arg_path, "w", encoding="utf-8") as file:
-        file.write(arg_str)
-    try:
-        with subprocess.Popen(
-            command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            executable=shutil.which(command[0]),
-        ) as process:
-            stdout_bytes, stderr_bytes = process.communicate()
-            stdout, stderr = (
-                stdout_bytes.decode(errors="backslashreplace"),
-                stderr_bytes.decode(errors="backslashreplace"),
-            )  # convert bytestrings to unicode strings
-            if stderr:
-                raise RuntimeError("      ： ", stderr)
-            arg_return_path = os.path.join(arg_dir, "return.txt")
-            with open(arg_return_path, "r", encoding="utf-8") as file:
-                return_str = file.read()
-            lines = return_str.splitlines()
-            if len(lines) == 1:
-                file_contents = lines[0].strip()
-                splitresult = file_contents.split(";")
-            else:
-                raise RuntimeError("      " + arg_dir)
-            mapping = fromstrtolist(int(splitresult[0]), int(splitresult[1]), splitresult[2])
-            if len(mapping) == 0:
-                raise RuntimeError("      " + splitresult + arg_return_path + arg_dir)
-            return mapping
-    except OSError as error:
-        raise RuntimeError(error)
-    except Exception as e:
-        raise RuntimeError(e)
+    """Return row-to-column and row-index mappings for a square cost matrix.
+
+    arg_dir is retained for caller compatibility; assignment is now solved
+    in-process with SciPy rather than a hard-coded external Python 2 runtime.
+    """
+    row_indices, column_indices = linear_sum_assignment(Metrix)
+    inverse = [None] * len(column_indices)
+    for row, column in zip(row_indices.tolist(), column_indices.tolist()):
+        inverse[column] = row
+    return [column_indices.tolist(), inverse]
 
 def from3to2(metrix):
     row = len(metrix)

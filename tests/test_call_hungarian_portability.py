@@ -1,65 +1,39 @@
 import importlib.util
-import os
-import sys
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+
+from scipy.optimize import linear_sum_assignment
 
 
-class FakeArray:
-    def __init__(self, values):
-        self.values = values
-        self.matrix = None
-
-    def reshape(self, rows, columns):
-        self.matrix = [self.values[i * columns:(i + 1) * columns] for i in range(rows)]
-        return self
-
-    def tolist(self):
-        return self.matrix
+REPO = Path(__file__).resolve().parents[1]
+MODULE_PATH = REPO / "astro" / "wfg" / "call_hungarian.py"
+SPEC = importlib.util.spec_from_file_location("astro_call_hungarian", MODULE_PATH)
+MODULE = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(MODULE)
 
 
-class FakeNumpy:
-    @staticmethod
-    def array(values):
-        return FakeArray(values)
+class HungarianAssignmentTests(unittest.TestCase):
+    def test_returns_minimum_cost_column_mapping_without_external_python2(self):
+        cost = [[4, 1, 3], [2, 0, 5], [3, 2, 2]]
+        expected_rows, expected_columns = linear_sum_assignment(cost)
 
+        with tempfile.TemporaryDirectory() as tmp:
+            mapping = MODULE.call_hungarian(cost, tmp)
 
-class FakeProcess:
-    def __init__(self, command, **kwargs):
-        self.command = command
+        self.assertEqual(mapping[0], expected_columns.tolist())
+        self.assertEqual(mapping[1], [expected_rows.tolist()[expected_columns.tolist().index(i)] for i in range(3)])
+        self.assertEqual(sum(cost[i][mapping[0][i]] for i in range(3)), 5)
 
-    def __enter__(self):
-        return self
+    def test_returns_inverse_column_to_row_mapping_for_three_cycle(self):
+        cost = [[10, 0, 10], [10, 10, 0], [0, 10, 10]]
 
-    def __exit__(self, *args):
-        return False
+        with tempfile.TemporaryDirectory() as tmp:
+            row_to_column, column_to_row = MODULE.call_hungarian(cost, tmp)
 
-    def communicate(self):
-        Path(self.command[-1], "return.txt").write_text("2;2;1,0,0,1", encoding="utf-8")
-        return b"", b""
-
-
-class HungarianPortabilityTests(unittest.TestCase):
-    def test_uses_environment_interpreter_and_repository_relative_helper(self):
-        repo = Path(__file__).resolve().parents[1]
-        module_path = repo / "astro" / "wfg" / "call_hungarian.py"
-        spec = importlib.util.spec_from_file_location("astro_call_hungarian", module_path)
-        module = importlib.util.module_from_spec(spec)
-        with patch.dict(sys.modules, {"numpy": FakeNumpy}):
-            spec.loader.exec_module(module)
-
-        helper = (repo / "astro" / "wfg" / "python2" / "hungarian1.py").resolve()
-        with tempfile.TemporaryDirectory() as temp_dir:
-            with patch.dict(os.environ, {"ASTRO_PYTHON2": "python2-test"}):
-                with patch.object(module.subprocess, "Popen", side_effect=FakeProcess) as popen:
-                    result = module.call_hungarian([[1, 0], [0, 1]], temp_dir)
-
-        command = popen.call_args.args[0]
-        self.assertEqual(command[0], "python2-test")
-        self.assertEqual(Path(command[1]).resolve(), helper)
-        self.assertEqual(result, [[1, 0], [0, 1]])
+        self.assertEqual(row_to_column, [1, 2, 0])
+        self.assertEqual(column_to_row, [2, 0, 1])
+        self.assertEqual(sum(cost[row][row_to_column[row]] for row in range(3)), 0)
 
 
 if __name__ == "__main__":

@@ -16,7 +16,7 @@ except:
 
 import copy
 
-from crytic_compile.localize import config as compile_config
+from lib import compile_config
 from filter.filter import *
 from filter.filter_json import *
 from lib import config
